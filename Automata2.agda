@@ -1,4 +1,4 @@
-module Automata (Σ : Set) where
+module Automata2 (Σ : Set) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -8,24 +8,24 @@ open import Data.Product hiding (Σ)
 open import Data.Nat
 
 open import Util
-open import Subset
+open import Subset.DecidableSubset
 open import Language Σ
 
 
 record NFA : Set₁ where
  field
   Q  : Set
-  δ  : Q → Σᵉ → Subset Q
+  δ  : Q → Σᵉ → DecSubset Q
   q₀ : Q
-  F  : Subset Q
-  F? : Decidable F
+  F  : DecSubset Q
+  --F? : Decidable F
 
 module NFA-Operations (N : NFA) where
  open NFA N
  
  infix 7 _⊢_
  _⊢_ : (Q × Σᵉ × Σᵉ*) → (Q × Σᵉ*) → Set
- (q , x , xs) ⊢ (q' , w') = xs ≡ w' × q' ∈ δ q x
+ (q , x , xs) ⊢ (q' , w') = xs ≡ w' × q' ∈ᵍ δ q x
 
  infix 7 _⊢ᵏ_─_
  _⊢ᵏ_─_ : (Q × Σᵉ*) → ℕ → (Q × Σᵉ*) → Set
@@ -51,9 +51,9 @@ module NFA-Operations (N : NFA) where
  ⊢ᵏ-lem₁ : ∀ q w n q' w' p w₁ m → (q , w) ⊢ᵏ n ─ (p , w₁) → (p , w₁) ⊢ᵏ m ─ (q' , w') → (q , w) ⊢ᵏ (n + m) ─ (q' , w')
  ⊢ᵏ-lem₁ q w zero    q' w' p w₁ zero       (q≡p , w≡w₁) (p≡q' , w₁≡w') = trans q≡p p≡q' , trans w≡w₁ w₁≡w'
  ⊢ᵏ-lem₁ q w zero    q' w' p w₁ (suc m) (q≡p , w≡w₁) (p' , a , w₁' , inj₁ (w₁≡aw₁' , a≢E) , (refl , p'∈δpa) , p'w₁'⊢ᵏq'w')
-                             = p' , a , w₁' , inj₁ (trans w≡w₁ w₁≡aw₁' , a≢E)  , (refl , subst (λ p → p' ∈ δ p a) (sym q≡p) p'∈δpa) , p'w₁'⊢ᵏq'w'
+                             = p' , a , w₁' , inj₁ (trans w≡w₁ w₁≡aw₁' , a≢E)  , (refl , subst (λ p → p' ∈ᵍ δ p a) (sym q≡p) p'∈δpa) , p'w₁'⊢ᵏq'w'
  ⊢ᵏ-lem₁ q w zero    q' w' p w₁ (suc m) (q≡p , w≡w₁) (p' , a , w₁' , inj₂ (w₁≡w₁'  , a≡E) , (refl , p'∈δpE) , p'w₁'⊢ᵏq'w')
-                             = p' , a , w₁' , inj₂ (trans w≡w₁ w₁≡w₁'  , a≡E)  , (refl , subst (λ p → p' ∈ δ p a) (sym q≡p) p'∈δpE) , p'w₁'⊢ᵏq'w'
+                             = p' , a , w₁' , inj₂ (trans w≡w₁ w₁≡w₁'  , a≡E)  , (refl , subst (λ p → p' ∈ᵍ δ p a) (sym q≡p) p'∈δpE) , p'w₁'⊢ᵏq'w'
  ⊢ᵏ-lem₁ q w (suc n) q' w' p w₁ zero    (p' , a , w₁' , prf₁ , prf₂ , p'w₁'⊢ᵏpw₁) (p≡q' , w₁≡w')
                            = p' , a , w₁' ,  prf₁ , prf₂ , ⊢ᵏ-lem₃ p' w₁' (n + zero) q' w' p w₁ p≡q' w₁≡w' (⊢ᵏ-lem₂ p' w₁' n p w₁ p'w₁'⊢ᵏpw₁)
  ⊢ᵏ-lem₁ q w (suc n) q' w' p w₁ (suc m) (p' , a , w₁' , prf₁ , prf₂ , p'w₁'⊢ᵏpw₁) pw₁⊢ᵏq'w'
@@ -64,7 +64,7 @@ module NFA-Operations (N : NFA) where
 
 
 Lᴺ : NFA → Language
-Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
+Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
  where
   open NFA nfa
   open NFA-Operations nfa
@@ -76,8 +76,8 @@ record DFA : Set₁ where
   Q  : Set
   δ  : Q → Σ → Q
   q₀ : Q
-  F  : Subset Q
-  F? : Decidable F
+  F  : DecSubset Q
+  --F? : Decidable F
 
 module DFA-Operations (D : DFA) where
  open DFA D
@@ -91,7 +91,7 @@ module DFA-Operations (D : DFA) where
  
 
 Lᴰ : DFA → Language
-Lᴰ dfa = λ w → δ₀ w ∈ F
+Lᴰ dfa = λ w → δ₀ w ∈ᵍ F
  where
   open DFA dfa
   open DFA-Operations dfa
