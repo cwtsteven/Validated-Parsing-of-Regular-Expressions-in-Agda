@@ -1,6 +1,7 @@
-module RegularExpression (Σ : Set) where
+module Approach3.RegularExpression (Σ : Set) where
 
-open import Language Σ renaming (Ø to ø)
+open import Level
+open import Approach3.Language Σ renaming (Ø to ø)
 
 infix 11 _∣_
 infix 12 _∙_
@@ -14,7 +15,7 @@ data RegExp : Set where
  _*  : RegExp → RegExp
 
 -- Language denoted by regular expression
-Lᴿ : RegExp → Languages
+Lᴿ : RegExp → Languages zero
 Lᴿ Ø         = ø
 Lᴿ ε         = ⟦ε⟧
 Lᴿ (σ a)     = ⟦ a ⟧

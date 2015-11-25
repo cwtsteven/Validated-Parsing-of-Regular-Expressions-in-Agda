@@ -1,4 +1,4 @@
-module Proofs.Epsilon-lemmas (Σ : Set) where
+module Approach3.Proofs.Epsilon-lemmas (Σ : Set) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -7,10 +7,10 @@ open import Data.Sum
 open import Data.Product hiding (Σ)
 open import Data.Nat
 
-open import Language Σ
-open import RegularExpression Σ
-open import Automata Σ
-open import Parsing Σ
+open import Approach3.Language Σ
+open import Approach3.RegularExpression Σ
+open import Approach3.Automata Σ
+open import Approach3.Parsing Σ
 
 nfa : ε-NFA
 nfa = parseToε-NFA ε

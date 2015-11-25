@@ -1,4 +1,4 @@
-module Automata2 (Σ : Set) where
+module Approach2.Automata (Σ : Set) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -15,9 +15,9 @@ open import Language Σ
 record NFA : Set₁ where
  field
   Q  : Set
-  δ  : Q → Σᵉ → DecSubset Q
+  δ  : Q → Σᵉ → DecPowerset Q
   q₀ : Q
-  F  : DecSubset Q
+  F  : DecPowerset Q
   --F? : Decidable F
 
 module NFA-Operations (N : NFA) where
@@ -63,7 +63,7 @@ module NFA-Operations (N : NFA) where
  ⊢*₂→⊢* q w q' w' (n  , m  , p , w₁ , prf₁ , prf₂) = n + m , ⊢ᵏ-lem₁ q w n q' w' p w₁ m prf₁ prf₂
 
 
-Lᴺ : NFA → Language
+Lᴺ : NFA → Languages
 Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
  where
   open NFA nfa
@@ -76,7 +76,7 @@ record DFA : Set₁ where
   Q  : Set
   δ  : Q → Σ → Q
   q₀ : Q
-  F  : DecSubset Q
+  F  : DecPowerset Q
   --F? : Decidable F
 
 module DFA-Operations (D : DFA) where
@@ -90,7 +90,7 @@ module DFA-Operations (D : DFA) where
  δ₀ w = δ* q₀ w
  
 
-Lᴰ : DFA → Language
+Lᴰ : DFA → Languages
 Lᴰ dfa = λ w → δ₀ w ∈ᵍ F
  where
   open DFA dfa

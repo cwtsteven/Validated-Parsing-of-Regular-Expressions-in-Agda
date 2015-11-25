@@ -1,5 +1,5 @@
-open import RegularExpression
-module Proofs.Union-lemmas (Σ : Set)(e₁ : RegularExpression.RegExp Σ)(e₂ : RegularExpression.RegExp Σ) where
+open import Approach3.RegularExpression
+module Approach3.Proofs.Union-lemmas (Σ : Set)(e₁ : Approach3.RegularExpression.RegExp Σ)(e₂ : Approach3.RegularExpression.RegExp Σ) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -7,10 +7,10 @@ open import Data.Sum
 open import Data.Product hiding (Σ)
 open import Data.Nat
 
-open import Subset
-open import Language Σ
-open import Automata Σ
-open import Parsing Σ
+open import Approach3.Subset
+open import Approach3.Language Σ
+open import Approach3.Automata Σ
+open import Approach3.Parsing Σ
 
 nfa : ε-NFA
 nfa = parseToε-NFA (e₁ ∣ e₂)

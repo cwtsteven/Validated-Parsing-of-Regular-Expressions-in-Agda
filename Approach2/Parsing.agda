@@ -1,5 +1,5 @@
 open import Util
-module Parsing2 (Σ : Set)(dec : DecEq Σ) where
+module Approach2.Parsing (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
 open import Data.Bool
@@ -12,7 +12,7 @@ open import Function
 open import Subset.DecidableSubset renaming (Ø to ø)
 open import Language Σ
 open import RegularExpression Σ
-open import Automata2 Σ
+open import Approach2.Automata Σ
 
 data _⊍_ (A B : Set) : Set where
   init : A ⊍ B
@@ -47,27 +47,27 @@ parseToNFA ε = record { Q = Q' ; δ = δ' ; q₀ = init ; F = F' }
  where
   Q' : Set
   Q' = ε-State
-  δ' : Q' → Σᵉ → DecSubset Q'
+  δ' : Q' → Σᵉ → DecPowerset Q'
   δ' init  E     init  = true
   δ' init  (α a) error = true
   δ' error _     error = true
   δ' _     _     _     = false
-  F' : DecSubset Q'
+  F' : DecPowerset Q'
   F' init  = true
   F' error = false
 parseToNFA (σ a) = record { Q = Q' ; δ = δ' ; q₀ = init ; F = F' }
  where
   Q' : Set
   Q' = σ-State
-  δ' : Q' → Σᵉ → DecSubset Q'
+  δ' : Q' → Σᵉ → DecPowerset Q'
   δ' init   E       init   = true
-  δ' init   (α  b)  accept = a ≡ b
+  δ' init   (α  b)  accept = decEqToBool dec a b
   δ' init   (α  b)  error  = not (decEqToBool dec a b)
   δ' accept E       accept = true
   δ' accept (α a)   error  = true
   δ' error  _       error  = true
   δ' _      _       _      = false
-  F' : DecSubset Q'
+  F' : DecPowerset Q'
   F' init   = false
   F' accept = true
   F' error  = false
@@ -77,13 +77,13 @@ parseToNFA (e₁ ∣ e₂) = record { Q = Q' ; δ = δ' ; q₀ = init ; F = F' }
   open NFA (parseToNFA e₂) renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂)
   Q' : Set
   Q' = Q₁ ⊍ Q₂
-  δ' : Q' → Σᵉ → DecSubset Q'
+  δ' : Q' → Σᵉ → DecPowerset Q'
   δ' init      Ε (⊍inj₁ q)  = true --q ≡ q₀₁
   δ' init      Ε (⊍inj₂ q)  = true --q ≡ q₀₂
   δ' (⊍inj₁ q) a (⊍inj₁ q') = δ₁ q a q'
   δ' (⊍inj₂ q) a (⊍inj₂ q') = δ₂ q a q'
   δ' _         _ _          = false
-  F' : DecSubset Q'
+  F' : DecPowerset Q'
   F' init      = false
   F' (⊍inj₁ q) = F₁ q
   F' (⊍inj₂ q) = F₂ q
@@ -93,13 +93,13 @@ parseToNFA (e₁ ∙ e₂) = record { Q = Q' ; δ = δ' ; q₀ = ⍟inj₁ q₀�
    open NFA (parseToNFA e₂) renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂)
    Q' : Set
    Q' = Q₁ ⍟ Q₂
-   δ' : Q' → Σᵉ → DecSubset Q'
+   δ' : Q' → Σᵉ → DecPowerset Q'
    δ' (⍟inj₁ q) a (⍟inj₁ q') = δ₁ q a q'
    δ' (⍟inj₁ q) Ε mid        = F₁ q
    δ' (⍟inj₂ q) a (⍟inj₂ q') = δ₂ q a q'
    δ' mid       Ε (⍟inj₂ q)  = true --q ≡ q₀₂
    δ' _         _ _ = false  
-   F' : DecSubset Q'
+   F' : DecPowerset Q'
    F' (⍟inj₁ q) = false
    F' mid       = false
    F' (⍟inj₂ q) = F₂ q
@@ -108,12 +108,12 @@ parseToNFA (e *)     = record { Q = Q' ; δ = δ' ; q₀ = init ; F = F' }
   open NFA (parseToNFA e)
   Q' : Set
   Q' = Q *-State
-  δ' : Q' → Σᵉ → DecSubset Q'
+  δ' : Q' → Σᵉ → DecPowerset Q'
   δ' init    E     (inj q)  = true --q ≡ q₀
   δ' (inj q) E     (inj q') = true --q ≡ q₀
   δ' (inj q) (α a) (inj q') = δ q (α a) q'
   δ' _       _     _        = false
-  F' : DecSubset Q'
+  F' : DecPowerset Q'
   F' init = true
   F' (inj q) = F q
 
@@ -123,12 +123,12 @@ determinise nfa = record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' }
  where
   open NFA nfa
   Q' : Set
-  Q' = DecSubset Q
+  Q' = DecPowerset Q
   δ' : Q' → Σ → Q'
   δ' = undefined
   q₀' : Q'
   q₀' = undefined
-  F' : DecSubset Q'
+  F' : DecPowerset Q'
   F' = undefined
 
 

@@ -1,8 +1,10 @@
-module Parsing (Σ : Set) where
+module Approach3.Parsing (Σ : Set) where
 
+open import Level
 open import Data.List
 open import Relation.Nullary
 open import Relation.Binary.PropositionalEquality
+open import Data.Sum
 open import Data.Product hiding (Σ)
 open import Data.Unit
 open import Data.Empty
@@ -10,10 +12,10 @@ open import Function
 
 
 open import Util
-open import Subset renaming (Ø to ø)
-open import Language Σ
-open import RegularExpression Σ
-open import Automata Σ
+open import Approach3.Subset renaming (Ø to ø)
+open import Approach3.Language Σ
+open import Approach3.RegularExpression Σ
+open import Approach3.Automata Σ
 
 data _⊍_ (A B : Set) : Set where
   init : A ⊍ B
@@ -48,12 +50,12 @@ parseToε-NFA ε = record { Q = Q' ; δ = δ' ; q₀ = init ; F = F' ; F? = F?' 
  where
   Q' : Set
   Q' = ε-State
-  δ' : Q' → Σᵉ → Powerset Q'
+  δ' : Q' → Σᵉ → Powerset Q' zero
   δ' init  E     init  = ⊤
   δ' init  (α a) error = ⊤
   δ' error _     error = ⊤
   δ' _     _     _     = ⊥
-  F' : Powerset Q'
+  F' : Powerset Q' zero
   F' init  = ⊤
   F' error = ⊥
   F?' : Decidable F'
@@ -63,7 +65,7 @@ parseToε-NFA (σ a) = record { Q = Q' ; δ = δ' ; q₀ = init ; F = F' ; F? = 
  where
   Q' : Set
   Q' = σ-State
-  δ' : Q' → Σᵉ → Powerset Q'
+  δ' : Q' → Σᵉ → Powerset Q' zero
   δ' init   E       init   = ⊤
   δ' init   (α  b)  accept = a ≡ b
   δ' init   (α  b)  error  = a ≢ b
@@ -71,7 +73,7 @@ parseToε-NFA (σ a) = record { Q = Q' ; δ = δ' ; q₀ = init ; F = F' ; F? = 
   δ' accept (α a)   error  = ⊤
   δ' error  _       error  = ⊤
   δ' _      _       _      = ⊥
-  F' : Powerset Q'
+  F' : Powerset Q' zero
   F' init   = ⊥
   F' accept = ⊤
   F' error  = ⊥
@@ -85,13 +87,13 @@ parseToε-NFA (e₁ ∣ e₂) = record { Q = Q' ; δ = δ' ; q₀ = init ; F = F
   open ε-NFA (parseToε-NFA e₂) renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; F? to F₂?)
   Q' : Set
   Q' = Q₁ ⊍ Q₂
-  δ' : Q' → Σᵉ → Powerset Q'
+  δ' : Q' → Σᵉ → Powerset Q' zero
   δ' init      Ε (⊍inj₁ q)  = q ≡ q₀₁
   δ' init      Ε (⊍inj₂ q)  = q ≡ q₀₂
   δ' (⊍inj₁ q) a (⊍inj₁ q') = δ₁ q a q'
   δ' (⊍inj₂ q) a (⊍inj₂ q') = δ₂ q a q'
   δ' _         _ _          = ⊥
-  F' : Powerset Q'
+  F' : Powerset Q' zero
   F' init      = ⊥
   F' (⊍inj₁ q) = F₁ q
   F' (⊍inj₂ q) = F₂ q
@@ -105,13 +107,13 @@ parseToε-NFA (e₁ ∙ e₂) = record { Q = Q' ; δ = δ' ; q₀ = ⍟inj₁ q�
    open ε-NFA (parseToε-NFA e₂) renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; F? to F₂?)
    Q' : Set
    Q' = Q₁ ⍟ Q₂
-   δ' : Q' → Σᵉ → Powerset Q'
+   δ' : Q' → Σᵉ → Powerset Q' zero
    δ' (⍟inj₁ q) a (⍟inj₁ q') = δ₁ q a q'
    δ' (⍟inj₁ q) Ε mid        = F₁ q
    δ' (⍟inj₂ q) a (⍟inj₂ q') = δ₂ q a q'
    δ' mid       Ε (⍟inj₂ q)  = q ≡ q₀₂
    δ' _         _ _ = ⊥  
-   F' : Powerset Q'
+   F' : Powerset Q' zero
    F' (⍟inj₁ q) = ⊥
    F' mid       = ⊥
    F' (⍟inj₂ q) = F₂ q
@@ -124,12 +126,12 @@ parseToε-NFA (e *)     = record { Q = Q' ; δ = δ' ; q₀ = init ; F = F' ; F?
   open ε-NFA (parseToε-NFA e)
   Q' : Set
   Q' = Q *-State
-  δ' : Q' → Σᵉ → Powerset Q'
+  δ' : Q' → Σᵉ → Powerset Q' zero
   δ' init    E     (inj q)  = q ≡ q₀
   δ' (inj q) E     (inj q') = q ≡ q₀
   δ' (inj q) (α a) (inj q') = δ q (α a) q'
   δ' _       _     _        = ⊥
-  F' : Powerset Q'
+  F' : Powerset Q' zero
   F' init = ⊤
   F' (inj q) = F q
   F?' : Decidable F'
@@ -140,7 +142,7 @@ remove-ε-setp : ε-NFA → NFA
 remove-ε-setp nfa = record { Q = Q ; δ = δ' ; q₀ = q₀ ; F = F ; F? = F? }
  where
   open ε-NFA nfa
-  δ' : Q → Σ → Powerset Q
+  δ' : Q → Σ → Powerset Q zero
   δ' = undefined
 
 powerset-construction : NFA → DFA
@@ -148,13 +150,13 @@ powerset-construction nfa = record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ;
  where
   open NFA nfa
   --open import Subset.DecidableSubset renaming (⟦_⟧ to ⟦_⟧₁)
-  Q' : Set
-  Q' = undefined
+  Q' : Set₁
+  Q' = Powerset Q zero
   δ' : Q' → Σ → Q'
   δ' = undefined
   q₀' : Q'
   q₀' = undefined
-  F' : Powerset Q'
+  F' : Powerset Q' (suc zero)
   F' = undefined
   F?' : Decidable F'
   F?' = undefined

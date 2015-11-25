@@ -25,6 +25,15 @@ decEqToBool dec x  y | no   x≢y = false
 satisfies : {A : Set} → (A → Bool) → A → Set
 satisfies p x = T (p x)
 
+-- ℕ
+open import Data.Empty
+open import Data.Unit
+_>0 : ℕ → Set
+_>0 zero          = ⊥
+_>0 (suc zero)    = ⊤
+_>0 (suc (suc n)) = (suc n) >0
+
+
 -- List lemma
 ++-assoc : {A : Set}(xs ys zs : List A) → xs ++ (ys ++ zs) ≡ (xs ++ ys) ++ zs
 ++-assoc [] ys zs       = refl

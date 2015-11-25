@@ -1,5 +1,6 @@
-module Language (Σ : Set) where
+module Approach3.Language (Σ : Set) where
 
+open import Level renaming (zero to lzero ; suc to lsuc ; _⊔_ to _⊔ˡ_)
 open import Data.List
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
@@ -7,7 +8,7 @@ open import Data.Product hiding (Σ)
 open import Data.Nat
 
 open import Util
-open import Subset renaming (Ø to ø ; ⟦_⟧ to ⟦_⟧₁ ; _⋃_ to _⊎_)
+open import Approach3.Subset renaming (Ø to ø ; ⟦_⟧ to ⟦_⟧₁ ; _⋃_ to _⊎_)
 
 open ≡-Reasoning
 
@@ -16,40 +17,43 @@ open ≡-Reasoning
 Σ* = List Σ
 
 -- Language as a subset of Σ*
-Languages : Set₁
-Languages = Powerset Σ*
+Languages : (ℓ : Level) → Set (lsuc ℓ)
+Languages ℓ = Powerset Σ* ℓ
 
 -- null set
-Ø : Languages
+Ø : Languages lzero
 Ø = ø
 
 -- set of empty word
-⟦ε⟧ : Languages
+⟦ε⟧ : Languages lzero
 ⟦ε⟧ = ⟦ [] ⟧₁
 
 -- set of single alphabet
-⟦_⟧ : Σ → Languages
+⟦_⟧ : Σ → Languages lzero
 ⟦ a ⟧ = ⟦ a ∷ [] ⟧₁
+
 
 infix 11 _⋃_
 -- union
-_⋃_ : Languages → Languages → Languages
+_⋃_ : ∀ {α ℓ} → Languages α → Languages ℓ → Languages (α ⊔ˡ ℓ)
 as ⋃ bs = as ⊎ bs
 
 infix 12 _•_
 -- set of concatenation of words
-_•_ : Languages → Languages → Languages
+_•_ : ∀ {α ℓ} → Languages α → Languages ℓ → Languages (α ⊔ˡ ℓ)
 L₁ • L₂ = λ w → Σ[ w₁ ∈ Σ* ] Σ[ w₂ ∈ Σ* ] (w₁ ∈ L₁ × w₂ ∈ L₂ × w ≡ w₁ ++ w₂)
 
-infix 6 _^_
-_^_ : Languages → ℕ → Languages
-_^_ L zero    = ⟦ε⟧
-_^_ L (suc n) = L • (L ^ n)
+infix 6 _^_&_
+_^_&_ : ∀ {α} → Languages α → (n : ℕ) → n >0 → Languages α
+L ^ zero          & ()
+L ^ (suc zero)    & tt = L
+L ^ (suc (suc n)) & tt = L • (L ^ (suc n) & tt)
 
 infix 13 _⋆
 -- set of closure
-_⋆ : Languages → Languages
-L ⋆ = λ w → Σ[ n ∈ ℕ ] w ∈ (L ^ n) 
+_⋆ : ∀ {α} → Languages α → Languages α
+L ⋆ = ⟦ε⟧ ⋃ λ w → Σ[ n ∈ ℕ ] Σ[ n>0 ∈ n >0 ] w ∈ (L ^ n & n>0)
+
 
 -- set of alphabet with ε
 data Σᵉ : Set where

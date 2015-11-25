@@ -1,5 +1,5 @@
 open import Util
-module Proofs2 (Σ : Set)(dec : DecEq Σ) where
+module Approach2.Proofs (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -13,8 +13,8 @@ open import Data.Nat
 open import Subset renaming (Ø to ø)
 open import Language Σ
 open import RegularExpression Σ
-open import Automata2 Σ
-open import Parsing2 Σ dec
+open import Approach2.Automata Σ
+open import Approach2.Parsing Σ dec
 
 {- 
   proving L(Regex) = L(NFA)
@@ -30,7 +30,7 @@ Lᴿ⊆Lᴺ ε (x ∷ xs) ()
 -- singleton
 Lᴿ⊆Lᴺ (σ a) []           ()
 Lᴿ⊆Lᴺ (σ a) (x ∷ y ∷ xs) ()
-Lᴿ⊆Lᴺ (σ a) (.a  ∷ [])   refl = accept , refl , 1 , accept , α a , [] , inj₁ (refl , λ ()) , (refl , refl) , refl , refl
+Lᴿ⊆Lᴺ (σ a) (.a  ∷ [])   refl = accept , refl , 1 , accept , α a , [] , inj₁ (refl , λ ()) , (refl , undefined) , refl , refl
 -- union
 Lᴿ⊆Lᴺ _ = undefined
 {-
