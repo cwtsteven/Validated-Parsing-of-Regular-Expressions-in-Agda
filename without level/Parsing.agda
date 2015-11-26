@@ -1,34 +1,33 @@
-module Approach3.Parsing (Σ : Set) where
+module Parsing (Σ : Set) where
 
-open import Level
 open import Data.List
 open import Relation.Nullary
 open import Relation.Binary.PropositionalEquality
-open import Data.Sum
 open import Data.Product hiding (Σ)
 open import Data.Unit
 open import Data.Empty
 open import Function
 
+
 open import Util
-open import Approach3.Subset renaming (Ø to ø)
-open import Approach3.Language Σ
-open import Approach3.RegularExpression Σ
-open import Approach3.Automata Σ
+open import Subset renaming (Ø to ø)
+open import Language Σ
+open import RegularExpression Σ
+open import Automata Σ
 
 data _⊍_ (A B : Set) : Set where
   init : A ⊍ B
-  ⊍inj₁ : A → A ⊍ B
-  ⊍inj₂ : B → A ⊍ B
+  ⊍inj₁ : (a : A) → A ⊍ B
+  ⊍inj₂ : (b : B) → A ⊍ B
 
 data _⍟_ (A B : Set) : Set where
- ⍟inj₁ : A → A ⍟ B
+ ⍟inj₁ : (a : A) → A ⍟ B
  mid   : A ⍟ B
- ⍟inj₂ : B → A ⍟ B
+ ⍟inj₂ : (b : B) → A ⍟ B
 
 data _*-State (A : Set) : Set where
  init : A *-State
- inj  : A → A *-State
+ inj  : (a : A) → A *-State
 
 data σ-State : Set where
  init   : σ-State
@@ -148,8 +147,9 @@ powerset-construction : NFA → DFA
 powerset-construction nfa = record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; F? = F?' }
  where
   open NFA nfa
-  Q' : Set₁
-  Q' = Powerset Q
+  --open import Subset.DecidableSubset renaming (⟦_⟧ to ⟦_⟧₁)
+  Q' : Set
+  Q' = undefined
   δ' : Q' → Σ → Q'
   δ' = undefined
   q₀' : Q'

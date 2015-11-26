@@ -13,20 +13,20 @@ open import Automata Σ
 open import Parsing Σ
 
 nfa : ε-NFA
-nfa = parseToε-NFA ε
+nfa = regexToε-NFA ε
 open ε-NFA nfa
 open ε-NFA-Operations nfa
 
-lem₂ : ∀ w n → ¬ ((error , w) ⊢ᵏ n ─ (init , []))
-lem₂ w zero    (() , _)
-lem₂ w (suc n) (init  , a , w₁ , w≡aw₁ , (refl , ()) , pw₁⊢ᵏinit[])
-lem₂ w (suc n) (error , a , w₁ , w≡aw₁ , (refl , tt) , pw₁⊢ᵏinit[]) = lem₂ w₁ n pw₁⊢ᵏinit[]
+lem₂ : ∀ w n w' → ¬ ((error , w) ⊢ᵏ n ─ (init , w'))
+lem₂ w zero    w' (() , _)
+lem₂ w (suc n) w' (init  , a , u , w≡au , (refl , ()) , pu⊢ᵏinitw')
+lem₂ w (suc n) w' (error , a , u , w≡au , (refl , tt) , pu⊢ᵏinitw') = lem₂ u n w' pu⊢ᵏinitw'
 
 lem₁ : ∀ a w n → ¬ ((init , α a ∷ w) ⊢ᵏ n ─ (init , []))
 lem₁ a w zero    (refl , ())
-lem₁ a w (suc n) (init  , E   , w₁         , inj₁ (() , _) , (refl , _)  , pw₁⊢ᵏinit[])
-lem₁ a w (suc n) (init  , E   , []         , inj₂ (() , _) , (refl , _)  , pw₁⊢ᵏinit[])
-lem₁ a w (suc n) (init  , E   , (E ∷ w₁)   , inj₂ (() , _) , (refl , _)  , pw₁⊢ᵏinit[])
-lem₁ a w (suc n) (init  , E   , (α c ∷ w₁) , _             , (refl , _)  , pw₁⊢ᵏinit[]) = lem₁ c w₁ n pw₁⊢ᵏinit[]
-lem₁ a w (suc n) (init  , α b , w₁         , _             , (refl , ()) , pw₁⊢ᵏinit[])
-lem₁ a w (suc n) (error , b   , w₁         , _             , (refl , _)  , pw₁⊢ᵏinit[]) = lem₂ w₁ n pw₁⊢ᵏinit[]
+lem₁ a w (suc n) (init  , E   , u         , inj₁ (() , _) , (refl , _)  , pw₁⊢ᵏinit[])
+lem₁ a w (suc n) (init  , E   , []         , inj₂ (() , _) , (refl , _) , pw₁⊢ᵏinit[])
+lem₁ a w (suc n) (init  , E   , (E ∷ u)   , inj₂ (() , _) , (refl , _)  , pw₁⊢ᵏinit[])
+lem₁ a w (suc n) (init  , E   , (α c ∷ u) , _             , (refl , _)  , pw₁⊢ᵏinit[]) = lem₁ c u n pw₁⊢ᵏinit[]
+lem₁ a w (suc n) (init  , α b , u         , _             , (refl , ()) , pw₁⊢ᵏinit[])
+lem₁ a w (suc n) (error , b   , u         , _             , (refl , _)  , pw₁⊢ᵏinit[]) = lem₂ u n [] pw₁⊢ᵏinit[]

@@ -1,6 +1,5 @@
-module Approach3.Automata (Σ : Set) where
+module Automata (Σ : Set) where
 
-open import Level renaming (zero to lzero ; suc to lsuc)
 open import Data.List
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
@@ -9,16 +8,16 @@ open import Data.Product hiding (Σ)
 open import Data.Nat
 
 open import Util
-open import Approach3.Subset
-open import Approach3.Language Σ
+open import Subset
+open import Language Σ
 
 
 record ε-NFA : Set₁ where
  field
   Q  : Set
-  δ  : Q → Σᵉ → Powerset Q {lzero}
+  δ  : Q → Σᵉ → Powerset Q
   q₀ : Q
-  F  : Powerset Q {lzero}
+  F  : Powerset Q
   F? : Decidable F
 
 module ε-NFA-Operations (N : ε-NFA) where
@@ -61,10 +60,10 @@ module ε-NFA-Operations (N : ε-NFA) where
                            = p' , a , w₁' , prf₁ , prf₂ , ⊢ᵏ-lem₁ p' w₁' n q' w' p w₁ (suc m) p'w₁'⊢ᵏpw₁ pw₁⊢ᵏq'w'
 
  ⊢*₂→⊢* : ∀ q w q' w' → (q , w) ⊢*₂ (q' , w') → (q , w) ⊢* (q' , w')
- ⊢*₂→⊢* q w q' w' (n  , m  , p , w₁ , prf₁ , prf₂) = n + m , ⊢ᵏ-lem₁ q w n q' w' p w₁ m prf₁ prf₂ 
+ ⊢*₂→⊢* q w q' w' (n  , m  , p , w₁ , prf₁ , prf₂) = n + m , ⊢ᵏ-lem₁ q w n q' w' p w₁ m prf₁ prf₂
 
 
-Lᵉᴺ : ε-NFA → Language
+Lᵉᴺ : ε-NFA → Languages
 Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
  where
   open ε-NFA nfa
@@ -74,21 +73,21 @@ Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , [
 record NFA : Set₁ where
  field
   Q  : Set
-  δ  : Q → Σ → Powerset Q {lzero}
+  δ  : Q → Σ → Powerset Q
   q₀ : Q
-  F  : Powerset Q {lzero}
+  F  : Powerset Q
   F? : Decidable F
 
-Lᴺ : NFA → Language {undefined}
+Lᴺ : NFA → Languages
 Lᴺ = undefined
 
 
-record DFA : Set₂ where
+record DFA : Set₁ where
  field
-  Q  : Set₁
+  Q  : Set
   δ  : Q → Σ → Q
   q₀ : Q
-  F  : Powerset Q {lzero} -- lsucc lzero?
+  F  : Powerset Q
   F? : Decidable F
 
 module DFA-Operations (D : DFA) where
@@ -102,7 +101,7 @@ module DFA-Operations (D : DFA) where
  δ₀ w = δ* q₀ w
  
 
-Lᴰ : DFA → Language
+Lᴰ : DFA → Languages
 Lᴰ dfa = λ w → δ₀ w ∈ F
  where
   open DFA dfa

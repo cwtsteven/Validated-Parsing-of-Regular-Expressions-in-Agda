@@ -1,4 +1,4 @@
-module Approach3.Proofs (Σ : Set) where
+module Proofs (Σ : Set) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -8,13 +8,14 @@ open import Data.Product hiding (Σ)
 open import Data.Unit
 open import Data.Empty
 open import Data.Nat
+open import Function
 
 open import Util
-open import Approach3.Subset renaming (Ø to ø)
-open import Approach3.Language Σ
-open import Approach3.RegularExpression Σ
-open import Approach3.Automata Σ
-open import Approach3.Parsing Σ
+open import Subset renaming (Ø to ø)
+open import Language Σ
+open import RegularExpression Σ
+open import Automata Σ
+open import Parsing Σ
 
 {- 
   proving L(Regex) = L(NFA)
@@ -34,17 +35,16 @@ Lᴿ⊆Lᵉᴺ (σ a) (.a  ∷ [])   refl = accept , tt , 1 , accept , α a , []
 -- union
 Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₁ w∈Lᴿ) = lem₁ w (Lᴿ⊆Lᵉᴺ e₁ w w∈Lᴿ)
  where
-  open import Approach3.Proofs.Union-lemmas Σ e₁ e₂
+  open import Proofs.Union-lemmas Σ e₁ e₂
 Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₂ w∈Lᴿ) = lem₄ w (Lᴿ⊆Lᵉᴺ e₂ w w∈Lᴿ)
  where
-  open import Approach3.Proofs.Union-lemmas Σ e₁ e₂
+  open import Proofs.Union-lemmas Σ e₁ e₂
 -- concatenation
 Lᴿ⊆Lᵉᴺ (e₁ ∙ e₂) w (w₁ , w₂ , w₁∈Lᴿe₁ , w₂∈Lᴿe₂ , w≡w₁w₂) = lem₁ w w₁ w₂ w≡w₁w₂ (Lᴿ⊆Lᵉᴺ e₁ w₁ w₁∈Lᴿe₁) (Lᴿ⊆Lᵉᴺ e₂ w₂ w₂∈Lᴿe₂)
  where
-  open import Approach3.Proofs.Concatenation-lemmas Σ e₁ e₂
+  open import Proofs.Concatenation-lemmas Σ e₁ e₂
 -- kleen star
-Lᴿ⊆Lᵉᴺ (e * ) w (w∈Lᴿeⁿ) = undefined
-
+Lᴿ⊆Lᵉᴺ (e * ) w (n , w∈Lᴿeⁿ) = undefined
 
 
 -- L(Regex) ⊇ L(NFA)
@@ -59,12 +59,12 @@ Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , []        , inj
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , (E ∷ w)   , inj₂ (() , _) , (refl , tt) ,  initw₁⊢ᵏinit[])
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , (α a ∷ w) , _             , (refl , tt) ,  initw₁⊢ᵏinit[]) = ⊥-elim (lem₁ a w n initw₁⊢ᵏinit[])
  where
-  open import Approach3.Proofs.Epsilon-lemmas Σ
+  open import Proofs.Epsilon-lemmas Σ
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , α a , w         , _             , (refl , ()) ,  initw₁⊢ᵏinit[]) 
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , error , E   , w         , _             , (refl , ()) , errorw₁⊢ᵏinit[])
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , error , α a , w         , _             , (refl , tt) , errorw₁⊢ᵏinit[]) = ⊥-elim (lem₂ w n errorw₁⊢ᵏinit[])
  where
-  open import Approach3.Proofs.Epsilon-lemmas Σ
+  open import Proofs.Epsilon-lemmas Σ
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (error , () , _)
 -- singleton
 Lᴿ⊇Lᵉᴺ (σ a) [] (init   , () , _)
@@ -82,23 +82,20 @@ Lᴿ⊇Lᵉᴺ (σ a) ( x ∷ y ∷ xs) _ = undefined
 -- others
 Lᴿ⊇Lᵉᴺ _ = undefined
 
-
 -- L(Regex) = L(NFA)
 Lᴿ=Lᵉᴺ : ∀ regex → Lᴿ regex ≈ Lᵉᴺ (parseToε-NFA regex)
 Lᴿ=Lᵉᴺ regex = Lᴿ⊆Lᵉᴺ regex , Lᴿ⊇Lᵉᴺ regex
 
 
 {-
-  proving L(NFA wtih ε) = L(NFA w/o ε)
+  proving L(ε-NFA) = L(NFA)
 -}
-
 Lᵉᴺ=Lᴺ : ∀ nfa → Lᵉᴺ nfa ≈ Lᴺ (remove-ε-setp nfa)
 Lᵉᴺ=Lᴺ = undefined
 
 {- 
-  proving L(NFA w/o ε) = L(DFA)
+  proving L(NFA) = L(DFA)
 -}
-
 Lᴺ=Lᴰ : ∀ nfa → Lᴺ nfa ≈ Lᴰ (powerset-construction nfa)
 Lᴺ=Lᴰ = undefined
 
