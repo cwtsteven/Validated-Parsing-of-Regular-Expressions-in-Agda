@@ -43,16 +43,24 @@ infix 12 _•_
 _•_ : ∀ {α ℓ} → Languages α → Languages ℓ → Languages (α ⊔ˡ ℓ)
 L₁ • L₂ = λ w → Σ[ w₁ ∈ Σ* ] Σ[ w₂ ∈ Σ* ] (w₁ ∈ L₁ × w₂ ∈ L₂ × w ≡ w₁ ++ w₂)
 
+{-
 infix 6 _^_&_
 _^_&_ : ∀ {α} → Languages α → (n : ℕ) → n >0 → Languages α
 L ^ zero          & ()
 L ^ (suc zero)    & tt = L
 L ^ (suc (suc n)) & tt = L • (L ^ (suc n) & tt)
+-}
+
+infix 6 _^_
+_^_ : Languages lzero → ℕ → Languages lzero
+L ^ zero    = ⟦ε⟧
+L ^ (suc n) = L • (L ^ n)
 
 infix 13 _⋆
 -- set of closure
-_⋆ : ∀ {α} → Languages α → Languages α
-L ⋆ = ⟦ε⟧ ⋃ λ w → Σ[ n ∈ ℕ ] Σ[ n>0 ∈ n >0 ] w ∈ (L ^ n & n>0)
+_⋆ : Languages lzero → Languages lzero
+L ⋆ = λ w → Σ[ n ∈ ℕ ] w ∈ (L ^ n)
+--⟦ε⟧ ⋃ λ w → Σ[ n ∈ ℕ ] Σ[ n>0 ∈ n >0 ] w ∈ (L ^ n & n>0)
 
 
 -- set of alphabet with ε

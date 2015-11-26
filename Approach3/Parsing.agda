@@ -10,7 +10,6 @@ open import Data.Unit
 open import Data.Empty
 open import Function
 
-
 open import Util
 open import Approach3.Subset renaming (Ø to ø)
 open import Approach3.Language Σ
@@ -149,7 +148,6 @@ powerset-construction : NFA → DFA
 powerset-construction nfa = record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; F? = F?' }
  where
   open NFA nfa
-  --open import Subset.DecidableSubset renaming (⟦_⟧ to ⟦_⟧₁)
   Q' : Set₁
   Q' = Powerset Q zero
   δ' : Q' → Σ → Q'

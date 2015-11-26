@@ -43,8 +43,7 @@ Lᴿ⊆Lᵉᴺ (e₁ ∙ e₂) w (w₁ , w₂ , w₁∈Lᴿe₁ , w₂∈Lᴿe�
  where
   open import Approach3.Proofs.Concatenation-lemmas Σ e₁ e₂
 -- kleen star
-Lᴿ⊆Lᵉᴺ (e * ) w (inj₁ ε∈Lᴿeⁿ) = undefined
-Lᴿ⊆Lᵉᴺ (e * ) w (inj₂ w∈Lᴿeⁿ) = undefined
+Lᴿ⊆Lᵉᴺ (e * ) w (w∈Lᴿeⁿ) = undefined
 
 
 
