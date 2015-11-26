@@ -16,9 +16,9 @@ open import Approach3.Language Σ
 record ε-NFA : Set₁ where
  field
   Q  : Set
-  δ  : Q → Σᵉ → Powerset Q lzero
+  δ  : Q → Σᵉ → Powerset Q {lzero}
   q₀ : Q
-  F  : Powerset Q lzero
+  F  : Powerset Q {lzero}
   F? : Decidable F
 
 module ε-NFA-Operations (N : ε-NFA) where
@@ -64,7 +64,7 @@ module ε-NFA-Operations (N : ε-NFA) where
  ⊢*₂→⊢* q w q' w' (n  , m  , p , w₁ , prf₁ , prf₂) = n + m , ⊢ᵏ-lem₁ q w n q' w' p w₁ m prf₁ prf₂ 
 
 
-Lᵉᴺ : ε-NFA → Languages lzero
+Lᵉᴺ : ε-NFA → Language
 Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
  where
   open ε-NFA nfa
@@ -74,12 +74,12 @@ Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , [
 record NFA : Set₁ where
  field
   Q  : Set
-  δ  : Q → Σ → Powerset Q lzero
+  δ  : Q → Σ → Powerset Q {lzero}
   q₀ : Q
-  F  : Powerset Q lzero
+  F  : Powerset Q {lzero}
   F? : Decidable F
 
-Lᴺ : NFA → Languages lzero
+Lᴺ : NFA → Language {undefined}
 Lᴺ = undefined
 
 
@@ -88,7 +88,7 @@ record DFA : Set₂ where
   Q  : Set₁
   δ  : Q → Σ → Q
   q₀ : Q
-  F  : Powerset Q (lsuc lzero)
+  F  : Powerset Q {lzero} -- lsucc lzero?
   F? : Decidable F
 
 module DFA-Operations (D : DFA) where
@@ -102,7 +102,7 @@ module DFA-Operations (D : DFA) where
  δ₀ w = δ* q₀ w
  
 
-Lᴰ : DFA → Languages (lsuc lzero)
+Lᴰ : DFA → Language
 Lᴰ dfa = λ w → δ₀ w ∈ F
  where
   open DFA dfa

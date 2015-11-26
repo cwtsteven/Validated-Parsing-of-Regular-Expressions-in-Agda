@@ -15,7 +15,7 @@ data RegExp : Set where
  _*  : RegExp → RegExp
 
 -- Language denoted by regular expression
-Lᴿ : RegExp → Languages zero
+Lᴿ : RegExp → Language
 Lᴿ Ø         = ø
 Lᴿ ε         = ⟦ε⟧
 Lᴿ (σ a)     = ⟦ a ⟧

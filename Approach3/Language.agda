@@ -17,48 +17,48 @@ open ≡-Reasoning
 Σ* = List Σ
 
 -- Language as a subset of Σ*
-Languages : (ℓ : Level) → Set (lsuc ℓ)
-Languages ℓ = Powerset Σ* ℓ
+Language : {ℓ : Level} → Set (lsuc ℓ)
+Language = Powerset Σ*
 
 -- null set
-Ø : Languages lzero
+Ø : Language
 Ø = ø
 
 -- set of empty word
-⟦ε⟧ : Languages lzero
+⟦ε⟧ : Language
 ⟦ε⟧ = ⟦ [] ⟧₁
 
 -- set of single alphabet
-⟦_⟧ : Σ → Languages lzero
+⟦_⟧ : Σ → Language
 ⟦ a ⟧ = ⟦ a ∷ [] ⟧₁
 
 
 infix 11 _⋃_
 -- union
-_⋃_ : ∀ {α ℓ} → Languages α → Languages ℓ → Languages (α ⊔ˡ ℓ)
+_⋃_ : ∀ {α ℓ} → Language {α} → Language {ℓ} → Language
 as ⋃ bs = as ⊎ bs
 
 infix 12 _•_
 -- set of concatenation of words
-_•_ : ∀ {α ℓ} → Languages α → Languages ℓ → Languages (α ⊔ˡ ℓ)
+_•_ : ∀ {α ℓ} → Language {α} → Language {ℓ} → Language
 L₁ • L₂ = λ w → Σ[ w₁ ∈ Σ* ] Σ[ w₂ ∈ Σ* ] (w₁ ∈ L₁ × w₂ ∈ L₂ × w ≡ w₁ ++ w₂)
 
 {-
 infix 6 _^_&_
-_^_&_ : ∀ {α} → Languages α → (n : ℕ) → n >0 → Languages α
+_^_&_ : ∀ {α} → Language α → (n : ℕ) → n >0 → Language α
 L ^ zero          & ()
 L ^ (suc zero)    & tt = L
 L ^ (suc (suc n)) & tt = L • (L ^ (suc n) & tt)
 -}
 
 infix 6 _^_
-_^_ : Languages lzero → ℕ → Languages lzero
+_^_ : Language → ℕ → Language
 L ^ zero    = ⟦ε⟧
 L ^ (suc n) = L • (L ^ n)
 
 infix 13 _⋆
 -- set of closure
-_⋆ : Languages lzero → Languages lzero
+_⋆ : Language → Language
 L ⋆ = λ w → Σ[ n ∈ ℕ ] w ∈ (L ^ n)
 --⟦ε⟧ ⋃ λ w → Σ[ n ∈ ℕ ] Σ[ n>0 ∈ n >0 ] w ∈ (L ^ n & n>0)
 
@@ -77,15 +77,17 @@ toΣᵉ* : Σ* → Σᵉ*
 toΣᵉ* = Data.List.map α
 
 
-Σᵉ*-lem₁ : ∀ w w₁ w₂ w' w₁' w₂' → toΣᵉ* w ≡ w' → toΣᵉ* w₁ ≡ w₁' → toΣᵉ* w₂ ≡ w₂' → w ≡ w₁ ++ w₂ → w' ≡ w₁' ++ w₂'
-Σᵉ*-lem₁ w w₁ w₂ w' w₁' w₂' w≡w' w₁≡w₁' w₂≡w₂' w≡w₁w₂ = begin
-                                                        w'                   ≡⟨ sym w≡w' ⟩
-                                                        toΣᵉ* w              ≡⟨ cong toΣᵉ* w≡w₁w₂ ⟩
-                                                        toΣᵉ* (w₁ ++ w₂)     ≡⟨ List-lem₃ α w₁ w₂  ⟩
-                                                        toΣᵉ* w₁ ++ toΣᵉ* w₂ ≡⟨ cong (λ w → w ++ toΣᵉ* w₂) w₁≡w₁' ⟩
-                                                        w₁' ++ toΣᵉ* w₂      ≡⟨ cong (λ w → w₁' ++ w) w₂≡w₂' ⟩
-                                                        w₁' ++ w₂'
-                                                        ∎
+Σᵉ*-lem₁ : ∀ w w₁ w₂ w' w₁' w₂' 
+        → toΣᵉ* w ≡ w' → toΣᵉ* w₁ ≡ w₁' → toΣᵉ* w₂ ≡ w₂' → w ≡ w₁ ++ w₂ → w' ≡ w₁' ++ w₂'
+Σᵉ*-lem₁ w w₁ w₂ w' w₁' w₂' w≡w' w₁≡w₁' w₂≡w₂' w≡w₁w₂ = 
+    begin
+      w'                   ≡⟨ sym w≡w' ⟩
+      toΣᵉ* w              ≡⟨ cong toΣᵉ* w≡w₁w₂ ⟩
+      toΣᵉ* (w₁ ++ w₂)     ≡⟨ List-lem₃ α w₁ w₂  ⟩
+      toΣᵉ* w₁ ++ toΣᵉ* w₂ ≡⟨ cong (λ w → w ++ toΣᵉ* w₂) w₁≡w₁' ⟩
+      w₁' ++ toΣᵉ* w₂      ≡⟨ cong (λ w → w₁' ++ w) w₂≡w₂' ⟩
+      w₁' ++ w₂'
+    ∎
 
 {-
 DecEq-Σᵉ : DecEq Σᵉ
