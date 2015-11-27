@@ -15,7 +15,7 @@ open import Data.Product
 open import Data.Empty
 
 -- General Powerset
-Powerset : ∀ {α}(A : Set α) → {ℓ : Level} → Set (α ⊔ suc ℓ)
+Powerset : ∀ {α} → Set α → {ℓ : Level} → Set (α ⊔ suc ℓ)
 Powerset A {ℓ} = A → Set ℓ
 
 -- Empty set
@@ -23,7 +23,7 @@ Powerset A {ℓ} = A → Set ℓ
 Ø = λ _ → ⊥
 
 -- Singleton
-⟦_⟧ : ∀ {α}{A : Set α}(a : A) → Powerset A
+⟦_⟧ : ∀ {α}{A : Set α} → A → Powerset A
 ⟦ a ⟧ = λ b → a ≡ b
 
 -- Membership
