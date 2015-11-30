@@ -109,7 +109,7 @@ Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , [
  where
   open ε-NFA nfa
   open ε-NFA-Operations nfa
-
+  
 
 -- Nondeterministic finite automata w/o ε-step
 -- section 2.2.3: Finite Automata
@@ -121,10 +121,34 @@ record NFA : Set₁ where
   F  : Powerset Q {lzero}
   F? : Decidable F
 
+module NFA-Operations (N : NFA) where
+ open NFA N
+
+  -- a move from (q , aw) to (q' , w)
+ infix 7 _⊢_
+ _⊢_ : (Q × Σ × Σ*) → (Q × Σ*) → Set
+ (q , a , w) ⊢ (q' , w') = w ≡ w' × q' ∈ δ q a
+
+ -- k moves from (q , w) to (q' , w')
+ infix 7 _⊢ᵏ_─_
+ _⊢ᵏ_─_ : (Q × Σ*) → ℕ → (Q × Σ*) → Set
+ (q , w) ⊢ᵏ zero    ─ (q' , w') = q ≡ q' × w ≡ w'
+ (q , w) ⊢ᵏ (suc n) ─ (q' , w')
+   = Σ[ p ∈ Q ] Σ[ a ∈ Σ ] Σ[ u ∈ Σ* ]
+     (w ≡ a ∷ u × (q , a , u) ⊢ (p , u) × (p , u) ⊢ᵏ n ─ (q' , w'))
+                                  
+ -- transitive closure of ⊢
+ infix 7 _⊢*_
+ _⊢*_ : (Q × Σ*) → (Q × Σ*) → Set
+ (q , w) ⊢* (q' , w') = Σ[ n ∈ ℕ ] ((q , w) ⊢ᵏ n ─ (q' , w'))
+
 -- Language denoted by a NFA
 -- section 2.2.3: Finite Automata
 Lᴺ : NFA → Language
-Lᴺ = undefined
+Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , w) ⊢* (q , []))
+ where
+  open NFA nfa
+  open NFA-Operations nfa
 
 
 -- Deterministic finite automata
