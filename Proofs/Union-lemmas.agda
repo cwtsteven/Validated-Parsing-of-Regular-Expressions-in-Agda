@@ -14,8 +14,10 @@ open import Parsing Σ
 
 nfa : ε-NFA
 nfa = regexToε-NFA (e₁ ∣ e₂)
+
 nfa₁ : ε-NFA
 nfa₁ = regexToε-NFA e₁
+
 nfa₂ : ε-NFA
 nfa₂ = regexToε-NFA e₂
 

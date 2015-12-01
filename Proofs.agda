@@ -54,7 +54,11 @@ Lᴿ⊆Lᵉᴺ (e₁ ∙ e₂) w (u , v , u∈Lᴿe₁ , v∈Lᴿe₂ , w≡uv) 
  where
   open import Proofs.Concatenation-lemmas Σ e₁ e₂
 -- kleen star
-Lᴿ⊆Lᵉᴺ (e * ) w (w∈Lᴿeⁿ) = undefined
+Lᴿ⊆Lᵉᴺ (e * ) .[] (zero , refl) = init , tt , 0 , refl , refl  
+Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ , w≡uv) = lem₁ n w u v w≡uv (Lᴿ⊆Lᵉᴺ e u u∈Lᴿe) v∈Lᴿeⁿ
+ where
+  open import Proofs.KleenStar-lemmas Σ e n
+
 
 -- L(Regex) ⊇ L(ε-NFA)
 Lᴿ⊇Lᵉᴺ : ∀ e → Lᴿ e ⊇ Lᵉᴺ (regexToε-NFA e)

@@ -27,9 +27,9 @@ open import Language Σ
 record ε-NFA : Set₁ where
  field
   Q  : Set
-  δ  : Q → Σᵉ → Powerset Q {lzero}
+  δ  : Q → Σᵉ → Subset Q {lzero}
   q₀ : Q
-  F  : Powerset Q {lzero}
+  F  : Subset Q {lzero}
   F? : Decidable F
 
 -- section 2.2.3: Finite Automata
@@ -116,9 +116,9 @@ Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , [
 record NFA : Set₁ where
  field
   Q  : Set
-  δ  : Q → Σ → Powerset Q {lzero}
+  δ  : Q → Σ → Subset Q {lzero}
   q₀ : Q
-  F  : Powerset Q {lzero}
+  F  : Subset Q {lzero}
   F? : Decidable F
 
 module NFA-Operations (N : NFA) where
@@ -158,7 +158,7 @@ record DFA : Set₂ where
   Q  : Set₁
   δ  : Q → Σ → Q
   q₀ : Q
-  F  : Powerset Q {lzero}
+  F  : Subset Q {lzero}
   F? : Decidable F
 
 module DFA-Operations (D : DFA) where

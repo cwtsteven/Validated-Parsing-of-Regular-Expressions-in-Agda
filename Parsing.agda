@@ -63,12 +63,12 @@ regexToε-NFA ε =
   where
    Q' : Set
    Q' = ε-State
-   δ' : Q' → Σᵉ → Powerset Q'
+   δ' : Q' → Σᵉ → Subset Q'
    δ' init  E     init  = ⊤
    δ' init  (α a) error = ⊤
    δ' error _     error = ⊤
    δ' _     _     _     = ⊥
-   F' : Powerset Q'
+   F' : Subset Q'
    F' init  = ⊤
    F' error = ⊥
    F?' : Decidable F'
@@ -79,7 +79,7 @@ regexToε-NFA (σ a) =
   where
    Q' : Set
    Q' = σ-State
-   δ' : Q' → Σᵉ → Powerset Q'
+   δ' : Q' → Σᵉ → Subset Q'
    δ' init   E       init   = ⊤
    δ' init   (α  b)  accept = a ≡ b
    δ' init   (α  b)  error  = a ≢ b
@@ -87,7 +87,7 @@ regexToε-NFA (σ a) =
    δ' accept (α a)   error  = ⊤
    δ' error  _       error  = ⊤
    δ' _      _       _      = ⊥
-   F' : Powerset Q'
+   F' : Subset Q'
    F' init   = ⊥
    F' accept = ⊤
    F' error  = ⊥
@@ -102,13 +102,13 @@ regexToε-NFA (e₁ ∣ e₂) =
    open ε-NFA (regexToε-NFA e₂) renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; F? to F₂?)
    Q' : Set
    Q' = Q₁ ⊍ Q₂
-   δ' : Q' → Σᵉ → Powerset Q'
+   δ' : Q' → Σᵉ → Subset Q'
    δ' init      Ε (⊍inj₁ q)  = q ≡ q₀₁
    δ' init      Ε (⊍inj₂ q)  = q ≡ q₀₂
    δ' (⊍inj₁ q) a (⊍inj₁ q') = δ₁ q a q'
    δ' (⊍inj₂ q) a (⊍inj₂ q') = δ₂ q a q'
    δ' _         _ _          = ⊥
-   F' : Powerset Q'
+   F' : Subset Q'
    F' init      = ⊥
    F' (⊍inj₁ q) = F₁ q
    F' (⊍inj₂ q) = F₂ q
@@ -123,13 +123,13 @@ regexToε-NFA (e₁ ∙ e₂) =
    open ε-NFA (regexToε-NFA e₂) renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; F? to F₂?)
    Q' : Set
    Q' = Q₁ ⍟ Q₂
-   δ' : Q' → Σᵉ → Powerset Q'
+   δ' : Q' → Σᵉ → Subset Q'
    δ' (⍟inj₁ q) a (⍟inj₁ q') = δ₁ q a q'
    δ' (⍟inj₁ q) Ε mid        = F₁ q
    δ' (⍟inj₂ q) a (⍟inj₂ q') = δ₂ q a q'
    δ' mid       Ε (⍟inj₂ q)  = q ≡ q₀₂
    δ' _         _ _ = ⊥  
-   F' : Powerset Q'
+   F' : Subset Q'
    F' (⍟inj₁ q) = ⊥
    F' mid       = ⊥
    F' (⍟inj₂ q) = F₂ q
@@ -143,12 +143,12 @@ regexToε-NFA (e *) =
    open ε-NFA (regexToε-NFA e)
    Q' : Set
    Q' = Q *-State
-   δ' : Q' → Σᵉ → Powerset Q'
+   δ' : Q' → Σᵉ → Subset Q'
    δ' init    E     (inj q)  = q ≡ q₀
    δ' (inj q) E     (inj q') = q ≡ q₀
    δ' (inj q) (α a) (inj q') = δ q (α a) q'
    δ' _       _     _        = ⊥
-   F' : Powerset Q'
+   F' : Subset Q'
    F' init = ⊤
    F' (inj q) = F q
    F?' : Decidable F'
@@ -162,7 +162,7 @@ remove-ε-step nfa =
  record { Q = Q ; δ = δ' ; q₀ = q₀ ; F = F ; F? = F? }
   where
    open ε-NFA nfa
-   δ' : Q → Σ → Powerset Q
+   δ' : Q → Σ → Subset Q
    δ' = undefined
 
 
@@ -173,12 +173,12 @@ powerset-construction nfa =
   where
    open NFA nfa
    Q' : Set₁
-   Q' = Powerset Q
+   Q' = Subset Q
    δ' : Q' → Σ → Q'
    δ' = undefined
    q₀' : Q'
    q₀' = undefined
-   F' : Powerset Q'
+   F' : Subset Q'
    F' = undefined
    F?' : Decidable F'
    F?' = undefined

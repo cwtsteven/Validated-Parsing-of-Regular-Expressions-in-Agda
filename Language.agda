@@ -30,7 +30,7 @@ open ≡-Reasoning
 -- Language as a subset of Σ*
 -- section 0.2.2: Languages
 Language : Set₁
-Language = Powerset Σ* {lzero}
+Language = Subset Σ* {lzero}
 
 -- Null set
 Ø : Language
