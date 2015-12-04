@@ -10,7 +10,7 @@ open import Data.Nat
 open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
-open import Parsing Σ
+open import Translation Σ
 
 nfa : ε-NFA
 nfa = regexToε-NFA ε

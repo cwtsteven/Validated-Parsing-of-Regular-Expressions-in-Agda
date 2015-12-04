@@ -1,8 +1,8 @@
 {-
-  The definition of Language and its operations follows that of:
-  The Theory of Parsing, Translation and Compiling (Vol. 1 : Parsing)
-  Section 0.2: Set of Strings
-    by Alfred V. Aho and Jeffery D. Ullman
+  Here the Language and its operations are defined according to:
+    The Theory of Parsing, Translation and Compiling (Vol. 1 : Parsing)
+    Section 0.2: Set of Strings
+      by Alfred V. Aho and Jeffery D. Ullman
 
   Steven Cheung 2015.
   Version 26-11-2015
@@ -97,3 +97,9 @@ toΣᵉ* = Data.List.map α
     toΣᵉ* (u ++ v)      ≡⟨ List-lem₃ α u v ⟩
     toΣᵉ* u ++ toΣᵉ* v
     ∎
+
+Σᵉ*-lem₂ : ∀ {w}
+           → toΣᵉ* w ≡ []
+           → w ≡ []
+Σᵉ*-lem₂ {[]}       refl = refl
+Σᵉ*-lem₂ {(x ∷ xs)} ()

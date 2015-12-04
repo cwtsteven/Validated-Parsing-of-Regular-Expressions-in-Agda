@@ -10,7 +10,7 @@ open import Data.Nat
 open import Subset
 open import Language Σ
 open import Automata Σ
-open import Parsing Σ
+open import Translation Σ
 
 nfa : ε-NFA
 nfa = regexToε-NFA (e₁ ∣ e₂)
@@ -31,8 +31,8 @@ open ε-NFA-Operations nfa₂ renaming (_⊢_ to _⊢ₑ₂_ ; _⊢*_ to _⊢*�
 lem₆ : ∀ q w n q' w'
        → (q , w) ⊢ᵏₑ₂ n ─ (q' , w')
        → (⊍inj₂ q , w) ⊢ᵏ n ─ (⊍inj₂ q' , w')
-lem₆ q w zero    q' w' (q≡q' , w≡w')
-  = cong ⊍inj₂ q≡q' , w≡w'
+lem₆ q w zero   .q .w (refl , refl)
+  = refl , refl
 lem₆ q w (suc n) q' w' (p , a , u , prf₁ , prf₂ , prf₃)
   = ⊍inj₂ p , a , u , prf₁ , prf₂ , lem₆ p u n q' w' prf₃
 
@@ -54,8 +54,8 @@ lem₄ {w} (q , q∈F , q₀₂w⊢*q[])
 lem₃ : ∀ q w n q' w'
        → (q , w) ⊢ᵏₑ₁ n ─ (q' , w')
        → (⊍inj₁ q , w) ⊢ᵏ n ─ (⊍inj₁ q' , w')
-lem₃ q w zero    q' w' (q≡q' , w≡w')
-  = cong ⊍inj₁ q≡q' , w≡w'
+lem₃ q w zero   .q .w (refl , refl)
+  = refl , refl
 lem₃ q w (suc n) q' w' (p , a , u , prf₁ , prf₂ , prf₃)
   = ⊍inj₁ p , a , u , prf₁ , prf₂ , lem₃ p u n q' w' prf₃
 

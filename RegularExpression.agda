@@ -1,8 +1,9 @@
 {-
-  The definition of Regular Expressions and the language denoted by them follows that of:
-  The Theory of Parsing, Translation and Compiling (Vol. 1 : Parsing)
-  Section 2.2: Regular sets, their generators, and their recognizers
-    by Alfred V. Aho and Jeffery D. Ullman
+  Here the Regular Expressions and the language denoted by them are 
+  defined according to:
+    The Theory of Parsing, Translation and Compiling (Vol. 1 : Parsing)
+    Section 2.2: Regular sets, their generators, and their recognizers
+      by Alfred V. Aho and Jeffery D. Ullman
 
   Steven Cheung 2015.
   Version 26-11-2015

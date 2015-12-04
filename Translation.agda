@@ -1,13 +1,15 @@
 {-
-  The translation of a Regular expression to a DFA follows the lecture notes 
-  written by Achim Jung from The University of Birmingham, 
-  School of Computer Science
+  Here the translation of a regular expression to a DFA is defined
+  according to:
+    the lecture notes written by Prof. Achim Jung 
+    from The University of Birmingham, 
+    School of Computer Science
 
   Steven Cheung 2015.
   Version 26-11-2015
 -}
 
-module Parsing (Σ : Set) where
+module Translation (Σ : Set) where
 
 open import Level
 open import Data.List
@@ -145,7 +147,7 @@ regexToε-NFA (e *) =
    Q' = Q *-State
    δ' : Q' → Σᵉ → Subset Q'
    δ' init    E     (inj q)  = q ≡ q₀
-   δ' (inj q) E     (inj q') = q ≡ q₀
+   δ' (inj q) E     (inj q') = (q ∈ F × q' ≡ q₀) ⊎ (δ q E q')
    δ' (inj q) (α a) (inj q') = δ q (α a) q'
    δ' _       _     _        = ⊥
    F' : Subset Q'

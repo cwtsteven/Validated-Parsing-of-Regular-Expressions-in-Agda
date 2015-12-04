@@ -13,7 +13,7 @@ open import Util
 open import Subset
 open import Language Σ
 open import Automata Σ
-open import Parsing Σ
+open import Translation Σ
 
 nfa : ε-NFA
 nfa = regexToε-NFA (e₁ ∙ e₂)
@@ -38,12 +38,12 @@ lem₅ : ∀ q w n q' w' u t v
        → (⍟inj₁ q , w) ⊢ᵏ n ─ (⍟inj₁ q' , w')
 lem₅ q w zero    q' w' u t v w≡uv w'≡tv (q≡q' , u≡t)
   = cong ⍟inj₁ q≡q' , List-lem₄ w≡uv w'≡tv u≡t
-lem₅ q w (suc n) q' w' u t v w≡uv w'≡tv (p , a , u' , inj₁ (u≡au' , a≢E)  , (refl , q≡δqa) , prf₃)
+lem₅ q w (suc n) q' w' u t v w≡uv w'≡tv (p , a , u' , inj₁ (u≡au' , a≢E)  , (refl , p≡δqa) , prf₃)
   = ⍟inj₁ p , a , u' ++ v , inj₁ (List-lem₅ w≡uv u≡au' , a≢E)
-    , (refl , q≡δqa) , lem₅ p (u' ++ v) n q' w' u' t v refl w'≡tv prf₃
-lem₅ q w (suc n) q' w' u t v w≡uv w'≡tv (p , E , u' , inj₂ (u≡u'  , refl) , (refl , q≡δqE) , prf₃)
+    , (refl , p≡δqa) , lem₅ p (u' ++ v) n q' w' u' t v refl w'≡tv prf₃
+lem₅ q w (suc n) q' w' u t v w≡uv w'≡tv (p , E , u' , inj₂ (u≡u'  , refl) , (refl , p≡δqE) , prf₃)
   = ⍟inj₁ p , E , u' ++ v , inj₂ (List-lem₅ w≡uv u≡u'  , refl)
-    , (refl , q≡δqE) , lem₅ p (u' ++ v) n q' w' u' t v refl w'≡tv prf₃
+    , (refl , p≡δqE) , lem₅ p (u' ++ v) n q' w' u' t v refl w'≡tv prf₃
 
 
 lem₄ : ∀ q w n q' w'
