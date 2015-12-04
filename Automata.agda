@@ -191,3 +191,11 @@ Lᴰ dfa = λ w → δ₀ w ∈ F
  where
   open DFA dfa
   open DFA-Operations dfa
+
+
+{- ∀dfa∈DFA. L(dfa) is decidable -}
+Dec-Lᴰ : ∀ dfa → Decidable (Lᴰ dfa)
+Dec-Lᴰ dfa = λ w → F? (δ₀ w)
+ where
+  open DFA dfa
+  open DFA-Operations dfa

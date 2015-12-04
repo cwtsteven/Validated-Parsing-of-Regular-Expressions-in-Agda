@@ -142,7 +142,6 @@ remove-ε-step nfa =
    δ' q a = λ q' → q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q →*ε p × q' ∈ δ p (α a))
 
 
-open import Data.Bool
 
 -- determinise the NFA by powerset construction
 powerset-construction : NFA → DFA

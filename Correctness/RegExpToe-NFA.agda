@@ -1,16 +1,13 @@
 {-
   This module contains the following proofs:
-    L(Regex) = L(ε-NFA)
-    L(ε-NFA) = L(NFA)
-    L(NFA)   = L(DFA)
-    L(DFA)   is Decidable
-    L(Regex) is Decidable
+    ∀e∈RegExp. L(e) ⊆ L(regexToε-NFA e)
+    ∀e∈RegExp. L(e) ⊇ L(regexToε-NFA e)
 
   Steven Cheung 2015.
   Version 4-12-2015
 -}
 
-module Proofs (Σ : Set) where
+module Correctness.RegExpToe-NFA (Σ : Set) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -30,9 +27,7 @@ open import Translation Σ
 open import State
 
 
-{- proving L(Regex) = L(ε-NFA) -}
-
--- L(Regex) ⊆ L(ε-NFA)
+{- ∀e∈RegExp. L(e) ⊆ L(regexToε-NFA e) -}
 Lᴿ⊆Lᵉᴺ : ∀ e → Lᴿ e ⊆ Lᵉᴺ (regexToε-NFA e)
 -- null
 Lᴿ⊆Lᵉᴺ Ø _ ()
@@ -47,21 +42,21 @@ Lᴿ⊆Lᵉᴺ (σ a) (.a  ∷ [])   refl
 -- union
 Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₁ w∈Lᴿ) = lem₁ (Lᴿ⊆Lᵉᴺ e₁ w w∈Lᴿ)
  where
-  open import Proofs.Union-lemmas Σ e₁ e₂
+  open import Correctness.RegExpToe-NFA.Union-lemmas Σ e₁ e₂
 Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₂ w∈Lᴿ) = lem₄ (Lᴿ⊆Lᵉᴺ e₂ w w∈Lᴿ)
  where
-  open import Proofs.Union-lemmas Σ e₁ e₂
+  open import Correctness.RegExpToe-NFA.Union-lemmas Σ e₁ e₂
 -- concatenation
 Lᴿ⊆Lᵉᴺ (e₁ ∙ e₂) w (u , v , u∈Lᴿe₁ , v∈Lᴿe₂ , w≡uv)
   = lem₁ w≡uv (Lᴿ⊆Lᵉᴺ e₁ u u∈Lᴿe₁) (Lᴿ⊆Lᵉᴺ e₂ v v∈Lᴿe₂)
  where
-  open import Proofs.Concatenation-lemmas Σ e₁ e₂
+  open import Correctness.RegExpToe-NFA.Concatenation-lemmas Σ e₁ e₂
 -- kleen star
 Lᴿ⊆Lᵉᴺ (e * ) .[] (zero , refl) = init , tt , 0 , refl , refl  
 Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡uv)
   = lem n w u v w≡uv (Lᴿ⊆Lᵉᴺ e u u∈Lᴿe) v∈Lᴿeⁿ⁺¹
  where
-  open import Proofs.KleenStar-lemmas Σ e
+  open import Correctness.RegExpToe-NFA.KleenStar-lemmas Σ e
   open ε-NFA nfa
   open ε-NFA nfa₁ renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)
   open ε-NFA-Operations nfa
@@ -92,7 +87,7 @@ Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡u
 
 
 
--- L(Regex) ⊇ L(ε-NFA)
+{- ∀e∈RegExp. L(e) ⊇ L(regexToε-NFA e) -}
 Lᴿ⊇Lᵉᴺ : ∀ e → Lᴿ e ⊇ Lᵉᴺ (regexToε-NFA e)
 -- null
 Lᴿ⊇Lᵉᴺ Ø w  (_ , () , _)
@@ -105,13 +100,13 @@ Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , (E ∷ w)   , i
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , (α a ∷ w) , _             , (refl , tt) ,  initw⊢ᵏinit[])
   = ⊥-elim (lem₁ a w n initw⊢ᵏinit[])
  where
-  open import Proofs.Epsilon-lemmas Σ
+  open import Correctness.RegExpToe-NFA.Epsilon-lemmas Σ
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , α a , w         , _             , (refl , ()) ,  initw⊢ᵏinit[]) 
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , error , E   , w         , _             , (refl , ()) , errorw⊢ᵏinit[])
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , error , α a , w         , _             , (refl , tt) , errorw⊢ᵏinit[])
   = ⊥-elim (lem₂ w n [] errorw⊢ᵏinit[])
  where
-  open import Proofs.Epsilon-lemmas Σ
+  open import Correctness.RegExpToe-NFA.Epsilon-lemmas Σ
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (error , () , _)
 -- singleton
 Lᴿ⊇Lᵉᴺ (σ a) [] (init   , () , _)
@@ -128,44 +123,3 @@ Lᴿ⊇Lᵉᴺ (σ a) ( x ∷ [])     _ = undefined
 Lᴿ⊇Lᵉᴺ (σ a) ( x ∷ y ∷ xs) _ = undefined
 -- others
 Lᴿ⊇Lᵉᴺ _ = undefined
-
-
--- L(Regex) = L(ε-NFA)
-Lᴿ=Lᵉᴺ : ∀ e → Lᴿ e ≈ Lᵉᴺ (regexToε-NFA e)
-Lᴿ=Lᵉᴺ e = Lᴿ⊆Lᵉᴺ e , Lᴿ⊇Lᵉᴺ e
-
-
-{- proving L(ε-NFA) = L(NFA) -}
-
-Lᵉᴺ=Lᴺ : ∀ nfa → Lᵉᴺ nfa ≈ Lᴺ (remove-ε-step nfa)
-Lᵉᴺ=Lᴺ = undefined
-
-
-{- proving L(NFA) = L(DFA) -}
-
-Lᴺ=Lᴰ : ∀ nfa → Lᴺ nfa ≈ Lᴰ (powerset-construction nfa)
-Lᴺ=Lᴰ = undefined
-
-
-{- proving L(DFA) is decidable -}
-
-Dec-Lᴰ : ∀ dfa → Decidable (Lᴰ dfa)
-Dec-Lᴰ dfa = λ w → F? (δ₀ w)
- where
-  open DFA dfa
-  open DFA-Operations dfa
-
-
-{- proving L(Regex) is decidable -}
-
-Dec-Lᴿ : ∀ e → Decidable (Lᴿ e)
-Dec-Lᴿ e = Decidable-lem₁
-           (≈-sym (≈-trans (Lᴿ=Lᵉᴺ e) (≈-trans (Lᵉᴺ=Lᴺ ε-nfa) (Lᴺ=Lᴰ nfa))))
-           (Dec-Lᴰ dfa)
- where
-  ε-nfa : ε-NFA
-  ε-nfa = regexToε-NFA e
-  nfa : NFA
-  nfa = regexToNFA e
-  dfa : DFA
-  dfa = regexToDFA e

@@ -1,4 +1,4 @@
-module Proofs.Epsilon-lemmas (Σ : Set) where
+module Correctness.RegExpToe-NFA.Epsilon-lemmas (Σ : Set) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality

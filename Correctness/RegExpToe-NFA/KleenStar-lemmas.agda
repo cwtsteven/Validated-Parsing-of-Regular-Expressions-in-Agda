@@ -1,6 +1,6 @@
 open import RegularExpression
 open import Data.Nat
-module Proofs.KleenStar-lemmas (Σ : Set)(e : RegularExpression.RegExp Σ) where
+module Correctness.RegExpToe-NFA.KleenStar-lemmas (Σ : Set)(e : RegularExpression.RegExp Σ) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality

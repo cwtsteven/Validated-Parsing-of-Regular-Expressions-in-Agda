@@ -1,5 +1,5 @@
 open import RegularExpression
-module Proofs.Concatenation-lemmas (Σ : Set)(e₁ : RegularExpression.RegExp Σ)(e₂ : RegularExpression.RegExp Σ) where
+module Correctness.RegExpToe-NFA.Concatenation-lemmas (Σ : Set)(e₁ : RegularExpression.RegExp Σ)(e₂ : RegularExpression.RegExp Σ) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
