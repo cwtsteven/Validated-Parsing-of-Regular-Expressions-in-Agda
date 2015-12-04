@@ -2,10 +2,11 @@
   This module contains some miscellaneous definitions and proofs that will be used.
 
   Steven Cheung 2015.
-  Version 26-11-2015
+  Version 4-12-2015
 -}
 module Util where
 
+open import Level renaming (zero to lzero ; suc to lsuc)
 open import Data.List
 open import Data.Bool
 open import Relation.Binary.PropositionalEquality
@@ -18,9 +19,13 @@ postulate undefined : ∀ {α} → {A : Set α} → A
 
 
 -- Decidable Equality
-DecEq : (A : Set) → Set
+DecEq : ∀ {ℓ} → (A : Set ℓ) → Set ℓ
 DecEq A = (x y : A) → Dec (x ≡ y)
 
+decEqToBool : {A : Set} → DecEq A → (x y : A) → Bool
+decEqToBool dec x y with dec x y
+... | yes _ = true
+... | no  _ = false
 
 -- List lemma
 ++-assoc : {A : Set}(xs ys zs : List A)

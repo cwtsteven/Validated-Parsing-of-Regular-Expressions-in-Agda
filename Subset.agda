@@ -2,11 +2,12 @@
   This module contains the definition of Subset and its operations.
 
   Steven Cheung 2015.
-  Version 26-11-2015
+  Version 4-12-2015
 -}
 
 module Subset where
 
+open import Util
 open import Level
 open import Relation.Nullary
 open import Relation.Binary.PropositionalEquality
@@ -63,6 +64,11 @@ infix 0 _≈_
 _≈_ : ∀ {α β ℓ}{A : Set α} → Subset A {β} → Subset A {ℓ} → Set (α ⊔ β ⊔ ℓ)
 as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
 
+-- Decidable Equality of Subset
+infix 0 _≟_
+_≟_ : ∀ {α β ℓ}{A : Set α} → (as : Subset A {β}) → (bs : Subset A {ℓ}) → Dec (as ≈ bs)
+as ≟ bs = undefined 
+
 -- Reflexivity of ≈
 ≈-refl : ∀ {α ℓ}{A : Set α}{as : Subset A {ℓ}} → as ≈ as
 ≈-refl = (λ a a∈as → a∈as) , (λ a a∈as → a∈as)
@@ -76,8 +82,19 @@ as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
 ≈-trans (as⊆bs , as⊇bs) (bs⊆cs , bs⊇cs) = (λ a a∈as → bs⊆cs a (as⊆bs a a∈as)) , (λ a a∈cs → as⊇bs a (bs⊇cs a a∈cs))
 
 -- Equality and decidability
-≈-Decidable : ∀ {α β ℓ}{A : Set α}{as : Subset A {β}}{bs : Subset A {ℓ}} → as ≈ bs → Decidable as → Decidable bs
-≈-Decidable (as⊆bs , as⊇bs) dec a with dec a
+Decidable-lem₁ : ∀ {α β ℓ}{A : Set α}{as : Subset A {β}}{bs : Subset A {ℓ}} → as ≈ bs → Decidable as → Decidable bs
+Decidable-lem₁ (as⊆bs , as⊇bs) dec a with dec a
 ... | yes a∈as = yes (as⊆bs a a∈as)
 ... | no  a∉as = no  (λ a∈bs → a∉as (as⊇bs a a∈bs))
+
+
+
+open import Data.List
+open import Data.Bool
+-- List representation
+toList : ∀ {α ℓ}{A : Set α} → (as : Subset A {ℓ}) → Decidable as → List A → List A
+toList as ∈? []       = []
+toList as ∈? (x ∷ xs) with ∈? x
+... | yes _ = x ∷ toList as ∈? xs
+... | no  _ = toList as ∈? xs
 

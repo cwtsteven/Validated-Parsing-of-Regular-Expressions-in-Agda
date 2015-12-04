@@ -15,6 +15,7 @@ open import Subset
 open import Language Σ
 open import Automata Σ
 open import Translation Σ
+open import State
 
 nfa : ε-NFA
 nfa = regexToε-NFA (e *)

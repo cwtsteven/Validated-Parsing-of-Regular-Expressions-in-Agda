@@ -7,7 +7,7 @@
     L(Regex) is Decidable
 
   Steven Cheung 2015.
-  Version 26-11-2015
+  Version 4-12-2015
 -}
 
 module Proofs (Σ : Set) where
@@ -27,6 +27,7 @@ open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
 open import Translation Σ
+open import State
 
 
 {- proving L(Regex) = L(ε-NFA) -}
@@ -158,7 +159,7 @@ Dec-Lᴰ dfa = λ w → F? (δ₀ w)
 {- proving L(Regex) is decidable -}
 
 Dec-Lᴿ : ∀ e → Decidable (Lᴿ e)
-Dec-Lᴿ e = ≈-Decidable
+Dec-Lᴿ e = Decidable-lem₁
            (≈-sym (≈-trans (Lᴿ=Lᵉᴺ e) (≈-trans (Lᵉᴺ=Lᴺ ε-nfa) (Lᴺ=Lᴰ nfa))))
            (Dec-Lᴰ dfa)
  where

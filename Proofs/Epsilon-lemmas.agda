@@ -11,6 +11,7 @@ open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
 open import Translation Σ
+open import State
 
 nfa : ε-NFA
 nfa = regexToε-NFA ε

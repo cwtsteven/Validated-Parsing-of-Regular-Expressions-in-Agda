@@ -5,7 +5,7 @@
       by Alfred V. Aho and Jeffery D. Ullman
 
   Steven Cheung 2015.
-  Version 26-11-2015
+  Version 4-12-2015
 -}
 
 module Automata (Σ : Set) where
@@ -27,6 +27,7 @@ open import Language Σ
 record ε-NFA : Set₁ where
  field
   Q  : Set
+  Q? : DecEq Q
   δ  : Q → Σᵉ → Subset Q {lzero}
   q₀ : Q
   F  : Subset Q {lzero}
@@ -59,6 +60,16 @@ module ε-NFA-Operations (N : ε-NFA) where
  _⊢*₂_ : (Q × Σᵉ*) → (Q × Σᵉ*) → Set
  (q , w) ⊢*₂ (q' , w') = Σ[ n ∈ ℕ ] Σ[ m ∈ ℕ ] Σ[ p ∈ Q ] Σ[ u ∈ Σᵉ* ]
                          ((q , w) ⊢ᵏ n ─ (p , u) × (p , u) ⊢ᵏ m ─ (q' , w'))
+
+ -- epsilon closure
+ infix 7 _→ᵏε_─_
+ _→ᵏε_─_ : Q → ℕ → Q → Set
+ q →ᵏε zero  ─ q' = q ≡ q'
+ q →ᵏε suc n ─ q' = Σ[ p ∈ Q ] (p ∈ δ q E × p →ᵏε n ─ q')  
+
+ infix 7 _→*ε_
+ _→*ε_ : Q → Q → Set
+ q →*ε q' = Σ[ n ∈ ℕ ] (q →ᵏε n ─ q')
                          
 
  ⊢ᵏ-lem₃ : ∀ q w n q' w' p u
@@ -111,11 +122,13 @@ Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , [
   open ε-NFA-Operations nfa
   
 
+
 -- Nondeterministic finite automata w/o ε-step
 -- section 2.2.3: Finite Automata
 record NFA : Set₁ where
  field
   Q  : Set
+  Q? : DecEq Q
   δ  : Q → Σ → Subset Q {lzero}
   q₀ : Q
   F  : Subset Q {lzero}
@@ -149,6 +162,7 @@ Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , w) ⊢* (q , []))
  where
   open NFA nfa
   open NFA-Operations nfa
+
 
 
 -- Deterministic finite automata
