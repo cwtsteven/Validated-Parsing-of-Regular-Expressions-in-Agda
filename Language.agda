@@ -5,12 +5,13 @@
       by Alfred V. Aho and Jeffery D. Ullman
 
   Steven Cheung 2015.
-  Version 26-11-2015
+  Version 9-12-2015
 -}
 
 module Language (Σ : Set) where
 
 open import Level renaming (zero to lzero ; suc to lsuc ; _⊔_ to _⊔ˡ_)
+open import Data.Bool
 open import Data.List
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
@@ -98,8 +99,25 @@ toΣᵉ* = Data.List.map α
     toΣᵉ* u ++ toΣᵉ* v
     ∎
 
+
+-- toΣᵉ* w ≡ [] ⊢ w ≡ []
 Σᵉ*-lem₂ : ∀ {w}
            → toΣᵉ* w ≡ []
            → w ≡ []
 Σᵉ*-lem₂ {[]}       refl = refl
 Σᵉ*-lem₂ {(x ∷ xs)} ()
+
+
+-- Decidable Equality of Σᵉ
+DecEq-Σᵉ : DecEq Σ → DecEq Σᵉ
+DecEq-Σᵉ dec E     E      = yes refl
+DecEq-Σᵉ dec E     (α  _) = no (λ ())
+DecEq-Σᵉ dec (α a) E      = no (λ ())
+DecEq-Σᵉ dec (α a) (α  b) with dec a b
+DecEq-Σᵉ dec (α a) (α .a) | yes refl = yes refl
+DecEq-Σᵉ dec (α a) (α  b) | no ¬a≡b  = no  (λ p → ¬σa≡σb ¬a≡b p)
+ where
+  lem : {a b : Σ} → α a ≡ α b → a ≡ b
+  lem refl = refl
+  ¬σa≡σb : ¬ (a ≡ b) → ¬ (α a ≡ α b)
+  ¬σa≡σb ¬a≡b σa≡σb = ¬a≡b (lem σa≡σb)

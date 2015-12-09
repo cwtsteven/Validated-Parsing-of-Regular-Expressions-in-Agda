@@ -6,8 +6,8 @@
   Steven Cheung 2015.
   Version 4-12-2015
 -}
-
-module Correctness.RegExpToe-NFA (Σ : Set) where
+open import Util
+module Correctness2.RegExpToe-NFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -18,13 +18,14 @@ open import Data.Unit
 open import Data.Empty
 open import Data.Nat
 
-open import Util
 open import Subset renaming (Ø to ø)
+open import Subset.DecidableSubset renaming (Ø to ø ; _∈_ to _∈ᵈ_)
 open import Language Σ
 open import RegularExpression Σ
-open import Automata Σ
-open import Translation Σ
+open import Automata2 Σ
+open import Translation2 Σ dec
 open import State
+open import Data.Bool
 
 
 {- ∀e∈RegExp. L(e) ⊆ L(regexToε-NFA e) -}
@@ -37,26 +38,29 @@ Lᴿ⊆Lᵉᴺ ε (x ∷ xs) ()
 -- singleton
 Lᴿ⊆Lᵉᴺ (σ a) []           ()
 Lᴿ⊆Lᵉᴺ (σ a) (x ∷ y ∷ xs) ()
-Lᴿ⊆Lᵉᴺ (σ a) (.a ∷ [])    refl
-  = accept , tt , 1 , accept , α a , [] , inj₁ (refl , λ ()) , (refl , refl) , refl , refl
+Lᴿ⊆Lᵉᴺ (σ a) (.a ∷ [])    refl with dec a a
+Lᴿ⊆Lᵉᴺ (σ a) (.a ∷ [])    refl | yes refl = accept , tt , 1 , accept , α a , [] , inj₁ (refl , λ ()) , (refl , undefined) , refl , refl -- problem
+Lᴿ⊆Lᵉᴺ (σ a) (.a ∷ [])    refl | no  a≢a  = ⊥-elim (a≢a refl)
+Lᴿ⊆Lᵉᴺ _ = undefined
+{-
 -- union
-Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₁ w∈Lᴿ) = lem₁ (Lᴿ⊆Lᵉᴺ e₁ w w∈Lᴿ)
+Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₁ w∈Lᴿ) = undefined --lem₁ (Lᴿ⊆Lᵉᴺ e₁ w w∈Lᴿ)
  where
-  open import Correctness.RegExpToe-NFA.Union-lemmas Σ e₁ e₂
-Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₂ w∈Lᴿ) = lem₄ (Lᴿ⊆Lᵉᴺ e₂ w w∈Lᴿ)
+  open import Correctness2.RegExpToe-NFA.Union-lemmas Σ e₁ e₂
+Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₂ w∈Lᴿ) = undefined --lem₄ (Lᴿ⊆Lᵉᴺ e₂ w w∈Lᴿ)
  where
-  open import Correctness.RegExpToe-NFA.Union-lemmas Σ e₁ e₂
+  open import Correctness2.RegExpToe-NFA.Union-lemmas Σ e₁ e₂
 -- concatenation
 Lᴿ⊆Lᵉᴺ (e₁ ∙ e₂) w (u , v , u∈Lᴿe₁ , v∈Lᴿe₂ , w≡uv)
   = lem₁ w≡uv (Lᴿ⊆Lᵉᴺ e₁ u u∈Lᴿe₁) (Lᴿ⊆Lᵉᴺ e₂ v v∈Lᴿe₂)
  where
-  open import Correctness.RegExpToe-NFA.Concatenation-lemmas Σ e₁ e₂
+  open import Correctness2.RegExpToe-NFA.Concatenation-lemmas Σ dec e₁ e₂
 -- kleen star
 Lᴿ⊆Lᵉᴺ (e * ) .[] (zero , refl) = init , tt , 0 , refl , refl  
 Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡uv)
   = lem n w u v w≡uv (Lᴿ⊆Lᵉᴺ e u u∈Lᴿe) v∈Lᴿeⁿ⁺¹
  where
-  open import Correctness.RegExpToe-NFA.KleenStar-lemmas Σ e
+  open import Correctness2.RegExpToe-NFA.KleenStar-lemmas Σ e
   open ε-NFA nfa
   open ε-NFA nfa₁ renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)
   open ε-NFA-Operations nfa
@@ -84,11 +88,12 @@ Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡u
     lem₇ v (inj p , .E    , .v , inj₂ (refl , refl) , (refl , injp∈δinitE) , pv'⊢ᵏq₂[]) = subst (λ p → (inj p , v) ⊢ᵏ n₂ ─ (q₂ , [])) injp∈δinitE pv'⊢ᵏq₂[]
     lem₇ v (inj p , (α a) , v' , inj₁ (v₁≡v' , ā≢E) , (refl , ())          , pv'⊢ᵏq₂[])
     lem₇ v (inj p , E     , v' , inj₁ (v₁≡v' , a≢E) , (refl , _)           , pv'⊢ᵏq₂[]) = ⊥-elim (a≢E refl)
-
+-}
 
 
 {- ∀e∈RegExp. L(e) ⊇ L(regexToε-NFA e) -}
 Lᴿ⊇Lᵉᴺ : ∀ e → Lᴿ e ⊇ Lᵉᴺ (regexToε-NFA e)
+{-
 -- null
 Lᴿ⊇Lᵉᴺ Ø w  (_ , () , _)
 -- ε
@@ -100,13 +105,13 @@ Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , (E ∷ w)   , i
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , (α a ∷ w) , _             , (refl , tt) ,  initw⊢ᵏinit[])
   = ⊥-elim (lem₁ a w n initw⊢ᵏinit[])
  where
-  open import Correctness.RegExpToe-NFA.Epsilon-lemmas Σ
+  open import Correctness2.RegExpToe-NFA.Epsilon-lemmas Σ
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , α a , w         , _             , (refl , ()) ,  initw⊢ᵏinit[]) 
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , error , E   , w         , _             , (refl , ()) , errorw⊢ᵏinit[])
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , error , α a , w         , _             , (refl , tt) , errorw⊢ᵏinit[])
   = ⊥-elim (lem₂ w n [] errorw⊢ᵏinit[])
  where
-  open import Correctness.RegExpToe-NFA.Epsilon-lemmas Σ
+  open import Correctness2.RegExpToe-NFA.Epsilon-lemmas Σ
 Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (error , () , _)
 -- singleton
 Lᴿ⊇Lᵉᴺ (σ a) [] (init   , () , _)
@@ -121,5 +126,6 @@ Lᴿ⊇Lᵉᴺ (σ a) [] (error  , () , _)
 Lᴿ⊇Lᵉᴺ (σ a) (.a ∷ []) (accept , tt , 1 , accept , α .a , [] , inj₁ (refl , prf) , (refl , refl) , refl , refl) = refl
 Lᴿ⊇Lᵉᴺ (σ a) ( x ∷ [])     _ = undefined
 Lᴿ⊇Lᵉᴺ (σ a) ( x ∷ y ∷ xs) _ = undefined
+-}
 -- others
 Lᴿ⊇Lᵉᴺ _ = undefined

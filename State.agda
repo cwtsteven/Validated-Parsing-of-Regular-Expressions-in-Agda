@@ -3,7 +3,7 @@
   of each case.
 
   Steven Cheung 2015.
-  Version 4-12-2015
+  Version 9-12-2015
 -}
 
 module State where
@@ -11,9 +11,12 @@ module State where
 open import Level
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
+open import Data.Unit
+open import Data.Empty
 
 open import Util
 open import Subset renaming (Ø to ø)
+
 
 {- Ø states -}
 data Ø-State : Set where
@@ -22,7 +25,8 @@ data Ø-State : Set where
 DecEq-Ø : DecEq Ø-State
 DecEq-Ø init init = yes refl
 
-
+Dec-Ø : (qs : Subset Ø-State {zero}) → Decidable qs
+Dec-Ø = undefined
 
 {- ε states -}
 data ε-State : Set where

@@ -2,13 +2,14 @@
   This module contains the definition of Subset and its operations.
 
   Steven Cheung 2015.
-  Version 4-12-2015
+  Version 9-12-2015
 -}
 
 module Subset where
 
 open import Util
 open import Level
+open import Data.Bool hiding (_≟_)
 open import Relation.Nullary
 open import Relation.Binary.PropositionalEquality
 open import Data.Sum
@@ -35,6 +36,16 @@ a ∈ p = p a
 -- Decidable
 Decidable : ∀ {α ℓ}{A : Set α} → Subset A {ℓ} → Set (α ⊔ ℓ)
 Decidable as = ∀ a → Dec (a ∈ as)
+
+-- Membership decider
+infix 10 _∈?_
+_∈?_ : ∀ {α ℓ}{A : Set α} → (a : A) → (as : Subset A {ℓ}) → {{dec : Decidable as}} → Dec (a ∈ as)
+(a ∈? as) {{dec}} = dec a
+
+decidableToBool : ∀ {α ℓ}{A : Set α}{as : Subset A {ℓ}} → Decidable as → A → Bool
+decidableToBool dec a with dec a
+decidableToBool dec a | yes a∈p = true
+decidableToBool dec a | no  a∉p = false
 
 
 {- Here we define the operations on set -}
@@ -64,11 +75,6 @@ infix 0 _≈_
 _≈_ : ∀ {α β ℓ}{A : Set α} → Subset A {β} → Subset A {ℓ} → Set (α ⊔ β ⊔ ℓ)
 as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
 
--- Decidable Equality of Subset
-infix 0 _≟_
-_≟_ : ∀ {α β ℓ}{A : Set α} → (as : Subset A {β}) → (bs : Subset A {ℓ}) → Dec (as ≈ bs)
-as ≟ bs = undefined 
-
 -- Reflexivity of ≈
 ≈-refl : ∀ {α ℓ}{A : Set α}{as : Subset A {ℓ}} → as ≈ as
 ≈-refl = (λ a a∈as → a∈as) , (λ a a∈as → a∈as)
@@ -93,8 +99,7 @@ open import Data.List
 open import Data.Bool
 -- List representation
 toList : ∀ {α ℓ}{A : Set α} → (as : Subset A {ℓ}) → Decidable as → List A → List A
-toList as ∈? []       = []
-toList as ∈? (x ∷ xs) with ∈? x
-... | yes _ = x ∷ toList as ∈? xs
-... | no  _ = toList as ∈? xs
-
+toList as dec []       = []
+toList as dec (x ∷ xs) with dec x
+... | yes _ = x ∷ toList as dec xs
+... | no  _ = toList as dec xs

@@ -5,32 +5,36 @@
       by Alfred V. Aho and Jeffery D. Ullman
 
   Steven Cheung 2015.
-  Version 4-12-2015
+  Version 9-12-2015
 -}
 
-module Automata (Σ : Set) where
+module Automata2 (Σ : Set) where
 
 open import Level renaming (zero to lzero ; suc to lsuc)
 open import Data.List
+open import Data.Bool
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Sum
 open import Data.Product hiding (Σ)
+open import Data.Unit
+open import Data.Empty
 open import Data.Nat
 
 open import Util
 open import Subset
+open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_)
 open import Language Σ
 
 -- Nondeterministic finite automata with ε-step
 -- section 2.2.3: Finite Automata
 record ε-NFA : Set₁ where
  field
-  Q     : Set
-  δ     : Q → Σᵉ → Subset Q {lzero}
-  q₀    : Q
-  F     : Subset Q {lzero}
-  Dec-F : Decidable F
+  Q  : Set
+  Q? : DecEq Q
+  δ  : Q → Σᵉ → DecSubset Q
+  q₀ : Q
+  F  : DecSubset Q
 
 -- section 2.2.3: Finite Automata
 module ε-NFA-Operations (N : ε-NFA) where
@@ -39,7 +43,7 @@ module ε-NFA-Operations (N : ε-NFA) where
  -- a move from (q , aw) to (q' , w)
  infix 7 _⊢_
  _⊢_ : (Q × Σᵉ × Σᵉ*) → (Q × Σᵉ*) → Set
- (q , a , w) ⊢ (q' , w') = w ≡ w' × q' ∈ δ q a
+ (q , a , w) ⊢ (q' , w') = w ≡ w' × q' ∈ᵍ δ q a
 
  -- k moves from (q , w) to (q' , w')
  infix 7 _⊢ᵏ_─_
@@ -64,7 +68,7 @@ module ε-NFA-Operations (N : ε-NFA) where
  infix 7 _→ᵏε_─_
  _→ᵏε_─_ : Q → ℕ → Q → Set
  q →ᵏε zero  ─ q' = q ≡ q'
- q →ᵏε suc n ─ q' = Σ[ p ∈ Q ] (p ∈ δ q E × p →ᵏε n ─ q')  
+ q →ᵏε suc n ─ q' = Σ[ p ∈ Q ] (p ∈ᵍ δ q E × p →ᵏε n ─ q')  
 
  infix 7 _→*ε_
  _→*ε_ : Q → Q → Set
@@ -97,9 +101,9 @@ module ε-NFA-Operations (N : ε-NFA) where
  ⊢ᵏ-lem₁ q w zero    q' w' p u zero       (q≡p , w≡u) (p≡q' , u≡w')
    = trans q≡p p≡q' , trans w≡u u≡w'
  ⊢ᵏ-lem₁ q w zero    q' w' p u (suc m) (q≡p , w≡u) (r , a , v , inj₁ (u≡av , a≢E) , (refl , r∈δpa) , rv⊢ᵏq'w')
-   = r , a , v , inj₁ (trans w≡u u≡av , a≢E)  , (refl , subst (λ p → r ∈ δ p a) (sym q≡p) r∈δpa) , rv⊢ᵏq'w'
+   = r , a , v , inj₁ (trans w≡u u≡av , a≢E)  , (refl , subst (λ p → r ∈ᵍ δ p a) (sym q≡p) r∈δpa) , rv⊢ᵏq'w'
  ⊢ᵏ-lem₁ q w zero    q' w' p u (suc m) (q≡p , w≡u) (r , a , v , inj₂ (u≡v  , a≡E) , (refl , r∈δpE) , rv⊢ᵏq'w')
-   = r , a , v , inj₂ (trans w≡u u≡v  , a≡E)  , (refl , subst (λ p → r ∈ δ p a) (sym q≡p) r∈δpE) , rv⊢ᵏq'w'
+   = r , a , v , inj₂ (trans w≡u u≡v  , a≡E)  , (refl , subst (λ p → r ∈ᵍ δ p a) (sym q≡p) r∈δpE) , rv⊢ᵏq'w'
  ⊢ᵏ-lem₁ q w (suc n) q' w' p u zero    (r , a , v , prf₁ , prf₂ , rv⊢ᵏpu) (p≡q' , u≡w')
    = r , a , v ,  prf₁ , prf₂ , ⊢ᵏ-lem₃ r v (n + zero) q' w' p u p≡q' u≡w' (⊢ᵏ-lem₂ r v n p u rv⊢ᵏpu)
  ⊢ᵏ-lem₁ q w (suc n) q' w' p u (suc m) (r , a , v , prf₁ , prf₂ , rv⊢ᵏpu) pu⊢ᵏq'w'
@@ -115,7 +119,7 @@ module ε-NFA-Operations (N : ε-NFA) where
 -- Language denoted by a ε-NFA
 -- section 2.2.3: Finite Automata
 Lᵉᴺ : ε-NFA → Language
-Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
+Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
  where
   open ε-NFA nfa
   open ε-NFA-Operations nfa
@@ -126,11 +130,11 @@ Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , toΣᵉ* w) ⊢* (q , [
 -- section 2.2.3: Finite Automata
 record NFA : Set₁ where
  field
-  Q     : Set
-  δ     : Q → Σ → Subset Q {lzero}
-  q₀    : Q
-  F     : Subset Q {lzero}
-  Dec-F : Decidable F
+  Q  : Set
+  Q? : DecEq Q
+  δ  : Q → Σ → DecSubset Q
+  q₀ : Q
+  F  : DecSubset Q
 
 module NFA-Operations (N : NFA) where
  open NFA N
@@ -138,7 +142,7 @@ module NFA-Operations (N : NFA) where
   -- a move from (q , aw) to (q' , w)
  infix 7 _⊢_
  _⊢_ : (Q × Σ × Σ*) → (Q × Σ*) → Set
- (q , a , w) ⊢ (q' , w') = w ≡ w' × q' ∈ δ q a
+ (q , a , w) ⊢ (q' , w') = w ≡ w' × q' ∈ᵍ δ q a
 
  -- k moves from (q , w) to (q' , w')
  infix 7 _⊢ᵏ_─_
@@ -156,7 +160,7 @@ module NFA-Operations (N : NFA) where
 -- Language denoted by a NFA
 -- section 2.2.3: Finite Automata
 Lᴺ : NFA → Language
-Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , w) ⊢* (q , []))
+Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , w) ⊢* (q , []))
  where
   open NFA nfa
   open NFA-Operations nfa
@@ -165,13 +169,12 @@ Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ F × (q₀ , w) ⊢* (q , []))
 
 -- Deterministic finite automata
 -- section 2.2.3: Finite Automata
-record DFA : Set₂ where
+record DFA : Set₁ where
  field
-  Q     : Set₁
-  δ     : Q → Σ → Q
-  q₀    : Q
-  F     : Subset Q {lzero}
-  Dec-F : Decidable F
+  Q  : Set
+  δ  : Q → Σ → Q
+  q₀ : Q
+  F  : DecSubset Q
 
 module DFA-Operations (D : DFA) where
  open DFA D
@@ -185,7 +188,7 @@ module DFA-Operations (D : DFA) where
 
 -- Language denoted by a DFA
 Lᴰ : DFA → Language
-Lᴰ dfa = λ w → δ₀ w ∈ F
+Lᴰ dfa = λ w → δ₀ w ∈ᵍ F
  where
   open DFA dfa
   open DFA-Operations dfa
@@ -193,7 +196,9 @@ Lᴰ dfa = λ w → δ₀ w ∈ F
 
 {- ∀dfa∈DFA. L(dfa) is decidable -}
 Dec-Lᴰ : ∀ dfa → Decidable (Lᴰ dfa)
-Dec-Lᴰ dfa = λ w → Dec-F (δ₀ w)
+Dec-Lᴰ dfa w with (δ₀ w) ∈ᵈ F
  where
   open DFA dfa
   open DFA-Operations dfa
+... | true  = yes tt
+... | false = no (λ p → p)

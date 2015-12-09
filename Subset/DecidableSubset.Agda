@@ -1,3 +1,9 @@
+{-
+  This module contains the definition of Decidable Subset and its operations.
+
+  Steven Cheung 2015.
+  Version 9-12-2015
+-}
 module Subset.DecidableSubset where
 
 open import Data.List
@@ -26,6 +32,10 @@ infix 10 _∈_
 -- membership
 _∈_ : {A : Set} → A → DecSubset A → Bool
 a ∈ p = p a
+
+infix 10 _∈ᵍ_
+_∈ᵍ_ : {A : Set} → A → DecSubset A → Set
+a ∈ᵍ p = T (a ∈ p)
 
 infix 11 _⋂_
 -- intersection

@@ -2,7 +2,7 @@
   This module contains some miscellaneous definitions and proofs that will be used.
 
   Steven Cheung 2015.
-  Version 4-12-2015
+  Version 9-12-2015
 -}
 module Util where
 
@@ -23,9 +23,9 @@ DecEq : ∀ {ℓ} → (A : Set ℓ) → Set ℓ
 DecEq A = (x y : A) → Dec (x ≡ y)
 
 decEqToBool : {A : Set} → DecEq A → (x y : A) → Bool
-decEqToBool dec x y with dec x y
-... | yes _ = true
-... | no  _ = false
+decEqToBool dec x  y with dec x y
+decEqToBool dec x .x | yes refl = true
+decEqToBool dec x  y | no  x≢y  = false
 
 -- List lemma
 ++-assoc : {A : Set}(xs ys zs : List A)
