@@ -5,13 +5,14 @@
   Steven Cheung 2015.
   Version 4-12-2015
 -}
-module RegExp-Decidability (Σ : Set) where
+open import Util
+module RegExp-Decidability (Σ : Set)(dec : DecEq Σ) where
 
 open import Subset
 open import RegularExpression Σ
 open import Automata Σ
-open import Translation Σ
-open import Correctness Σ
+open import Translation Σ dec
+open import Correctness Σ dec
 
 {- proving L(Regex) is decidable -}
 Dec-Lᴿ : ∀ e → Decidable (Lᴿ e)

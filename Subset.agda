@@ -2,7 +2,7 @@
   This module contains the definition of Subset and its operations.
 
   Steven Cheung 2015.
-  Version 9-12-2015
+  Version 10-12-2015
 -}
 
 module Subset where
@@ -42,13 +42,8 @@ infix 10 _∈?_
 _∈?_ : ∀ {α ℓ}{A : Set α} → (a : A) → (as : Subset A {ℓ}) → {{dec : Decidable as}} → Dec (a ∈ as)
 (a ∈? as) {{dec}} = dec a
 
-decidableToBool : ∀ {α ℓ}{A : Set α}{as : Subset A {ℓ}} → Decidable as → A → Bool
-decidableToBool dec a with dec a
-decidableToBool dec a | yes a∈p = true
-decidableToBool dec a | no  a∉p = false
 
-
-{- Here we define the operations on set -}
+{- Here we define the operations on subset -}
 
 -- Intersection
 infix 11 _⋂_
@@ -92,14 +87,3 @@ Decidable-lem₁ : ∀ {α β ℓ}{A : Set α}{as : Subset A {β}}{bs : Subset A
 Decidable-lem₁ (as⊆bs , as⊇bs) dec a with dec a
 ... | yes a∈as = yes (as⊆bs a a∈as)
 ... | no  a∉as = no  (λ a∈bs → a∉as (as⊇bs a a∈bs))
-
-
-
-open import Data.List
-open import Data.Bool
--- List representation
-toList : ∀ {α ℓ}{A : Set α} → (as : Subset A {ℓ}) → Decidable as → List A → List A
-toList as dec []       = []
-toList as dec (x ∷ xs) with dec x
-... | yes _ = x ∷ toList as dec xs
-... | no  _ = toList as dec xs

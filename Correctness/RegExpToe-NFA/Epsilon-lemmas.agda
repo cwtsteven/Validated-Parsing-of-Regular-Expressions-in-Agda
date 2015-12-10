@@ -1,4 +1,5 @@
-module Correctness.RegExpToe-NFA.Epsilon-lemmas (Σ : Set) where
+open import Util
+module Correctness.RegExpToe-NFA.Epsilon-lemmas (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -10,7 +11,7 @@ open import Data.Nat
 open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
-open import Translation Σ
+open import Translation Σ dec
 open import State
 
 nfa : ε-NFA

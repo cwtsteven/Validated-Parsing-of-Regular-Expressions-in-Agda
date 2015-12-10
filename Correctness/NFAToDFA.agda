@@ -4,10 +4,10 @@
     ∀nfa∈NFA. L(nfa) ⊇ L(powerset-construction dfa)
 
   Steven Cheung 2015.
-  Version 4-12-2015
+  Version 10-12-2015
 -}
-
-module Correctness.NFAToDFA (Σ : Set) where
+open import Util
+module Correctness.NFAToDFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -18,12 +18,11 @@ open import Data.Unit
 open import Data.Empty
 open import Data.Nat
 
-open import Util
 open import Subset renaming (Ø to ø)
 open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
-open import Translation Σ
+open import Translation Σ dec
 open import State
 
 Lᴺ⊆Lᴰ : ∀ nfa → Lᴺ nfa ⊆ Lᴰ (powerset-construction nfa)

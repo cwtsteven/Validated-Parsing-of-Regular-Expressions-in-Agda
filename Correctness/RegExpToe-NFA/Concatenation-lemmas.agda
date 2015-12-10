@@ -1,7 +1,9 @@
+open import Util
 open import RegularExpression
-module Correctness.RegExpToe-NFA.Concatenation-lemmas (Σ : Set)(e₁ : RegularExpression.RegExp Σ)(e₂ : RegularExpression.RegExp Σ) where
+module Correctness.RegExpToe-NFA.Concatenation-lemmas (Σ : Set)(dec : DecEq Σ)(e₁ : RegularExpression.RegExp Σ)(e₂ : RegularExpression.RegExp Σ) where
 
 open import Data.List
+open import Data.Bool
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Sum
@@ -9,11 +11,11 @@ open import Data.Product hiding (Σ)
 open import Data.Empty
 open import Data.Nat
 
-open import Util
 open import Subset
+open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ)
 open import Language Σ
 open import Automata Σ
-open import Translation Σ
+open import Translation Σ dec
 open import State
 
 nfa : ε-NFA
@@ -26,8 +28,8 @@ nfa₂ : ε-NFA
 nfa₂ = regexToε-NFA e₂
 
 open ε-NFA nfa
-open ε-NFA nfa₁ renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)
-open ε-NFA nfa₂ renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂)
+open ε-NFA nfa₁ renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)
+open ε-NFA nfa₂ renaming (Q to Q₂ ; Q? to Q₂? ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂)
 open ε-NFA-Operations nfa
 open ε-NFA-Operations nfa₁ renaming (_⊢_ to _⊢ₑ₁_ ; _⊢*_ to _⊢*ₑ₁_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₁_─_ ; ⊢*-lem₁ to ⊢*-lem₁ₑ₁)
 open ε-NFA-Operations nfa₂ renaming (_⊢_ to _⊢ₑ₂_ ; _⊢*_ to _⊢*ₑ₂_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₂_─_ ; ⊢*-lem₁ to ⊢*-lem₁ₑ₂)
@@ -79,7 +81,7 @@ lem₃ : ∀ q w n q' w'
        → (⍟inj₁ q' , E , w') ⊢ (mid , w')
        → (⍟inj₁ q , w) ⊢ᵏ (suc n) ─ (mid , w')
 lem₃ q w zero    q' w' (q≡q' , w≡w') (refl , mid∈δq'E)
-  = mid , E , w' , inj₂ (w≡w' , refl) , (refl , subst (λ p → mid ∈ δ p E) (sym q≡q') mid∈δq'E) , refl , refl
+  = mid , E , w' , inj₂ (w≡w' , refl) , (refl , subst (λ p → mid ∈ᵍ δ p E) (sym q≡q') mid∈δq'E) , refl , refl
 lem₃ q w (suc n) q' w' (⍟inj₁ p , a , u , prf₁ , prf₂ , prf₃) prf₄
   = ⍟inj₁ p , a , u , prf₁ , prf₂ , lem₃ p u n q' w' prf₃ prf₄
 lem₃ q w (suc n) q' w' (mid     , a , u , prf₁ , prf₂ , prf₃) prf₄
@@ -89,17 +91,20 @@ lem₃ q w (suc n) q' w' (⍟inj₂ p , a , u , prf₁ , prf₂ , prf₃) prf₄
 
 
 lem₂ : ∀ u q₁ v q₂ w w'
-       → q₁ ∈ F₁
+       → q₁ ∈ᵍ F₁
        → w ≡ u ++ v
        → (q₀₁ , u) ⊢*ₑ₁ (q₁ , [])
        → (q₀₂ , v) ⊢*ₑ₂ (q₂ , w')
        → (q₀ , w) ⊢* (⍟inj₂ q₂ , w')
-lem₂ u q₁ v q₂ w w' q₁∈F₁ w≡uv (n₁ , prf₁) (n₂ , prf₂)
+lem₂ u q₁ v q₂ w w' q₁∈F₁ w≡uv (n₁ , prf₁) (n₂ , prf₂) with δ mid E (⍟inj₂ q₀₂) | inspect (δ mid E) (⍟inj₂ q₀₂)
+lem₂ u q₁ v q₂ w w' q₁∈F₁ w≡uv (n₁ , prf₁) (n₂ , prf₂) | true  | [ eq ]
   = ⊢*-lem₁ 
     (suc n₁ , suc n₂ , mid , v , lem₃ q₀₁ w n₁ q₁ v
       (lem₅ q₀₁ w n₁ q₁ v u [] v w≡uv refl prf₁) (refl , q₁∈F₁)
-      , ((⍟inj₂ q₀₂) , E , v , (inj₂ (refl , refl)) , (refl , refl) , lem₄ q₀₂ v n₂ q₂ w' prf₂))
-
+      , ((⍟inj₂ q₀₂) , E , v , (inj₂ (refl , refl)) , (refl , eq) , lem₄ q₀₂ v n₂ q₂ w' prf₂))
+lem₂ u q₁ v q₂ w w' q₁∈F₁ w≡uv (n₁ , prf₁) (n₂ , prf₂) | false | [ eq ] with Q₂? q₀₂ q₀₂
+lem₂ u q₁ v q₂ w w' q₁∈F₁ w≡uv (n₁ , prf₁) (n₂ , prf₂) | false | [ () ] | yes refl
+lem₂ u q₁ v q₂ w w' q₁∈F₁ w≡uv (n₁ , prf₁) (n₂ , prf₂) | false | [ eq ] | no  q₀₂≢q₀₂ = ⊥-elim (q₀₂≢q₀₂ refl)
 
 lem₁ : ∀ {w u v}
        → w ≡ u ++ v

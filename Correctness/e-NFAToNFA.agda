@@ -4,10 +4,10 @@
     ∀nfa∈ε-NFA. L(nfa) ⊇ L(remove-ε-step nfa)
 
   Steven Cheung 2015.
-  Version 4-12-2015
+  Version 10-12-2015
 -}
-
-module Correctness.e-NFAToNFA (Σ : Set) where
+open import Util
+module Correctness.e-NFAToNFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -18,12 +18,11 @@ open import Data.Unit
 open import Data.Empty
 open import Data.Nat
 
-open import Util
 open import Subset renaming (Ø to ø)
 open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
-open import Translation Σ
+open import Translation Σ dec
 open import State
 
 Lᵉᴺ⊆Lᴺ : ∀ nfa → Lᵉᴺ nfa ⊆ Lᴺ (remove-ε-step nfa)

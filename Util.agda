@@ -11,6 +11,7 @@ open import Data.List
 open import Data.Bool
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
+open import Data.Product
 open import Data.Nat
 
 open ≡-Reasoning
@@ -26,6 +27,11 @@ decEqToBool : {A : Set} → DecEq A → (x y : A) → Bool
 decEqToBool dec x  y with dec x y
 decEqToBool dec x .x | yes refl = true
 decEqToBool dec x  y | no  x≢y  = false
+
+-- Logic
+infix 0 _⇔_
+_⇔_ : ∀ {α} → Set α → Set α → Set α
+P ⇔ Q = (P → Q) × (Q → P)
 
 -- List lemma
 ++-assoc : {A : Set}(xs ys zs : List A)

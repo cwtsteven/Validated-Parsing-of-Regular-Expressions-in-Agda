@@ -3,12 +3,13 @@
   of each case.
 
   Steven Cheung 2015.
-  Version 9-12-2015
+  Version 10-12-2015
 -}
 
 module State where
 
 open import Level
+open import Data.List
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Unit
@@ -25,8 +26,10 @@ data Ø-State : Set where
 DecEq-Ø : DecEq Ø-State
 DecEq-Ø init init = yes refl
 
-Dec-Ø : (qs : Subset Ø-State {zero}) → Decidable qs
-Dec-Ø = undefined
+Ø-List : List Ø-State
+Ø-List = init ∷ []
+
+
 
 {- ε states -}
 data ε-State : Set where
@@ -38,6 +41,9 @@ DecEq-ε init init   = yes refl
 DecEq-ε init error  = no (λ ())
 DecEq-ε error error = yes refl
 DecEq-ε error init  = no (λ ())
+
+ε-List : List ε-State
+ε-List = init ∷ error ∷ []
 
 
 
@@ -58,9 +64,13 @@ DecEq-σ error error   = yes refl
 DecEq-σ error init    = no (λ ())
 DecEq-σ error accept  = no (λ ())
 
+σ-List : List σ-State
+σ-List = init ∷ accept ∷ error ∷ []
+
 
 
 {- union states -}
+infix 1 _⊍_
 data _⊍_ (A B : Set) : Set where
   init : A ⊍ B
   ⊍inj₁ : (a : A) → A ⊍ B
@@ -93,9 +103,13 @@ DecEq-⊍ decA decB (⊍inj₂ q) (⊍inj₂ .q) | yes refl = yes refl
 DecEq-⊍ decA decB (⊍inj₂ q) (⊍inj₂ q') | no ¬q≡q' = no (⊍-lem₄ refl refl ¬q≡q')
 DecEq-⊍ decA decB (⊍inj₂ q) (⊍inj₁ _) = no (λ ())
 
+⊍-List : {A B : Set} → List A → List B → List (A ⊍ B)
+⊍-List as bs = init ∷ map ⊍inj₁ as ++ map ⊍inj₂ bs
+
 
 
 {- concatenation states -}
+infix 2 _⍟_
 data _⍟_ (A B : Set) : Set where
  ⍟inj₁ : (a : A) → A ⍟ B
  mid   : A ⍟ B
@@ -128,6 +142,9 @@ DecEq-⍟ decA decB mid       mid        = yes refl
 DecEq-⍟ decA decB mid       (⍟inj₁ q') = no (λ ())
 DecEq-⍟ decA decB mid       (⍟inj₂ q') = no (λ ())
 
+⍟-List : {A B : Set} → List A → List B → List (A ⍟ B)
+⍟-List as bs = map ⍟inj₁ as ++ mid ∷ map ⍟inj₂ bs
+
 
 
 {- kleen star states -}
@@ -148,6 +165,6 @@ DecEq-* dec (inj q) (inj q') with dec q q'
 DecEq-* dec (inj q) (inj .q) | yes refl = yes refl
 DecEq-* dec (inj q) (inj q') | no ¬q≡q' = no (*-lem₂ ¬q≡q')
 DecEq-* dec (inj _) init     = no (λ ())
-{- -}
 
-
+*-List : {A : Set} → List A → List (A *-State)
+*-List as = init ∷ map inj as
