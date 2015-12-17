@@ -40,30 +40,23 @@ regexToε-NFA ε =
    Q' : Set
    Q' = ε-State
    δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init  E     init  = true
-   δ' init  (α a) error = false
-   δ' error _     error = true
-   δ' _     _     _     = false
+   δ' init E     init = true
+   δ' init (α a) init = false
    F' : DecSubset Q'
    F' init  = true
-   F' error = false
 regexToε-NFA (σ a) =
  record { Q = Q' ; Q? = DecEq-σ ; δ = δ' ; q₀ = init ; F = F' ; It = σ-List }
   where
    Q' : Set
    Q' = σ-State
    δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init   E       init   = true
-   δ' init   (α  b)  accept = decEqToBool dec a b
-   δ' init   (α  b)  error  = not (decEqToBool dec a b)
-   δ' accept E       accept = true
-   δ' accept (α a)   error  = true
-   δ' error  _       error  = true
-   δ' _      _       _      = false
+   δ' init   E     init   = true
+   δ' init   (α b) accept = decEqToBool dec a b
+   δ' accept E     accept = true
+   δ' _      _     _      = false
    F' : DecSubset Q'
    F' init   = false
    F' accept = true
-   F' error  = false
 regexToε-NFA (e₁ ∣ e₂) =
  record { Q = Q' ; Q? = DecEq-⊍ Q₁? Q₂? ; δ = δ' ; q₀ = init ; F = F' ; It = ⊍-List It₁ It₂ }
   where
@@ -72,8 +65,8 @@ regexToε-NFA (e₁ ∣ e₂) =
    Q' : Set
    Q' = Q₁ ⊍ Q₂
    δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init      Ε (⊍inj₁ q)  = decEqToBool Q₁? q q₀₁
-   δ' init      Ε (⊍inj₂ q)  = decEqToBool Q₂? q q₀₂
+   δ' init      E (⊍inj₁ q)  = decEqToBool Q₁? q q₀₁
+   δ' init      E (⊍inj₂ q)  = decEqToBool Q₂? q q₀₂
    δ' (⊍inj₁ q) a (⊍inj₁ q') = q' ∈ δ₁ q a
    δ' (⊍inj₂ q) a (⊍inj₂ q') = q' ∈ δ₂ q a
    δ' _         _ _          = false
@@ -90,9 +83,9 @@ regexToε-NFA (e₁ ∙ e₂) =
    Q' = Q₁ ⍟ Q₂
    δ' : Q' → Σᵉ → DecSubset Q'
    δ' (⍟inj₁ q) a (⍟inj₁ q') = q' ∈ δ₁ q a
-   δ' (⍟inj₁ q) Ε mid        = q  ∈ F₁
+   δ' (⍟inj₁ q) E mid        = q  ∈ F₁
    δ' (⍟inj₂ q) a (⍟inj₂ q') = q' ∈ δ₂ q a
-   δ' mid       Ε (⍟inj₂ q)  = decEqToBool Q₂? q q₀₂
+   δ' mid       E (⍟inj₂ q)  = decEqToBool Q₂? q q₀₂
    δ' _         _ _ = false  
    F' : DecSubset Q'
    F' (⍟inj₁ q) = false
@@ -128,9 +121,11 @@ remove-ε-step nfa =
    ε-closure zero    l = l
    ε-closure (suc n) l = ε-closure n (helper l)
    δ' : Q → Σ → DecSubset Q
-   δ' q a = λ q' → q' ∈ δ q (α a) ∨ any (λ p → (p ∈ᴸ removeDuplicate (ε-closure (length It) (q ∷ [])) Q?) {{Q?}} ∧ q' ∈ δ p (α a)) It -- q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q' ∈ δ p (α a) × q →*ε p)
+   --     = λ q' → q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q' ∈ δ p (α a) × q →*ε p)
+   δ' q a = λ q' → q' ∈ δ q (α a) ∨ any (λ p → (p ∈ᴸ removeDuplicate (ε-closure (length It) (q ∷ [])) Q?) {{Q?}} ∧ q' ∈ δ p (α a)) It 
    F' : DecSubset Q
-   F' = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ (p ∈ᴸ removeDuplicate (ε-closure (length It) (q ∷ [])) Q?) {{Q?}}) It -- q ∈ F ⊎ Σ[ p ∈ Q ] (p ∈ F × q →*ε p)
+   -- = λ q → q ∈ F ⊎ Σ[ p ∈ Q ] (p ∈ F × q →*ε p)
+   F' = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ (p ∈ᴸ removeDuplicate (ε-closure (length It) (q ∷ [])) Q?) {{Q?}}) It
 
 
 
@@ -143,11 +138,13 @@ powerset-construction nfa =
    Q' : Set
    Q' = DecSubset Q
    δ' : Q' → Σ → Q'
-   δ' qs a = λ q → any (λ p → p ∈ qs ∧ q ∈ δ p a) It -- Σ[ p ∈ Q ] (p ∈ qs × q ∈ δ p a)
+   --      = λ q → Σ[ p ∈ Q ] (p ∈ qs × q ∈ δ p a)
+   δ' qs a = λ q → any (λ p → p ∈ qs ∧ q ∈ δ p a) It
    q₀' : Q'
    q₀' = ⟦ q₀ ⟧ {{Q?}}
    F' : DecSubset Q'
-   F' = λ qs → any (λ p → p ∈ qs ∧ p ∈ F) It -- Σ[ p ∈ Q ] (p ∈ qs × p ∈ F)
+   -- = λ qs → Σ[ p ∈ Q ] (p ∈ qs × p ∈ F)
+   F' = λ qs → any (λ p → p ∈ qs ∧ p ∈ F) It 
 
 
 

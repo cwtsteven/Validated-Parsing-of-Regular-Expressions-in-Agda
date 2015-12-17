@@ -33,19 +33,19 @@ Lᴿ⊆Lᵉᴺ : ∀ e → Lᴿ e ⊆ Lᵉᴺ (regexToε-NFA e)
 -- null
 Lᴿ⊆Lᵉᴺ Ø _ ()
 -- ε
-Lᴿ⊆Lᵉᴺ ε []       refl = init , refl , 0 , refl , refl
-Lᴿ⊆Lᵉᴺ ε (x ∷ xs) ()
+Lᴿ⊆Lᵉᴺ ε = Lᴿ⊆Lᴺ.lem₁
+ where open import Correctness.RegExpToe-NFA.Epsilon-lemmas Σ dec
 -- singleton
-Lᴿ⊆Lᵉᴺ (σ a) w w∈Lᴿ = lem₁ w w∈Lᴿ
+Lᴿ⊆Lᵉᴺ (σ a) = Lᴿ⊆Lᴺ.lem₁
  where open import Correctness.RegExpToe-NFA.Singleton-lemmas Σ dec a
 -- union
-Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₁ w∈Lᴿ) = lem₁ (Lᴿ⊆Lᵉᴺ e₁ w w∈Lᴿ)
+Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₁ w∈Lᴿ) = Lᴿ⊆Lᴺ.lem₁ (Lᴿ⊆Lᵉᴺ e₁ w w∈Lᴿ)
  where open import Correctness.RegExpToe-NFA.Union-lemmas Σ dec e₁ e₂
-Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₂ w∈Lᴿ) = lem₄ (Lᴿ⊆Lᵉᴺ e₂ w w∈Lᴿ)
+Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₂ w∈Lᴿ) = Lᴿ⊆Lᴺ.lem₄ (Lᴿ⊆Lᵉᴺ e₂ w w∈Lᴿ)
  where open import Correctness.RegExpToe-NFA.Union-lemmas Σ dec e₁ e₂
 -- concatenation
 Lᴿ⊆Lᵉᴺ (e₁ ∙ e₂) w (u , v , u∈Lᴿe₁ , v∈Lᴿe₂ , w≡uv)
-  = lem₁ w≡uv (Lᴿ⊆Lᵉᴺ e₁ u u∈Lᴿe₁) (Lᴿ⊆Lᵉᴺ e₂ v v∈Lᴿe₂)
+  = Lᴿ⊆Lᴺ.lem₁ w≡uv (Lᴿ⊆Lᵉᴺ e₁ u u∈Lᴿe₁) (Lᴿ⊆Lᵉᴺ e₂ v v∈Lᴿe₂)
  where open import Correctness.RegExpToe-NFA.Concatenation-lemmas Σ dec e₁ e₂
 -- kleen star
 Lᴿ⊆Lᵉᴺ (e * ) .[] (zero , refl) = init , refl , 0 , refl , refl  
@@ -53,6 +53,7 @@ Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡u
   = lem n w u v w≡uv (Lᴿ⊆Lᵉᴺ e u u∈Lᴿe) v∈Lᴿeⁿ⁺¹
  where
   open import Correctness.RegExpToe-NFA.KleenStar-lemmas Σ dec e
+  open Lᴿ⊆Lᴺ
   open ε-NFA nfa
   open ε-NFA nfa₁ renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)
   open ε-NFA-Operations nfa
@@ -68,20 +69,20 @@ Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡u
     = lem₁ w u (subst (λ v → w ≡ u ++ v) (Σᵉ*-lem₂ v≡[]) w≡uv) (q , q∈F₁ , (n₁ , prf₁))
   lem (suc n) w u  v  w≡uv  (q , q∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) | (q₂ , q₂∈F , (suc n₂ , prf₂)) with inj q₀₁ ∈ᵈ δ (inj q) E | inspect (δ (inj q) E) (inj q₀₁)
   lem (suc n) w u  v  w≡uv  (q , q∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) | (q₂ , q₂∈F , (suc n₂ , prf₂)) | true  | [ eq ]
-    = q₂ , q₂∈F , ⊢*-lem₁ (suc n₁ , suc n₂ , inj q , (toΣᵉ* v)
+    = q₂ , q₂∈F , ⊢*-lem₂ (suc n₁ , suc n₂ , inj q , (toΣᵉ* v)
          , lem₅ (toΣᵉ* w) n₁ q (toΣᵉ* u) (toΣᵉ* v) (Σᵉ*-lem₁ {w} {u} {v} w≡uv) prf₁
          , (inj q₀₁ , E , (toΣᵉ* v) , inj₂ (refl , refl) , (refl , eq) , lem₇ (toΣᵉ* v) prf₂))
    where
     lem₇ : ∀ v
            → (init , v) ⊢ᵏ suc n₂ ─ (q₂ , [])
            → (inj q₀₁ , v) ⊢ᵏ n₂ ─ (q₂ , [])
-    lem₇ v (init  , E     , v' , _                  , (refl , ())          , pv'⊢ᵏq₂[])
-    lem₇ v (init  , (α a) , v' , _                  , (refl , ())          , pv'⊢ᵏq₂[])
-    lem₇ v (inj p , .E    , .v , inj₂ (refl , refl) , (refl , injp∈δinitE) , pv'⊢ᵏq₂[]) with Q₁? p q₀₁
-    lem₇ v (inj p , .E    , .v , inj₂ (refl , refl) , (refl , injp∈δinitE) , pv'⊢ᵏq₂[]) | yes p≡q₀₁ = subst (λ p → (inj p , v) ⊢ᵏ n₂ ─ (q₂ , [])) p≡q₀₁ pv'⊢ᵏq₂[]
-    lem₇ v (inj p , .E    , .v , inj₂ (refl , refl) , (refl , ()         ) , pv'⊢ᵏq₂[]) | no  p≢q₀₁
-    lem₇ v (inj p , (α a) , v' , inj₁ (v₁≡v' , ā≢E) , (refl , ())          , pv'⊢ᵏq₂[])
-    lem₇ v (inj p , E     , v' , inj₁ (v₁≡v' , a≢E) , (refl , _)           , pv'⊢ᵏq₂[]) = ⊥-elim (a≢E refl)
+    lem₇ v (init  ,  E   ,  _ , _                  , (refl , ()) , pv'⊢ᵏq₂[])
+    lem₇ v (init  ,  α _ ,  _ , _                  , (refl , ()) , pv'⊢ᵏq₂[])
+    lem₇ v (inj p , .E   , .v , inj₂ (refl , refl) , (refl , _)  , pv'⊢ᵏq₂[]) with Q₁? p q₀₁
+    lem₇ v (inj p , .E   , .v , inj₂ (refl , refl) , (refl , _)  , pv'⊢ᵏq₂[]) | yes p≡q₀₁ = subst (λ p → (inj p , v) ⊢ᵏ n₂ ─ (q₂ , [])) p≡q₀₁ pv'⊢ᵏq₂[]
+    lem₇ v (inj p , .E   , .v , inj₂ (refl , refl) , (refl , ()) , pv'⊢ᵏq₂[]) | no  p≢q₀₁
+    lem₇ v (inj p ,  α _ ,  _ , inj₁ (v₁≡v' , a≢E) , (refl , ()) , pv'⊢ᵏq₂[])
+    lem₇ v (inj p ,  E   ,  _ , inj₁ (v₁≡v' , E≢E) , (refl , _)  , pv'⊢ᵏq₂[]) = ⊥-elim (E≢E refl)
   lem (suc n) w u  v  w≡uv  (q , q∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) | (q₂ , q₂∈F , (suc n₂ , prf₂)) | false | [ eq ] with q ∈ᵈ F₁ | Q₁? q₀₁ q₀₁
   lem (suc n) w u  v  w≡uv  (q , q∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) | (q₂ , q₂∈F , (suc n₂ , prf₂)) | false | [ () ] | true  | yes refl    
   lem (suc n) w u  v  w≡uv  (q , ()   , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) | (q₂ , q₂∈F , (suc n₂ , prf₂)) | false | [ eq ] | false | yes refl
@@ -89,39 +90,21 @@ Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡u
 
 {- ∀e∈RegExp. L(e) ⊇ L(regexToε-NFA e) -}
 Lᴿ⊇Lᵉᴺ : ∀ e → Lᴿ e ⊇ Lᵉᴺ (regexToε-NFA e)
-{-
 -- null
 Lᴿ⊇Lᵉᴺ Ø w  (_ , () , _)
 -- ε
-Lᴿ⊇Lᵉᴺ ε [] _ = refl
-Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , zero  , _ , ())
-Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , w         , inj₁ (() , _) , (refl , tt) ,  initw⊢ᵏinit[])
-Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , []        , inj₂ (() , _) , (refl , tt) ,  initw⊢ᵏinit[])
-Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , (E ∷ w)   , inj₂ (() , _) , (refl , tt) ,  initw⊢ᵏinit[])
-Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , E   , (α a ∷ w) , _             , (refl , tt) ,  initw⊢ᵏinit[])
-  = ⊥-elim (lem₁ a w n initw⊢ᵏinit[])
- where
-  open import Correctness2.RegExpToe-NFA.Epsilon-lemmas Σ
-Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , init  , α a , w         , _             , (refl , ()) ,  initw⊢ᵏinit[]) 
-Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , error , E   , w         , _             , (refl , ()) , errorw⊢ᵏinit[])
-Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (init  , tt , suc n , error , α a , w         , _             , (refl , tt) , errorw⊢ᵏinit[])
-  = ⊥-elim (lem₂ w n [] errorw⊢ᵏinit[])
- where
-  open import Correctness2.RegExpToe-NFA.Epsilon-lemmas Σ
-Lᴿ⊇Lᵉᴺ ε (x ∷ xs) (error , () , _)
+Lᴿ⊇Lᵉᴺ ε = Lᴿ⊇Lᴺ.lem₁
+ where open import Correctness.RegExpToe-NFA.Epsilon-lemmas Σ dec
 -- singleton
-Lᴿ⊇Lᵉᴺ (σ a) [] (init   , () , _)
-Lᴿ⊇Lᵉᴺ (σ a) [] (accept , tt , zero , () , _)
-Lᴿ⊇Lᵉᴺ (σ a) [] (accept , tt , suc n , q      , E   , w , inj₁ (() , _) , _           , _)
-Lᴿ⊇Lᵉᴺ (σ a) [] (accept , tt , suc n , init   , E   , w , _             , (refl , tt) , _) = undefined
-Lᴿ⊇Lᵉᴺ (σ a) [] (accept , tt , suc n , accept , E   , w , _             , (refl , ()) , _)
-Lᴿ⊇Lᵉᴺ (σ a) [] (accept , tt , suc n , error  , E   , w , _             , (refl , ()) , _)
-Lᴿ⊇Lᵉᴺ (σ a) [] (accept , tt , suc n , q      , α b , w , inj₁ (() , _) , _           , _)
-Lᴿ⊇Lᵉᴺ (σ a) [] (accept , tt , suc n , q      , α b , w , inj₂ (_ , ()) , _           , _)
-Lᴿ⊇Lᵉᴺ (σ a) [] (error  , () , _)
-Lᴿ⊇Lᵉᴺ (σ a) (.a ∷ []) (accept , tt , 1 , accept , α .a , [] , inj₁ (refl , prf) , (refl , refl) , refl , refl) = refl
-Lᴿ⊇Lᵉᴺ (σ a) ( x ∷ [])     _ = undefined
-Lᴿ⊇Lᵉᴺ (σ a) ( x ∷ y ∷ xs) _ = undefined
--}
+Lᴿ⊇Lᵉᴺ (σ a) = Lᴿ⊇Lᴺ.lem₁
+ where open import Correctness.RegExpToe-NFA.Singleton-lemmas Σ dec a
+-- union
+Lᴿ⊇Lᵉᴺ (e₁ ∣ e₂) w w∈Lᴺ with Lᴿ⊇Lᴺ.lem₁ w w∈Lᴺ
+ where open import Correctness.RegExpToe-NFA.Union-lemmas Σ dec e₁ e₂
+... | inj₁ w∈Lᵉᴺe₁ = inj₁ (Lᴿ⊇Lᵉᴺ e₁ w w∈Lᵉᴺe₁)
+... | inj₂ w∈Lᵉᴺe₂ = inj₂ (Lᴿ⊇Lᵉᴺ e₂ w w∈Lᵉᴺe₂)
+-- concatenation
+Lᴿ⊇Lᵉᴺ (e₁ ∙ e₂) = Lᴿ⊇Lᴺ.lem₁
+ where open import Correctness.RegExpToe-NFA.Concatenation-lemmas Σ dec e₁ e₂
 -- others
 Lᴿ⊇Lᵉᴺ _ = undefined

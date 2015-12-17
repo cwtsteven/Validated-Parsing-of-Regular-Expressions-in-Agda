@@ -99,7 +99,7 @@ module ε-NFA-Operations (N : ε-NFA) where
            → (q , w) ⊢ᵏ n ─ (p , u)
            → (p , u) ⊢ᵏ m ─ (q' , w')
            → (q , w) ⊢ᵏ (n + m) ─ (q' , w')
- ⊢ᵏ-lem₁ q w zero    q' w' p u zero       (q≡p , w≡u) (p≡q' , u≡w')
+ ⊢ᵏ-lem₁ q w zero    q' w' p u zero    (q≡p , w≡u) (p≡q' , u≡w')
    = trans q≡p p≡q' , trans w≡u u≡w'
  ⊢ᵏ-lem₁ q w zero    q' w' p u (suc m) (q≡p , w≡u) (r , a , v , inj₁ (u≡av , a≢E) , (refl , r∈δpa) , rv⊢ᵏq'w')
    = r , a , v , inj₁ (trans w≡u u≡av , a≢E)  , (refl , subst (λ p → r ∈ᵍ δ p a) (sym q≡p) r∈δpa) , rv⊢ᵏq'w'
@@ -110,15 +110,26 @@ module ε-NFA-Operations (N : ε-NFA) where
  ⊢ᵏ-lem₁ q w (suc n) q' w' p u (suc m) (r , a , v , prf₁ , prf₂ , rv⊢ᵏpu) pu⊢ᵏq'w'
    = r , a , v , prf₁ , prf₂ , ⊢ᵏ-lem₁ r v n q' w' p u (suc m) rv⊢ᵏpu pu⊢ᵏq'w'
 
+ ⊢*-lem₃ : ∀ {q w q' w'}
+           → (q , w) ⊢* (q' , w')
+           → (q , w) ⊢*₂ (q' , w')
+ ⊢*-lem₃ {q} {w} {q'} {w'} (n , prf)
+   = n , zero , q' , w' , prf , (refl , refl)
 
- ⊢*-lem₁ : ∀ {q w q' w'}
+ ⊢*-lem₂ : ∀ {q w q' w'}
            → (q , w) ⊢*₂ (q' , w')
            → (q , w) ⊢* (q' , w')
- ⊢*-lem₁ {q} {w} {q'} {w'} (n  , m  , p , u , prf₁ , prf₂)
-   = n + m , ⊢ᵏ-lem₁ q w n q' w' p u m prf₁ prf₂ 
+ ⊢*-lem₂ {q} {w} {q'} {w'} (n , m , p , u , prf₁ , prf₂)
+   = n + m , ⊢ᵏ-lem₁ q w n q' w' p u m prf₁ prf₂
+
+ ⊢*-lem₁ : ∀ {q w q' w'}
+           → (q , w) ⊢* (q' , w') ⇔ (q , w) ⊢*₂ (q' , w')
+ ⊢*-lem₁ = ⊢*-lem₃ , ⊢*-lem₂
+ 
 
 -- Language denoted by a ε-NFA
 -- section 2.2.3: Finite Automata
+-- L(nfa) = { w | ∃q∈F. (q₀ , w) ⊢* (q , []) }
 Lᵉᴺ : ε-NFA → Language
 Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
  where

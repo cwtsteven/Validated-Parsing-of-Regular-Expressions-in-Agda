@@ -18,7 +18,6 @@ open import Data.Empty
 open import Util
 open import Subset renaming (Ø to ø)
 
-
 {- Ø states -}
 data Ø-State : Set where
  init : Ø-State
@@ -34,16 +33,12 @@ DecEq-Ø init init = yes refl
 {- ε states -}
 data ε-State : Set where
  init  : ε-State
- error : ε-State
 
 DecEq-ε : DecEq ε-State
 DecEq-ε init init   = yes refl
-DecEq-ε init error  = no (λ ())
-DecEq-ε error error = yes refl
-DecEq-ε error init  = no (λ ())
 
 ε-List : List ε-State
-ε-List = init ∷ error ∷ []
+ε-List = init ∷ []
 
 
 
@@ -51,21 +46,15 @@ DecEq-ε error init  = no (λ ())
 data σ-State : Set where
  init   : σ-State
  accept : σ-State
- error  : σ-State
 
 DecEq-σ : DecEq σ-State
 DecEq-σ init init     = yes refl
 DecEq-σ init accept   = no (λ ())
-DecEq-σ init error    = no (λ ())
 DecEq-σ accept accept = yes refl
 DecEq-σ accept init   = no (λ ())
-DecEq-σ accept error  = no (λ ())
-DecEq-σ error error   = yes refl
-DecEq-σ error init    = no (λ ())
-DecEq-σ error accept  = no (λ ())
 
 σ-List : List σ-State
-σ-List = init ∷ accept ∷ error ∷ []
+σ-List = init ∷ accept ∷ []
 
 
 
@@ -73,8 +62,8 @@ DecEq-σ error accept  = no (λ ())
 infix 1 _⊍_
 data _⊍_ (A B : Set) : Set where
   init : A ⊍ B
-  ⊍inj₁ : (a : A) → A ⊍ B
-  ⊍inj₂ : (b : B) → A ⊍ B
+  ⊍inj₁ : A → A ⊍ B
+  ⊍inj₂ : B → A ⊍ B
 
 ⊍-lem₁ : {A B : Set}{q q' : A}{injq injq' : A ⊍ B} → injq ≡ ⊍inj₁ q → injq' ≡ ⊍inj₁ q' → injq ≡ injq' → q ≡ q'
 ⊍-lem₁ refl refl refl = refl
@@ -111,9 +100,9 @@ DecEq-⊍ decA decB (⊍inj₂ q) (⊍inj₁ _) = no (λ ())
 {- concatenation states -}
 infix 2 _⍟_
 data _⍟_ (A B : Set) : Set where
- ⍟inj₁ : (a : A) → A ⍟ B
+ ⍟inj₁ : A → A ⍟ B
  mid   : A ⍟ B
- ⍟inj₂ : (b : B) → A ⍟ B
+ ⍟inj₂ : B → A ⍟ B
  
 ⍟-lem₁ : {A B : Set}{q q' : A}{injq injq' : A ⍟ B} → injq ≡ ⍟inj₁ q → injq' ≡ ⍟inj₁ q' → injq ≡ injq' → q ≡ q'
 ⍟-lem₁ refl refl refl = refl
@@ -150,7 +139,7 @@ DecEq-⍟ decA decB mid       (⍟inj₂ q') = no (λ ())
 {- kleen star states -}
 data _*-State (A : Set) : Set where
  init : A *-State
- inj  : (a : A) → A *-State
+ inj  : A → A *-State
 
 *-lem₁ : {A : Set}{q q' : A} → inj q ≡ inj q' → q ≡ q'
 *-lem₁ refl = refl
