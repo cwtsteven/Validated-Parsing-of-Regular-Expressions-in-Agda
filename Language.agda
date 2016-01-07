@@ -16,6 +16,8 @@ open import Data.List
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Product hiding (Σ)
+open import Data.Empty
+open import Data.Unit
 open import Data.Nat
 
 open import Util
@@ -31,7 +33,7 @@ open ≡-Reasoning
 -- Language as a subset of Σ*
 -- section 0.2.2: Languages
 Language : Set₁
-Language = Subset Σ* {lzero}
+Language = Subset Σ*
 
 -- Null set
 Ø : Language
@@ -87,6 +89,11 @@ data Σᵉ : Set where
 toΣᵉ* : Σ* → Σᵉ*
 toΣᵉ* = Data.List.map α
 
+-- Transform a word over Σᵉ to a word over Σ*
+toΣ* : Σᵉ* → Σ*
+toΣ* []         = []
+toΣ* (E   ∷ xs) = toΣ* xs
+toΣ* (α a ∷ xs) = a ∷ toΣ* xs
 
 -- w ≡ u ++ v ⊢ toΣᵉ* w ≡ toΣᵉ* u ++ toΣᵉ* v
 Σᵉ*-lem₁ : ∀ {w u v}
@@ -99,6 +106,10 @@ toΣᵉ* = Data.List.map α
     toΣᵉ* u ++ toΣᵉ* v
     ∎
 
+Σᵉ*-lem₁' : ∀ {wᵉ uᵉ vᵉ}
+            → wᵉ ≡ uᵉ ++ vᵉ
+            → toΣ* wᵉ ≡ toΣ* uᵉ ++ toΣ* vᵉ
+Σᵉ*-lem₁' = undefined 
 
 -- toΣᵉ* w ≡ [] ⊢ w ≡ []
 Σᵉ*-lem₂ : ∀ {w}
@@ -107,6 +118,34 @@ toΣᵉ* = Data.List.map α
 Σᵉ*-lem₂ {[]}       refl = refl
 Σᵉ*-lem₂ {(x ∷ xs)} ()
 
+-- w ≡ toΣ* (toΣᵉ* w)
+Σᵉ*-lem₃ : ∀ w
+           → w ≡ toΣ* (toΣᵉ* w)
+Σᵉ*-lem₃ []       = refl
+Σᵉ*-lem₃ (x ∷ xs) = cong (λ w → x ∷ w) (Σᵉ*-lem₃ xs)
+
+-- toΣ* (E ∷ w) ≡ toΣ* w
+Σᵉ*-lem₄ : ∀ w
+           → toΣ* (E ∷ w) ≡ toΣ* w
+Σᵉ*-lem₄ w = refl
+
+Σᵉ*-lem₅ : ∀ {x y xs b u}
+           → x ∷ y ∷ xs ≡ toΣ* (α b ∷ u)
+           → y ∷ xs ≡ toΣ* u
+Σᵉ*-lem₅ {x} {y} {xs} {b} {u} prf = cong tail prf
+
+Σᵉ*-lem₆ : ∀ {xs ys}
+           → toΣ* xs ++ toΣ* ys ≡ toΣ* (xs ++ ys)
+Σᵉ*-lem₆ {[]}       {ys} = refl   
+Σᵉ*-lem₆ {α a ∷ xs} {ys} = cong (λ xs → a ∷ xs) (Σᵉ*-lem₆ {xs} {ys})
+Σᵉ*-lem₆ {E   ∷ xs} {ys} = Σᵉ*-lem₆ {xs} {ys}
+
+Σᵉ*-lem₇ : ∀ {w}
+           → toΣ* (w ∷ʳ E) ≡ toΣ* w
+Σᵉ*-lem₇ {[]}       = refl
+Σᵉ*-lem₇ {α a ∷ xs} = cong (λ xs → a ∷ xs) (Σᵉ*-lem₇ {xs})
+Σᵉ*-lem₇ {E   ∷ xs} = Σᵉ*-lem₇ {xs}
+                    
 
 -- Decidable Equality of Σᵉ
 DecEq-Σᵉ : DecEq Σ → DecEq Σᵉ

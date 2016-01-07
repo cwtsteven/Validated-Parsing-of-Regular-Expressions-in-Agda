@@ -32,10 +32,10 @@ DecEq-Ø init init = yes refl
 
 {- ε states -}
 data ε-State : Set where
- init  : ε-State
+ init : ε-State
 
 DecEq-ε : DecEq ε-State
-DecEq-ε init init   = yes refl
+DecEq-ε init init = yes refl
 
 ε-List : List ε-State
 ε-List = init ∷ []
@@ -61,7 +61,7 @@ DecEq-σ accept init   = no (λ ())
 {- union states -}
 infix 1 _⊍_
 data _⊍_ (A B : Set) : Set where
-  init : A ⊍ B
+  init  : A ⊍ B
   ⊍inj₁ : A → A ⊍ B
   ⊍inj₂ : B → A ⊍ B
 

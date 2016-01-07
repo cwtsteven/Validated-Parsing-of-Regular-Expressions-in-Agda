@@ -40,8 +40,9 @@ regexToε-NFA ε =
    Q' : Set
    Q' = ε-State
    δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init E     init = true
-   δ' init (α a) init = false
+   --δ' init E     init = true
+   --δ' init (α a) init = false
+   δ' init _ init = false
    F' : DecSubset Q'
    F' init  = true
 regexToε-NFA (σ a) =
@@ -50,10 +51,10 @@ regexToε-NFA (σ a) =
    Q' : Set
    Q' = σ-State
    δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init   E     init   = true
-   δ' init   (α b) accept = decEqToBool dec a b
-   δ' accept E     accept = true
-   δ' _      _     _      = false
+   --δ' init   E     init   = true
+   δ' init (α b) accept = decEqToBool dec a b
+   --δ' accept E     accept = true
+   δ' _    _     _      = false
    F' : DecSubset Q'
    F' init   = false
    F' accept = true
@@ -92,19 +93,19 @@ regexToε-NFA (e₁ ∙ e₂) =
    F' mid       = false
    F' (⍟inj₂ q) = q ∈ F₂
 regexToε-NFA (e *) =
- record { Q = Q' ; Q? = DecEq-* Q? ; δ = δ' ; q₀ = init ; F = F' ; It = *-List It }
+ record { Q = Q' ; Q? = DecEq-* Q₁? ; δ = δ' ; q₀ = init ; F = F' ; It = *-List It₁ }
   where
-   open ε-NFA (regexToε-NFA e)
+   open ε-NFA (regexToε-NFA e) renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; It to It₁)
    Q' : Set
-   Q' = Q *-State
+   Q' = Q₁ *-State
    δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init    E     (inj q)  = decEqToBool Q? q q₀
-   δ' (inj q) E     (inj q') = q  ∈ F ∧ decEqToBool Q? q' q₀ ∨ q' ∈ δ q E
-   δ' (inj q) (α a) (inj q') = q' ∈ δ q (α a)
+   δ' init    E     (inj q)  = decEqToBool Q₁? q q₀₁
+   δ' (inj q) E     (inj q') = q' ∈ δ₁ q E ∨ (q  ∈ F₁ ∧ decEqToBool Q₁? q' q₀₁)
+   δ' (inj q) (α a) (inj q') = q' ∈ δ₁ q (α a)
    δ' _       _     _        = false
    F' : DecSubset Q'
    F' init    = true
-   F' (inj q) = q ∈ F
+   F' (inj q) = q ∈ F₁
 
 
 -- remove ε-steps

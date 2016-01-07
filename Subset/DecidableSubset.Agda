@@ -19,16 +19,17 @@ open import Data.Empty
 DecSubset : (A : Set) → Set
 DecSubset A = A → Bool
 
--- null set
+-- Empty set
 Ø : {A : Set} → DecSubset A
 Ø = λ _ → false
 
--- singleton
+-- Singleton
 ⟦_⟧ : {A : Set} → A → {{dec : DecEq A}} → DecSubset A
 ⟦ a ⟧ {{dec}} = λ b → decEqToBool dec a b
 
+
+-- Membership
 infix 10 _∈_
--- membership
 _∈_ : {A : Set} → A → DecSubset A → Bool
 a ∈ p = p a
 
@@ -44,6 +45,7 @@ infix 10 _∉ᵍ_
 _∉ᵍ_ : {A : Set} → A → DecSubset A → Set
 a ∉ᵍ p = ¬ (a ∈ᵍ p)
 
+
 ∈ᵍ-lem₃ : {A : Set}(a : A)(p : DecSubset A) → ¬ (a ∈ᵍ p) → a ∈ p ≡ false
 ∈ᵍ-lem₃ a p a∉ᵍp with a ∈ p
 ∈ᵍ-lem₃ a p a∉ᵍp | true  = ⊥-elim (a∉ᵍp refl)
@@ -57,13 +59,15 @@ a ∉ᵍ p = ¬ (a ∈ᵍ p)
 ∈ᵍ-lem₁ : {A : Set}(a : A)(p : DecSubset A) → a ∈ p ≡ false ⇔ ¬ (a ∈ᵍ p)
 ∈ᵍ-lem₁ a p = ∈ᵍ-lem₂ a p , ∈ᵍ-lem₃ a p
 
+
+-- Intersection
 infix 11 _⋂_
--- intersection
 _⋂_ : {A : Set} → DecSubset A → DecSubset A → DecSubset A
 as ⋂ bs = λ a → a ∈ as ∧ a ∈ bs
 
+
+-- nion
 infix 11 _⋃_
--- union
 _⋃_ : {A : Set} → DecSubset A → DecSubset A → DecSubset A
 as ⋃ bs = λ a → a ∈ as ∨ a ∈ bs
 

@@ -32,14 +32,15 @@ open ε-NFA-Operations nfa₁ renaming (_⊢_ to _⊢ₑ₁_ ; _⊢*_ to _⊢*�
 
 module Lᴿ⊆Lᴺ where
 
+{-
  lem₆ : ∀ q w n q' u v
         → w ≡ u ++ v
         → (q , u) ⊢ᵏₑ₁ n ─ (q' , [])
         → (inj q , w) ⊢ᵏ n ─ (inj q' , v)
  lem₆ q w zero    q' .[] u w≡u[] (q≡q' , refl)
    = cong inj q≡q' , trans w≡u[] refl
- lem₆ q w (suc n) q' u v w≡uv (p , (α a) , u' , inj₁ (u≡au' , a≢E)  , (refl , p≡δqa) , prf₃)
-   = inj p , (α a) , u' ++ v , inj₁ (List-lem₅ w≡uv u≡au' , a≢E)
+ lem₆ q w (suc n) q' u v w≡uv (p , (α a) , u' , refl , (refl , p≡δqa) , prf₃)
+   = inj p , (α a) , u' ++ v , inj₁ (List-lem₅ w≡uv refl , a≢E)
      , (refl , p≡δqa) , lem₆ p (u' ++ v) n q' u' v refl prf₃
  lem₆ q w (suc n) q' u v w≡uv (p    ,  E , u' , inj₁ (u≡au' , a≢E)  , (refl , p≡δqa) , prf₃) = ⊥-elim (a≢E refl)
  lem₆ q w (suc n) q' u v w≡uv (p    , .E , u' , inj₂ (u≡u'  , refl) , (refl , p≡δqE) , prf₃) with inj p ∈ᵈ δ (inj q) E | inspect (δ (inj q) E) (inj p)
@@ -101,3 +102,80 @@ module Lᴿ⊆Lᴺ where
      , lem₂ (toΣᵉ* w) q []
        (subst (λ w → (q₀₁ , (toΣᵉ* w)) ⊢*ₑ₁ (q , []))
          (trans (sym (List-lem₂ u)) (sym w≡u[])) q₀₁u⊢*̂ₑ₁q[])
+-}
+
+ lem₆ : ∀ q wᵉ n vᵉ
+        → ¬ (inj q , wᵉ) ⊢ᵏ n ─ (init , vᵉ)
+ lem₆ q wᵉ zero    vᵉ (() , _)
+ lem₆ q wᵉ (suc n) vᵉ (init  , α _ , uᵉ , _ , (refl ,   ()) , prf₂)
+ lem₆ q wᵉ (suc n) vᵉ (init  , E   , uᵉ , _ , (refl ,   ()) , prf₂)
+ lem₆ q wᵉ (suc n) vᵉ (inj p , a   , uᵉ , _ , (refl , prf₁) , prf₂)
+   = lem₆ p uᵉ n vᵉ prf₂
+
+ lem₅ : ∀ wᵉ n vᵉ
+        → ¬ (init , wᵉ) ⊢ᵏ suc n ─ (init , vᵉ)
+ lem₅ ._ zero    .uᵉ (.init  , α _ , uᵉ , refl , (refl ,   ()) , (refl , refl))
+ lem₅ ._ zero    .uᵉ (.init  , E   , uᵉ , refl , (refl ,   ()) , (refl , refl))
+ lem₅ ._ (suc n)  vᵉ ( init  , α _ , uᵉ , refl , (refl ,   ()) , prf₂)
+ lem₅ ._ (suc n)  vᵉ ( init  , E   , uᵉ , refl , (refl ,   ()) , prf₂) 
+ lem₅ ._ (suc n)  vᵉ ( inj p , a   , uᵉ , refl , (refl , prf₁) , prf₂)
+   = lem₆ p uᵉ (suc n) vᵉ prf₂
+
+ lem₄ : ∀ wᵉ n q₁
+        → (q₀ , wᵉ)  ⊢ᵏ suc n ─ (inj q₁ , [])
+        → Σ[ uᵉ ∈ Σᵉ* ] (wᵉ ≡ E ∷ uᵉ × (inj q₀₁ , uᵉ) ⊢ᵏ n ─ (inj q₁ , []))
+ lem₄ ._ n  q₁ (init     , α _ , u , refl , (refl ,   ()) , prf₂)
+ lem₄ ._ n  q₁ (init     , E   , u , refl , (refl ,   ()) , prf₂)
+ lem₄ ._ n  q₁ (inj  p   , α _ , u , refl , (refl ,   ()) , prf₂)
+ lem₄ ._ n  q₁ (inj  p   , E   , u , refl , (refl , prf₁) , prf₂) with Q₁? p q₀₁
+ lem₄ ._ n  q₁ (inj .q₀₁ , E   , u , refl , (refl , prf₁) , prf₂) | yes refl = u , refl , prf₂
+ lem₄ ._ n  q₁ (inj  p   , E   , u , refl , (refl ,   ()) , prf₂) | no p≢q₀₁
+
+
+ lem₃ : ∀ q wᵉ uᵉ n q' vᵉ
+        → wᵉ ≡ uᵉ ++ vᵉ
+        → (q , uᵉ) ⊢ᵏₑ₁ n ─ (q' , [])
+        → (inj q , wᵉ) ⊢ᵏ n ─ (inj q' , vᵉ)
+ lem₃ q wᵉ .[] zero    .q  vᵉ w≡uv (refl , refl) = refl , w≡uv
+ lem₃ q wᵉ ._  (suc n)  q' vᵉ w≡uv (p , α a , u₁ , refl , (refl , prf₁) , prf₂)
+   = inj p , α a , u₁ ++ vᵉ , w≡uv , (refl , prf₁) , lem₃ p (u₁ ++ vᵉ) u₁ n q' vᵉ refl prf₂
+ lem₃ q wᵉ ._  (suc n)  q' vᵉ w≡uv (p , E   , u₁ , refl , (refl , prf₁) , prf₂) with inj p ∈ᵈ δ (inj q) E | inspect (δ (inj q) E) (inj p)
+ lem₃ q wᵉ ._  (suc n)  q' vᵉ w≡uv (p , E   , u₁ , refl , (refl , prf₁) , prf₂) | true  | [ eq ]
+   = inj p , E , u₁ ++ vᵉ , w≡uv , (refl , eq) , lem₃ p (u₁ ++ vᵉ) u₁ n q' vᵉ refl prf₂
+ lem₃ q wᵉ ._  (suc n)  q' vᵉ w≡uv (p , E   , u₁ , refl , (refl , prf₁) , prf₂) | false | [ eq ] with p ∈ᵈ δ₁ q E | inspect (δ₁ q E) p
+ lem₃ q wᵉ ._  (suc n)  q' vᵉ w≡uv (p , E   , u₁ , refl , (refl , prf₁) , prf₂) | false | [ () ] | true  | [ eq₁ ]
+ lem₃ q wᵉ ._  (suc n)  q' vᵉ w≡uv (p , E   , u₁ , refl , (refl ,   ()) , prf₂) | false | [ eq ] | false | [ eq₁ ]
+
+ lem₂ : ∀ wᵉ uᵉ n q vᵉ
+        → wᵉ ≡ uᵉ ++ vᵉ
+        → (q₀₁ , uᵉ) ⊢ᵏₑ₁ n ─ (q , [])
+        → (init , E ∷ wᵉ) ⊢ᵏ suc n ─ (inj q , vᵉ)
+ lem₂ wᵉ uᵉ n q vᵉ w≡uv prf with inj q₀₁ ∈ᵈ δ q₀ E | inspect (δ q₀ E) (inj q₀₁)
+ lem₂ wᵉ uᵉ n q vᵉ w≡uv prf | true  | [ eq ] = inj q₀₁ , E , wᵉ , refl , (refl , eq) , lem₃ q₀₁ wᵉ uᵉ n q vᵉ w≡uv prf
+ lem₂ wᵉ uᵉ n q vᵉ w≡uv prf | false | [ eq ] with Q₁? q₀₁ q₀₁
+ lem₂ wᵉ uᵉ n q vᵉ w≡uv prf | false | [ () ] | yes refl
+ lem₂ wᵉ uᵉ n q vᵉ w≡uv prf | false | [ eq ] | no  q₀₁≢q₀₁ = ⊥-elim (q₀₁≢q₀₁ refl)
+
+ {-
+ lem₃ : ∀ q uᵉ n q₁ vᵉ
+        → (q , uᵉ) ⊢ᵏₑ₁ n ─ (q₁ , vᵉ)
+        → (inj q , uᵉ) ⊢ᵏ n ─ (inj q₁ , vᵉ)
+ lem₃ q .vᵉ zero    .q  vᵉ (refl , refl) = refl , refl
+ lem₃ q ._  (suc n)  q₁ vᵉ (p , α a , u₁ , refl , prf₁ , prf₂)
+   = inj p , α a , u₁ , refl , prf₁ , lem₃ p u₁ n q₁ vᵉ prf₂
+ lem₃ q ._  (suc n)  q₁ vᵉ (p , E   , u₁ , refl , (refl , prf₁) , prf₂) with inj p ∈ᵈ δ (inj q) E | inspect (δ (inj q) E) (inj p)
+ lem₃ q ._  (suc n)  q₁ vᵉ (p , E   , u₁ , refl , (refl , prf₁) , prf₂) | true  | [ eq ]
+   = inj p , E , u₁ , refl , (refl , eq) , lem₃ p u₁ n q₁ vᵉ prf₂
+ lem₃ q ._  (suc n)  q₁ vᵉ (p , E   , u₁ , refl , (refl , prf₁) , prf₂) | false | [ eq ] with p ∈ᵈ δ₁ q E | inspect (δ₁ q E) p
+ lem₃ q ._  (suc n)  q₁ vᵉ (p , E   , u₁ , refl , (refl , prf₁) , prf₂) | false | [ () ] | true  | [ eq₁ ]
+ lem₃ q ._  (suc n)  q₁ vᵉ (p , E   , u₁ , refl , (refl ,   ()) , prf₂) | false | [ eq ] | false | [ eq₁ ]
+
+ lem₂ : ∀ uᵉ n q₁
+        → (q₀₁ , uᵉ) ⊢ᵏₑ₁ n ─ (q₁ , [])
+        → (q₀ , E ∷ uᵉ)  ⊢ᵏ suc n ─ (inj q₁ , [])
+ lem₂ uᵉ n q₁ prf with inj q₀₁ ∈ᵈ δ q₀ E | inspect (δ q₀ E) (inj q₀₁)
+ lem₂ uᵉ n q₁ prf | true  | [ eq ] = inj q₀₁ , E , uᵉ , refl , (refl , eq) , lem₃ q₀₁ uᵉ n q₁ [] prf
+ lem₂ uᵉ n q₁ prf | false | [ eq ] with Q₁? q₀₁ q₀₁
+ lem₂ uᵉ n q₁ prf | false | [ () ] | yes refl
+ lem₂ uᵉ n q₁ prf | false | [ eq ] | no  q₀₁≢q₀₁ = ⊥-elim (q₀₁≢q₀₁ refl)
+-}

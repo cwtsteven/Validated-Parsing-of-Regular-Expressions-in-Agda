@@ -10,7 +10,6 @@
 
 module Automata (Σ : Set) where
 
-open import Level renaming (zero to lzero ; suc to lsuc)
 open import Data.List
 open import Data.Bool
 open import Relation.Binary.PropositionalEquality
@@ -31,99 +30,160 @@ open import Language Σ
 record ε-NFA : Set₁ where
  field
   Q  : Set
-  Q? : DecEq Q
   δ  : Q → Σᵉ → DecSubset Q
   q₀ : Q
   F  : DecSubset Q
+  Q? : DecEq Q
   It : List Q
 
 -- section 2.2.3: Finite Automata
 module ε-NFA-Operations (N : ε-NFA) where
  open ε-NFA N
 
+ open ≡-Reasoning
+
  -- a move from (q , aw) to (q' , w)
  infix 7 _⊢_
  _⊢_ : (Q × Σᵉ × Σᵉ*) → (Q × Σᵉ*) → Set
- (q , a , w) ⊢ (q' , w') = w ≡ w' × q' ∈ᵍ δ q a
+ (q , aᵉ , wᵉ) ⊢ (q' , wᵉ') = wᵉ ≡ wᵉ' × q' ∈ᵍ δ q aᵉ
 
  -- k moves from (q , w) to (q' , w')
  infix 7 _⊢ᵏ_─_
  _⊢ᵏ_─_ : (Q × Σᵉ*) → ℕ → (Q × Σᵉ*) → Set
- (q , w) ⊢ᵏ zero    ─ (q' , w') = q ≡ q' × w ≡ w'
- (q , w) ⊢ᵏ (suc n) ─ (q' , w')
-   = Σ[ p ∈ Q ] Σ[ a ∈ Σᵉ ] Σ[ u ∈ Σᵉ* ]
-     (((w ≡ a ∷ u × a ≢ E) ⊎ (w ≡ u × a ≡ E)) × (q , a , u) ⊢ (p , u) × (p , u) ⊢ᵏ n ─ (q' , w'))
+ (q , wᵉ) ⊢ᵏ zero    ─ (q' , wᵉ')
+   = q ≡ q' × wᵉ ≡ wᵉ'
+ (q , wᵉ) ⊢ᵏ (suc n) ─ (q' , wᵉ')
+   = Σ[ p ∈ Q ] Σ[ aᵉ ∈ Σᵉ ] Σ[ uᵉ ∈ Σᵉ* ]
+     ( wᵉ ≡ aᵉ ∷ uᵉ × (q , aᵉ , uᵉ) ⊢ (p , uᵉ) × (p , uᵉ) ⊢ᵏ n ─ (q' , wᵉ') )
+     --( ((w ≡ a ∷ u × Σ[ b ∈ Σ ] a ≡ α b) ⊎ (w ≡ u × a ≡ E)) × (q , a , u) ⊢ (p , u) × (p , u) ⊢ᵏ n ─ (q' , w') )
+
+ -- alternative definition for k moves
+ infix 7 _⊢ᵏ₂_─_
+ _⊢ᵏ₂_─_ : (Q × Σᵉ*) → ℕ → (Q × Σᵉ*) → Set
+ (q , wᵉ) ⊢ᵏ₂ zero ─ (q' , wᵉ')
+   = (q , wᵉ) ⊢ᵏ zero ─ (q' , wᵉ')
+ (q , wᵉ) ⊢ᵏ₂ (suc n) ─ (q' , wᵉ')
+   = Σ[ p ∈ Q ] Σ[ aᵉ ∈ Σᵉ ]
+     ( (q , wᵉ) ⊢ᵏ n ─ (p , aᵉ ∷ wᵉ') × (p , aᵉ , wᵉ') ⊢ (q' , wᵉ') )
+
+ find-p : ∀ q wᵉ n q' wᵉ'
+          → (q , wᵉ) ⊢ᵏ suc n ─ (q' , wᵉ')
+          → Q
+ find-p q ._ zero    .p  .uᵉ  (p , a , uᵉ , refl , prf₁ , (refl , refl)) = q
+ find-p q ._ (suc n)  q'  wᵉ' (p , a , uᵉ , refl , prf₁ , prf₂)          = find-p p uᵉ n q' wᵉ' prf₂
+
+ find-a : ∀ q wᵉ n q' wᵉ'
+          → (q , wᵉ) ⊢ᵏ suc n ─ (q' , wᵉ')
+          → Σᵉ
+ find-a q ._ zero    .p  .uᵉ  (p , aᵉ , uᵉ , refl , prf₁ , (refl , refl)) = aᵉ
+ find-a q ._ (suc n)  q'  wᵉ' (p , aᵉ , uᵉ , refl , prf₁ , prf₂)          = find-a p uᵉ n q' wᵉ' prf₂
+ 
+ ⊢ᵏ-lem₈ : ∀ q wᵉ n q' wᵉ'
+           → (prf : (q , wᵉ) ⊢ᵏ suc n ─ (q' , wᵉ'))
+           → Σ[ p ∈ Q ] Σ[ a ∈ Σᵉ ] ( p ≡ find-p q wᵉ n q' wᵉ' prf × a ≡ find-a q wᵉ n q' wᵉ' prf × (p , a , wᵉ') ⊢ (q' , wᵉ') )
+ ⊢ᵏ-lem₈ q ._ zero    .p  .uᵉ  (p , a , uᵉ , refl , prf₁ , (refl , refl)) = q , a , refl , refl , prf₁
+ ⊢ᵏ-lem₈ q ._ (suc n)  q'  wᵉ' (p , a , uᵉ , refl , prf₁ , prf₂)          = ⊢ᵏ-lem₈ p uᵉ n q' wᵉ' prf₂
+
+ ⊢ᵏ-lem₇ : ∀ q wᵉ n q' wᵉ' p a
+           → (prf : (q , wᵉ) ⊢ᵏ suc n ─ (q' , wᵉ'))
+           → p ≡ find-p q wᵉ n q' wᵉ' prf
+           → a ≡ find-a q wᵉ n q' wᵉ' prf
+           → (q , wᵉ) ⊢ᵏ n ─ (p , a ∷ wᵉ')
+ ⊢ᵏ-lem₇ q ._ zero    .p' .uᵉ  p a (p' , a' , uᵉ , refl , prf₁ , (refl , refl)) p≡q a≡a'
+   = sym p≡q , cong (λ a → a ∷ uᵉ) (sym a≡a')
+ ⊢ᵏ-lem₇ q ._ (suc n)  q'  wᵉ' p a (p' , a' , uᵉ , refl , prf₁ ,          prf₂) p≡p a≡a
+   = p' , a' , uᵉ , refl , prf₁ , ⊢ᵏ-lem₇ p' uᵉ n q' wᵉ' p a prf₂ p≡p a≡a
+
+ ⊢ᵏ-lem₆ : ∀ q wᵉ n q' wᵉ'
+           → (prf : (q , wᵉ) ⊢ᵏ suc n ─ (q' , wᵉ'))
+           → Σ[ p ∈ Q ] Σ[ a ∈ Σᵉ ] ( p ≡ find-p q wᵉ n q' wᵉ' prf × a ≡ find-a q wᵉ n q' wᵉ' prf × (q , wᵉ) ⊢ᵏ n ─ (p , a ∷ wᵉ') )
+ ⊢ᵏ-lem₆ q wᵉ n q' wᵉ' prf = p , a , refl , refl , ⊢ᵏ-lem₇ q wᵉ n q' wᵉ' p a prf refl refl
+  where
+   p : Q
+   p = find-p q wᵉ n q' wᵉ' prf
+   a : Σᵉ
+   a = find-a q wᵉ n q' wᵉ' prf
+
+
+ ⊢ᵏ-lem₅ : ∀ q wᵉ n q' wᵉ'
+           → (prf : (q , wᵉ) ⊢ᵏ suc n ─ (q' , wᵉ'))
+           → Σ[ p ∈ Q ] Σ[ a ∈ Σᵉ ] (p ≡ find-p q wᵉ n q' wᵉ' prf × a ≡ find-a q wᵉ n q' wᵉ' prf × (q , wᵉ) ⊢ᵏ n ─ (p , a ∷ wᵉ') × (p , a , wᵉ') ⊢ (q' , wᵉ'))
+ ⊢ᵏ-lem₅ q wᵉ n q' wᵉ' prf with ⊢ᵏ-lem₆ q wᵉ n q' wᵉ' prf | ⊢ᵏ-lem₈ q wᵉ n q' wᵉ' prf
+ ... | p₁ , a₁ , p₁≡p , a₁≡a , prf₁ |  p₂ , a₂ , p₂≡p , a₂≡a , prf₂ = p₁ , a₁ , p₁≡p , a₁≡a , prf₁ , prf₂''
+  where
+   prf₂' : (p₁ , a₂ , wᵉ') ⊢ (q' , wᵉ')
+   prf₂' = subst (λ p₁ → (p₁ , a₂ , wᵉ') ⊢ (q' , wᵉ')) (trans p₂≡p (sym p₁≡p)) prf₂
+   prf₂'' : (p₁ , a₁ , wᵉ') ⊢ (q' , wᵉ')
+   prf₂'' = subst (λ a₁ → (p₁ , a₁ , wᵉ') ⊢ (q' , wᵉ')) (trans a₂≡a (sym a₁≡a)) prf₂'
+
+ ⊢ᵏ-lem₄ : ∀ q wᵉ n q' wᵉ'
+           → (q , wᵉ) ⊢ᵏ suc n ─ (q' , wᵉ')
+           → (q , wᵉ) ⊢ᵏ₂ suc n ─ (q' , wᵉ')
+ ⊢ᵏ-lem₄ q wᵉ n q' wᵉ' prf with ⊢ᵏ-lem₅ q wᵉ n q' wᵉ' prf
+ ... | p' , a' , p≡p' , a≡a' , prf₁ = p , a , prf₁''
+  where
+   p : Q
+   p = find-p q wᵉ n q' wᵉ' prf
+   a : Σᵉ
+   a = find-a q wᵉ n q' wᵉ' prf
+   prf₁' : (q , wᵉ) ⊢ᵏ n ─ (p , a' ∷ wᵉ') × (p , a' , wᵉ') ⊢ (q' , wᵉ')
+   prf₁' = subst (λ p → (q , wᵉ) ⊢ᵏ n ─ (p , a' ∷ wᵉ') × (p , a' , wᵉ') ⊢ (q' , wᵉ')) p≡p' prf₁
+   prf₁'' : (q , wᵉ) ⊢ᵏ n ─ (p , a ∷ wᵉ') × (p , a , wᵉ') ⊢ (q' , wᵉ')
+   prf₁'' = subst (λ a → (q , wᵉ) ⊢ᵏ n ─ (p , a ∷ wᵉ') × (p , a , wᵉ') ⊢ (q' , wᵉ')) a≡a' prf₁'
+
+ ⊢ᵏ-lem₃ : ∀ {q wᵉ n q' wᵉ'}
+           → (q , wᵉ) ⊢ᵏ₂ n ─ (q' , wᵉ')
+           → (q , wᵉ) ⊢ᵏ n ─ (q' , wᵉ')
+ ⊢ᵏ-lem₃ = undefined
+
+ ⊢ᵏ-lem₂ : ∀ {q wᵉ n q' wᵉ'}
+           → (q , wᵉ) ⊢ᵏ n ─ (q' , wᵉ')
+           → (q , wᵉ) ⊢ᵏ₂ n ─ (q' , wᵉ')
+ ⊢ᵏ-lem₂ {q} {wᵉ} {zero}  {.q} {.wᵉ} (refl , refl) = refl , refl
+ ⊢ᵏ-lem₂ {q} {wᵉ} {suc n} {q'} {wᵉ'} prf           = ⊢ᵏ-lem₄ q wᵉ n q' wᵉ' prf
+
+ ⊢ᵏ-lem₁ : ∀ {q wᵉ n q' wᵉ'}
+           → (q , wᵉ) ⊢ᵏ n ─ (q' , wᵉ') ⇔ (q , wᵉ) ⊢ᵏ₂ n ─ (q' , wᵉ')
+ ⊢ᵏ-lem₁ {q} {wᵉ} {n} {q'} {wᵉ'} = ⊢ᵏ-lem₂ {q} {wᵉ} {n} {q'} {wᵉ'} , ⊢ᵏ-lem₃ {q} {wᵉ} {n} {q'} {wᵉ'}
                                   
  -- transitive closure of ⊢
  infix 7 _⊢*_
  _⊢*_ : (Q × Σᵉ*) → (Q × Σᵉ*) → Set
- (q , w) ⊢* (q' , w') = Σ[ n ∈ ℕ ] ((q , w) ⊢ᵏ n ─ (q' , w'))
+ (q , wᵉ) ⊢* (q' , wᵉ') = Σ[ n ∈ ℕ ] (q , wᵉ) ⊢ᵏ n ─ (q' , wᵉ')
 
  -- alternative definition of ⊢*, we will later prove that ⊢*₂ is equivalent to ⊢*
  infix 7 _⊢*₂_
  _⊢*₂_ : (Q × Σᵉ*) → (Q × Σᵉ*) → Set
- (q , w) ⊢*₂ (q' , w') = Σ[ n ∈ ℕ ] Σ[ m ∈ ℕ ] Σ[ p ∈ Q ] Σ[ u ∈ Σᵉ* ]
-                         ((q , w) ⊢ᵏ n ─ (p , u) × (p , u) ⊢ᵏ m ─ (q' , w'))
-
- -- epsilon closure
- infix 7 _→ᵏε_─_
- _→ᵏε_─_ : Q → ℕ → Q → Set
- q →ᵏε zero  ─ q' = q ≡ q'
- q →ᵏε suc n ─ q' = Σ[ p ∈ Q ] (p ∈ᵍ δ q E × p →ᵏε n ─ q')
-
- infix 7 _→*ε_
- _→*ε_ : Q → Q → Set
- q →*ε q' = Σ[ n ∈ ℕ ] (q →ᵏε n ─ q')
+ (q , wᵉ) ⊢*₂ (q' , wᵉ') = Σ[ n ∈ ℕ ] Σ[ m ∈ ℕ ] Σ[ p ∈ Q ] Σ[ uᵉ ∈ Σᵉ* ]
+                         ((q , wᵉ) ⊢ᵏ n ─ (p , uᵉ) × (p , uᵉ) ⊢ᵏ m ─ (q' , wᵉ'))
                          
 
- ⊢ᵏ-lem₃ : ∀ q w n q' w' p u
-           → p ≡ q' → u ≡ w'
-           → (q , w) ⊢ᵏ n ─ (p , u)
-           → (q , w) ⊢ᵏ n ─ (q' , w')
- ⊢ᵏ-lem₃ q w zero    q' w' p u p≡q' u≡w' (q≡p , w≡u)
-   = trans q≡p p≡q' , trans w≡u u≡w'
- ⊢ᵏ-lem₃ q w (suc n) q' w' p u p≡q' u≡w' (r , a , v , prf₁ , prf₂ , rv⊢ᵏpu)
-   = r , a , v , prf₁ , prf₂ , ⊢ᵏ-lem₃ r v n q' w' p u p≡q' u≡w' rv⊢ᵏpu
+ ⊢*-lem₄ : ∀ q wᵉ n q' wᵉ' p uᵉ m
+           → (q , wᵉ) ⊢ᵏ n ─ (p , uᵉ)
+           → (p , uᵉ) ⊢ᵏ m ─ (q' , wᵉ')
+           → (q , wᵉ) ⊢ᵏ n + m ─ (q' , wᵉ')
+ ⊢*-lem₄ .p wᵉ zero     q'  wᵉ' p .wᵉ m (refl , refl)                     prf
+   = prf
+ ⊢*-lem₄  q wᵉ (suc n)  q'  wᵉ' p  uᵉ m (r , a , vᵉ , prf₁ , prf₂ , prf₃) prf₄
+   = r , a , vᵉ , prf₁ , prf₂ , ⊢*-lem₄ r vᵉ n q' wᵉ' p uᵉ m prf₃ prf₄
 
 
- ⊢ᵏ-lem₂ : ∀ q w n q' w'
-           → (q , w) ⊢ᵏ n ─ (q' , w')
-           → (q , w) ⊢ᵏ (n + zero) ─ (q' , w')
- ⊢ᵏ-lem₂ q w zero    q' w' (q≡q' , w≡w')
-   = (q≡q' , w≡w')
- ⊢ᵏ-lem₂ q w (suc n) q' w' (p , a , u , prf₁ , prf₂ , prf₃)
-   = p , a , u , prf₁ , prf₂ , ⊢ᵏ-lem₂ p u n q' w' prf₃
+ ⊢*-lem₃ : ∀ {q wᵉ q' wᵉ'}
+           → (q , wᵉ) ⊢*  (q' , wᵉ')
+           → (q , wᵉ) ⊢*₂ (q' , wᵉ')
+ ⊢*-lem₃ {q} {wᵉ} {q'} {wᵉ'} (n , prf)
+   = n , zero , q' , wᵉ' , prf , (refl , refl)
 
 
- ⊢ᵏ-lem₁ : ∀ q w n q' w' p u m
-           → (q , w) ⊢ᵏ n ─ (p , u)
-           → (p , u) ⊢ᵏ m ─ (q' , w')
-           → (q , w) ⊢ᵏ (n + m) ─ (q' , w')
- ⊢ᵏ-lem₁ q w zero    q' w' p u zero    (q≡p , w≡u) (p≡q' , u≡w')
-   = trans q≡p p≡q' , trans w≡u u≡w'
- ⊢ᵏ-lem₁ q w zero    q' w' p u (suc m) (q≡p , w≡u) (r , a , v , inj₁ (u≡av , a≢E) , (refl , r∈δpa) , rv⊢ᵏq'w')
-   = r , a , v , inj₁ (trans w≡u u≡av , a≢E)  , (refl , subst (λ p → r ∈ᵍ δ p a) (sym q≡p) r∈δpa) , rv⊢ᵏq'w'
- ⊢ᵏ-lem₁ q w zero    q' w' p u (suc m) (q≡p , w≡u) (r , a , v , inj₂ (u≡v  , a≡E) , (refl , r∈δpE) , rv⊢ᵏq'w')
-   = r , a , v , inj₂ (trans w≡u u≡v  , a≡E)  , (refl , subst (λ p → r ∈ᵍ δ p a) (sym q≡p) r∈δpE) , rv⊢ᵏq'w'
- ⊢ᵏ-lem₁ q w (suc n) q' w' p u zero    (r , a , v , prf₁ , prf₂ , rv⊢ᵏpu) (p≡q' , u≡w')
-   = r , a , v ,  prf₁ , prf₂ , ⊢ᵏ-lem₃ r v (n + zero) q' w' p u p≡q' u≡w' (⊢ᵏ-lem₂ r v n p u rv⊢ᵏpu)
- ⊢ᵏ-lem₁ q w (suc n) q' w' p u (suc m) (r , a , v , prf₁ , prf₂ , rv⊢ᵏpu) pu⊢ᵏq'w'
-   = r , a , v , prf₁ , prf₂ , ⊢ᵏ-lem₁ r v n q' w' p u (suc m) rv⊢ᵏpu pu⊢ᵏq'w'
+ ⊢*-lem₂ : ∀ {q wᵉ q' wᵉ'}
+           → (q , wᵉ) ⊢*₂ (q' , wᵉ')
+           → (q , wᵉ) ⊢*  (q' , wᵉ')
+ ⊢*-lem₂ {q} {wᵉ} {q'} {wᵉ'} (n , m , p , uᵉ , prf₁ , prf₂)
+   = n + m , ⊢*-lem₄ q wᵉ n q' wᵉ' p uᵉ m prf₁ prf₂
 
- ⊢*-lem₃ : ∀ {q w q' w'}
-           → (q , w) ⊢* (q' , w')
-           → (q , w) ⊢*₂ (q' , w')
- ⊢*-lem₃ {q} {w} {q'} {w'} (n , prf)
-   = n , zero , q' , w' , prf , (refl , refl)
 
- ⊢*-lem₂ : ∀ {q w q' w'}
-           → (q , w) ⊢*₂ (q' , w')
-           → (q , w) ⊢* (q' , w')
- ⊢*-lem₂ {q} {w} {q'} {w'} (n , m , p , u , prf₁ , prf₂)
-   = n + m , ⊢ᵏ-lem₁ q w n q' w' p u m prf₁ prf₂
-
- ⊢*-lem₁ : ∀ {q w q' w'}
-           → (q , w) ⊢* (q' , w') ⇔ (q , w) ⊢*₂ (q' , w')
+ ⊢*-lem₁ : ∀ {q wᵉ q' wᵉ'}
+           → (q , wᵉ) ⊢* (q' , wᵉ') ⇔ (q , wᵉ) ⊢*₂ (q' , wᵉ')
  ⊢*-lem₁ = ⊢*-lem₃ , ⊢*-lem₂
  
 
@@ -131,7 +191,8 @@ module ε-NFA-Operations (N : ε-NFA) where
 -- section 2.2.3: Finite Automata
 -- L(nfa) = { w | ∃q∈F. (q₀ , w) ⊢* (q , []) }
 Lᵉᴺ : ε-NFA → Language
-Lᵉᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
+Lᵉᴺ nfa = λ w → Σ[ wᵉ ∈ Σᵉ* ] (w ≡ toΣ* wᵉ × Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , wᵉ) ⊢* (q , [])))
+       -- λ w → Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
  where
   open ε-NFA nfa
   open ε-NFA-Operations nfa
@@ -160,7 +221,8 @@ module NFA-Operations (N : NFA) where
  -- k moves from (q , w) to (q' , w')
  infix 7 _⊢ᵏ_─_
  _⊢ᵏ_─_ : (Q × Σ*) → ℕ → (Q × Σ*) → Set
- (q , w) ⊢ᵏ zero    ─ (q' , w') = q ≡ q' × w ≡ w'
+ (q , w) ⊢ᵏ zero    ─ (q' , w')
+   = q ≡ q' × w ≡ w'
  (q , w) ⊢ᵏ (suc n) ─ (q' , w')
    = Σ[ p ∈ Q ] Σ[ a ∈ Σ ] Σ[ u ∈ Σ* ]
      (w ≡ a ∷ u × (q , a , u) ⊢ (p , u) × (p , u) ⊢ᵏ n ─ (q' , w'))
@@ -168,7 +230,7 @@ module NFA-Operations (N : NFA) where
  -- transitive closure of ⊢
  infix 7 _⊢*_
  _⊢*_ : (Q × Σ*) → (Q × Σ*) → Set
- (q , w) ⊢* (q' , w') = Σ[ n ∈ ℕ ] ((q , w) ⊢ᵏ n ─ (q' , w'))
+ (q , w) ⊢* (q' , w') = Σ[ n ∈ ℕ ] (q , w) ⊢ᵏ n ─ (q' , w')
 
 -- Language denoted by a NFA
 -- section 2.2.3: Finite Automata

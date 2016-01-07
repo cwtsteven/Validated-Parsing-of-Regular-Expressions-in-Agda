@@ -13,6 +13,7 @@ module RegularExpression (Σ : Set) where
 
 open import Language Σ renaming (Ø to ø)
 
+
 -- Regular expressions
 -- section 2.2.1: Regular Sets and Regular Expressions
 infix 11 _∣_
@@ -25,6 +26,7 @@ data RegExp : Set where
  _∣_ : RegExp → RegExp → RegExp
  _∙_ : RegExp → RegExp → RegExp
  _*  : RegExp → RegExp
+
 
 -- Language denoted by regular expressions
 -- section 2.2.1: Regular Sets and Regular Expressions
