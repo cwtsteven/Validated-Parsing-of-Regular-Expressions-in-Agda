@@ -5,7 +5,7 @@
       by Alfred V. Aho and Jeffery D. Ullman
 
   Steven Cheung 2015.
-  Version 07-01-2016
+  Version 10-01-2016
 -}
 
 module Automata (Σ : Set) where
@@ -194,10 +194,9 @@ module ε-NFA-Operations (N : ε-NFA) where
 
 -- Language denoted by a ε-NFA
 -- section 2.2.3: Finite Automata
--- L(nfa) = { w | ∃q∈F. (q₀ , w) ⊢* (q , []) }
+-- L(nfa) = { w | ∃wᵉ∈Σᵉ*. w ≡ toΣ* wᵉ ∧ ∃q∈F. (q₀ , wᵉ) ⊢* (q , []) }
 Lᵉᴺ : ε-NFA → Language
 Lᵉᴺ nfa = λ w → Σ[ wᵉ ∈ Σᵉ* ] (w ≡ toΣ* wᵉ × Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , wᵉ) ⊢* (q , [])))
-       -- λ w → Σ[ q ∈ Q ] (q ∈ᵍ F × (q₀ , toΣᵉ* w) ⊢* (q , []))
  where
   open ε-NFA nfa
   open ε-NFA-Operations nfa

@@ -5,7 +5,7 @@
       by Alfred V. Aho and Jeffery D. Ullman
 
   Steven Cheung 2015.
-  Version 07-01-2016
+  Version 10-01-2016
 -}
 
 module Language (Σ : Set) where
@@ -95,6 +95,7 @@ toΣ* []         = []
 toΣ* (E   ∷ xs) = toΣ* xs
 toΣ* (α a ∷ xs) = a ∷ toΣ* xs
 
+-- Lemmas on Σᵉ
 Σᵉ*-lem₁ : ∀ {w u}
            → toΣ* w ++ toΣ* u ≡ toΣ* (w ++ u)
 Σᵉ*-lem₁ {[]}       {ys} = refl   
@@ -107,6 +108,7 @@ toΣ* (α a ∷ xs) = a ∷ toΣ* xs
 Σᵉ*-lem₂ {[]}       = refl
 Σᵉ*-lem₂ {α a ∷ xs} = cong (λ xs → a ∷ xs) (Σᵉ*-lem₂ {xs})
 Σᵉ*-lem₂ {E   ∷ xs} = Σᵉ*-lem₂ {xs}
+
 
 Σᵉ*-lem₃ : ∀ w u uᵉ v vᵉ vᵉ₁
            → w ≡ u ++ v
@@ -124,6 +126,7 @@ toΣ* (α a ∷ xs) = a ∷ toΣ* xs
     toΣ* (uᵉ ++ E ∷ vᵉ₁)
     ∎
 
+
 Σᵉ*-lem₄ : ∀ wᵉ uᵉ vᵉ
            → wᵉ ≡ uᵉ ++ E ∷ vᵉ
            → toΣ* wᵉ ≡ toΣ* uᵉ ++ toΣ* vᵉ
@@ -132,6 +135,7 @@ toΣ* (α a ∷ xs) = a ∷ toΣ* xs
                           toΣ* (uᵉ ++ E ∷ vᵉ) ≡⟨ sym (Σᵉ*-lem₁ {uᵉ} {E ∷ vᵉ}) ⟩
                           toΣ* uᵉ ++ toΣ* vᵉ
                           ∎
+
 
 -- Decidable Equality of Σᵉ
 DecEq-Σᵉ : DecEq Σ → DecEq Σᵉ

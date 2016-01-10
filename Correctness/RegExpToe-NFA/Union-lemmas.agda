@@ -2,7 +2,7 @@
   This module contains the following proofs:
 
   Steven Cheung 2015.
-  Version 07-01-2016
+  Version 10-01-2016
 -}
 open import Util
 open import RegularExpression
@@ -183,75 +183,3 @@ module Lᴿ⊇Lᴺ where
  lem₁  w  ([]       , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = ⊥-elim (lem₇ q prf)
  lem₁  w  (α a ∷ wᵉ , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = ⊥-elim (lem₈ a wᵉ q prf)
  lem₁  w  (E   ∷ wᵉ , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = inj₂ (wᵉ , w≡wᵉ , q , q∈F₂ , lem₉ {wᵉ} {q} prf)
-
-
-{-
- lem₇ : ∀ q w n q' w'
-        → ¬ (⊍inj₁ q , w) ⊢ᵏ n ─ (⊍inj₂ q' , w')
- lem₇ q w zero    q' .w  (() , refl)
- lem₇ q w (suc n) q'  w' (init    , _ , _ , _ , (_ , ()) ,   _)
- lem₇ q w (suc n) q'  w' (⊍inj₁ p , _ , u , _ , _        , prf)
-   = lem₇ p u n q' w' prf
- lem₇ q w (suc n) q'  w' (⊍inj₂ _ , _ , _ , _ , (_ , ()) ,   _)
-
- lem₆ : ∀ q w n q' w'
-        → (⊍inj₂ q , w) ⊢ᵏ n ─ (⊍inj₂ q' , w')
-        → (q , w) ⊢ᵏₑ₂ n ─ (q' , w')
- lem₆ q w zero    .q  .w  (refl , refl) = refl , refl
- lem₆ q w (suc n)  q'  w' (init    , _ , _ , _     , (_ , ()) ,    _)
- lem₆ q w (suc n)  q'  w' (⊍inj₁ p , _ , _ , _     , (_ , ()) ,    _)
- lem₆ q w (suc n)  q'  w' (⊍inj₂ p , a , u , prf₁  , prf₂     , prf₃)
-   = p , a , u , prf₁ , prf₂ , lem₆ p u n q' w' prf₃
-
- lem₅ : ∀ {w q}
-        → (q₀ , w) ⊢* (⊍inj₂ q , [])
-        → (q₀₂ , w) ⊢*ₑ₂ (q , [])
- lem₅ {w} {q} (zero  , () , _)
- lem₅ {w} {q} (suc n , init       ,  (α _) ,  _ , inj₁ (_    ,    _) , (_ , ()) , _)
- lem₅ {w} {q} (suc n , init       ,  E     ,  _ , inj₁ (_    ,  E≢E) , (_ ,  _) , _) = ⊥-elim (E≢E refl)
- lem₅ {w} {q} (suc n , init       , .E     ,  _ , inj₂ (refl , refl) , (_ , ()) , _)
- lem₅ {w} {q} (suc n , ⊍inj₂  _   ,  (α _) ,  _ , inj₁ (_    ,    _) , (_ , ()) , _)
- lem₅ {w} {q} (suc n , ⊍inj₂  _   ,  E     ,  _ , inj₁ (_    ,  E≢E) , (_ ,  _) , _) = ⊥-elim (E≢E refl)
- lem₅ {w} {q} (suc n , ⊍inj₂  p   , .E     , .w , inj₂ (refl , refl) , (_ ,  _) , _) with Q₂? p q₀₂
- lem₅ {w} {q} (suc n , ⊍inj₂ .q₀₂ , .E     , .w , inj₂ (refl , refl) , (_ ,  _) , prf) | yes refl  = n , lem₆ q₀₂ w n q [] prf
- lem₅ {w} {q} (suc n , ⊍inj₂  p   , .E     , .w , inj₂ (refl , refl) , (_ , ()) ,   _) | no  p≢q₀₂
- lem₅ {w} {q} (suc n , ⊍inj₁  p   ,  _     ,  u , _                  , (_ ,  _) , prf) = ⊥-elim (lem₇ p u n q [] prf)
- 
- lem₄ : ∀ q w n q' w'
-        → ¬ (⊍inj₂ q , w) ⊢ᵏ n ─ (⊍inj₁ q' , w')
- lem₄ q w zero    q' .w  (() , refl)
- lem₄ q w (suc n) q'  w' (init    , _ , _ , _ , (_ , ()) ,    _)
- lem₄ q w (suc n) q'  w' (⊍inj₁ _ , _ , _ , _ , (_ , ()) ,    _) 
- lem₄ q w (suc n) q'  w' (⊍inj₂ p , _ , u , _ , _        , prf₃)
-   = lem₄ p u n q' w' prf₃
-
- lem₃ : ∀ q w n q' w'
-        → (⊍inj₁ q , w) ⊢ᵏ n ─ (⊍inj₁ q' , w')
-        → (q , w) ⊢ᵏₑ₁ n ─ (q' , w')
- lem₃ q w zero    .q  .w  (refl , refl) = refl , refl
- lem₃ q w (suc n)  q'  w' (init    , _ , _ , _     , (_ , ()) ,    _)
- lem₃ q w (suc n)  q'  w' (⊍inj₁ p , a , u , prf₁  , prf₂     , prf₃)
-   = p , a , u , prf₁ , prf₂ , lem₃ p u n q' w' prf₃
- lem₃ q w (suc n)  q'  w' (⊍inj₂ p , _ , _ , _     , (_ , ()) ,    _)
-
- lem₂ : ∀ {w q}
-        → (q₀ , w) ⊢* (⊍inj₁ q , [])
-        → (q₀₁ , w) ⊢*ₑ₁ (q , [])
- lem₂ {w} {q} (zero  , () , _)
- lem₂ {w} {q} (suc n , init       ,  (α _) ,  _ , inj₁ (_    ,    _) , (_ , ()) ,  _)
- lem₂ {w} {q} (suc n , init       ,  E     ,  _ , inj₁ (_    ,  E≢E) , (_ ,  _) ,  _) = ⊥-elim (E≢E refl)
- lem₂ {w} {q} (suc n , init       , .E     ,  _ , inj₂ (refl , refl) , (_ , ()) ,  _)
- lem₂ {w} {q} (suc n , ⊍inj₁  _   ,  (α _) ,  _ , inj₁ (_    ,    _) , (_ , ()) ,  _)
- lem₂ {w} {q} (suc n , ⊍inj₁  _   ,  E     ,  u , inj₁ (_    ,  E≢E) , (_ ,  _) ,  _) = ⊥-elim (E≢E refl)
- lem₂ {w} {q} (suc n , ⊍inj₁  p   , .E     , .w , inj₂ (refl , refl) , (_ ,  _) ,  _) with Q₁? p q₀₁
- lem₂ {w} {q} (suc n , ⊍inj₁ .q₀₁ , .E     , .w , inj₂ (refl , refl) , (_ ,  _) , prf) | yes refl  = n , lem₃ q₀₁ w n q [] prf
- lem₂ {w} {q} (suc n , ⊍inj₁  p   , .E     , .w , inj₂ (refl , refl) , (_ , ()) ,   _) | no  p≢q₀₁ 
- lem₂ {w} {q} (suc n , ⊍inj₂  p   ,  a     ,  u , _                  , (_ ,  _) , prf) = ⊥-elim (lem₄ p u n q [] prf)
-
- lem₁ : ∀ w
-        → w ∈ Lᵉᴺ nfa
-        → w ∈ Lᵉᴺ nfa₁ ⊎ w ∈ Lᵉᴺ nfa₂
- lem₁ w (init    , ()   ,   _)
- lem₁ w (⊍inj₁ q , q∈F₁ , prf) = inj₁ (q , q∈F₁ , lem₂ prf)
- lem₁ w (⊍inj₂ q , q∈F₂ , prf) = inj₂ (q , q∈F₂ , lem₅ prf)
--}

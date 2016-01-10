@@ -26,7 +26,7 @@ open import Translation Σ dec
 open import State
 
 Lᵉᴺ⊆Lᴺ : ∀ nfa → Lᵉᴺ nfa ⊆ Lᴺ (remove-ε-step nfa)
-Lᵉᴺ⊆Lᴺ nfa w (q , q∈F , n , q₀w⊢ᵏq[]) = undefined
+Lᵉᴺ⊆Lᴺ nfa w (q , q∈F , n , prf) = undefined
  where
   open ε-NFA nfa
   open ε-NFA-Operations nfa

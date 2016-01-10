@@ -6,7 +6,7 @@
     School of Computer Science
 
   Steven Cheung 2015.
-  Version 07-01-2016
+  Version 10-01-2016
 -}
 open import Util
 module Translation (Σ : Set)(dec : DecEq Σ) where
@@ -23,7 +23,7 @@ open import Data.Empty
 open import Function
 open import Data.Nat renaming (_≟_ to _≟N_)
 
-open import Subset.DecidableSubset renaming (Ø to ø)
+open import Subset.DecidableSubset renaming (Ø to ø ; _⋃_ to _⋃ᵈ_)
 open import Language Σ hiding (⟦_⟧)
 open import RegularExpression Σ
 open import Automata Σ
@@ -115,18 +115,23 @@ remove-ε-step nfa =
   where
    open ε-NFA nfa
    open ε-NFA-Operations nfa
-   helper : List Q → List Q
-   helper []       = []
-   helper (x ∷ xs) = filter (λ y → y ∈ δ x E) It ++ helper xs
-   ε-closure : ℕ → List Q → List Q
-   ε-closure zero    l = l
-   ε-closure (suc n) l = ε-closure n (helper l)
+   mutual
+    ε-closure₁ : Q → DecSubset Q
+    ε-closure₁ q = undefined -- It (⟦ q ⟧ {{Q?}})
+
+    ε-closure : List Q → DecSubset Q → DecSubset Q
+    ε-closure []       qs = ø
+    ε-closure (p ∷ ps) qs = if qs p
+                            then ε-closure₁ p ⋃ᵈ ε-closure ps qs
+                            else ε-closure ps qs
+   
    δ' : Q → Σ → DecSubset Q
    --     = λ q' → q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q' ∈ δ p (α a) × q →*ε p)
-   δ' q a = λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ (p ∈ᴸ removeDuplicate (ε-closure (length It) (q ∷ [])) Q?) {{Q?}}) It 
+   δ' q a = λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ p ∈ ε-closure It (⟦ q ⟧ {{Q?}})) It
+   
    F' : DecSubset Q
    -- = λ q → q ∈ F ⊎ Σ[ p ∈ Q ] (p ∈ F × q →*ε p)
-   F' = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ (p ∈ᴸ removeDuplicate (ε-closure (length It) (q ∷ [])) Q?) {{Q?}}) It
+   F' = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ p ∈ ε-closure It (⟦ q ⟧ {{Q?}})) It
 
 
 

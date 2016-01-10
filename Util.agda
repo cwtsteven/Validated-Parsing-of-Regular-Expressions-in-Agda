@@ -16,7 +16,7 @@ open import Data.Nat
 
 open ≡-Reasoning
 
---postulate undefined : ∀ {α} → {A : Set α} → A
+postulate undefined : ∀ {α} → {A : Set α} → A
 
 
 -- Decidable Equality
@@ -35,10 +35,25 @@ _⇔_ : ∀ {α} → Set α → Set α → Set α
 P ⇔ Q = (P → Q) × (Q → P)
 
 
--- List lemma
+-- List lemmas
 tail : {A : Set} → List A → List A
 tail []       = []
 tail (x ∷ xs) = xs
+
+
+DecEq-List : {A : Set} → DecEq A → DecEq (List A)
+DecEq-List dec []         []       = yes refl
+DecEq-List dec ( x ∷  xs) []       = no (λ ())
+DecEq-List dec []         (y ∷ ys) = no (λ ())
+DecEq-List dec ( x ∷  xs) (y ∷ ys) with dec x y
+DecEq-List dec (.y ∷  xs) (y ∷ ys) | yes refl with DecEq-List dec xs ys
+DecEq-List dec (.y ∷ .ys) (y ∷ ys) | yes refl | yes refl  = yes refl
+DecEq-List dec (.y ∷  xs) (y ∷ ys) | yes refl | no  xs≢ys = no  (λ yxs≡yys → xs≢ys (cong tail yxs≡yys))
+DecEq-List dec ( x ∷  xs) (y ∷ ys) | no  x≢y  = no (λ xxs≡yys → x≢y (lem₁ xxs≡yys))
+ where
+  lem₁ : {A : Set}{x y : A}{xs ys : List A} → x ∷ xs ≡ y ∷ ys → x ≡ y
+  lem₁ {x} {._} {xs} {._} refl = refl
+
 
 List-lem₁ : {A : Set}{x y : A}{xs ys : List A}
             → x ≢ y
@@ -51,10 +66,12 @@ List-lem₂ : {A : Set}(xs : List A)
 List-lem₂ []       = refl
 List-lem₂ (x ∷ xs) = cong (λ xs → x ∷ xs) (List-lem₂ xs)
 
+
 List-lem₃ : {A : Set}(xs ys zs : List A)
             → (xs ++ ys) ++ zs ≡  xs ++ ys ++ zs
 List-lem₃ []       ys zs = refl
 List-lem₃ (x ∷ xs) ys zs = cong (λ xs → x ∷ xs) (List-lem₃ xs ys zs)
+
 
 List-lem₄ : {A : Set}(ws us vs xs ys : List A)
             → ws ≡ us ++ vs
