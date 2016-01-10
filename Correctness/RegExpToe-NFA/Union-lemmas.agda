@@ -1,3 +1,9 @@
+{-
+  This module contains the following proofs:
+
+  Steven Cheung 2015.
+  Version 07-01-2016
+-}
 open import Util
 open import RegularExpression
 module Correctness.RegExpToe-NFA.Union-lemmas (Σ : Set)(dec : DecEq Σ)(e₁ : RegularExpression.RegExp Σ)(e₂ : RegularExpression.RegExp Σ) where
@@ -174,7 +180,9 @@ module Lᴿ⊇Lᴺ where
  lem₁ .[] ([]       , refl , ⊍inj₁ q , q∈F₁ , prf) = ⊥-elim (lem₂ q prf)
  lem₁  w  (α a ∷ wᵉ , w≡wᵉ , ⊍inj₁ q , q∈F₁ , prf) = ⊥-elim (lem₃ a wᵉ q prf)
  lem₁  w  (E   ∷ wᵉ , w≡wᵉ , ⊍inj₁ q , q∈F₁ , prf) = inj₁ (wᵉ , w≡wᵉ , q , q∈F₁ , lem₄ {wᵉ} {q} prf)
- lem₁  w  (wᵉ , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = inj₂ (wᵉ , w≡wᵉ , q , q∈F₂ , undefined) --lem₅ prf)
+ lem₁  w  ([]       , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = ⊥-elim (lem₇ q prf)
+ lem₁  w  (α a ∷ wᵉ , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = ⊥-elim (lem₈ a wᵉ q prf)
+ lem₁  w  (E   ∷ wᵉ , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = inj₂ (wᵉ , w≡wᵉ , q , q∈F₂ , lem₉ {wᵉ} {q} prf)
 
 
 {-

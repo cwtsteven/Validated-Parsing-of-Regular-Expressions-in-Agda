@@ -6,7 +6,7 @@
     School of Computer Science
 
   Steven Cheung 2015.
-  Version 10-12-2015
+  Version 07-01-2016
 -}
 open import Util
 module Translation (Σ : Set)(dec : DecEq Σ) where
@@ -100,7 +100,7 @@ regexToε-NFA (e *) =
    Q' = Q₁ *-State
    δ' : Q' → Σᵉ → DecSubset Q'
    δ' init    E     (inj q)  = decEqToBool Q₁? q q₀₁
-   δ' (inj q) E     (inj q') = q' ∈ δ₁ q E ∨ (q  ∈ F₁ ∧ decEqToBool Q₁? q' q₀₁)
+   δ' (inj q) E     (inj q') = q' ∈ δ₁ q E ∨ (q ∈ F₁ ∧ decEqToBool Q₁? q' q₀₁)
    δ' (inj q) (α a) (inj q') = q' ∈ δ₁ q (α a)
    δ' _       _     _        = false
    F' : DecSubset Q'
@@ -123,7 +123,7 @@ remove-ε-step nfa =
    ε-closure (suc n) l = ε-closure n (helper l)
    δ' : Q → Σ → DecSubset Q
    --     = λ q' → q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q' ∈ δ p (α a) × q →*ε p)
-   δ' q a = λ q' → q' ∈ δ q (α a) ∨ any (λ p → (p ∈ᴸ removeDuplicate (ε-closure (length It) (q ∷ [])) Q?) {{Q?}} ∧ q' ∈ δ p (α a)) It 
+   δ' q a = λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ (p ∈ᴸ removeDuplicate (ε-closure (length It) (q ∷ [])) Q?) {{Q?}}) It 
    F' : DecSubset Q
    -- = λ q → q ∈ F ⊎ Σ[ p ∈ Q ] (p ∈ F × q →*ε p)
    F' = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ (p ∈ᴸ removeDuplicate (ε-closure (length It) (q ∷ [])) Q?) {{Q?}}) It

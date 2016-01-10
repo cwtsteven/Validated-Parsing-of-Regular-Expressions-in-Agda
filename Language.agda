@@ -5,7 +5,7 @@
       by Alfred V. Aho and Jeffery D. Ullman
 
   Steven Cheung 2015.
-  Version 9-12-2015
+  Version 07-01-2016
 -}
 
 module Language (Σ : Set) where
@@ -64,14 +64,39 @@ L₁ • L₂ = λ w → Σ[ u ∈ Σ* ] Σ[ v ∈ Σ* ] (u ∈ L₁ × v ∈ L�
 
 -- Closure
 -- section 0.2.3: Operations on Languages
-infix 6 _^_
+infix 11 _^_
 _^_ : Language → ℕ → Language
 L ^ zero    = ⟦ε⟧
 L ^ (suc n) = L • (L ^ n)
 
 infix 13 _⋆
 _⋆ : Language → Language
-L ⋆ = λ w → Σ[ n ∈ ℕ ] w ∈ (L ^ n)
+L ⋆ = λ w → Σ[ n ∈ ℕ ] w ∈ L ^ n
+
+infix 13 _⋆₂
+_⋆₂ : Language → Language
+L ⋆₂ = λ w → Σ[ n ∈ ℕ ] Σ[ m ∈ ℕ ] Σ[ u ∈ Σ* ] Σ[ v ∈ Σ* ] ( u ∈ L ^ n × v ∈ L ^ m × w ≡ u ++ v )
+
+⋆₂-lem₄ : ∀ {L} n m w u v 
+          → u ∈ L ^ n
+          → v ∈ L ^ m
+          → w ≡ u ++ v
+          → w ∈ L ^ (n + m)
+⋆₂-lem₄ zero    m .v .[] v refl v∈Lᵐ refl = v∈Lᵐ
+⋆₂-lem₄ (suc n) m  w  u  v (s , t , s∈L , t∈Lⁿ , u≡st) v∈Lᵐ w≡uv
+  = s , (t ++ v) , s∈L , ⋆₂-lem₄ n m (t ++ v) t v t∈Lⁿ v∈Lᵐ refl , List-lem₄ w u v s t w≡uv u≡st
+
+⋆₂-lem₃ : ∀ {L}
+          → L ⋆ ⊇ L ⋆₂
+⋆₂-lem₃ {L} w (n , m , u , v , u∈Lⁿ , v∈Lᵐ , w≡uv) = n + m , ⋆₂-lem₄ n m w u v u∈Lⁿ v∈Lᵐ w≡uv
+
+⋆₂-lem₂ : ∀ {L}
+          → L ⋆ ⊆ L ⋆₂
+⋆₂-lem₂ = undefined
+
+⋆₂-lem₁ : ∀ {L}
+          → L ⋆ ≈ L ⋆₂
+⋆₂-lem₁ = ⋆₂-lem₂ , ⋆₂-lem₃
 
 
 {- Here we define the set of alphabet containing ε -}
@@ -95,57 +120,43 @@ toΣ* []         = []
 toΣ* (E   ∷ xs) = toΣ* xs
 toΣ* (α a ∷ xs) = a ∷ toΣ* xs
 
--- w ≡ u ++ v ⊢ toΣᵉ* w ≡ toΣᵉ* u ++ toΣᵉ* v
-Σᵉ*-lem₁ : ∀ {w u v}
+Σᵉ*-lem₁ : ∀ {w u}
+           → toΣ* w ++ toΣ* u ≡ toΣ* (w ++ u)
+Σᵉ*-lem₁ {[]}       {ys} = refl   
+Σᵉ*-lem₁ {α a ∷ xs} {ys} = cong (λ xs → a ∷ xs) (Σᵉ*-lem₁ {xs} {ys})
+Σᵉ*-lem₁ {E   ∷ xs} {ys} = Σᵉ*-lem₁ {xs} {ys}
+
+
+Σᵉ*-lem₂ : ∀ {w}
+           → toΣ* (w ∷ʳ E) ≡ toΣ* w
+Σᵉ*-lem₂ {[]}       = refl
+Σᵉ*-lem₂ {α a ∷ xs} = cong (λ xs → a ∷ xs) (Σᵉ*-lem₂ {xs})
+Σᵉ*-lem₂ {E   ∷ xs} = Σᵉ*-lem₂ {xs}
+
+Σᵉ*-lem₃ : ∀ w u uᵉ v vᵉ vᵉ₁
            → w ≡ u ++ v
-           → toΣᵉ* w ≡ toΣᵉ* u ++ toΣᵉ* v
-Σᵉ*-lem₁ {w} {u} {v} w≡uv
+           → u ≡ toΣ* uᵉ
+           → v ≡ toΣ* vᵉ
+           → vᵉ ≡ E ∷ vᵉ₁
+           → w ≡ toΣ* (uᵉ ++ E ∷ vᵉ₁)
+Σᵉ*-lem₃ w u uᵉ v vᵉ vᵉ₁ w≡uv u≡uᵉ v≡vᵉ vᵉ≡Evᵉ₁
   = begin
-    toΣᵉ* w             ≡⟨ cong toΣᵉ* w≡uv ⟩
-    toΣᵉ* (u ++ v)      ≡⟨ List-lem₃ α u v ⟩
-    toΣᵉ* u ++ toΣᵉ* v
+    w                         ≡⟨ w≡uv ⟩
+    u ++ v                    ≡⟨ cong (λ u → u ++ v) u≡uᵉ ⟩
+    toΣ* uᵉ ++ v              ≡⟨ cong (λ v → toΣ* uᵉ ++ v) v≡vᵉ ⟩
+    toΣ* uᵉ ++ toΣ* vᵉ        ≡⟨ cong (λ v → toΣ* uᵉ ++ toΣ* v) vᵉ≡Evᵉ₁ ⟩
+    toΣ* uᵉ ++ toΣ* (E ∷ vᵉ₁) ≡⟨ Σᵉ*-lem₁ {uᵉ} {E ∷ vᵉ₁} ⟩
+    toΣ* (uᵉ ++ E ∷ vᵉ₁)
     ∎
 
-Σᵉ*-lem₁' : ∀ {wᵉ uᵉ vᵉ}
-            → wᵉ ≡ uᵉ ++ vᵉ
-            → toΣ* wᵉ ≡ toΣ* uᵉ ++ toΣ* vᵉ
-Σᵉ*-lem₁' = undefined 
-
--- toΣᵉ* w ≡ [] ⊢ w ≡ []
-Σᵉ*-lem₂ : ∀ {w}
-           → toΣᵉ* w ≡ []
-           → w ≡ []
-Σᵉ*-lem₂ {[]}       refl = refl
-Σᵉ*-lem₂ {(x ∷ xs)} ()
-
--- w ≡ toΣ* (toΣᵉ* w)
-Σᵉ*-lem₃ : ∀ w
-           → w ≡ toΣ* (toΣᵉ* w)
-Σᵉ*-lem₃ []       = refl
-Σᵉ*-lem₃ (x ∷ xs) = cong (λ w → x ∷ w) (Σᵉ*-lem₃ xs)
-
--- toΣ* (E ∷ w) ≡ toΣ* w
-Σᵉ*-lem₄ : ∀ w
-           → toΣ* (E ∷ w) ≡ toΣ* w
-Σᵉ*-lem₄ w = refl
-
-Σᵉ*-lem₅ : ∀ {x y xs b u}
-           → x ∷ y ∷ xs ≡ toΣ* (α b ∷ u)
-           → y ∷ xs ≡ toΣ* u
-Σᵉ*-lem₅ {x} {y} {xs} {b} {u} prf = cong tail prf
-
-Σᵉ*-lem₆ : ∀ {xs ys}
-           → toΣ* xs ++ toΣ* ys ≡ toΣ* (xs ++ ys)
-Σᵉ*-lem₆ {[]}       {ys} = refl   
-Σᵉ*-lem₆ {α a ∷ xs} {ys} = cong (λ xs → a ∷ xs) (Σᵉ*-lem₆ {xs} {ys})
-Σᵉ*-lem₆ {E   ∷ xs} {ys} = Σᵉ*-lem₆ {xs} {ys}
-
-Σᵉ*-lem₇ : ∀ {w}
-           → toΣ* (w ∷ʳ E) ≡ toΣ* w
-Σᵉ*-lem₇ {[]}       = refl
-Σᵉ*-lem₇ {α a ∷ xs} = cong (λ xs → a ∷ xs) (Σᵉ*-lem₇ {xs})
-Σᵉ*-lem₇ {E   ∷ xs} = Σᵉ*-lem₇ {xs}
-                    
+Σᵉ*-lem₄ : ∀ wᵉ uᵉ vᵉ
+           → wᵉ ≡ uᵉ ++ E ∷ vᵉ
+           → toΣ* wᵉ ≡ toΣ* uᵉ ++ toΣ* vᵉ
+Σᵉ*-lem₄ wᵉ uᵉ vᵉ wᵉ≡uv = begin
+                          toΣ* wᵉ             ≡⟨ cong toΣ* wᵉ≡uv ⟩
+                          toΣ* (uᵉ ++ E ∷ vᵉ) ≡⟨ sym (Σᵉ*-lem₁ {uᵉ} {E ∷ vᵉ}) ⟩
+                          toΣ* uᵉ ++ toΣ* vᵉ
+                          ∎
 
 -- Decidable Equality of Σᵉ
 DecEq-Σᵉ : DecEq Σ → DecEq Σᵉ

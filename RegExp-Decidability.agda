@@ -3,7 +3,7 @@
     ∀e∈RegExp. L(e) is decidable
 
   Steven Cheung 2015.
-  Version 4-12-2015
+  Version 04-12-2015
 -}
 open import Util
 module RegExp-Decidability (Σ : Set)(dec : DecEq Σ) where

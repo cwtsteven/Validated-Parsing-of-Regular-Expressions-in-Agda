@@ -6,7 +6,7 @@
       by Alfred V. Aho and Jeffery D. Ullman
 
   Steven Cheung 2015.
-  Version 26-11-2015
+  Version 07-01-2016
 -}
 
 module RegularExpression (Σ : Set) where

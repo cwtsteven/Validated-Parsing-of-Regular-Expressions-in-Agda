@@ -1,3 +1,9 @@
+{-
+  This module contains the following proofs:
+
+  Steven Cheung 2015.
+  Version 07-01-2016
+-}
 open import Util
 module Correctness.RegExpToe-NFA.Singleton-lemmas (Σ : Set)(dec : DecEq Σ)(a : Σ) where
 
@@ -59,14 +65,14 @@ module Lᴿ⊇Lᴺ where
  lem₁ (.a ∷ []) (._  , _    , accept , refl , suc n , accept , α  _ , _  , refl , _          ,   _) | yes refl = refl
  lem₁ ( x ∷ []) (._  , _    , accept , refl , suc n , accept , α  b , _  , refl , _          ,   _) | no  a≢x  with dec a b
  lem₁ ( x ∷ []) (._  , w≡wᵉ , accept , refl , suc n , accept , α .a , uᵉ , refl , (_ , refl) ,   _) | no  a≢x  | yes refl
-   = ⊥-elim (List-lem₆ {xs = toΣ* uᵉ} {ys = []} a≢x (sym w≡wᵉ))
+   = ⊥-elim (List-lem₁ {xs = toΣ* uᵉ} {ys = []} a≢x (sym w≡wᵉ))
  lem₁ ( x ∷ []) (._  , _    , accept , refl , suc n , accept , α  b , _  , refl , (_ ,   ()) ,   _) | no  a≢x  | no  a≢b
  lem₁ ( x ∷ []) (._  , w≡wᵉ , accept , refl , suc n , _      , E    , uᵉ , refl , (_ ,   ()) ,   _)
  
  lem₁ ( x ∷ y ∷ xs) (._ , _    , accept , refl , zero  , ()     , refl)
  lem₁ ( x ∷ y ∷ xs) (._ , _    , accept , refl , suc n , init   , α _ , _  , refl , (_ , ())  ,   _)
  lem₁ ( x ∷ y ∷ xs) (._ , w≡wᵉ , accept , refl , suc n , accept , α b , uᵉ , refl , _         , prf)
-   = ⊥-elim (lem₂ (y ∷ xs) uᵉ n (λ ()) (Σᵉ*-lem₅ {x} {y} {xs} {b} {uᵉ} w≡wᵉ) prf)
+   = ⊥-elim (lem₂ (y ∷ xs) uᵉ n (λ ()) (cong tail w≡wᵉ) prf)
  lem₁ ( x ∷ y ∷ xs) (._ , w≡wᵉ , accept , refl , suc n , _      , E   , uᵉ , refl , (_ , ())  ,   _)
  
 {-

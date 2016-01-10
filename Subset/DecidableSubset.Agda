@@ -2,7 +2,7 @@
   This module contains the definition of Decidable Subset and its operations.
 
   Steven Cheung 2015.
-  Version 10-12-2015
+  Version 07-01-2016
 -}
 open import Util
 module Subset.DecidableSubset where
@@ -46,18 +46,23 @@ _∉ᵍ_ : {A : Set} → A → DecSubset A → Set
 a ∉ᵍ p = ¬ (a ∈ᵍ p)
 
 
-∈ᵍ-lem₃ : {A : Set}(a : A)(p : DecSubset A) → ¬ (a ∈ᵍ p) → a ∈ p ≡ false
-∈ᵍ-lem₃ a p a∉ᵍp with a ∈ p
-∈ᵍ-lem₃ a p a∉ᵍp | true  = ⊥-elim (a∉ᵍp refl)
-∈ᵍ-lem₃ a p a∉ᵍp | false = refl
+∈ᵍ-lem₃ : {A : Set}{a : A}{p : DecSubset A}
+          → a ∉ᵍ p
+          → a ∈ p ≡ false
+∈ᵍ-lem₃ {A} {a} {p} a∉ᵍp with a ∈ p
+∈ᵍ-lem₃ {A} {a} {p} a∉ᵍp | true  = ⊥-elim (a∉ᵍp refl)
+∈ᵍ-lem₃ {A} {a} {p} a∉ᵍp | false = refl
 
-∈ᵍ-lem₂ : {A : Set}(a : A)(p : DecSubset A) → a ∈ p ≡ false → ¬ (a ∈ᵍ p)
-∈ᵍ-lem₂ a p a∈p≡false a∈ᵍp with a ∈ p
-∈ᵍ-lem₂ a p ()        a∈ᵍp | true 
-∈ᵍ-lem₂ a p a∈p≡false ()   | false
+∈ᵍ-lem₂ : {A : Set}{a : A}{p : DecSubset A}
+          → a ∈ p ≡ false
+          → a ∉ᵍ p
+∈ᵍ-lem₂ {A} {a} {p} a∈p≡false a∈ᵍp with a ∈ p
+∈ᵍ-lem₂ {A} {a} {p} ()        a∈ᵍp | true 
+∈ᵍ-lem₂ {A} {a} {p} a∈p≡false ()   | false
 
-∈ᵍ-lem₁ : {A : Set}(a : A)(p : DecSubset A) → a ∈ p ≡ false ⇔ ¬ (a ∈ᵍ p)
-∈ᵍ-lem₁ a p = ∈ᵍ-lem₂ a p , ∈ᵍ-lem₃ a p
+∈ᵍ-lem₁ : {A : Set}{a : A}{p : DecSubset A}
+          → a ∈ p ≡ false ⇔ a ∉ᵍ p
+∈ᵍ-lem₁ {A} {a} {p} = ∈ᵍ-lem₂ {A} {a} {p} , ∈ᵍ-lem₃ {A} {a} {p}
 
 
 -- Intersection

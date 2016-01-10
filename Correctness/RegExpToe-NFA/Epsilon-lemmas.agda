@@ -1,3 +1,12 @@
+{-
+  This module contains the following proofs:
+    L(ε) ⊆ L(regexToε-NFA ε)
+    L(ε) ⊇ L(regexToε-NFA ε)
+
+  Steven Cheung 2015.
+  Version 07-01-2016
+-}
+
 open import Util
 module Correctness.RegExpToe-NFA.Epsilon-lemmas (Σ : Set)(dec : DecEq Σ) where
 

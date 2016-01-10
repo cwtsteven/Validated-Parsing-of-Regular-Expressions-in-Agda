@@ -1,3 +1,9 @@
+{-
+  This module contains the following proofs:
+
+  Steven Cheung 2015.
+  Version 07-01-2016
+-}
 open import Util
 open import RegularExpression
 module Correctness.RegExpToe-NFA.Concatenation-lemmas (Σ : Set)(dec : DecEq Σ)(e₁ : RegularExpression.RegExp Σ)(e₂ : RegularExpression.RegExp Σ) where
@@ -32,9 +38,9 @@ open ε-NFA nfa₁ renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q�
 open ε-NFA nfa₂ renaming (Q to Q₂ ; Q? to Q₂? ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂)
 open ε-NFA-Operations nfa
 open ε-NFA-Operations nfa₁
-  renaming (_⊢_ to _⊢ₑ₁_ ; _⊢*_ to _⊢*ₑ₁_ ; _⊢*₂_ to _⊢*₂ₑ₁_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₁_─_ ; ⊢*-lem₁ to ⊢*-lem₁ₑ₁ ; ⊢*-lem₂ to ⊢*-lem₂ₑ₁ ; ⊢*-lem₃ to ⊢*-lem₃ₑ₁ ; ⊢ᵏ-lem₂ to ⊢ᵏₑ₁-lem₂)
+  renaming (_⊢_ to _⊢ₑ₁_ ; _⊢*_ to _⊢*ₑ₁_ ; _⊢*₂_ to _⊢*₂ₑ₁_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₁_─_ ; ⊢*-lem₁ to ⊢*-lem₁ₑ₁ ; ⊢*-lem₂ to ⊢*-lem₂ₑ₁ ; ⊢*-lem₃ to ⊢*-lem₃ₑ₁ ; ⊢ᵏ₂-lem₂ to ⊢ᵏ₂ₑ₁-lem₂)
 open ε-NFA-Operations nfa₂
-  renaming (_⊢_ to _⊢ₑ₂_ ; _⊢*_ to _⊢*ₑ₂_ ; _⊢*₂_ to _⊢*₂ₑ₂_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₂_─_ ; ⊢*-lem₁ to ⊢*-lem₁ₑ₂ ; ⊢*-lem₂ to ⊢*-lem₂ₑ₂ ; ⊢*-lem₃ to ⊢*-lem₃ₑ₂ ; ⊢ᵏ-lem₂ to ⊢ᵏₑ₂-lem₂)
+  renaming (_⊢_ to _⊢ₑ₂_ ; _⊢*_ to _⊢*ₑ₂_ ; _⊢*₂_ to _⊢*₂ₑ₂_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₂_─_ ; ⊢*-lem₁ to ⊢*-lem₁ₑ₂ ; ⊢*-lem₂ to ⊢*-lem₂ₑ₂ ; ⊢*-lem₃ to ⊢*-lem₃ₑ₂ ; ⊢ᵏ₂-lem₂ to ⊢ᵏ₂ₑ₂-lem₂)
 
 open ≡-Reasoning 
 
@@ -96,9 +102,9 @@ module Lᴿ⊆Lᴺ where
                   w                            ≡⟨ w≡uv ⟩
                   u ++ v                       ≡⟨ cong (λ u → u ++ v) u≡uᵉ ⟩
                   toΣ* uᵉ ++ v                 ≡⟨ cong (λ v → toΣ* uᵉ ++ v) v≡vᵉ ⟩
-                  toΣ* uᵉ ++ toΣ* vᵉ           ≡⟨ cong (λ v → toΣ* uᵉ ++ v) (sym (Σᵉ*-lem₄ vᵉ)) ⟩
-                  toΣ* uᵉ ++ toΣ* (E ∷ vᵉ)     ≡⟨ cong (λ v → toΣ* uᵉ ++ v) (sym (Σᵉ*-lem₄ (E ∷ vᵉ))) ⟩
-                  toΣ* uᵉ ++ toΣ* (E ∷ E ∷ vᵉ) ≡⟨ Σᵉ*-lem₆ {uᵉ} {E ∷ E ∷ vᵉ} ⟩
+                  toΣ* uᵉ ++ toΣ* vᵉ           ≡⟨ cong (λ v → toΣ* uᵉ ++ v) refl ⟩
+                  toΣ* uᵉ ++ toΣ* (E ∷ vᵉ)     ≡⟨ cong (λ v → toΣ* uᵉ ++ v) refl ⟩
+                  toΣ* uᵉ ++ toΣ* (E ∷ E ∷ vᵉ) ≡⟨ Σᵉ*-lem₁ {uᵉ} {E ∷ E ∷ vᵉ} ⟩
                   toΣ* (uᵉ ++ E ∷ E ∷ vᵉ)
                   ∎
 
@@ -291,7 +297,8 @@ module Lᴿ⊇Lᴺ where
         → toΣ* (find-uᵉ q₀ wᵉ n mid vᵉ prf) ∈ Lᵉᴺ nfa₁
  lem₃ wᵉ zero    vᵉ (() , _)
  lem₃ wᵉ (suc n) vᵉ prf with lem₄ q₀₁ wᵉ n vᵉ prf
- ... | p , prf₁ , w≡wᵉ , p∈F₁ , prf₂ = find-uᵉ q₀ wᵉ n (⍟inj₁ p) (E ∷ vᵉ) prf₁ , trans (cong toΣ* w≡wᵉ) (Σᵉ*-lem₇ {find-uᵉ q₀ wᵉ n (⍟inj₁ p) (E ∷ vᵉ) prf₁}) , p , p∈F₁ , n , prf₂
+ ... | p , prf₁ , w≡wᵉ , p∈F₁ , prf₂
+   = find-uᵉ q₀ wᵉ n (⍟inj₁ p) (E ∷ vᵉ) prf₁ , trans (cong toΣ* w≡wᵉ) (Σᵉ*-lem₂ {find-uᵉ q₀ wᵉ n (⍟inj₁ p) (E ∷ vᵉ) prf₁}) , p , p∈F₁ , n , prf₂
 
 
  lem₃₁ : ∀ q uᵉ n p vᵉ
@@ -355,7 +362,7 @@ module Lᴿ⊇Lᴺ where
          → (⍟inj₂ p , uᵉ) ⊢ᵏ m ─ (⍟inj₂ q' , [])
          → Σ[ n₁ ∈ ℕ ] Σ[ m₁ ∈ ℕ ] Σ[ vᵉ ∈ Σᵉ* ] ( (⍟inj₁ q , wᵉ) ⊢ᵏ n₁ ─ (mid , vᵉ) × (mid , vᵉ) ⊢ᵏ m₁ ─ (⍟inj₂ q' , []) )
  lem₂₀ q _  zero    p uᵉ m q' (() , _) prf₁ 
- lem₂₀ q wᵉ (suc n) p uᵉ m q' prf₁ prf₂ with ⊢ᵏ-lem₂ {⍟inj₁ q} {wᵉ} {suc n} {⍟inj₂ p} {uᵉ} prf₁
+ lem₂₀ q wᵉ (suc n) p uᵉ m q' prf₁ prf₂ with ⊢ᵏ₂-lem₂ {⍟inj₁ q} {wᵉ} {suc n} {⍟inj₂ p} {uᵉ} prf₁
  lem₂₀ q wᵉ (suc n) p uᵉ m q' prf₁ prf₂ | ⍟inj₁ p₁ , a   , prf₃ , (refl ,   ())
  lem₂₀ q wᵉ (suc n) p uᵉ m q' prf₁ prf₂ | mid      , α _ , prf₃ , (refl ,   ())
  lem₂₀ q wᵉ (suc n) p uᵉ m q' prf₁ prf₂ | mid      , E   , prf₃ , (refl , prf₄)
@@ -384,7 +391,7 @@ module Lᴿ⊇Lᴺ where
    wᵉ≡uᵉvᵉ : toΣ* wᵉ ≡ toΣ* uᵉ ++ toΣ* vᵉ
    wᵉ≡uᵉvᵉ = begin
              toΣ* wᵉ            ≡⟨ cong toΣ* (lem₁₁ q₀ wᵉ n mid vᵉ prf₁) ⟩ 
-             toΣ* (uᵉ ++ vᵉ)    ≡⟨ sym (Σᵉ*-lem₆ {uᵉ} {vᵉ}) ⟩ 
+             toΣ* (uᵉ ++ vᵉ)    ≡⟨ sym (Σᵉ*-lem₁ {uᵉ} {vᵉ}) ⟩ 
              toΣ* uᵉ ++ toΣ* vᵉ
              ∎
 

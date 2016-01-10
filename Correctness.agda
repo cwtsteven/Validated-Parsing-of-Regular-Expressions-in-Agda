@@ -5,7 +5,7 @@
     ∀nfa∈NFA.   L(nfa) = L(powerset-construction dfa)
 
   Steven Cheung 2015.
-  Version 10-12-2015
+  Version 07-01-2016
 -}
 open import Util
 module Correctness (Σ : Set)(dec : DecEq Σ) where
