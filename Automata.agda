@@ -64,15 +64,6 @@ module ε-NFA-Operations (N : ε-NFA) where
  (q , wᵉ) ⊢ᵏ₂ (suc n) ─ (q' , wᵉ')
    = Σ[ p ∈ Q ] Σ[ aᵉ ∈ Σᵉ ]
      ( (q , wᵉ) ⊢ᵏ n ─ (p , aᵉ ∷ wᵉ') × (p , aᵉ , wᵉ') ⊢ (q' , wᵉ') )
-
- -- alternative definition of ⊢ᵏ
- infix 7 _⊢ᵏ₃_─_
- _⊢ᵏ₃_─_ : (Q × Σᵉ*) → ℕ → (Q × Σᵉ*) → Set
- (q , wᵉ) ⊢ᵏ₃ zero ─ (q' , wᵉ')
-   = (q , wᵉ) ⊢ᵏ zero ─ (q' , wᵉ')
- (q , wᵉ) ⊢ᵏ₃ (suc n) ─ (q' , wᵉ')
-   = Σ[ n₁ ∈ ℕ ] Σ[ m₁ ∈ ℕ ] Σ[ p ∈ Q ] Σ[ uᵉ ∈ Σᵉ* ]
-     ( (q , wᵉ) ⊢ᵏ n₁ ─ (p , uᵉ) × (p , uᵉ) ⊢ᵏ m₁ ─ (q' , wᵉ') )
  
  -- transitive closure of ⊢
  infix 7 _⊢*_
@@ -150,11 +141,18 @@ module ε-NFA-Operations (N : ε-NFA) where
    prf₁'' : (q , wᵉ) ⊢ᵏ n ─ (p , a ∷ wᵉ') × (p , a , wᵉ') ⊢ (q' , wᵉ')
    prf₁'' = subst (λ a → (q , wᵉ) ⊢ᵏ n ─ (p , a ∷ wᵉ') × (p , a , wᵉ') ⊢ (q' , wᵉ')) a≡a' prf₁'
 
- -- not necessary
+ ⊢ᵏ₂-lem₉ : ∀ {q wᵉ n p a q' wᵉ'}
+            → (q , wᵉ) ⊢ᵏ n ─ (p , a ∷ wᵉ')
+            → (p , a , wᵉ') ⊢ (q' , wᵉ')
+            → (q , wᵉ) ⊢ᵏ suc n ─ (q' , wᵉ')
+ ⊢ᵏ₂-lem₉ {.p} {._} {zero}  {p} {a} {q'} {wᵉ'} (refl , refl) prf = q' , a , wᵉ' , refl , prf , (refl , refl)
+ ⊢ᵏ₂-lem₉ {q}  {._} {suc n} {p} {a} {q'} {wᵉ'} (p₁ , a₁ , u₁ , refl , prf₁ , prf₂) prf₃ = p₁ , a₁ , u₁ , refl , prf₁ , ⊢ᵏ₂-lem₉ {p₁} {u₁} {n} {p} {a} {q'} {wᵉ'} prf₂ prf₃
+
  ⊢ᵏ₂-lem₃ : ∀ {q wᵉ n q' wᵉ'}
            → (q , wᵉ) ⊢ᵏ₂ n ─ (q' , wᵉ')
            → (q , wᵉ) ⊢ᵏ n ─ (q' , wᵉ')
- ⊢ᵏ₂-lem₃ = undefined
+ ⊢ᵏ₂-lem₃ {q} {wᵉ} {zero}  {.q} {.wᵉ} (refl , refl) = refl , refl
+ ⊢ᵏ₂-lem₃ {q} {wᵉ} {suc n} {q'} {wᵉ'} (p , a , prf₁ , prf₂) = ⊢ᵏ₂-lem₉ {q} {wᵉ} {n} {p} {a} {q'} {wᵉ'} prf₁ prf₂
 
  ⊢ᵏ₂-lem₂ : ∀ {q wᵉ n q' wᵉ'}
            → (q , wᵉ) ⊢ᵏ n ─ (q' , wᵉ')
@@ -166,24 +164,6 @@ module ε-NFA-Operations (N : ε-NFA) where
            → (q , wᵉ) ⊢ᵏ n ─ (q' , wᵉ') ⇔ (q , wᵉ) ⊢ᵏ₂ n ─ (q' , wᵉ')
  ⊢ᵏ₂-lem₁ {q} {wᵉ} {n} {q'} {wᵉ'} = ⊢ᵏ₂-lem₂ {q} {wᵉ} {n} {q'} {wᵉ'} , ⊢ᵏ₂-lem₃ {q} {wᵉ} {n} {q'} {wᵉ'}
  {- above are the proofs of ⊢ᵏ ⇔ ⊢ᵏ₂ -}
-
- {- below are the proofs of ⊢ᵏ ⇔ ⊢ᵏ₃ -}
- -- not necessary
- ⊢ᵏ₃-lem₃ : ∀ {q wᵉ n q' wᵉ'}
-           → (q , wᵉ) ⊢ᵏ₃ n ─ (q' , wᵉ')
-           → (q , wᵉ) ⊢ᵏ n ─ (q' , wᵉ')
- ⊢ᵏ₃-lem₃ = undefined
-
- ⊢ᵏ₃-lem₂ : ∀ {q wᵉ n q' wᵉ'}
-           → (q , wᵉ) ⊢ᵏ  n ─ (q' , wᵉ')
-           → (q , wᵉ) ⊢ᵏ₃ n ─ (q' , wᵉ')
- ⊢ᵏ₃-lem₂ {q} {wᵉ} {zero}  {q'} {wᵉ'} prf = prf
- ⊢ᵏ₃-lem₂ {q} {wᵉ} {suc n} {q'} {wᵉ'} prf = suc n , zero , q' , wᵉ' , prf , (refl , refl)
-
- ⊢ᵏ₃-lem₁ : ∀ {q wᵉ n q' wᵉ'}
-           → (q , wᵉ) ⊢ᵏ n ─ (q' , wᵉ') ⇔ (q , wᵉ) ⊢ᵏ₃ n ─ (q' , wᵉ')
- ⊢ᵏ₃-lem₁ {q} {wᵉ} {n} {q'} {wᵉ'} = ⊢ᵏ₃-lem₂ {q} {wᵉ} {n} {q'} {wᵉ'} , ⊢ᵏ₃-lem₃ {q} {wᵉ} {n} {q'} {wᵉ'}
- {- above are the proofs of ⊢ᵏ ⇔ ⊢ᵏ₃ -}
 
  {- below are the proofs of ⊢* ⇔ ⊢*₂ -}
  ⊢*-lem₄ : ∀ q wᵉ n q' wᵉ' p uᵉ m

@@ -73,31 +73,6 @@ infix 13 _⋆
 _⋆ : Language → Language
 L ⋆ = λ w → Σ[ n ∈ ℕ ] w ∈ L ^ n
 
-infix 13 _⋆₂
-_⋆₂ : Language → Language
-L ⋆₂ = λ w → Σ[ n ∈ ℕ ] Σ[ m ∈ ℕ ] Σ[ u ∈ Σ* ] Σ[ v ∈ Σ* ] ( u ∈ L ^ n × v ∈ L ^ m × w ≡ u ++ v )
-
-⋆₂-lem₄ : ∀ {L} n m w u v 
-          → u ∈ L ^ n
-          → v ∈ L ^ m
-          → w ≡ u ++ v
-          → w ∈ L ^ (n + m)
-⋆₂-lem₄ zero    m .v .[] v refl v∈Lᵐ refl = v∈Lᵐ
-⋆₂-lem₄ (suc n) m  w  u  v (s , t , s∈L , t∈Lⁿ , u≡st) v∈Lᵐ w≡uv
-  = s , (t ++ v) , s∈L , ⋆₂-lem₄ n m (t ++ v) t v t∈Lⁿ v∈Lᵐ refl , List-lem₄ w u v s t w≡uv u≡st
-
-⋆₂-lem₃ : ∀ {L}
-          → L ⋆ ⊇ L ⋆₂
-⋆₂-lem₃ {L} w (n , m , u , v , u∈Lⁿ , v∈Lᵐ , w≡uv) = n + m , ⋆₂-lem₄ n m w u v u∈Lⁿ v∈Lᵐ w≡uv
-
-⋆₂-lem₂ : ∀ {L}
-          → L ⋆ ⊆ L ⋆₂
-⋆₂-lem₂ = undefined
-
-⋆₂-lem₁ : ∀ {L}
-          → L ⋆ ≈ L ⋆₂
-⋆₂-lem₁ = ⋆₂-lem₂ , ⋆₂-lem₃
-
 
 {- Here we define the set of alphabet containing ε -}
 

@@ -16,7 +16,7 @@ open import Data.Nat
 
 open ≡-Reasoning
 
-postulate undefined : ∀ {α} → {A : Set α} → A
+--postulate undefined : ∀ {α} → {A : Set α} → A
 
 
 -- Decidable Equality
