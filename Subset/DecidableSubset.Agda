@@ -74,6 +74,20 @@ infix 11 _⋃_
 _⋃_ : {A : Set} → DecSubset A → DecSubset A → DecSubset A
 as ⋃ bs = λ a → a ∈ as ∨ a ∈ bs
 
+-- Subset
+infix 10 _⊆_
+_⊆_ : {A : Set} → DecSubset A → DecSubset A → {{It : List A}} → Bool
+(as ⊆ bs) {{It}} = all (λ a → if a ∈ as then a ∈ bs else true) It
+
+-- Superset
+infix 10 _⊇_
+_⊇_ : {A : Set} → DecSubset A → DecSubset A → {{It : List A}} → Bool
+(as ⊇ bs) {{It}} = (bs ⊆ as) {{It}}
+
+-- Equality
+infix 0 _≈_
+_≈_ : {A : Set} → DecSubset A → DecSubset A → {{It : List A}} → Bool
+(as ≈ bs) {{It}} = (as ⊆ bs) {{It}} ∧ (as ⊇ bs) {{It}}
 
 
 -- List representation

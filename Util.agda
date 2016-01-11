@@ -2,7 +2,7 @@
   This module contains some miscellaneous definitions and proofs that will be used.
 
   Steven Cheung 2015.
-  Version 9-12-2015
+  Version 10-01-2016
 -}
 module Util where
 

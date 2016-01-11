@@ -45,14 +45,25 @@ open ε-NFA-Operations nfa₁
 ¬lem₂ q wᵉ (suc n) vᵉ (inj p , a   , uᵉ , _ , (refl , prf₁) , prf₂)
   = ¬lem₂ p uᵉ n vᵉ prf₂
 
+lem₄₀ : ∀ wᵉ n vᵉ
+        → (init , wᵉ) ⊢ᵏ n ─ (init , vᵉ)
+        → toΣ* wᵉ ≡ toΣ* vᵉ
+lem₄₀ wᵉ zero    .wᵉ (refl , refl) = refl
+lem₄₀ ._ (suc n)  vᵉ (init  , α _ , uᵉ , refl , (refl ,   ()) , prf₂)
+lem₄₀ ._ (suc n)  vᵉ (init  , E   , uᵉ , refl , (refl , prf₁) , prf₂) = lem₄₀ uᵉ n vᵉ prf₂
+lem₄₀ ._ (suc n)  vᵉ (inj p , α _ , uᵉ , refl , (refl ,   ()) , prf₂)
+lem₄₀ ._ (suc n)  vᵉ (inj p , E   , uᵉ , refl , (refl , prf₁) , prf₂) = ⊥-elim (¬lem₂ p uᵉ n vᵉ prf₂)
+
+
 ¬lem₁ : ∀ wᵉ n vᵉ
-        → ¬ (init , wᵉ) ⊢ᵏ suc n ─ (init , vᵉ)
-¬lem₁ ._ zero    .uᵉ (.init  , α _ , uᵉ , refl , (refl ,   ()) , (refl , refl))
-¬lem₁ ._ zero    .uᵉ (.init  , E   , uᵉ , refl , (refl ,   ()) , (refl , refl))
-¬lem₁ ._ (suc n)  vᵉ ( init  , α _ , uᵉ , refl , (refl ,   ()) , prf₂)
-¬lem₁ ._ (suc n)  vᵉ ( init  , E   , uᵉ , refl , (refl ,   ()) , prf₂) 
-¬lem₁ ._ (suc n)  vᵉ ( inj p , a   , uᵉ , refl , (refl , prf₁) , prf₂)
-  = ¬lem₂ p uᵉ (suc n) vᵉ prf₂
+        → toΣ* wᵉ ≢ toΣ* vᵉ
+        → ¬ (init , wᵉ) ⊢ᵏ n ─ (init , vᵉ)
+¬lem₁ ._ zero     vᵉ w≢v (refl , refl) = ⊥-elim (w≢v refl)
+¬lem₁ ._ (suc n)  vᵉ w≢v ( init  , α _ , uᵉ , refl , (refl ,   ()) , prf₂)
+¬lem₁ ._ (suc n)  vᵉ w≢v ( init  , E   , uᵉ , refl , (refl , prf₁) , prf₂)
+  = ¬lem₁ uᵉ n vᵉ w≢v prf₂
+¬lem₁ ._ (suc n)  vᵉ w≢v ( inj p , a   , uᵉ , refl , (refl , prf₁) , prf₂)
+  = ¬lem₂ p uᵉ n vᵉ prf₂
 
 
 module Lᴿ⊆Lᴺ where
@@ -60,13 +71,25 @@ module Lᴿ⊆Lᴺ where
 
  lem₄ : ∀ wᵉ n q₁
         → (q₀ , wᵉ)  ⊢ᵏ suc n ─ (inj q₁ , [])
-        → Σ[ uᵉ ∈ Σᵉ* ] (wᵉ ≡ E ∷ uᵉ × (inj q₀₁ , uᵉ) ⊢ᵏ n ─ (inj q₁ , []))
+        → Σ[ n₁ ∈ ℕ ] Σ[ uᵉ ∈ Σᵉ* ] (toΣ* wᵉ ≡ toΣ* uᵉ × (inj q₀₁ , uᵉ) ⊢ᵏ n₁ ─ (inj q₁ , []))
+ lem₄ ._ zero    q₁  (inj .q₁  , α _ , .[] , refl , (refl ,   ()) , (refl , refl))
+ lem₄ ._ zero    q₁  (inj .q₁  , E   , .[] , refl , (refl , prf₁) , (refl , refl)) with Q₁? q₁ q₀₁
+ lem₄ ._ zero   .q₀₁ (inj .q₀₁ , E   , .[] , refl , (refl , prf₁) , (refl , refl)) | yes refl  = zero , [] , (refl , (refl , refl))
+ lem₄ ._ zero    q₁  (inj .q₁  , E   , .[] , refl , (refl ,   ()) , (refl , refl)) | no  p≢q₀₁
+ lem₄ ._ (suc n) q₁  (init     , α _ ,  uᵉ , refl , (refl ,   ()) , prf₂)
+ lem₄ ._ (suc n) q₁  (init     , E   ,  uᵉ , refl , (refl , prf₁) , prf₂) = lem₄ uᵉ n q₁ prf₂
+ lem₄ ._ (suc n) q₁  (inj  p   , α _ ,  uᵉ , refl , (refl ,   ()) , prf₂)
+ lem₄ ._ (suc n) q₁  (inj  p   , E   ,  uᵉ , refl , (refl , prf₁) , prf₂) with Q₁? p q₀₁
+ lem₄ ._ (suc n) q₁  (inj .q₀₁ , E   ,  uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  = suc n , uᵉ , refl , prf₂
+ lem₄ ._ (suc n) q₁  (inj  p   , E   ,  uᵉ , refl , (refl ,   ()) , prf₂) | no  p≢q₀₁
+{-
  lem₄ ._ n  q₁ (init     , α _ , u , refl , (refl ,   ()) , prf₂)
- lem₄ ._ n  q₁ (init     , E   , u , refl , (refl ,   ()) , prf₂)
+ lem₄ ._ n  q₁ (init     , E   , u , refl , (refl , prf₁) , prf₂) with lem₄ u n q₁ prf₂
+ lem₄ ._ n  q₁ (init     , E   , u , refl , (refl , prf₁) , prf₂) | n₁ , uᵉ , w≡Eu , prf₃ = ?
  lem₄ ._ n  q₁ (inj  p   , α _ , u , refl , (refl ,   ()) , prf₂)
  lem₄ ._ n  q₁ (inj  p   , E   , u , refl , (refl , prf₁) , prf₂) with Q₁? p q₀₁
- lem₄ ._ n  q₁ (inj .q₀₁ , E   , u , refl , (refl , prf₁) , prf₂) | yes refl = u , refl , prf₂
- lem₄ ._ n  q₁ (inj  p   , E   , u , refl , (refl ,   ()) , prf₂) | no p≢q₀₁
+ lem₄ ._ n  q₁ (inj .q₀₁ , E   , u , refl , (refl , prf₁) , prf₂) | yes refl = n , u , refl , prf₂
+ lem₄ ._ n  q₁ (inj  p   , E   , u , refl , (refl ,   ()) , prf₂) | no p≢q₀₁-}
 
 
  lem₃ : ∀ q wᵉ uᵉ n q' vᵉ

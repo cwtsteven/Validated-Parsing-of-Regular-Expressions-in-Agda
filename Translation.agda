@@ -40,9 +40,8 @@ regexToε-NFA ε =
    Q' : Set
    Q' = ε-State
    δ' : Q' → Σᵉ → DecSubset Q'
-   --δ' init E     init = true
-   --δ' init (α a) init = false
-   δ' init _ init = false
+   δ' init E     init = true
+   δ' init (α a) init = false
    F' : DecSubset Q'
    F' init  = true
 regexToε-NFA (σ a) =
@@ -51,10 +50,10 @@ regexToε-NFA (σ a) =
    Q' : Set
    Q' = σ-State
    δ' : Q' → Σᵉ → DecSubset Q'
-   --δ' init   E     init   = true
-   δ' init (α b) accept = decEqToBool dec a b
-   --δ' accept E     accept = true
-   δ' _    _     _      = false
+   δ' init   E     init   = true
+   δ' init   (α b) accept = decEqToBool dec a b
+   δ' accept E     accept = true
+   δ' _      _     _      = false
    F' : DecSubset Q'
    F' init   = false
    F' accept = true
@@ -66,6 +65,7 @@ regexToε-NFA (e₁ ∣ e₂) =
    Q' : Set
    Q' = Q₁ ⊍ Q₂
    δ' : Q' → Σᵉ → DecSubset Q'
+   δ' init      E init       = true
    δ' init      E (⊍inj₁ q)  = decEqToBool Q₁? q q₀₁
    δ' init      E (⊍inj₂ q)  = decEqToBool Q₂? q q₀₂
    δ' (⊍inj₁ q) a (⊍inj₁ q') = q' ∈ δ₁ q a
@@ -86,6 +86,7 @@ regexToε-NFA (e₁ ∙ e₂) =
    δ' (⍟inj₁ q) a (⍟inj₁ q') = q' ∈ δ₁ q a
    δ' (⍟inj₁ q) E mid        = q  ∈ F₁
    δ' (⍟inj₂ q) a (⍟inj₂ q') = q' ∈ δ₂ q a
+   δ' mid       E mid        = true
    δ' mid       E (⍟inj₂ q)  = decEqToBool Q₂? q q₀₂
    δ' _         _ _ = false  
    F' : DecSubset Q'
@@ -99,6 +100,7 @@ regexToε-NFA (e *) =
    Q' : Set
    Q' = Q₁ *-State
    δ' : Q' → Σᵉ → DecSubset Q'
+   δ' init    E     init     = true
    δ' init    E     (inj q)  = decEqToBool Q₁? q q₀₁
    δ' (inj q) E     (inj q') = q' ∈ δ₁ q E ∨ (q ∈ F₁ ∧ decEqToBool Q₁? q' q₀₁)
    δ' (inj q) (α a) (inj q') = q' ∈ δ₁ q (α a)
@@ -116,22 +118,34 @@ remove-ε-step nfa =
    open ε-NFA nfa
    open ε-NFA-Operations nfa
    mutual
-    ε-closure₁ : Q → DecSubset Q
-    ε-closure₁ q = undefined -- It (⟦ q ⟧ {{Q?}})
+    ε-closure₁' : Q → DecSubset Q
+    ε-closure₁' q = ø --ε-closure It (⟦ q ⟧ {{Q?}})
 
-    ε-closure : List Q → DecSubset Q → DecSubset Q
-    ε-closure []       qs = ø
-    ε-closure (p ∷ ps) qs = if qs p
-                            then ε-closure₁ p ⋃ᵈ ε-closure ps qs
-                            else ε-closure ps qs
+    ε-closure₁ : List Q → DecSubset Q → DecSubset Q
+    ε-closure₁ []       qs = ø
+    ε-closure₁ (p ∷ ps) qs = if p ∈ qs
+                             then ε-closure₁' p ⋃ᵈ ε-closure₁ ps qs
+                             else ε-closure₁ ps qs
+
+   one-step : List Q → DecSubset Q → DecSubset Q
+   one-step []       qs = ø
+   one-step (p ∷ ps) qs = if p ∈ qs
+                          then δ p E ⋃ᵈ one-step ps qs
+                          else one-step ps qs
+
+   ε-closure₂ : DecSubset Q → DecSubset Q
+   ε-closure₂ qs = let ps = one-step It qs in
+                   if qs ≈ ps
+                   then qs
+                   else ø --undefined --ε-closure₂ ps
    
    δ' : Q → Σ → DecSubset Q
    --     = λ q' → q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q' ∈ δ p (α a) × q →*ε p)
-   δ' q a = λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ p ∈ ε-closure It (⟦ q ⟧ {{Q?}})) It
+   δ' q a = ø --undefined --λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ p ∈ ε-closure It (⟦ q ⟧ {{Q?}})) It
    
    F' : DecSubset Q
    -- = λ q → q ∈ F ⊎ Σ[ p ∈ Q ] (p ∈ F × q →*ε p)
-   F' = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ p ∈ ε-closure It (⟦ q ⟧ {{Q?}})) It
+   F' = ø --undefined --λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ p ∈ ε-closure It (⟦ q ⟧ {{Q?}})) It
 
 
 

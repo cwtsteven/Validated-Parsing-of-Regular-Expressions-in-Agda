@@ -114,14 +114,14 @@ toΣ* (α a ∷ xs) = a ∷ toΣ* xs
            → w ≡ u ++ v
            → u ≡ toΣ* uᵉ
            → v ≡ toΣ* vᵉ
-           → vᵉ ≡ E ∷ vᵉ₁
+           → toΣ* vᵉ ≡ toΣ* vᵉ₁
            → w ≡ toΣ* (uᵉ ++ E ∷ vᵉ₁)
-Σᵉ*-lem₃ w u uᵉ v vᵉ vᵉ₁ w≡uv u≡uᵉ v≡vᵉ vᵉ≡Evᵉ₁
+Σᵉ*-lem₃ w u uᵉ v vᵉ vᵉ₁ w≡uv u≡uᵉ v≡vᵉ v≡vᵉ₁
   = begin
     w                         ≡⟨ w≡uv ⟩
     u ++ v                    ≡⟨ cong (λ u → u ++ v) u≡uᵉ ⟩
     toΣ* uᵉ ++ v              ≡⟨ cong (λ v → toΣ* uᵉ ++ v) v≡vᵉ ⟩
-    toΣ* uᵉ ++ toΣ* vᵉ        ≡⟨ cong (λ v → toΣ* uᵉ ++ toΣ* v) vᵉ≡Evᵉ₁ ⟩
+    toΣ* uᵉ ++ toΣ* vᵉ        ≡⟨ cong (λ v → toΣ* uᵉ ++ v) v≡vᵉ₁ ⟩
     toΣ* uᵉ ++ toΣ* (E ∷ vᵉ₁) ≡⟨ Σᵉ*-lem₁ {uᵉ} {E ∷ vᵉ₁} ⟩
     toΣ* (uᵉ ++ E ∷ vᵉ₁)
     ∎
@@ -135,6 +135,23 @@ toΣ* (α a ∷ xs) = a ∷ toΣ* xs
                           toΣ* (uᵉ ++ E ∷ vᵉ) ≡⟨ sym (Σᵉ*-lem₁ {uᵉ} {E ∷ vᵉ}) ⟩
                           toΣ* uᵉ ++ toΣ* vᵉ
                           ∎
+
+Σᵉ*-lem₅ : ∀ {w u v uᵉ vᵉ}
+           → w ≡ u ++ v
+           → u ≡ toΣ* uᵉ
+           → v ≡ toΣ* vᵉ
+           → toΣ* vᵉ ≡ []
+           → w ≡ toΣ* uᵉ
+Σᵉ*-lem₅ {w} {u} {v} {uᵉ} {vᵉ} w≡uv u≡uᵉ v≡vᵉ v≡[]
+  = begin
+    w            ≡⟨ w≡uv ⟩
+    u ++ v       ≡⟨ cong (λ v → u ++ v) v≡vᵉ ⟩
+    u ++ toΣ* vᵉ ≡⟨ cong (λ v → u ++ v) v≡[] ⟩
+    u ++ []      ≡⟨ List-lem₂ u ⟩
+    u            ≡⟨ u≡uᵉ ⟩
+    toΣ* uᵉ
+    ∎
+
 
 
 -- Decidable Equality of Σᵉ

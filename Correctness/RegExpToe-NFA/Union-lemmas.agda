@@ -113,16 +113,17 @@ module Lᴿ⊇Lᴺ where
    = p , a , uᵉ , prf₁ , prf₂ , lem₁₀ p uᵉ n q' wᵉ' prf₃
 
  lem₉ : ∀ {wᵉ q}
-        → (q₀ , E ∷ wᵉ) ⊢* (⊍inj₂ q , [])
-        → (q₀₂ , wᵉ) ⊢*ₑ₂ (q , [])
+        → (q₀ , wᵉ) ⊢* (⊍inj₂ q , [])
+        → Σ[ uᵉ ∈ Σᵉ* ] ( (q₀₂ , uᵉ) ⊢*ₑ₂ (q , []) × toΣ* wᵉ ≡ toΣ* uᵉ )
  lem₉ { _} {q} (zero  , () , _)
- lem₉ { _} {q} (suc n , init       , α _ , _  , ()   , (_ , ()) ,   _)
- lem₉ {._} {q} (suc n , init       , E   , _  , refl , (_ , ()) ,   _)
- lem₉ { _} {q} (suc n , ⊍inj₁  _   , α _ , _  , ()   , (_ , ()) ,   _)
- lem₉ { _} {q} (suc n , ⊍inj₁  p   , a   , uᵉ , _    , (_ ,  _) , prf) = ⊥-elim (lem₁₁ p uᵉ n q [] prf)
- lem₉ {._} {q} (suc n , ⊍inj₂  p   , E   , uᵉ , refl , (_ ,  _) ,   _) with Q₂? p q₀₂
- lem₉ {._} {q} (suc n , ⊍inj₂ .q₀₂ , E   , uᵉ , refl , (_ ,  _) , prf) | yes refl  = n , lem₁₀ q₀₂ uᵉ n q [] prf
- lem₉ {._} {q} (suc n , ⊍inj₂  p   , E   , uᵉ , refl , (_ , ()) ,   _) | no  p≢q₀₂
+ lem₉ {._} {q} (suc n , init       , α _ , _  , refl , (_    , ())   ,    _)
+ lem₉ {._} {q} (suc n , init       , E   , uᵉ , refl , (refl , prf₁) , prf₂) = lem₉ {uᵉ} {q} (n , prf₂)
+ lem₉ {._} {q} (suc n , ⊍inj₁  _   , α _ , _  , refl , (_    , ())   ,    _)
+ lem₉ {._} {q} (suc n , ⊍inj₁  p   , a   , uᵉ , refl , (_    ,  _)   ,  prf) = ⊥-elim (lem₁₁ p uᵉ n q [] prf)
+ lem₉ {._} {q} (suc n , ⊍inj₂  p   , α _ , uᵉ , refl , (_    , ())   ,    _) 
+ lem₉ {._} {q} (suc n , ⊍inj₂  p   , E   , uᵉ , refl , (_    ,  _)   ,    _) with Q₂? p q₀₂
+ lem₉ {._} {q} (suc n , ⊍inj₂ .q₀₂ , E   , uᵉ , refl , (_    ,  _)   ,  prf) | yes refl  = uᵉ , (n , lem₁₀ q₀₂ uᵉ n q [] prf) , refl
+ lem₉ {._} {q} (suc n , ⊍inj₂  p   , E   , uᵉ , refl , (_    , ())   ,    _) | no  p≢q₀₂
 
  lem₈ : ∀ a wᵉ q
         → ¬ (q₀ , α a ∷ wᵉ) ⊢* (⊍inj₂ q , [])
@@ -152,16 +153,17 @@ module Lᴿ⊇Lᴺ where
  lem₅ q wᵉ (suc n)  q'  wᵉ' (⊍inj₂ p , _ , _  , _    , (_ , ()) ,    _)
 
  lem₄ : ∀ {wᵉ q}
-        → (q₀ , E ∷ wᵉ) ⊢* (⊍inj₁ q , [])
-        → (q₀₁ , wᵉ) ⊢*ₑ₁ (q , [])
+        → (q₀ , wᵉ) ⊢* (⊍inj₁ q , [])
+        → Σ[ uᵉ ∈ Σᵉ* ] ( (q₀₁ , uᵉ) ⊢*ₑ₁ (q , []) × toΣ* wᵉ ≡ toΣ* uᵉ )
  lem₄ { _} {q} (zero  , () , _)
- lem₄ { _} {q} (suc n , init       , α _ , _  , ()   , (_ , ()) ,   _)
- lem₄ {._} {q} (suc n , init       , E   , _  , refl , (_ , ()) ,   _)
- lem₄ { _} {q} (suc n , ⊍inj₁  _   , α _ , _  , ()   , (_ , ()) ,   _)
+ lem₄ {._} {q} (suc n , init       , α _ , _  , refl , (_    , ())   ,    _)
+ lem₄ {._} {q} (suc n , init       , E   , uᵉ , refl , (refl , prf₁) , prf₂) = lem₄ {uᵉ} {q} (n , prf₂)
+ lem₄ {._} {q} (suc n , ⊍inj₁  _   , α _ , _  , refl , (_ , ()) ,   _)
  lem₄ {._} {q} (suc n , ⊍inj₁  p   , E   , uᵉ , refl , (_ ,  _) ,   _) with Q₁? p q₀₁
- lem₄ {._} {q} (suc n , ⊍inj₁ .q₀₁ , E   , uᵉ , refl , (_ ,  _) , prf) | yes refl  = n , lem₅ q₀₁ uᵉ n q [] prf
- lem₄ {._} {q} (suc n , ⊍inj₁  p   , E   , uᵉ , refl , (_ , ()) ,   _) | no  p≢q₀₁ 
- lem₄ { _} {q} (suc n , ⊍inj₂  p   , a   , uᵉ , _    , (_ ,  _) , prf) = ⊥-elim (lem₆ p uᵉ n q [] prf)
+ lem₄ {._} {q} (suc n , ⊍inj₁ .q₀₁ , E   , uᵉ , refl , (_    ,  _)   ,  prf) | yes refl  = uᵉ , (n , lem₅ q₀₁ uᵉ n q [] prf) , refl
+ lem₄ {._} {q} (suc n , ⊍inj₁  p   , E   , uᵉ , refl , (_    , ())   ,    _) | no  p≢q₀₁ 
+ lem₄ {._} {q} (suc n , ⊍inj₂  _   , α _ , _  , refl , (_    , ())   ,    _)
+ lem₄ {._} {q} (suc n , ⊍inj₂  p   , a   , uᵉ , refl , (_    ,  _)   ,  prf) = ⊥-elim (lem₆ p uᵉ n q [] prf)
 
  lem₃ : ∀ a wᵉ q
         → ¬ (q₀ , α a ∷ wᵉ) ⊢* (⊍inj₁ q , [])
@@ -179,7 +181,9 @@ module Lᴿ⊇Lᴺ where
  lem₁  w  (_  , _    , init    , ()   ,   _)
  lem₁ .[] ([]       , refl , ⊍inj₁ q , q∈F₁ , prf) = ⊥-elim (lem₂ q prf)
  lem₁  w  (α a ∷ wᵉ , w≡wᵉ , ⊍inj₁ q , q∈F₁ , prf) = ⊥-elim (lem₃ a wᵉ q prf)
- lem₁  w  (E   ∷ wᵉ , w≡wᵉ , ⊍inj₁ q , q∈F₁ , prf) = inj₁ (wᵉ , w≡wᵉ , q , q∈F₁ , lem₄ {wᵉ} {q} prf)
+ lem₁  w  (E   ∷ wᵉ , w≡wᵉ , ⊍inj₁ q , q∈F₁ , prf) with lem₄ {E ∷ wᵉ} {q} prf
+ lem₁  w  (E   ∷ wᵉ , w≡wᵉ , ⊍inj₁ q , q∈F₁ , prf) | uᵉ , prf₁ , w≡u = inj₁ (uᵉ , trans w≡wᵉ w≡u , q , q∈F₁ , prf₁)
  lem₁  w  ([]       , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = ⊥-elim (lem₇ q prf)
  lem₁  w  (α a ∷ wᵉ , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = ⊥-elim (lem₈ a wᵉ q prf)
- lem₁  w  (E   ∷ wᵉ , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) = inj₂ (wᵉ , w≡wᵉ , q , q∈F₂ , lem₉ {wᵉ} {q} prf)
+ lem₁  w  (E   ∷ wᵉ , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) with lem₉ {E ∷ wᵉ} {q} prf
+ lem₁  w  (E   ∷ wᵉ , w≡wᵉ , ⊍inj₂ q , q∈F₂ , prf) | uᵉ , prf₁ , w≡u = inj₂ (uᵉ , trans w≡wᵉ w≡u , q , q∈F₂ , prf₁)

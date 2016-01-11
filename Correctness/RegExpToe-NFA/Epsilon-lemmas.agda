@@ -41,5 +41,5 @@ module Lᴿ⊇Lᴺ where
  lem₁ []       _ = refl
  lem₁ (x ∷ xs) (.[] , ()   , init , refl , zero  , refl , refl)
  lem₁ (x ∷ xs) (._  , _    , init , refl , suc n , init , α _ , _  , refl , (refl , ()) ,   _)
- lem₁ (x ∷ xs) (._  , w≡wᵉ , init , refl , suc n , init , E   , uᵉ , refl , (refl , ()) , prf)
-   --= lem₁ (x ∷ xs) (uᵉ , w≡wᵉ , init , refl , n , prf)
+ lem₁ (x ∷ xs) (._  , w≡wᵉ , init , refl , suc n , init , E   , uᵉ , refl , (refl ,  _) , prf)
+   = lem₁ (x ∷ xs) (uᵉ , w≡wᵉ , init , refl , n , prf)

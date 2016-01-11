@@ -2,7 +2,7 @@
   This module contains the following proofs:
 
   Steven Cheung 2015.
-  Version 10-01-2016
+  Version 11-01-2016
 -}
 open import Util
 open import RegularExpression
@@ -145,13 +145,13 @@ module Lᴿ⊇Lᴺ where
         → (mid , vᵉ) ⊢ᵏ m ─ (⍟inj₂ q , [])
         → toΣ* vᵉ ∈ Lᵉᴺ nfa₂
  lem₉ q vᵉ zero    q∈F (() , _)
- lem₉ q []         (suc n) q∈F (_          ,  _    ,  _  , ()   , (refl ,     _) ,    _)
- lem₉ q (α a ∷ vᵉ) (suc n) q∈F (p          ,  α .a , .vᵉ , refl , (refl ,    ()) ,    _)
- lem₉ q (E   ∷ vᵉ) (suc n) q∈F (⍟inj₁ _    , .E    , .vᵉ , refl , (refl ,    ()) ,    _)
- lem₉ q (E   ∷ vᵉ) (suc n) q∈F (mid        , .E    , .vᵉ , refl , (refl ,    ()) ,    _)
- lem₉ q (E   ∷ vᵉ) (suc n) q∈F (⍟inj₂ p    , .E    , .vᵉ , refl , (refl ,  prf₁) , prf₂) with Q₂? p q₀₂
- lem₉ q (E   ∷ vᵉ) (suc n) q∈F (⍟inj₂ .q₀₂ , .E    , .vᵉ , refl , (refl ,  prf₁) , prf₂) | yes refl = vᵉ , refl , q , q∈F , n , lem₁₀ q₀₂ vᵉ n q prf₂
- lem₉ q (E   ∷ vᵉ) (suc n) q∈F (⍟inj₂ p    , .E    , .vᵉ , refl , (refl ,    ()) , prf₂) | no  _
+ lem₉ q []         (suc m) q∈F (_          ,  _    ,  _  , ()   , (refl ,     _) ,    _)
+ lem₉ q (α a ∷ vᵉ) (suc m) q∈F (p          ,  α .a , .vᵉ , refl , (refl ,    ()) ,    _)
+ lem₉ q (E   ∷ vᵉ) (suc m) q∈F (⍟inj₁ _    , .E    , .vᵉ , refl , (refl ,    ()) ,    _)
+ lem₉ q (E   ∷ vᵉ) (suc m) q∈F (mid        , .E    , .vᵉ , refl , (refl ,  prf₁) , prf₂) = lem₉ q vᵉ m q∈F prf₂
+ lem₉ q (E   ∷ vᵉ) (suc m) q∈F (⍟inj₂ p    , .E    , .vᵉ , refl , (refl ,  prf₁) , prf₂) with Q₂? p q₀₂
+ lem₉ q (E   ∷ vᵉ) (suc m) q∈F (⍟inj₂ .q₀₂ , .E    , .vᵉ , refl , (refl ,  prf₁) , prf₂) | yes refl = vᵉ , refl , q , q∈F , m , lem₁₀ q₀₂ vᵉ m q prf₂
+ lem₉ q (E   ∷ vᵉ) (suc m) q∈F (⍟inj₂ p    , .E    , .vᵉ , refl , (refl ,    ()) , prf₂) | no  _
 
 -- --
 
@@ -163,16 +163,16 @@ module Lᴿ⊇Lᴺ where
  lem₈ q ._  (suc n) vᵉ (⍟inj₂ p , a , uᵉ , refl , (refl , prf₁) , prf₂)
    = lem₈ p uᵉ n vᵉ prf₂
 
-
+{-
  lem₇ : ∀ uᵉ n vᵉ
         → ¬ (mid , uᵉ) ⊢ᵏ suc n ─ (mid , vᵉ)
- lem₇ ._ n vᵉ (⍟inj₁ _ , α _ , u₁ , refl , (refl , ()) , prf₂)
- lem₇ ._ n vᵉ (⍟inj₁ _ , E   , u₁ , refl , (refl , ()) , prf₂)
- lem₇ ._ n vᵉ (mid     , α _ , u₁ , refl , (refl , ()) , prf₂)
- lem₇ ._ n vᵉ (mid     , E   , u₁ , refl , (refl , ()) , prf₂)
- lem₇ ._ n vᵉ (⍟inj₂ p , a   , u₁ , refl , (refl ,  _) , prf₂)
+ lem₇ ._ n vᵉ (⍟inj₁ _ , α _ , u₁ , refl , (refl ,   ()) , prf₂)
+ lem₇ ._ n vᵉ (⍟inj₁ _ , E   , u₁ , refl , (refl ,   ()) , prf₂)
+ lem₇ ._ n vᵉ (mid     , α _ , u₁ , refl , (refl ,   ()) , prf₂)
+ lem₇ ._ n vᵉ (mid     , E   , u₁ , refl , (refl , prf₁) , prf₂) = {!!}
+ lem₇ ._ n vᵉ (⍟inj₂ p , a   , u₁ , refl , (refl ,    _) , prf₂)
    = ⊥-elim (lem₈ p u₁ n vᵉ prf₂)
-
+-}
 
  lem₆ : ∀ q a uᵉ p₁ n p
          → (q , a , uᵉ) ⊢ₑ₁ (p₁ , uᵉ)
@@ -183,25 +183,38 @@ module Lᴿ⊇Lᴺ where
 
  lem₅ : ∀ q a uᵉ p₁ n p vᵉ
          → (⍟inj₁ q , a , uᵉ) ⊢ (⍟inj₁ p₁ , uᵉ)
-         → (⍟inj₁ p₁ , uᵉ) ⊢ᵏ n ─ (⍟inj₁ p , E ∷ vᵉ)
-         → (⍟inj₁ q , a ∷ uᵉ) ⊢ᵏ suc n ─ (⍟inj₁ p , E ∷ vᵉ)
+         → (⍟inj₁ p₁ , uᵉ) ⊢ᵏ n ─ (⍟inj₁ p , vᵉ)
+         → (⍟inj₁ q , a ∷ uᵉ) ⊢ᵏ suc n ─ (⍟inj₁ p , vᵉ)
  lem₅ q a uᵉ p₁ n p vᵉ prf₁ prf₂ = ⍟inj₁ p₁ , a , uᵉ , refl , prf₁ , prf₂
 
+ lem₇ : ∀ wᵉ n vᵉ
+        → (prf : (mid , wᵉ) ⊢ᵏ n ─ (mid , vᵉ))
+        → toΣ* wᵉ ≡ toΣ* vᵉ × toΣ* (find-uᵉ mid wᵉ n mid vᵉ prf) ≡ [] 
+ lem₇ ._ zero    vᵉ (refl , refl) = refl , refl
+ lem₇ ._ (suc n) vᵉ (⍟inj₁ p , α _ , u₁ , refl , (refl ,   ()) , prf₂)
+ lem₇ ._ (suc n) vᵉ (⍟inj₁ p , E   , u₁ , refl , (refl ,   ()) , prf₂)
+ lem₇ ._ (suc n) vᵉ (mid     , α _ , u₁ , refl , (refl ,   ()) , prf₂)
+ lem₇ ._ (suc n) vᵉ (mid     , E   , u₁ , refl , (refl , prf₁) , prf₂) = lem₇ u₁ n vᵉ prf₂
+ lem₇ ._ (suc n) vᵉ (⍟inj₂ p , α _ , u₁ , refl , (refl ,   ()) , prf₂) 
+ lem₇ ._ (suc n) vᵉ (⍟inj₂ p , E   , u₁ , refl , (refl , prf₁) , prf₂) = ⊥-elim (lem₈ p u₁ n vᵉ prf₂)
 
  lem₄ : ∀ q wᵉ n vᵉ
         → (prf  : (⍟inj₁ q  , wᵉ) ⊢ᵏ suc n ─ (mid , vᵉ))
-        → Σ[ p ∈ Q₁ ] Σ[ prf₁ ∈ (⍟inj₁ q , wᵉ) ⊢ᵏ n ─ (⍟inj₁ p , E ∷ vᵉ) ]
-          ( find-uᵉ (⍟inj₁ q) wᵉ (suc n) mid vᵉ prf ≡ find-uᵉ (⍟inj₁ q) wᵉ n (⍟inj₁ p) (E ∷ vᵉ) prf₁ ∷ʳ E
+        → Σ[ n₁ ∈ ℕ ] Σ[ p ∈ Q₁ ] Σ[ uᵉ ∈ Σᵉ* ] Σ[ prf₁ ∈ (⍟inj₁ q , wᵉ) ⊢ᵏ n₁ ─ (⍟inj₁ p , uᵉ) ]
+          ( toΣ* (find-uᵉ (⍟inj₁ q) wᵉ (suc n) mid vᵉ prf) ≡ toΣ* (find-uᵉ (⍟inj₁ q) wᵉ n₁ (⍟inj₁ p) uᵉ prf₁)
             × p ∈ᵍ F₁
-            × (q , find-uᵉ (⍟inj₁ q) wᵉ n (⍟inj₁ p) (E ∷ vᵉ) prf₁) ⊢ᵏₑ₁ n ─ (p , []) )
- lem₄ q ._ zero    vᵉ (.mid , α _ , .vᵉ , refl , (refl ,   ()) , (refl , refl)) 
- lem₄ q ._ zero    vᵉ (.mid , E   , .vᵉ , refl , (refl , q∈F₁) , (refl , refl)) = q , (refl , refl) , refl , q∈F₁ , (refl , refl)
- lem₄ q ._ (suc n) vᵉ (⍟inj₁ p₁    , a   ,  uᵉ , refl , (refl ,   q⊢p₁) , prf₁) with lem₄ p₁ uᵉ n vᵉ prf₁
- lem₄ q ._ (suc n) vᵉ (⍟inj₁ p₁    , a   ,  uᵉ , refl , (refl ,   q⊢p₁) , prf₁) | p , prf₁' , w≡w , p∈F₁ , prf₂
-   = p , lem₅ q a uᵉ p₁ n p vᵉ (refl ,   q⊢p₁) prf₁' , cong (λ u → a ∷ u) w≡w , p∈F₁ , lem₆ q a (find-uᵉ (⍟inj₁ p₁) uᵉ n (⍟inj₁ p) (E ∷ vᵉ) prf₁') p₁ n p (refl , q⊢p₁) prf₂
+            × (q , find-uᵉ (⍟inj₁ q) wᵉ n₁ (⍟inj₁ p) uᵉ prf₁) ⊢ᵏₑ₁ n₁ ─ (p , []) )
+ lem₄ q ._ zero    vᵉ (.mid , α _ , .vᵉ  , refl , (refl ,   ()) , (refl , refl)) 
+ lem₄ q ._ zero    vᵉ (.mid , E   , .vᵉ  , refl , (refl , q∈F₁) , (refl , refl)) = zero , q , E ∷ vᵉ , (refl , refl) , refl , q∈F₁ , (refl , refl)
+ lem₄ q ._ (suc n) vᵉ (⍟inj₁ p₁    , α a ,  uᵉ , refl , (refl ,   q⊢p₁) , prf₁) with lem₄ p₁ uᵉ n vᵉ prf₁
+ lem₄ q ._ (suc n) vᵉ (⍟inj₁ p₁    , α a ,  uᵉ , refl , (refl ,   q⊢p₁) , prf₁) | n₁ , p , u₁ , prf₁' , w≡w , p∈F₁ , prf₂
+   = suc n₁ , p , u₁ , lem₅ q (α a) uᵉ p₁ n₁ p u₁ (refl , q⊢p₁) prf₁' , cong (λ w → a ∷ w) w≡w , p∈F₁ , lem₆ q (α a) (find-uᵉ (⍟inj₁ p₁) uᵉ n₁ (⍟inj₁ p) u₁ prf₁') p₁ n₁ p (refl , q⊢p₁) prf₂
+ lem₄ q ._ (suc n) vᵉ (⍟inj₁ p₁    , E   ,  uᵉ , refl , (refl ,   q⊢p₁) , prf₁) with lem₄ p₁ uᵉ n vᵉ prf₁
+ lem₄ q ._ (suc n) vᵉ (⍟inj₁ p₁    , E   ,  uᵉ , refl , (refl ,   q⊢p₁) , prf₁) | n₁ , p , u₁ , prf₁' , w≡w , p∈F₁ , prf₂
+   = suc n₁ , p , u₁ , lem₅ q E uᵉ p₁ n₁ p u₁ (refl , q⊢p₁) prf₁' , w≡w , p∈F₁ , lem₆ q E (find-uᵉ (⍟inj₁ p₁) uᵉ n₁ (⍟inj₁ p) u₁ prf₁') p₁ n₁ p (refl , q⊢p₁) prf₂
  lem₄ q ._ (suc n) vᵉ (mid         , α _ ,  uᵉ , refl , (refl ,     ()) , prf₁)
- lem₄ q ._ (suc n) vᵉ (mid         , E   ,  uᵉ , refl , (refl ,   q⊢p₁) , prf₁)
-   = ⊥-elim (lem₇ uᵉ n vᵉ prf₁)
+ lem₄ q ._ (suc n) vᵉ (mid         , E   ,  uᵉ , refl , (refl ,   q⊢p₁) , prf₁) with lem₇ uᵉ (suc n) vᵉ prf₁
+ lem₄ q ._ (suc n) vᵉ (mid         , E   ,  uᵉ , refl , (refl ,   q⊢p₁) , prf₁) | u≡v , find-u≡[] = zero , q , E ∷ uᵉ , (refl , refl) , find-u≡[] , q⊢p₁ , (refl , refl)
  lem₄ q ._ (suc n) vᵉ (⍟inj₂ _     , a   ,  uᵉ , refl , (refl ,     ()) , prf₁)
 
 
@@ -210,8 +223,8 @@ module Lᴿ⊇Lᴺ where
         → toΣ* (find-uᵉ q₀ wᵉ n mid vᵉ prf) ∈ Lᵉᴺ nfa₁
  lem₃ wᵉ zero    vᵉ (() , _)
  lem₃ wᵉ (suc n) vᵉ prf with lem₄ q₀₁ wᵉ n vᵉ prf
- ... | p , prf₁ , w≡wᵉ , p∈F₁ , prf₂
-   = find-uᵉ q₀ wᵉ n (⍟inj₁ p) (E ∷ vᵉ) prf₁ , trans (cong toΣ* w≡wᵉ) (Σᵉ*-lem₂ {find-uᵉ q₀ wᵉ n (⍟inj₁ p) (E ∷ vᵉ) prf₁}) , p , p∈F₁ , n , prf₂
+ ... | n₁ , p , uᵉ , prf₁ , w≡wᵉ , p∈F₁ , prf₂
+   = find-uᵉ q₀ wᵉ n₁ (⍟inj₁ p) uᵉ prf₁ , w≡wᵉ , p , p∈F₁ , n₁ , prf₂
 
 
  lem₃₁ : ∀ q uᵉ n p vᵉ
@@ -225,10 +238,10 @@ module Lᴿ⊇Lᴺ where
  lem₃₀ : ∀ uᵉ n p vᵉ
          → ¬ (mid , uᵉ) ⊢ᵏ n ─ (⍟inj₁ p , vᵉ)
  lem₃₀  uᵉ zero    p vᵉ (() , _)
- lem₃₀ ._  (suc n) p vᵉ (⍟inj₁ p' , α _ , uᵉ , refl , (_ , ()) , prf₂)
- lem₃₀ ._  (suc n) p vᵉ (⍟inj₁ p' , E   , uᵉ , refl , (_ , ()) , prf₂)
- lem₃₀ ._  (suc n) p vᵉ (mid      , α _ , uᵉ , refl , (_ , ()) , prf₂)
- lem₃₀ ._  (suc n) p vᵉ (mid      , E   , uᵉ , refl , (_ , ()) , prf₂)
+ lem₃₀ ._  (suc n) p vᵉ (⍟inj₁ p' , α _ , uᵉ , refl , (_ ,   ()) , prf₂)
+ lem₃₀ ._  (suc n) p vᵉ (⍟inj₁ p' , E   , uᵉ , refl , (_ ,   ()) , prf₂)
+ lem₃₀ ._  (suc n) p vᵉ (mid      , α _ , uᵉ , refl , (_ ,   ()) , prf₂)
+ lem₃₀ ._  (suc n) p vᵉ (mid      , E   , uᵉ , refl , (_ , prf₁) , prf₂) = lem₃₀ uᵉ n p vᵉ prf₂
  lem₃₀ ._  (suc n) p vᵉ (⍟inj₂ p' , a , uᵉ , refl , prf₁ , prf₂)
    = ⊥-elim (lem₃₁ p' uᵉ n p vᵉ prf₂)
 
