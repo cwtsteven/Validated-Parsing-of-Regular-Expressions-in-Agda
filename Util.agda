@@ -50,9 +50,9 @@ DecEq-List dec (.y ∷  xs) (y ∷ ys) | yes refl with DecEq-List dec xs ys
 DecEq-List dec (.y ∷ .ys) (y ∷ ys) | yes refl | yes refl  = yes refl
 DecEq-List dec (.y ∷  xs) (y ∷ ys) | yes refl | no  xs≢ys = no  (λ yxs≡yys → xs≢ys (cong tail yxs≡yys))
 DecEq-List dec ( x ∷  xs) (y ∷ ys) | no  x≢y  = no (λ xxs≡yys → x≢y (lem₁ xxs≡yys))
- where
-  lem₁ : {A : Set}{x y : A}{xs ys : List A} → x ∷ xs ≡ y ∷ ys → x ≡ y
-  lem₁ {x} {._} {xs} {._} refl = refl
+  where
+    lem₁ : {A : Set}{x y : A}{xs ys : List A} → x ∷ xs ≡ y ∷ ys → x ≡ y
+    lem₁ {x} {._} {xs} {._} refl = refl
 
 
 List-lem₁ : {A : Set}{x y : A}{xs ys : List A}

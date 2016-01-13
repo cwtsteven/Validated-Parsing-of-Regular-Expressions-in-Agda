@@ -29,19 +29,19 @@ open import State
 {- ∀e∈RegExp. L(e) = L(regexToε-NFA e) -}
 Lᴿ≈Lᵉᴺ : ∀ e → Lᴿ e ≈ Lᵉᴺ (regexToε-NFA e)
 Lᴿ≈Lᵉᴺ e = Lᴿ⊆Lᵉᴺ e , Lᴿ⊇Lᵉᴺ e
- where
-  open import Correctness.RegExpToe-NFA Σ dec
+  where
+    open import Correctness.RegExpToe-NFA Σ dec
 
 
 {- ∀nfa∈ε-NFA. L(nfa) = L(remove-ε-step nfa) -}
 Lᵉᴺ≈Lᴺ : ∀ nfa → Lᵉᴺ nfa ≈ Lᴺ (remove-ε-step nfa)
 Lᵉᴺ≈Lᴺ nfa = Lᵉᴺ⊆Lᴺ nfa , Lᵉᴺ⊇Lᴺ nfa
- where
-  open import Correctness.e-NFAToNFA Σ dec
+  where
+    open import Correctness.e-NFAToNFA Σ dec
 
 
 {- ∀nfa∈NFA. L(nfa) = L(powerset-construction dfa) -}
 Lᴺ≈Lᴰ : ∀ nfa → Lᴺ nfa ≈ Lᴰ (powerset-construction nfa)
 Lᴺ≈Lᴰ nfa = Lᴺ⊆Lᴰ nfa , Lᴺ⊇Lᴰ nfa
- where
-  open import Correctness.NFAToDFA Σ dec
+  where
+    open import Correctness.NFAToDFA Σ dec

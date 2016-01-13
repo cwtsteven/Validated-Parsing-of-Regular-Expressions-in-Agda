@@ -32,14 +32,14 @@ open ε-NFA nfa
 open ε-NFA-Operations nfa
 
 module Lᴿ⊆Lᴺ where
- lem₁ : Lᴿ ε ⊆ Lᵉᴺ nfa
- lem₁ []       refl = [] , refl , init , refl , zero , refl , refl
- lem₁ (x ∷ xs) ()
+  lem₁ : Lᴿ ε ⊆ Lᵉᴺ nfa
+  lem₁ []       refl = [] , refl , init , refl , zero , refl , refl
+  lem₁ (x ∷ xs) ()
 
 module Lᴿ⊇Lᴺ where
- lem₁ : Lᴿ ε ⊇ Lᵉᴺ nfa
- lem₁ []       _ = refl
- lem₁ (x ∷ xs) (.[] , ()   , init , refl , zero  , refl , refl)
- lem₁ (x ∷ xs) (._  , _    , init , refl , suc n , init , α _ , _  , refl , (refl , ()) ,   _)
- lem₁ (x ∷ xs) (._  , w≡wᵉ , init , refl , suc n , init , E   , uᵉ , refl , (refl ,  _) , prf)
-   = lem₁ (x ∷ xs) (uᵉ , w≡wᵉ , init , refl , n , prf)
+  lem₁ : Lᴿ ε ⊇ Lᵉᴺ nfa
+  lem₁ []       _ = refl
+  lem₁ (x ∷ xs) (.[] , ()   , init , refl , zero  , refl , refl)
+  lem₁ (x ∷ xs) (._  , _    , init , refl , suc n , init , α _ , _  , refl , (refl , ()) ,   _)
+  lem₁ (x ∷ xs) (._  , w≡wᵉ , init , refl , suc n , init , E   , uᵉ , refl , (refl ,  _) , prf)
+    = lem₁ (x ∷ xs) (uᵉ , w≡wᵉ , init , refl , n , prf)

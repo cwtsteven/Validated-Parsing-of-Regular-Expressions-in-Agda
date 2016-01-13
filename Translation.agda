@@ -33,138 +33,121 @@ open import State
 -- translate a Regular expression to a NFA with ε-step
 regexToε-NFA : RegExp → ε-NFA
 regexToε-NFA Ø =
- record { Q = Ø-State ; Q? = DecEq-Ø ; δ = λ _ _ _ → false ; q₀ = init ; F = ø ; It = Ø-List }
+  record { Q = Ø-State ; Q? = DecEq-Ø ; δ = λ _ _ _ → false ; q₀ = init ; F = ø ; It = Ø-List }
 regexToε-NFA ε =
- record { Q = Q' ; Q? = DecEq-ε ; δ = δ' ; q₀ = init ; F = F' ; It = ε-List } 
-  where
-   Q' : Set
-   Q' = ε-State
-   δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init E     init = true
-   δ' init (α a) init = false
-   F' : DecSubset Q'
-   F' init  = true
+  record { Q = Q' ; Q? = DecEq-ε ; δ = δ' ; q₀ = init ; F = F' ; It = ε-List } 
+    where
+      Q' : Set
+      Q' = ε-State
+      δ' : Q' → Σᵉ → DecSubset Q'
+      δ' init E     init = true
+      δ' init (α a) init = false
+      F' : DecSubset Q'
+      F' init  = true
 regexToε-NFA (σ a) =
- record { Q = Q' ; Q? = DecEq-σ ; δ = δ' ; q₀ = init ; F = F' ; It = σ-List }
-  where
-   Q' : Set
-   Q' = σ-State
-   δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init   E     init   = true
-   δ' init   (α b) accept = decEqToBool dec a b
-   δ' accept E     accept = true
-   δ' _      _     _      = false
-   F' : DecSubset Q'
-   F' init   = false
-   F' accept = true
+  record { Q = Q' ; Q? = DecEq-σ ; δ = δ' ; q₀ = init ; F = F' ; It = σ-List }
+    where
+      Q' : Set
+      Q' = σ-State
+      δ' : Q' → Σᵉ → DecSubset Q'
+      δ' init   E     init   = true
+      δ' init   (α b) accept = decEqToBool dec a b
+      δ' accept E     accept = true
+      δ' _      _     _      = false
+      F' : DecSubset Q'
+      F' init   = false
+      F' accept = true
 regexToε-NFA (e₁ ∣ e₂) =
- record { Q = Q' ; Q? = DecEq-⊍ Q₁? Q₂? ; δ = δ' ; q₀ = init ; F = F' ; It = ⊍-List It₁ It₂ }
-  where
-   open ε-NFA (regexToε-NFA e₁) renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; It to It₁)
-   open ε-NFA (regexToε-NFA e₂) renaming (Q to Q₂ ; Q? to Q₂? ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; It to It₂)
-   Q' : Set
-   Q' = Q₁ ⊍ Q₂
-   δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init      E init       = true
-   δ' init      E (⊍inj₁ q)  = decEqToBool Q₁? q q₀₁
-   δ' init      E (⊍inj₂ q)  = decEqToBool Q₂? q q₀₂
-   δ' (⊍inj₁ q) a (⊍inj₁ q') = q' ∈ δ₁ q a
-   δ' (⊍inj₂ q) a (⊍inj₂ q') = q' ∈ δ₂ q a
-   δ' _         _ _          = false
-   F' : DecSubset Q'
-   F' init      = false
-   F' (⊍inj₁ q) = q ∈ F₁
-   F' (⊍inj₂ q) = q ∈ F₂
+  record { Q = Q' ; Q? = DecEq-⊍ Q₁? Q₂? ; δ = δ' ; q₀ = init ; F = F' ; It = ⊍-List It₁ It₂ }
+    where
+      open ε-NFA (regexToε-NFA e₁) renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; It to It₁)
+      open ε-NFA (regexToε-NFA e₂) renaming (Q to Q₂ ; Q? to Q₂? ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; It to It₂)
+      Q' : Set
+      Q' = Q₁ ⊍ Q₂
+      δ' : Q' → Σᵉ → DecSubset Q'
+      δ' init      E init       = true
+      δ' init      E (⊍inj₁ q)  = decEqToBool Q₁? q q₀₁
+      δ' init      E (⊍inj₂ q)  = decEqToBool Q₂? q q₀₂
+      δ' (⊍inj₁ q) a (⊍inj₁ q') = q' ∈ δ₁ q a
+      δ' (⊍inj₂ q) a (⊍inj₂ q') = q' ∈ δ₂ q a
+      δ' _         _ _          = false
+      F' : DecSubset Q'
+      F' init      = false
+      F' (⊍inj₁ q) = q ∈ F₁
+      F' (⊍inj₂ q) = q ∈ F₂
 regexToε-NFA (e₁ ∙ e₂) =
- record { Q = Q' ; Q? = DecEq-⍟ Q₁? Q₂? ; δ = δ' ; q₀ = ⍟inj₁ q₀₁ ; F = F' ; It = ⍟-List It₁ It₂ }
-  where
-   open ε-NFA (regexToε-NFA e₁) renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; It to It₁)
-   open ε-NFA (regexToε-NFA e₂) renaming (Q to Q₂ ; Q? to Q₂? ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; It to It₂)
-   Q' : Set
-   Q' = Q₁ ⍟ Q₂
-   δ' : Q' → Σᵉ → DecSubset Q'
-   δ' (⍟inj₁ q) a (⍟inj₁ q') = q' ∈ δ₁ q a
-   δ' (⍟inj₁ q) E mid        = q  ∈ F₁
-   δ' (⍟inj₂ q) a (⍟inj₂ q') = q' ∈ δ₂ q a
-   δ' mid       E mid        = true
-   δ' mid       E (⍟inj₂ q)  = decEqToBool Q₂? q q₀₂
-   δ' _         _ _ = false  
-   F' : DecSubset Q'
-   F' (⍟inj₁ q) = false
-   F' mid       = false
-   F' (⍟inj₂ q) = q ∈ F₂
+  record { Q = Q' ; Q? = DecEq-⍟ Q₁? Q₂? ; δ = δ' ; q₀ = ⍟inj₁ q₀₁ ; F = F' ; It = ⍟-List It₁ It₂ }
+    where
+      open ε-NFA (regexToε-NFA e₁) renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; It to It₁)
+      open ε-NFA (regexToε-NFA e₂) renaming (Q to Q₂ ; Q? to Q₂? ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; It to It₂)
+      Q' : Set
+      Q' = Q₁ ⍟ Q₂
+      δ' : Q' → Σᵉ → DecSubset Q'
+      δ' (⍟inj₁ q) a (⍟inj₁ q') = q' ∈ δ₁ q a
+      δ' (⍟inj₁ q) E mid        = q  ∈ F₁
+      δ' (⍟inj₂ q) a (⍟inj₂ q') = q' ∈ δ₂ q a
+      δ' mid       E mid        = true
+      δ' mid       E (⍟inj₂ q)  = decEqToBool Q₂? q q₀₂
+      δ' _         _ _ = false  
+      F' : DecSubset Q'
+      F' (⍟inj₁ q) = false
+      F' mid       = false
+      F' (⍟inj₂ q) = q ∈ F₂
 regexToε-NFA (e *) =
- record { Q = Q' ; Q? = DecEq-* Q₁? ; δ = δ' ; q₀ = init ; F = F' ; It = *-List It₁ }
-  where
-   open ε-NFA (regexToε-NFA e) renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; It to It₁)
-   Q' : Set
-   Q' = Q₁ *-State
-   δ' : Q' → Σᵉ → DecSubset Q'
-   δ' init    E     init     = true
-   δ' init    E     (inj q)  = decEqToBool Q₁? q q₀₁
-   δ' (inj q) E     (inj q') = q' ∈ δ₁ q E ∨ (q ∈ F₁ ∧ decEqToBool Q₁? q' q₀₁)
-   δ' (inj q) (α a) (inj q') = q' ∈ δ₁ q (α a)
-   δ' _       _     _        = false
-   F' : DecSubset Q'
-   F' init    = true
-   F' (inj q) = q ∈ F₁
-
+  record { Q = Q' ; Q? = DecEq-* Q₁? ; δ = δ' ; q₀ = init ; F = F' ; It = *-List It₁ }
+    where
+      open ε-NFA (regexToε-NFA e) renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; It to It₁)
+      Q' : Set
+      Q' = Q₁ *-State
+      δ' : Q' → Σᵉ → DecSubset Q'
+      δ' init    E     init     = true
+      δ' init    E     (inj q)  = decEqToBool Q₁? q q₀₁
+      δ' (inj q) E     (inj q') = q' ∈ δ₁ q E ∨ (q ∈ F₁ ∧ decEqToBool Q₁? q' q₀₁)
+      δ' (inj q) (α a) (inj q') = q' ∈ δ₁ q (α a)
+      δ' _       _     _        = false
+      F' : DecSubset Q'
+      F' init    = true
+      F' (inj q) = q ∈ F₁
+   
 
 -- remove ε-steps
 remove-ε-step : ε-NFA → NFA
 remove-ε-step nfa =
- record { Q = Q ; Q? = Q? ; δ = δ' ; q₀ = q₀ ; F = F' ; It = It }
-  where
-   open ε-NFA nfa
-   open ε-NFA-Operations nfa
-   mutual
-    ε-closure₁' : Q → DecSubset Q
-    ε-closure₁' q = ø --ε-closure It (⟦ q ⟧ {{Q?}})
-
-    ε-closure₁ : List Q → DecSubset Q → DecSubset Q
-    ε-closure₁ []       qs = ø
-    ε-closure₁ (p ∷ ps) qs = if p ∈ qs
-                             then ε-closure₁' p ⋃ᵈ ε-closure₁ ps qs
-                             else ε-closure₁ ps qs
-
-   one-step : List Q → DecSubset Q → DecSubset Q
-   one-step []       qs = ø
-   one-step (p ∷ ps) qs = if p ∈ qs
-                          then δ p E ⋃ᵈ one-step ps qs
-                          else one-step ps qs
-
-   ε-closure₂ : DecSubset Q → DecSubset Q
-   ε-closure₂ qs = let ps = one-step It qs in
-                   if qs ≈ ps
-                   then qs
-                   else ø --undefined --ε-closure₂ ps
+  record { Q = Q ; Q? = Q? ; δ = δ' ; q₀ = q₀ ; F = F' ; It = It }
+    where
+      open ε-NFA nfa
+      open ε-NFA-Operations nfa
+      δ' : Q → Σ → DecSubset Q
+      --     = { q' | q' ∈ δ q (α a) ∨ ∃p∈Q. q' ∈ δ p (α a) ∧ p ∈ ε-closure(q) }
+      --     = λ q' → q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q' ∈ δ p (α a) × p ∈ ε-closure q)
+      δ' q a = λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ p ∈ ε-closure₃ (length It) (⟦ q ⟧ {{Q?}})) It
    
-   δ' : Q → Σ → DecSubset Q
-   --     = λ q' → q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q' ∈ δ p (α a) × q →*ε p)
-   δ' q a = ø --undefined --λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ p ∈ ε-closure It (⟦ q ⟧ {{Q?}})) It
-   
-   F' : DecSubset Q
-   -- = λ q → q ∈ F ⊎ Σ[ p ∈ Q ] (p ∈ F × q →*ε p)
-   F' = ø --undefined --λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ p ∈ ε-closure It (⟦ q ⟧ {{Q?}})) It
+      F' : DecSubset Q
+      -- = { q | q ∈ F ∨ ∃p∈Q. p ∈ F ∧ p ∈ ε-closure(q) }
+      -- = λ q → q ∈ F ⊎ Σ[ p ∈ Q ] (p ∈ F × p ∈ ε-closure q)
+      F' = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ p ∈ ε-closure₃ (length It) (⟦ q ⟧ {{Q?}})) It
 
 
 
 -- determinise the NFA by powerset construction
 powerset-construction : NFA → DFA
 powerset-construction nfa =
- record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' }
-  where
-   open NFA nfa
-   Q' : Set
-   Q' = DecSubset Q
-   δ' : Q' → Σ → Q'
-   --      = λ q → Σ[ p ∈ Q ] (p ∈ qs × q ∈ δ p a)
-   δ' qs a = λ q → any (λ p → p ∈ qs ∧ q ∈ δ p a) It
-   q₀' : Q'
-   q₀' = ⟦ q₀ ⟧ {{Q?}}
-   F' : DecSubset Q'
-   -- = λ qs → Σ[ p ∈ Q ] (p ∈ qs × p ∈ F)
-   F' = λ qs → any (λ p → p ∈ qs ∧ p ∈ F) It 
+  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' }
+    where
+      open NFA nfa
+      Q' : Set
+      Q' = DecSubset Q
+      
+      δ' : Q' → Σ → Q'
+      --      = λ q → Σ[ p ∈ Q ] (p ∈ qs × q ∈ δ p a)
+      δ' qs a = λ q → any (λ p → p ∈ qs ∧ q ∈ δ p a) It
+      
+      q₀' : Q'
+      q₀' = ⟦ q₀ ⟧ {{Q?}}
+      
+      F' : DecSubset Q'
+      -- = λ qs → Σ[ p ∈ Q ] (p ∈ qs × p ∈ F)
+      F' = λ qs → any (λ p → p ∈ qs ∧ p ∈ F) It 
 
 
 

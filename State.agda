@@ -20,7 +20,7 @@ open import Subset renaming (Ø to ø)
 
 {- Ø states -}
 data Ø-State : Set where
- init : Ø-State
+  init : Ø-State
 
 DecEq-Ø : DecEq Ø-State
 DecEq-Ø init init = yes refl
@@ -32,7 +32,7 @@ DecEq-Ø init init = yes refl
 
 {- ε states -}
 data ε-State : Set where
- init : ε-State
+  init : ε-State
 
 DecEq-ε : DecEq ε-State
 DecEq-ε init init = yes refl
@@ -44,8 +44,8 @@ DecEq-ε init init = yes refl
 
 {- singleton states -}
 data σ-State : Set where
- init   : σ-State
- accept : σ-State
+  init   : σ-State
+  accept : σ-State
 
 DecEq-σ : DecEq σ-State
 DecEq-σ init init     = yes refl
@@ -100,9 +100,9 @@ DecEq-⊍ decA decB (⊍inj₂ q) (⊍inj₁ _) = no (λ ())
 {- concatenation states -}
 infix 2 _⍟_
 data _⍟_ (A B : Set) : Set where
- ⍟inj₁ : A → A ⍟ B
- mid   : A ⍟ B
- ⍟inj₂ : B → A ⍟ B
+  ⍟inj₁ : A → A ⍟ B
+  mid   : A ⍟ B
+  ⍟inj₂ : B → A ⍟ B
  
 ⍟-lem₁ : {A B : Set}{q q' : A}{injq injq' : A ⍟ B} → injq ≡ ⍟inj₁ q → injq' ≡ ⍟inj₁ q' → injq ≡ injq' → q ≡ q'
 ⍟-lem₁ refl refl refl = refl
@@ -138,8 +138,8 @@ DecEq-⍟ decA decB mid       (⍟inj₂ q') = no (λ ())
 
 {- kleen star states -}
 data _*-State (A : Set) : Set where
- init : A *-State
- inj  : A → A *-State
+  init : A *-State
+  inj  : A → A *-State
 
 *-lem₁ : {A : Set}{q q' : A} → inj q ≡ inj q' → q ≡ q'
 *-lem₁ refl = refl

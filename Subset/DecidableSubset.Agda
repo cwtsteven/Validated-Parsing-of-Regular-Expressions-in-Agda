@@ -95,24 +95,24 @@ open import Data.Vec renaming (_∈_ to _∈ⱽ_)
 open import Data.Nat
 
 data Sub (A : Set) : Set where
- keep : A → Sub A
- cast : A → Sub A
-
+  keep : A → Sub A
+  cast : A → Sub A
+ 
 DecEq-Sub : {A : Set} → DecEq A → DecEq (Sub A)
 DecEq-Sub dec (keep a) (keep  b) with dec a b
 DecEq-Sub dec (keep a) (keep .a) | yes refl = yes refl
 DecEq-Sub dec (keep a) (keep  b) | no a≢b   = no  (λ a≡b → a≢b (lem₁ a b a≡b))
- where
-  lem₁ : {A : Set}(a b : A) → keep a ≡ keep b → a ≡ b
-  lem₁ a .a refl = refl
+  where
+    lem₁ : {A : Set}(a b : A) → keep a ≡ keep b → a ≡ b
+    lem₁ a .a refl = refl
 DecEq-Sub dec (keep a) (cast  b) = no (λ ())
 DecEq-Sub dec (cast a) (keep  b) = no (λ ())
 DecEq-Sub dec (cast a) (cast  b) with dec a b
 DecEq-Sub dec (cast a) (cast .a) | yes refl = yes refl
 DecEq-Sub dec (cast a) (cast  b) | no a≢b   = no  (λ a≡b → a≢b (lem₁ a b a≡b))
- where
-  lem₁ : {A : Set}(a b : A) → cast a ≡ cast b → a ≡ b
-  lem₁ a .a refl = refl
+  where
+    lem₁ : {A : Set}(a b : A) → cast a ≡ cast b → a ≡ b
+    lem₁ a .a refl = refl
 
 _∈ᴸ_ : {A : Set}(a : A)(as : List (Sub A)) → {{dec : DecEq A}} → Bool
 (a ∈ᴸ []) {{dec}}            = false
