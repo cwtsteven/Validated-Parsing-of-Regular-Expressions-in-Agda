@@ -117,15 +117,19 @@ remove-ε-step nfa =
     where
       open ε-NFA nfa
       open ε-NFA-Operations nfa
+
       δ' : Q → Σ → DecSubset Q
       --     = { q' | q' ∈ δ q (α a) ∨ ∃p∈Q. q' ∈ δ p (α a) ∧ p ∈ ε-closure(q) }
       --     = λ q' → q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q' ∈ δ p (α a) × p ∈ ε-closure q)
-      δ' q a = λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ p ∈ ε-closure₃ (length It) (⟦ q ⟧ {{Q?}})) It
-   
+      --     = λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ p ∈ ε-closure q) It
+      δ' q a = λ q' → q' ∈ δ q (α a) ∨ (q ⊢ε a ─ q')
+
+
       F' : DecSubset Q
       -- = { q | q ∈ F ∨ ∃p∈Q. p ∈ F ∧ p ∈ ε-closure(q) }
       -- = λ q → q ∈ F ⊎ Σ[ p ∈ Q ] (p ∈ F × p ∈ ε-closure q)
-      F' = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ p ∈ ε-closure₃ (length It) (⟦ q ⟧ {{Q?}})) It
+      -- = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ p ∈ ε-closure q) It
+      F' = λ q → q ∈ F ∨ (q ⊢εF)
 
 
 

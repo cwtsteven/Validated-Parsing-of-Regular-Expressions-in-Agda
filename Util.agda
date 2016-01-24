@@ -20,7 +20,7 @@ postulate undefined : ∀ {α} → {A : Set α} → A
 
 
 -- Decidable Equality
-DecEq : ∀ {ℓ} → (A : Set ℓ) → Set ℓ
+DecEq : (A : Set) → Set
 DecEq A = (x y : A) → Dec (x ≡ y)
 
 decEqToBool : {A : Set} → DecEq A → (x y : A) → Bool
@@ -31,7 +31,7 @@ decEqToBool dec x  y | no  x≢y  = false
 
 -- Logic
 infix 0 _⇔_
-_⇔_ : ∀ {α} → Set α → Set α → Set α
+_⇔_ : ∀ {α ℓ} → Set α → Set ℓ → Set (ℓ Level.⊔ α)
 P ⇔ Q = (P → Q) × (Q → P)
 
 
@@ -128,3 +128,8 @@ Bool-lem₈ : ∀ {p}
             → ¬ (p ∧ false ≡ true)
 Bool-lem₈ {true}  ()
 Bool-lem₈ {false} () 
+
+Bool-lem₉ : ∀ {p}
+            → p ≡ false
+            → p ≢ true
+Bool-lem₉ {.false} refl ()

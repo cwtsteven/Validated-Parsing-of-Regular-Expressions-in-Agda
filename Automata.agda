@@ -22,8 +22,8 @@ open import Data.Nat
 
 open import Util
 open import Subset
-open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; Ø to ø ; _⋃_ to _⋃ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; _≈_ to _≈ᵈ_)
-open import Language Σ
+open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; Ø to ø ; _⋃_ to _⋃ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; _≈_ to _≈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ)
+open import Language Σ hiding (Ø ; _⋃_)
 
 -- Nondeterministic finite automata with ε-step
 -- section 2.2.3: Finite Automata
@@ -54,7 +54,6 @@ module ε-NFA-Operations (N : ε-NFA) where
   (q , wᵉ) ⊢ᵏ (suc n) ─ (q' , wᵉ')
     = Σ[ p ∈ Q ] Σ[ aᵉ ∈ Σᵉ ] Σ[ uᵉ ∈ Σᵉ* ]
       ( wᵉ ≡ aᵉ ∷ uᵉ × (q , aᵉ , uᵉ) ⊢ (p , uᵉ) × (p , uᵉ) ⊢ᵏ n ─ (q' , wᵉ') )
-      --( ((w ≡ a ∷ u × Σ[ b ∈ Σ ] a ≡ α b) ⊎ (w ≡ u × a ≡ E)) × (q , a , u) ⊢ (p , u) × (p , u) ⊢ᵏ n ─ (q' , w') )
 
   -- alternative definition of ⊢ᵏ
   infix 7 _⊢ᵏ₂_─_
@@ -75,35 +74,99 @@ module ε-NFA-Operations (N : ε-NFA) where
   _⊢*₂_ : (Q × Σᵉ*) → (Q × Σᵉ*) → Set
   (q , wᵉ) ⊢*₂ (q' , wᵉ') = Σ[ n ∈ ℕ ] Σ[ m ∈ ℕ ] Σ[ p ∈ Q ] Σ[ uᵉ ∈ Σᵉ* ]
                             ((q , wᵉ) ⊢ᵏ n ─ (p , uᵉ) × (p , uᵉ) ⊢ᵏ m ─ (q' , wᵉ'))
+
   -- ε closure
-  mutual
-    ε-closure₁' : Q → DecSubset Q
-    ε-closure₁' q = ø --ε-closure It (⟦ q ⟧ {{Q?}})
+  ε-closure : Q → DecSubset Q
+  ε-closure q = helper₁ (length It) (⟦ q ⟧ᵈ {{Q?}})
+    where
+      helper₂ : List Q → DecSubset Q → DecSubset Q
+      helper₂ []       qs = ø
+      helper₂ (p ∷ ps) qs = if p ∈ᵈ qs
+                            then δ p E ⋃ᵈ helper₂ ps qs
+                            else helper₂ ps qs
+      helper₁ : ℕ → DecSubset Q → DecSubset Q
+      helper₁ zero    qs = qs
+      helper₁ (suc n) qs = helper₁ n (helper₂ It qs)
 
-    ε-closure₁ : List Q → DecSubset Q → DecSubset Q
-    ε-closure₁ []       qs = ø
-    ε-closure₁ (p ∷ ps) qs = if p ∈ᵈ qs
-                             then ε-closure₁' p ⋃ᵈ ε-closure₁ ps qs
-                             else ε-closure₁ ps qs
 
-  one-step : List Q → DecSubset Q → DecSubset Q
-  one-step []       qs = ø
-  one-step (p ∷ ps) qs = if p ∈ᵈ qs
-                         then δ p E ⋃ᵈ one-step ps qs
-                         else one-step ps qs
+  infix 7 _⊢ε_─_
+  _⊢ε_─_ : Q → Σ → Q → Bool
+  q ⊢ε a ─ q' = helper It
+    where
+      helper : List Q → Bool
+      helper []       = false
+      helper (p ∷ ps) = (p ∈ᵈ ε-closure q ∧ q' ∈ᵈ δ p (α a)) ∨ helper ps
+      
 
-  ε-closure₂ : DecSubset Q → DecSubset Q
-  ε-closure₂ qs = let ps = one-step It qs in
-                  if qs ≈ᵈ ps
-                  then qs
-                  else ø --undefined --ε-closure₂ ps
+  ⊢εF-decider : List Q → Q → Bool
+  ⊢εF-decider []       q = false
+  ⊢εF-decider (p ∷ ps) q = (p ∈ᵈ ε-closure q ∧ p ∈ᵈ F) ∨ ⊢εF-decider ps q
+
+  infix 7 _⊢εF
+  _⊢εF : Q → Bool
+  q ⊢εF = ⊢εF-decider It q
+     
+
+{-
   
-  ε-closure₃ : ℕ → DecSubset Q → DecSubset Q
-  ε-closure₃ zero    qs = qs
-  ε-closure₃ (suc n) qs = let ps = one-step It qs in
-                          if qs ≈ᵈ ps
-                          then qs
-                          else ε-closure₃ n ps
+  data _→ε*_ : Q → Q → Set where
+    y : ∀ q q' → q' ∈ᵍ ε-closure q → q →ε* q'
+
+  Dec-→ε* : ∀ q q' → Dec (q →ε* q')
+  Dec-→ε* q q' with q' ∈ᵈ ε-closure q | inspect (ε-closure q) q'
+  Dec-→ε* q q' | true  | [ eq ] = yes (y q q' eq)
+  Dec-→ε* q q' | false | [ eq ] = no →ε*lem₁
+    where
+      →ε*lem₁ : ¬ q →ε* q'
+      →ε*lem₁ (y .q .q' prf) = ∈ᵍ-lem₂ {Q} {q'} {ε-closure q} eq prf
+
+  infix 7 _→εᵏ_─_
+  _→εᵏ_─_ : Q → ℕ → Q → Set
+  q →εᵏ zero  ─ q' = q ≡ q'
+  q →εᵏ suc n ─ q' = Σ[ p ∈ Q ] ( p ∈ᵍ δ q E × p →εᵏ n ─ q' )
+
+  infix 7 _→ε*_
+  _→ε*_ : Q → Q → Set
+  q →ε* q' = Σ[ n ∈ ℕ ] q →εᵏ n ─ q'
+
+  Dec-→ε* : ∀ q q' → Dec (q →ε* q')
+  Dec-→ε* q q' = undefined
+
+  ε-closure : Q → DecSubset Q
+  ε-closure q q' with Dec-→ε* q q'
+  ... | yes prf = true
+  ... | no  prf = false
+
+
+  _⊢ε_─_ : Q → Σ → Q → Set
+  q ⊢ε a ─ q' = Σ[ p ∈ Q ] (q' ∈ᵍ δ p (α a) × p ∈ᵍ ε-closure q)
+
+  Dec-⊢ε : ∀ q a q' → Dec (q ⊢ε a ─ q')
+  Dec-⊢ε = undefined
+
+
+  _∈F : Q → Set
+  q ∈F = Σ[ p ∈ Q ] (p ∈ᵍ F × p ∈ᵍ ε-closure q)
+
+  Dec-q∈F : ∀ q → Dec (q ∈F)
+  Dec-q∈F = undefined
+
+
+  ε-helper' : List Q → DecSubset Q → DecSubset Q
+  ε-helper' [] qs = ø
+  ε-helper' (p ∷ ps) qs = if p ∈ᵈ qs
+                          then δ p E ⋃ᵈ ε-helper' ps qs
+                          else ε-helper' ps qs
+
+  ε-helper : ℕ → DecSubset Q → DecSubset Q
+  ε-helper zero    qs = qs
+  ε-helper (suc n) qs = ε-helper n (ε-helper' It qs)
+
+  -- assuming any state can be reached in n steps
+  ε-closure₁ : Q → DecSubset Q
+  ε-closure₁ q = ε-helper (length It) (⟦ q ⟧ᵈ {{Q?}})
+-}
+
 
   {- below are the proofs of ⊢ᵏ ⇔ ⊢ᵏ₂ -}
   find-p : ∀ q wᵉ n q' wᵉ'
@@ -265,6 +328,7 @@ module NFA-Operations (N : NFA) where
   _⊢*_ : (Q × Σ*) → (Q × Σ*) → Set
   (q , w) ⊢* (q' , w') = Σ[ n ∈ ℕ ] (q , w) ⊢ᵏ n ─ (q' , w')
   
+  
 -- Language denoted by a NFA
 -- section 2.2.3: Finite Automata
 Lᴺ : NFA → Language
@@ -293,6 +357,11 @@ module DFA-Operations (D : DFA) where
   
   δ₀ : Σ* → Q
   δ₀ w = δ* q₀ w
+
+  lem₁ : ∀ q w u → δ* q (w ++ u) ≡ δ* (δ* q w) u
+  lem₁ q []      u = refl
+  lem₁ q (a ∷ w) u = lem₁ (δ q a) w u
+  
 
 -- Language denoted by a DFA
 Lᴰ : DFA → Language

@@ -11,7 +11,10 @@
 
 module RegularExpression (Σ : Set) where
 
+open import Data.Product hiding (Σ)
+
 open import Language Σ renaming (Ø to ø)
+open import Subset using (_≈_)
 
 
 -- Regular expressions
@@ -37,3 +40,8 @@ Lᴿ (σ a)     = ⟦ a ⟧
 Lᴿ (e₁ ∣ e₂) = Lᴿ e₁ ⋃ Lᴿ e₂
 Lᴿ (e₁ ∙ e₂) = Lᴿ e₁ • Lᴿ e₂
 Lᴿ (e *)     = (Lᴿ e) ⋆
+
+
+-- Regular Language is the language that can be denoted by a Regular Expression
+Regular : Language → Set
+Regular L = Σ[ e ∈ RegExp ] (L ≈ Lᴿ e)
