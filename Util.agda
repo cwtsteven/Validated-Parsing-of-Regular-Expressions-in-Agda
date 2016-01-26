@@ -133,3 +133,9 @@ Bool-lem₉ : ∀ {p}
             → p ≡ false
             → p ≢ true
 Bool-lem₉ {.false} refl ()
+
+Bool-lem₁₀ : ∀ p q
+             → p ≡ true
+             → q ∨ p ≡ true
+Bool-lem₁₀ .true false refl = refl
+Bool-lem₁₀ .true true  refl = refl

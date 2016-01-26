@@ -76,50 +76,6 @@ module ε-NFA-Operations (N : ε-NFA) where
                             ((q , wᵉ) ⊢ᵏ n ─ (p , uᵉ) × (p , uᵉ) ⊢ᵏ m ─ (q' , wᵉ'))
 
   -- ε closure
-  ε-closure : Q → DecSubset Q
-  ε-closure q = helper₁ (length It) (⟦ q ⟧ᵈ {{Q?}})
-    where
-      helper₂ : List Q → DecSubset Q → DecSubset Q
-      helper₂ []       qs = ø
-      helper₂ (p ∷ ps) qs = if p ∈ᵈ qs
-                            then δ p E ⋃ᵈ helper₂ ps qs
-                            else helper₂ ps qs
-      helper₁ : ℕ → DecSubset Q → DecSubset Q
-      helper₁ zero    qs = qs
-      helper₁ (suc n) qs = helper₁ n (helper₂ It qs)
-
-
-  infix 7 _⊢ε_─_
-  _⊢ε_─_ : Q → Σ → Q → Bool
-  q ⊢ε a ─ q' = helper It
-    where
-      helper : List Q → Bool
-      helper []       = false
-      helper (p ∷ ps) = (p ∈ᵈ ε-closure q ∧ q' ∈ᵈ δ p (α a)) ∨ helper ps
-      
-
-  ⊢εF-decider : List Q → Q → Bool
-  ⊢εF-decider []       q = false
-  ⊢εF-decider (p ∷ ps) q = (p ∈ᵈ ε-closure q ∧ p ∈ᵈ F) ∨ ⊢εF-decider ps q
-
-  infix 7 _⊢εF
-  _⊢εF : Q → Bool
-  q ⊢εF = ⊢εF-decider It q
-     
-
-{-
-  
-  data _→ε*_ : Q → Q → Set where
-    y : ∀ q q' → q' ∈ᵍ ε-closure q → q →ε* q'
-
-  Dec-→ε* : ∀ q q' → Dec (q →ε* q')
-  Dec-→ε* q q' with q' ∈ᵈ ε-closure q | inspect (ε-closure q) q'
-  Dec-→ε* q q' | true  | [ eq ] = yes (y q q' eq)
-  Dec-→ε* q q' | false | [ eq ] = no →ε*lem₁
-    where
-      →ε*lem₁ : ¬ q →ε* q'
-      →ε*lem₁ (y .q .q' prf) = ∈ᵍ-lem₂ {Q} {q'} {ε-closure q} eq prf
-
   infix 7 _→εᵏ_─_
   _→εᵏ_─_ : Q → ℕ → Q → Set
   q →εᵏ zero  ─ q' = q ≡ q'
@@ -129,43 +85,57 @@ module ε-NFA-Operations (N : ε-NFA) where
   _→ε*_ : Q → Q → Set
   q →ε* q' = Σ[ n ∈ ℕ ] q →εᵏ n ─ q'
 
-  Dec-→ε* : ∀ q q' → Dec (q →ε* q')
-  Dec-→ε* q q' = undefined
+  →εᵏ-lem₁ : ∀ q n p q'
+             → q →εᵏ n ─ p
+             → q' ∈ᵍ δ p E
+             → q →εᵏ suc n ─ q'
+  →εᵏ-lem₁ q zero    .q q' refl q'∈δpE = q' , q'∈δpE , refl
+  →εᵏ-lem₁ q (suc n)  p q' (p₁ , p∈δqE , prf) q'∈δpE = p₁ , p∈δqE , →εᵏ-lem₁ p₁ n p q' prf q'∈δpE
+
+  data Reachable : Q → Set where
+    step : {q : Q} → ∀ p → q →ε* p → Reachable q
+
+  Reachable? : {q : Q} → Q → List (Reachable q) → Bool
+  Reachable? q' []              = false
+  Reachable? q' (step p _ ∷ rs) = decEqToBool Q? q' p ∨ Reachable? q' rs
+
+  one-state : {q : Q} → List (Reachable q) → List Q → (q' : Q) → q →ε* q' → List (Reachable q)
+  one-state rs []       q' q→ε*q' = []
+  one-state rs (p ∷ ps) q' q→ε*q' with Reachable? p rs
+  one-state rs (p ∷ ps) q' q→ε*q'      | true  = one-state rs ps q' q→ε*q'
+  one-state rs (p ∷ ps) q' q→ε*q'      | false with p ∈ᵈ δ q' E | inspect (δ q' E) p
+  one-state rs (p ∷ ps) q' (n , q→εᵏq') | false | true  | [ p∈δq'E ]
+    = step p (suc n , (→εᵏ-lem₁ _ n q' p q→εᵏq' p∈δq'E)) ∷ one-state (step p (suc n , (→εᵏ-lem₁ _ n q' p q→εᵏq' p∈δq'E)) ∷ rs) ps q' (n , q→εᵏq')
+  one-state rs (p ∷ ps) q' q→ε*q'      | false | false | [ p∉δq'E ] = one-state rs ps q' q→ε*q'
+
+  one-step : {q : Q} → List (Reachable q) → List (Reachable q) → List (Reachable q)
+  one-step rs []                   = []
+  one-step rs (step p q→ε*p ∷ rs') = one-state rs It p q→ε*p ++ one-step (one-state rs It p q→ε*p ++ rs) rs'
+
+  n-step : {q : Q} → ℕ → List (Reachable q) → List (Reachable q)
+  n-step zero    rs = rs
+  n-step (suc n) rs with one-step rs rs
+  n-step (suc n) rs | [] = rs
+  n-step (suc n) rs | _  = n-step n (one-step rs rs)
 
   ε-closure : Q → DecSubset Q
-  ε-closure q q' with Dec-→ε* q q'
-  ... | yes prf = true
-  ... | no  prf = false
+  ε-closure q = λ q' → Reachable? q' (n-step (length It) (step q (zero , refl) ∷ []))
+  
+  ⊢ε-decider : List Q → Q → Σ → DecSubset Q
+  ⊢ε-decider []       q a = ø
+  ⊢ε-decider (p ∷ ps) q a = λ q' → (p ∈ᵈ ε-closure q ∧ q' ∈ᵈ δ p (α a)) ∨ q' ∈ᵈ ⊢ε-decider ps q a
 
+  infix 7 _⊢ε_─_
+  _⊢ε_─_ : Q → Σ → Q → Bool
+  q ⊢ε a ─ q' = ⊢ε-decider It q a q'
+      
+  ⊢εF-decider : List Q → DecSubset Q
+  ⊢εF-decider []       = ø
+  ⊢εF-decider (p ∷ ps) = λ q → (p ∈ᵈ ε-closure q ∧ p ∈ᵈ F) ∨ q ∈ᵈ ⊢εF-decider ps
 
-  _⊢ε_─_ : Q → Σ → Q → Set
-  q ⊢ε a ─ q' = Σ[ p ∈ Q ] (q' ∈ᵍ δ p (α a) × p ∈ᵍ ε-closure q)
-
-  Dec-⊢ε : ∀ q a q' → Dec (q ⊢ε a ─ q')
-  Dec-⊢ε = undefined
-
-
-  _∈F : Q → Set
-  q ∈F = Σ[ p ∈ Q ] (p ∈ᵍ F × p ∈ᵍ ε-closure q)
-
-  Dec-q∈F : ∀ q → Dec (q ∈F)
-  Dec-q∈F = undefined
-
-
-  ε-helper' : List Q → DecSubset Q → DecSubset Q
-  ε-helper' [] qs = ø
-  ε-helper' (p ∷ ps) qs = if p ∈ᵈ qs
-                          then δ p E ⋃ᵈ ε-helper' ps qs
-                          else ε-helper' ps qs
-
-  ε-helper : ℕ → DecSubset Q → DecSubset Q
-  ε-helper zero    qs = qs
-  ε-helper (suc n) qs = ε-helper n (ε-helper' It qs)
-
-  -- assuming any state can be reached in n steps
-  ε-closure₁ : Q → DecSubset Q
-  ε-closure₁ q = ε-helper (length It) (⟦ q ⟧ᵈ {{Q?}})
--}
+  infix 7 _⊢εF
+  _⊢εF : DecSubset Q
+  q ⊢εF = q ∈ᵈ ⊢εF-decider It
 
 
   {- below are the proofs of ⊢ᵏ ⇔ ⊢ᵏ₂ -}
@@ -258,14 +228,14 @@ module ε-NFA-Operations (N : ε-NFA) where
   {- above are the proofs of ⊢ᵏ ⇔ ⊢ᵏ₂ -}
 
   {- below are the proofs of ⊢* ⇔ ⊢*₂ -}
-  ⊢*-lem₄ : ∀ q wᵉ n q' wᵉ' p uᵉ m
+  ⊢*-lem₄ : ∀ q wᵉ n p uᵉ m q' wᵉ'
             → (q , wᵉ) ⊢ᵏ n ─ (p , uᵉ)
             → (p , uᵉ) ⊢ᵏ m ─ (q' , wᵉ')
             → (q , wᵉ) ⊢ᵏ n + m ─ (q' , wᵉ')
-  ⊢*-lem₄ .p wᵉ zero     q'  wᵉ' p .wᵉ m (refl , refl) prf
+  ⊢*-lem₄ .p wᵉ zero     p .wᵉ m q'  wᵉ' (refl , refl) prf
     = prf
-  ⊢*-lem₄  q wᵉ (suc n)  q'  wᵉ' p  uᵉ m (r , a , vᵉ , prf₁ , prf₂ , prf₃) prf₄
-    = r , a , vᵉ , prf₁ , prf₂ , ⊢*-lem₄ r vᵉ n q' wᵉ' p uᵉ m prf₃ prf₄
+  ⊢*-lem₄  q wᵉ (suc n)  p  uᵉ m q'  wᵉ' (r , a , vᵉ , prf₁ , prf₂ , prf₃) prf₄
+    = r , a , vᵉ , prf₁ , prf₂ , ⊢*-lem₄ r vᵉ n p uᵉ m q' wᵉ' prf₃ prf₄
 
   ⊢*-lem₃ : ∀ {q wᵉ q' wᵉ'}
             → (q , wᵉ) ⊢*  (q' , wᵉ')
@@ -277,7 +247,7 @@ module ε-NFA-Operations (N : ε-NFA) where
             → (q , wᵉ) ⊢*₂ (q' , wᵉ')
             → (q , wᵉ) ⊢*  (q' , wᵉ')
   ⊢*-lem₂ {q} {wᵉ} {q'} {wᵉ'} (n , m , p , uᵉ , prf₁ , prf₂)
-    = n + m , ⊢*-lem₄ q wᵉ n q' wᵉ' p uᵉ m prf₁ prf₂
+    = n + m , ⊢*-lem₄ q wᵉ n p uᵉ m q' wᵉ' prf₁ prf₂
   
   ⊢*-lem₁ : ∀ {q wᵉ q' wᵉ'}
             → (q , wᵉ) ⊢* (q' , wᵉ') ⇔ (q , wᵉ) ⊢*₂ (q' , wᵉ')
