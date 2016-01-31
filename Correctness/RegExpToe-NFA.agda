@@ -21,7 +21,7 @@ open import Data.Nat
 open import Induction.Nat
 
 open import Subset renaming (Ø to ø)
-open import Subset.DecidableSubset renaming (Ø to ø ; _∈_ to _∈ᵈ_) hiding (_⊆_ ; _⊇_ ; _≈_)
+open import Subset.DecidableSubset renaming (Ø to ø ; _∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_)
 open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
@@ -70,7 +70,7 @@ Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡u
     lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) with lem₁ v s t n v≡st (Lᴿ⊆Lᵉᴺ e s s∈Lᴿe) t∈Lᴿeⁿ
     lem₁ w u .[] (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) | .[] , refl , ._  , q₂∈F , zero  , (refl , refl)
       = E ∷ uᵉ , trans (trans w≡uv (List-lem₂ u)) u≡uᵉ , inj q₁ , q₁∈F₁ , suc n₁ , lem₂ uᵉ uᵉ n₁ q₁ [] (sym (List-lem₂ uᵉ)) prf₁
-    lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) |  vᵉ , v≡vᵉ ,  q₂     , q₂∈F , suc m , prf₂ with inj q₀₁ ∈ᵈ δ (inj q₁) E | inspect (δ (inj q₁) E) (inj q₀₁)
+    lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) |  vᵉ , v≡vᵉ ,  q₂     , q₂∈F , suc m , prf₂ with inj q₀₁ ∈ᵈ? δ (inj q₁) E | inspect (δ (inj q₁) E) (inj q₀₁)
     lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) |  vᵉ , v≡vᵉ ,  init   , q₂∈F , suc m , prf₂ | true  | [ eq ] with lem₄₀ vᵉ (suc m) [] prf₂
     lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) |  vᵉ , v≡vᵉ ,  init   , q₂∈F , suc m , prf₂ | true  | [ eq ] | v≡[]
       = E ∷ uᵉ , Σᵉ*-lem₅ w u v uᵉ vᵉ w≡uv u≡uᵉ v≡vᵉ v≡[] , inj q₁ , q₁∈F₁ , suc n₁ , lem₂ uᵉ uᵉ n₁ q₁ [] (sym (List-lem₂ uᵉ)) prf₁
@@ -80,9 +80,9 @@ Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡u
         , ⊢*-lem₂ (suc n₁ , suc m₂ , inj q₁ , E ∷ vᵉ₁
         , lem₂ (uᵉ ++ E ∷ vᵉ₁) uᵉ n₁ q₁ (E ∷ vᵉ₁) refl prf₁
         , (inj q₀₁ , E , vᵉ₁ , refl , (refl , eq) , prf₃))
-    lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) |  vᵉ , v≡vᵉ ,  q₂     , q₂∈F , suc m , prf₂ | false | [ eq ] with q₁ ∈ᵈ F₁ | Q₁? q₀₁ q₀₁
+    lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) |  vᵉ , v≡vᵉ ,  q₂     , q₂∈F , suc m , prf₂ | false | [ eq ] with q₁ ∈ᵈ? F₁ | Q₁? q₀₁ q₀₁
     lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) |  vᵉ , v≡vᵉ ,  q₂     , q₂∈F , suc m , prf₂ | false | [ eq ] | true  | yes refl
-      = ⊥-elim (Bool-lem₂ (subst (λ p → p ≡ false) (Bool-lem₁ (q₀₁ ∈ᵈ δ₁ q₁ E)) eq))
+      = ⊥-elim (Bool-lem₂ (subst (λ p → p ≡ false) (Bool-lem₁ (q₀₁ ∈ᵈ? δ₁ q₁ E)) eq))
     lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ ,    () , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) |  vᵉ , v≡vᵉ ,  q₂     , q₂∈F , suc m , prf₂ | false | [ eq ] | false | yes refl
     lem₁ w u  v  (suc n) w≡uv (uᵉ , u≡uᵉ , q₁ , q₁∈F₁ , (n₁ , prf₁)) (s , t , s∈Lᴿe , t∈Lᴿeⁿ , v≡st) |  vᵉ , v≡vᵉ ,  q₂     , q₂∈F , suc m , prf₂ | false | [ eq ] | _     | no  q₀₁≢q₀₁
       = ⊥-elim (q₀₁≢q₀₁ refl)
@@ -121,7 +121,7 @@ Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
 
     NoLoop-lem₁ : ∀ w wᵉ n q vᵉ
                   → w ≡ toΣ* wᵉ
-                  → inj q ∈ᵍ F
+                  → inj q ∈ᵈ F
                   → (prf : (inj q₀₁ , wᵉ) ⊢ᵏ n ─ (inj q , vᵉ))
                   → NoLoop q₀₁ wᵉ n q vᵉ prf
                   → toΣ* (find-uᵉ q₀₁ wᵉ n q vᵉ prf) ∈ Lᵉᴺ nfa₁
@@ -134,7 +134,7 @@ Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
 
     HasLoop-lem₁ : ∀ n w wᵉ q
                    → w ≡ toΣ* wᵉ
-                   → inj q ∈ᵍ F
+                   → inj q ∈ᵈ F
                    → (prf : (inj q₀₁ , wᵉ) ⊢ᵏ n ─ (inj q , []))
                    → HasLoop q₀₁ wᵉ n q [] prf
                    → Σ[ n₁ ∈ ℕ ] w ∈ Lᴿ e ^ n₁
@@ -145,13 +145,13 @@ Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
                    → m₁ <′ n
                    → ∀ w wᵉ q
                      → w ≡ toΣ* wᵉ
-                     → inj q ∈ᵍ F
+                     → inj q ∈ᵈ F
                      → (prf : (inj q₀₁ , wᵉ) ⊢ᵏ m₁ ─ (inj q , []))
                      → HasLoop q₀₁ wᵉ m₁ q [] prf
                      → Σ[ n₁ ∈ ℕ ] w ∈ Lᴿ e ^ n₁)
                  → ∀ w wᵉ q
                    → w ≡ toΣ* wᵉ
-                   → inj q ∈ᵍ F
+                   → inj q ∈ᵈ F
                    → (prf : (inj q₀₁ , wᵉ) ⊢ᵏ n ─ (inj q , []))
                    → HasLoop q₀₁ wᵉ n q [] prf
                    → Σ[ n₁ ∈ ℕ ] w ∈ Lᴿ e ^ n₁
@@ -181,7 +181,7 @@ Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
 
     lem₄ : ∀ w wᵉ q n
            → w ≡ toΣ* wᵉ
-           → inj q ∈ᵍ F
+           → inj q ∈ᵈ F
            → (inj q₀₁ , wᵉ) ⊢ᵏ n ─ (inj q , [])
            → Σ[ n₁ ∈ ℕ ] w ∈ Lᴿ e ^ n₁
     lem₄ w wᵉ q n w≡wᵉ q∈F prf with lem₅ q₀₁ wᵉ n q [] prf
@@ -211,7 +211,7 @@ Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
 
     lem₂ : ∀ w wᵉ q n
            → w ≡ toΣ* wᵉ
-           → inj q ∈ᵍ F
+           → inj q ∈ᵈ F
            → (init , wᵉ) ⊢ᵏ suc n ─ (inj q , [])
            → Σ[ n₁ ∈ ℕ ] w ∈ Lᴿ e ^ n₁
     lem₂ w wᵉ q n w≡wᵉ q∈F prf with lem₃ wᵉ n q prf

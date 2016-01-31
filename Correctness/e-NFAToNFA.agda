@@ -4,7 +4,7 @@
     ∀nfa∈ε-NFA. L(nfa) ⊇ L(remove-ε-step nfa)
 
   Steven Cheung 2015.
-  Version 10-12-2015
+  Version 31-01-2015
 -}
 open import Util
 module Correctness.e-NFAToNFA (Σ : Set)(dec : DecEq Σ) where
@@ -18,9 +18,10 @@ open import Data.Product hiding (Σ)
 open import Data.Unit
 open import Data.Empty
 open import Data.Nat
+open import Induction.Nat
 
 open import Subset renaming (Ø to ø)
-open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ)
+open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ)
 open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
@@ -37,12 +38,90 @@ module Lᵉᴺ⊆Lᴺ (ε-nfa : ε-NFA) where
   open NFA-Operations nfa
   open ε-NFA ε-nfa renaming (Q to Qₑ ; Q? to Qₑ? ; δ to δₑ ; q₀ to q₀ₑ ; F to Fₑ ; It to Itₑ) 
   open ε-NFA-Operations ε-nfa
-    renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ; _⊢*₂_ to _⊢*₂ₑ_ ; _⊢ᵏ_─_ to _⊢ᵏₑ_─_ ; ⊢*-lem₁ to ⊢*-lem₁ₑ ; ⊢*-lem₂ to ⊢*-lem₂ₑ ; ⊢*-lem₃ to ⊢*-lem₃ₑ)
+    renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ; _⊢*₂_ to _⊢*₂ₑ_ ; _⊢ᵏ_─_ to _⊢ᵏₑ_─_ ; ⊢ᵏ₂-lem₉ to ⊢ᵏ₂-lem₉ₑ)
 
+
+  lem₂ : ∀ q wᵉ n q' wᵉ'
+         → (q , wᵉ) ⊢ᵏₑ n ─ (q' , wᵉ')
+         → Σ[ p ∈ Qₑ ] Σ[ a ∈ Σ ] Σ[ n₁ ∈ ℕ ] ( n₁ <′ n ×  (q , wᵉ) ⊢ᵏₑ n₁ ─ (p , α a ∷ wᵉ') × (p , α a , wᵉ') ⊢ₑ (q' , wᵉ') )
+           ⊎ Σ[ p ∈ Qₑ ] Σ[ a ∈ Σ ] Σ[ uᵉ ∈ Σᵉ* ] Σ[ n₁ ∈ ℕ ] ( n₁ <′ n × Σ[ p₁ ∈ Qₑ ] ( toΣ* uᵉ ≡ toΣ* wᵉ' × (q , wᵉ) ⊢ᵏₑ n₁ ─ (p , α a ∷ uᵉ) × (p , α a , uᵉ) ⊢ₑ (p₁ , uᵉ) × (p₁ →ε* q') ) )
+           ⊎ toΣ* wᵉ ≡ toΣ* wᵉ' × q →ε* q'
+  lem₂ q wᵉ zero   .q .wᵉ  (refl , refl) = inj₂ (inj₂ (refl , (zero , refl)))
+  lem₂ q wᵉ (suc n) q' wᵉ' prf with ⊢ᵏ₂-lem₂ {q} {wᵉ} {suc n} {q'} {wᵉ'} prf
+  lem₂ q wᵉ (suc n) q' wᵉ' prf | p , α a , prf₁ , (refl , prf₂) = inj₁ (p , a , n , ≤′-refl , prf₁ , (refl , prf₂))
+  lem₂ q wᵉ (suc n) q' wᵉ' prf | p , E   , prf₁ , (refl , prf₂) with lem₂ q wᵉ n p (E ∷ wᵉ') prf₁
+  lem₂ q wᵉ (suc n) q' wᵉ' prf | p , E   , prf₁ , (refl , prf₂) | inj₁ (p₁ , a , n₁ , n₁<n , prf₃ , prf₄)
+    = inj₂ (inj₁ (p₁ , a , E ∷ wᵉ' , n₁ , ≤′-step n₁<n , p , refl , prf₃ , prf₄ , (1 , q' , prf₂ , refl)))
+  lem₂ q wᵉ (suc n) q' wᵉ' prf | p , E   , prf₁ , (refl , prf₂) | inj₂ (inj₁ (p₁ , a , uᵉ , n₁ , n₁<n , p₂ , uᵉ≡[] , prf₃ , prf₄ , (k , prf₅)))
+    = inj₂ (inj₁ (p₁ , a , uᵉ , n₁ , ≤′-step n₁<n , p₂ , uᵉ≡[] , prf₃ , prf₄ , (suc k , →εᵏ-lem₁ p₂ k p q' prf₅ prf₂)))
+  lem₂ q wᵉ (suc n) q' wᵉ' prf | p , E   , prf₁ , (refl , prf₂) | inj₂ (inj₂ (wᵉ≡[] , (k , q→εᵏp)))
+    = inj₂ (inj₂ (wᵉ≡[] , (suc k , →εᵏ-lem₁ q k p q' q→εᵏp prf₂)))
+
+  
+  lem₃ : ∀ n w q wᵉ p a uᵉ q'
+         → w ≡ toΣ* wᵉ
+         → (q , wᵉ) ⊢ᵏₑ n ─ (p , α a ∷ uᵉ)
+         → (p , α a , uᵉ) ⊢ₑ (q' , uᵉ)
+         → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) )
+  lem₃ = <-rec _ helper
+    where
+      helper : ∀ n
+               → (∀ m₁
+                 → m₁ <′ n
+                 → ∀ w q wᵉ p a uᵉ q'
+                   → w ≡ toΣ* wᵉ
+                   → (q , wᵉ) ⊢ᵏₑ m₁ ─ (p , α a ∷ uᵉ)
+                   → (p , α a , uᵉ) ⊢ₑ (q' , uᵉ)
+                   → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) ))
+               → ∀ w q wᵉ p a uᵉ q'
+                 → w ≡ toΣ* wᵉ
+                 → (q , wᵉ) ⊢ᵏₑ n ─ (p , α a ∷ uᵉ)
+                 → (p , α a , uᵉ) ⊢ₑ (q' , uᵉ)
+                 → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) )
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) with lem₂ q wᵉ n p (α a ∷ uᵉ) prf₁
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₁ (p₁ , a₁ , n₁ , n₁<n , prf₃ , prf₄) with rec n₁ n₁<n w q wᵉ p₁ a₁ (α a ∷ uᵉ) p w≡wᵉ prf₃ prf₄
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₁ (p₁ , a₁ , n₁ , n₁<n , prf₃ , prf₄) | ._ , refl , n₂ , prf₅
+        = toΣ* uᵉ , refl , suc n₂ , ⊢ᵏ₂-lem₉ {q} {w} {n₂} {p} {a} {q'} {toΣ* uᵉ} prf₅ (refl , Bool-lem₆ _ _ prf₂)
+        
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₁ (p₁ , a₁ , uᵉ₁ , n₁ , n₁<n , p₂ , uᵉ₁≡auᵉ , prf₃ , prf₄ , p₂→p)) with rec n₁ n₁<n w q wᵉ p₁ a₁ uᵉ₁ p₂ w≡wᵉ prf₃ prf₄
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₁ (p₁ , a₁ , uᵉ₁ , n₁ , n₁<n , p₂ , uᵉ₁≡auᵉ , prf₃ , prf₄ , p₂→p)) | ._ , refl , n₂ , prf₅ with ∃q⊢a-q'? (Dec-→ε*⊢ p₂ a q') | inspect (λ q' → ∃q⊢a-q'? (Dec-→ε*⊢ p₂ a q')) q'
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₁ (p₁ , a₁ , uᵉ₁ , n₁ , n₁<n , p₂ , uᵉ₁≡auᵉ , prf₃ , prf₄ , p₂→p)) | ._ , refl , n₂ , prf₅ | true  | [ eq ]
+        = let q→p₂ = subst (λ u → (q , w) ⊢ᵏ n₂ ─ (p₂ , u)) uᵉ₁≡auᵉ prf₅ in
+          toΣ* uᵉ , refl , suc n₂ , ⊢ᵏ₂-lem₉ {q} {w} {n₂} {p₂} {a} {q'} {toΣ* uᵉ} q→p₂ (refl , Bool-lem₁₀ (∃q⊢a-q'? (Dec-→ε*⊢ p₂ a q')) (q' ∈ᵈ? δₑ p₂ (α a)) eq)
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₁ (p₁ , a₁ , uᵉ₁ , n₁ , n₁<n , p₂ , uᵉ₁≡auᵉ , prf₃ , prf₄ , p₂→p)) | ._ , refl , n₂ , prf₅ | false | [ eq ] with Dec-→ε*⊢ p₂ a q'
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₁ (p₁ , a₁ , uᵉ₁ , n₁ , n₁<n , p₂ , uᵉ₁≡auᵉ , prf₃ , prf₄ , p₂→p)) | ._ , refl , n₂ , prf₅ | false | [ () ] | yes _
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₁ (p₁ , a₁ , uᵉ₁ , n₁ , n₁<n , p₂ , uᵉ₁≡auᵉ , prf₃ , prf₄ , p₂→p)) | ._ , refl , n₂ , prf₅ | false | [ eq ] | no  ¬q→p
+        = ⊥-elim (¬q→p (p , prf₂ , p₂→p))
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₂ (wᵉ≡auᵉ , q→p)) with ∃q⊢a-q'? (Dec-→ε*⊢ q a q') | inspect (λ q' → ∃q⊢a-q'? (Dec-→ε*⊢ q a q')) q'
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₂ (wᵉ≡auᵉ , q→p)) | true  | [ eq ]
+        = toΣ* uᵉ , refl , suc zero , (q' , a , toΣ* uᵉ , trans w≡wᵉ wᵉ≡auᵉ , (refl , Bool-lem₁₀ (∃q⊢a-q'? (Dec-→ε*⊢ q a q')) (q' ∈ᵈ? δₑ q (α a)) eq) , (refl , refl))
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₂ (wᵉ≡auᵉ , q→p)) | false | [ eq ] with Dec-→ε*⊢ q a q'
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₂ (wᵉ≡auᵉ , q→p)) | false | [ () ] | yes _
+      helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₂ (inj₂ (wᵉ≡auᵉ , q→p)) | false | [ eq ] | no  ¬q→p
+        = ⊥-elim (¬q→p (p , prf₂ , q→p))
+    
 
   lem₁ : Lᵉᴺ ε-nfa ⊆ Lᴺ nfa
-  lem₁ w (wᵉ , w≡wᵉ , q , q∈F , prf) = undefined
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) with lem₂ q₀ wᵉ n q [] prf
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₁ (p , a , n₁ , n₁<n , prf₁ , prf₂) with lem₃ n₁ w q₀ wᵉ p a [] q w≡wᵉ prf₁ prf₂
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₁ (p , a , n₁ , n₁<n , prf₁ , prf₂) | .[] , refl , n₂ , prf₃
+    = q , Bool-lem₆ _ _ q∈Fₑ  , n₂ , prf₃
+    
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₁ (p , a , uᵉ , n₁ , n₁<n , p₁ , uᵉ≡[] , prf₃ , prf₄ , (k , prf₅))) with ∃q∈F? (Dec-→ε*∈F p₁) | inspect (λ p → ∃q∈F? (Dec-→ε*∈F p)) p₁
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₁ (p , a , uᵉ , n₁ , n₁<n , p₁ , uᵉ≡[] , prf₃ , prf₄ , (k , prf₅))) | true  | [ eq ] with lem₃ n₁ w q₀ wᵉ p a uᵉ p₁ w≡wᵉ prf₃ prf₄
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₁ (p , a , uᵉ , n₁ , n₁<n , p₁ , uᵉ≡[] , prf₃ , prf₄ , (k , prf₅))) | true  | [ eq ] | u , u≡uᵉ , n₂ , prf₆
+    = p₁ , Bool-lem₁₀ (∃q∈F? (Dec-→ε*∈F p₁)) (Fₑ p₁) eq , n₂ , subst (λ u → (q₀ , w) ⊢ᵏ n₂ ─ (p₁ , u)) (trans u≡uᵉ uᵉ≡[]) prf₆
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₁ (p , a , uᵉ , n₁ , n₁<n , p₁ , uᵉ≡[] , prf₃ , prf₄ , (k , prf₅))) | false | [ eq ] with Dec-→ε*∈F p₁
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₁ (p , a , uᵉ , n₁ , n₁<n , p₁ , uᵉ≡[] , prf₃ , prf₄ , (k , prf₅))) | false | [ () ] | yes _
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₁ (p , a , uᵉ , n₁ , n₁<n , p₁ , uᵉ≡[] , prf₃ , prf₄ , (k , prf₅))) | false | [ eq ] | no  ¬p→ε*q
+    = ⊥-elim (¬p→ε*q (q , q∈Fₑ , k , prf₅))
 
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₂ (wᵉ≡[] , q₀→q)) with ∃q∈F? (Dec-→ε*∈F q₀ₑ) | inspect (λ p → ∃q∈F? (Dec-→ε*∈F p)) q₀ₑ
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₂ (wᵉ≡[] , q₀→q)) | true  | [ eq ] = q₀ₑ , Bool-lem₁₀ (∃q∈F? (Dec-→ε*∈F q₀ₑ)) (Fₑ q₀ₑ) eq , (zero , refl , trans w≡wᵉ wᵉ≡[])
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₂ (wᵉ≡[] , q₀→q)) | false | [ eq ] with Dec-→ε*∈F q₀ₑ
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₂ (wᵉ≡[] , q₀→q)) | false | [ () ] | yes _
+  lem₁ w (wᵉ , w≡wᵉ , q , q∈Fₑ , (n , prf)) | inj₂ (inj₂ (wᵉ≡[] , q₀→q)) | false | [ eq ] | no  ¬q₀→q
+    = ⊥-elim (¬q₀→q (q , q∈Fₑ , q₀→q))
 
 
 Lᵉᴺ⊆Lᴺ : ∀ ε-nfa → Lᵉᴺ ε-nfa ⊆ Lᴺ (remove-ε-step ε-nfa)
@@ -60,104 +139,52 @@ module Lᵉᴺ⊇Lᴺ (ε-nfa : ε-NFA) where
   open ε-NFA-Operations ε-nfa
     renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ; _⊢*₂_ to _⊢*₂ₑ_ ; _⊢ᵏ_─_ to _⊢ᵏₑ_─_)
 
-  -- tree?
-  lem₁₀ : ∀ q n p w'
-          → q →εᵏ n ─ p
-          → Σ[ w ∈ Σᵉ* ] ( toΣ* w ≡ toΣ* w' × (q , w) ⊢ᵏₑ n ─ (p , w') )
-  lem₁₀ q zero    .q w' refl = w' , refl , (refl , refl)
-  lem₁₀ q (suc n)  p w' (p₁ , p₁δqE , p₁→εᵏp) with lem₁₀ p₁ n p w' p₁→εᵏp
-  lem₁₀ q (suc n)  p w' (p₁ , p₁δqE , p₁→εᵏp) | w₁ , w₁≡w' , prf
-    = E ∷ w₁ , w₁≡w' , (p₁ , E , w₁ , refl , (refl , p₁δqE) , prf)
-
-  lem₉ : ∀ q p w' rs
-         → Reachable? {q} p rs ≡ true
-         → Σ[ n ∈ ℕ ] Σ[ w ∈ Σᵉ* ] ( toΣ* w ≡ toΣ* w' × (q , w) ⊢ᵏₑ n ─ (p , w') )
-  lem₉ q p w' [] ()
-  lem₉ q p w' (step  p₁ _ ∷ rs) reach with Qₑ? p p₁
-  lem₉ q p w' (step .p  (n , prf) ∷ rs) reach | yes refl = n , lem₁₀ q n p w' prf
-  lem₉ q p w' (step  p₁ _ ∷ rs) reach | no  _    = lem₉ q p w' rs reach
-
-  lem₇ : ∀ q p w'
-         → p ∈ᵍ ε-closure q
-         → Σ[ n ∈ ℕ ] Σ[ w ∈ Σᵉ* ] ( toΣ* w ≡ toΣ* w' × (q , w) ⊢ᵏₑ n ─ (p , w') )
-  lem₇ q  p w' p∈εq = lem₉ q p w' (n-step (length It) (step q (zero , refl) ∷ [])) p∈εq
-
-
-  lem₅ : ∀ q a w q' ps
-         → ⊢ε-decider ps q a q' ≡ true
-         → Σ[ p ∈ Qₑ ] Σ[ n ∈ ℕ ] Σ[ w' ∈ Σᵉ* ] ( toΣ* (α a ∷ w) ≡ toΣ* w' × (q , w') ⊢ᵏₑ n ─ (p , α a ∷ w) × (p , α a , w) ⊢ₑ (q' , w) )
-  lem₅ q a w q' []           ()
-  lem₅ q a w q' (p ∷ ps) q⊢εa─q' with p ∈ᵈ ε-closure q | inspect (ε-closure q) p | q' ∈ᵈ δₑ p (α a) | inspect (δₑ p (α a)) q'
-  lem₅ q a w q' (p ∷ ps) q⊢εa─q' | true  | [ p∈εq ] | true  | [ q'∈δpa ] with lem₇ q p (α a ∷ w) p∈εq
-  lem₅ q a w q' (p ∷ ps) q⊢εa─q' | true  | [ p∈εq ] | true  | [ q'∈δpa ] | n , w' , w'≡aw , prf
-    = p , n , w' , sym w'≡aw , prf , (refl , q'∈δpa)
-  lem₅ q a w q' (p ∷ ps) q⊢εa─q' | false | [ p∉εq ] | _     | [ q'∈δpa ] = lem₅ q a w q' ps q⊢εa─q'
-  lem₅ q a w q' (p ∷ ps) q⊢εa─q' | true  | [ p∈εq ] | false | [ q'∉δpa ] = lem₅ q a w q' ps q⊢εa─q'
-
-  lem₄ : ∀ q a w q'
-         → q ⊢ε a ─ q' ≡ true
-         → Σ[ p ∈ Qₑ ] Σ[ n ∈ ℕ ] Σ[ w' ∈ Σᵉ* ] ( toΣ* (α a ∷ w) ≡ toΣ* w' × (q , w') ⊢ᵏₑ n ─ (p , α a ∷ w) × (p , α a , w) ⊢ₑ (q' , w) )
-  lem₄ q a w q' q⊢εa─q' = lem₅ q a w q' Itₑ q⊢εa─q'
-
-
-  lem₆ : ∀ q w' ps
-         → ⊢εF-decider ps q ≡ true
-         → Σ[ p ∈ Qₑ ] Σ[ n ∈ ℕ ] Σ[ w ∈ Σᵉ* ]  ( toΣ* w ≡ toΣ* w' × p ∈ᵍ Fₑ × (q , w) ⊢ᵏₑ n ─ (p , w') )
-  lem₆ q w' []       ()
-  lem₆ q w' (p ∷ ps) q⊢εF with p ∈ᵈ ε-closure q | inspect (ε-closure q) p | p ∈ᵈ Fₑ | inspect Fₑ p
-  lem₆ q w' (p ∷ ps) q⊢εF | true  | [ p∈εq ] | true  | [ p∈Fₑ ] with lem₇ q p w' p∈εq
-  lem₆ q w' (p ∷ ps) q⊢εF | true  | [ p∈εq ] | true  | [ p∈Fₑ ] | n , w , w≡w' , prf
-    = p , n , w , w≡w' , p∈Fₑ , prf
-  lem₆ q w' (p ∷ ps) q⊢εF | false | [ p∉εq ] | _     | [ p∉Fₑ ] = lem₆ q w' ps q⊢εF
-  lem₆ q w' (p ∷ ps) q⊢εF | true  | [ p∈εq ] | false | [ p∉Fₑ ] = lem₆ q w' ps q⊢εF
-
-  lem₃ : ∀ q w'
-         → q ⊢εF ≡ true
-         → Σ[ p ∈ Qₑ ] Σ[ n ∈ ℕ ] Σ[ w ∈ Σᵉ* ]  ( toΣ* w ≡ toΣ* w' × p ∈ᵍ Fₑ × (q , w) ⊢ᵏₑ n ─ (p , w') )
-  lem₃ q w' q⊢εF = lem₆ q w' Itₑ q⊢εF
+  lem₃ : ∀ q n q' uᵉ
+         → q →εᵏ n ─ q'
+         → Σ[ wᵉ ∈ Σᵉ* ] ( toΣ* uᵉ ≡ toΣ* wᵉ × (q , wᵉ) ⊢ᵏₑ n ─ (q' , uᵉ) )
+  lem₃ q zero    .q  uᵉ refl = uᵉ , refl , (refl , refl)
+  lem₃ q (suc n)  q' uᵉ (p , prf₁ , prf₂) with lem₃ p n q' uᵉ prf₂
+  lem₃ q (suc n)  q' uᵉ (p , prf₁ , prf₂) | wᵉ , uᵉ≡wᵉ , prf₃ = E ∷ wᵉ , uᵉ≡wᵉ , (p , E , wᵉ , refl , (refl , prf₁) , prf₃)
 
   lem₂ : ∀ q w n q'
          → (q , w) ⊢ᵏ n ─ (q' , [])
-         → Σ[ wᵉ ∈ Σᵉ* ] Σ[ n₁ ∈ ℕ ] ( w ≡ toΣ* wᵉ × (q , wᵉ) ⊢ᵏₑ n₁ ─ (q' , []) )
-  lem₂ q .[] zero    .q  (refl , refl) = [] , zero , refl , (refl , refl)
-  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) with p ∈ᵈ δₑ q (α a) | inspect (δₑ q (α a)) p
-  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | true  | [ eq ] with lem₂ p u n q' prf₂
-  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | true  | [ eq ] | wᵉ , n₁ , u≡wᵉ , prf₃
-    = α a ∷ wᵉ , suc n₁ , cong (λ u → a ∷ u) u≡wᵉ , (p , α a , wᵉ , refl , (refl , eq) , prf₃)
-  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | false | [ eq ] with q ⊢ε a ─ p | inspect (_⊢ε_─_ q a) p
-  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | false | [ eq ] | true  | [ q⊢εa─p ] with lem₂ p u n q' prf₂
-  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | false | [ eq ] | true  | [ q⊢εa─p ] | wᵉ₂ , n₂ , u≡wᵉ₂ , prf₃ with lem₄ q a wᵉ₂ p q⊢εa─p
-  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | false | [ eq ] | true  | [ q⊢εa─p ] | wᵉ₂ , n₂ , u≡wᵉ₂ , prf₃ | p₁ , n₁ , wᵉ₁ , awᵉ₂≡w₁ , prf₄ , prf₅
-    = wᵉ₁ , n₁ + suc n₂ , trans (cong (λ u → a ∷ u) u≡wᵉ₂) awᵉ₂≡w₁ , ⊢*-lem₄ q wᵉ₁ n₁ p₁ (α a ∷ wᵉ₂) (suc n₂) q' [] prf₄ (p , α a , wᵉ₂ , refl , prf₅ , prf₃)
-  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl ,   ()) , prf₂) | false | [ eq ] | false | [ q⊬εa─p ]
+         → Σ[ wᵉ ∈ Σᵉ* ] ( w ≡ toΣ* wᵉ × Σ[ n₁ ∈ ℕ ] (q , wᵉ) ⊢ᵏₑ n₁ ─ (q' , []) )
+  lem₂ q .[] zero    .q  (refl , refl) = [] , refl , zero , (refl , refl)
+  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) with p ∈ᵈ? δₑ q (α a) | inspect (δₑ q (α a)) p
+  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | true  | [ p∈δqa ] with lem₂ p u n q' prf₂
+  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | true  | [ p∈δqa ] | uᵉ , u≡uᵉ , n₁ , prf₃
+    = α a ∷ uᵉ , cong (λ u → a ∷ u) u≡uᵉ , suc n₁ , (p , α a , uᵉ , refl , (refl , p∈δqa) , prf₃)
+  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | false | [ p∉δqa ] with Dec-→ε*⊢ q a p
+  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | false | [ p∉δqa ] | yes (p₁ , p∈δp₁a , k , q→εᵏp₁) with lem₂ p u n q' prf₂
+  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | false | [ p∉δqa ] | yes (p₁ , p∈δp₁a , k , q→εᵏp₁) | uᵉ , u≡uᵉ , n₁ , prf₃ with lem₃ q k p₁ (α a ∷ uᵉ) q→εᵏp₁
+  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | false | [ p∉δqa ] | yes (p₁ , p∈δp₁a , k , q→εᵏp₁) | uᵉ , u≡uᵉ , n₁ , prf₃ | uᵉ₁ , auᵉ≡uᵉ₁ , prf₄ 
+    = uᵉ₁ , trans (cong (λ u → a ∷ u) u≡uᵉ) auᵉ≡uᵉ₁ , k + suc n₁ ,  ⊢*-lem₄ q uᵉ₁ k p₁ (α a ∷ uᵉ) (suc n₁) q' [] prf₄ (p , α a , uᵉ , refl , (refl , p∈δp₁a) , prf₃)
+  lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl ,   ()) , prf₂) | false | [ p∉δqa ] | no  _
+  
+  lem₄ : ∀ q wᵉ n q' vᵉ
+         → (q , wᵉ) ⊢ᵏₑ n ─ (q' , [])
+         → (q , wᵉ ++ vᵉ) ⊢ᵏₑ n ─ (q' , vᵉ)
+  lem₄ q .[] zero   .q  vᵉ (refl , refl) = refl , refl
+  lem₄ q ._  (suc n) q' vᵉ (p , a , uᵉ , refl , (refl , prf₁) , prf₂)
+    = p , a , uᵉ ++ vᵉ , refl , (refl , prf₁) , lem₄ p uᵉ n q' vᵉ prf₂
 
-  lem₈ : ∀ q wᵉ₁ n q' wᵉ₂
-         → (q , wᵉ₁) ⊢ᵏₑ n ─ (q' , [])
-         → (q , wᵉ₁ ++ wᵉ₂) ⊢ᵏₑ n ─ (q' , wᵉ₂)
-  lem₈ q .[] zero    .q  wᵉ₂ (refl , refl) = refl , refl
-  lem₈ q ._  (suc n)  q' wᵉ₂ (p , a , uᵉ , refl , (refl , prf₁) , prf₂)
-    = p , a , uᵉ ++ wᵉ₂ , refl , (refl , prf₁) , lem₈ p uᵉ n q' wᵉ₂ prf₂
 
   lem₁ : Lᵉᴺ ε-nfa ⊇ Lᴺ nfa
-  lem₁ w (q , q∈F , n , prf) with q ∈ᵈ Fₑ | inspect Fₑ q
+  lem₁ w (q , q∈F , n , prf) with q ∈ᵈ? Fₑ | inspect Fₑ q
   lem₁ w (q , q∈F , n , prf) | true  | [ q∈Fₑ ] with lem₂ q₀ w n q prf
-  lem₁ w (q , q∈F , n , prf) | true  | [ q∈Fₑ ] | wᵉ , n₁ , w≡wᵉ , prf₁ = wᵉ , w≡wᵉ , q , q∈Fₑ , n₁ , prf₁
-  lem₁ w (q , q∈F , n , prf) | false | [ q∉Fₑ ] with q ⊢εF | inspect _⊢εF q
-  lem₁ w (q , q∈F , n , prf) | false | [ q∉Fₑ ] | true  | [ q⊢εF ] with lem₂ q₀ w n q prf | lem₃ q [] q⊢εF
-  lem₁ w (q , q∈F , n , prf) | false | [ q∉Fₑ ] | true  | [ q⊢εF ] | wᵉ₁ , n₁ , w≡wᵉ₁ , prf₁ | p , n₂ , wᵉ₂ , wᵉ₂≡[] , p∈Fₑ , prf₂
-    = wᵉ₁ ++ wᵉ₂ , w≡wᵉ₁wᵉ₂  , p , p∈Fₑ , n₁ + n₂ , ⊢*-lem₄ q₀ (wᵉ₁ ++ wᵉ₂) n₁ q wᵉ₂ n₂ p [] (lem₈ q₀ wᵉ₁ n₁ q wᵉ₂ prf₁) prf₂
-    where
-      open ≡-Reasoning
-      w≡wᵉ₁wᵉ₂ : w ≡ toΣ* (wᵉ₁ ++ wᵉ₂)
-      w≡wᵉ₁wᵉ₂ = begin
-                 w                    ≡⟨ w≡wᵉ₁ ⟩
-                 toΣ* wᵉ₁             ≡⟨ sym (List-lem₂ (toΣ* wᵉ₁)) ⟩
-                 toΣ* wᵉ₁ ++ []       ≡⟨ cong (λ w → toΣ* wᵉ₁ ++ w) (sym wᵉ₂≡[]) ⟩
-                 toΣ* wᵉ₁ ++ toΣ* wᵉ₂ ≡⟨ Σᵉ*-lem₁ wᵉ₁ wᵉ₂ ⟩
-                 toΣ* (wᵉ₁ ++ wᵉ₂)
-                 ∎
-  lem₁ w (q ,  () , n , prf) | false | [ q∉Fₑ ] | false | [ q⊬εF ]
- 
+  lem₁ w (q , q∈F , n , prf) | true  | [ q∈Fₑ ] | wᵉ , w≡wᵉ , n₁ , prf₁
+    = wᵉ , w≡wᵉ , q , q∈Fₑ , (n₁ , prf₁)
+  lem₁ w (q , q∈F , n , prf) | false | [ q∉Fₑ ] with Dec-→ε*∈F q
+  lem₁ w (q , q∈F , n , prf) | false | [ q∉Fₑ ] | yes (p , p∈Fₑ , n₂ , q→εᵏp) with lem₂ q₀ w n q prf | lem₃ q n₂ p [] q→εᵏp
+  lem₁ w (q , q∈F , n , prf) | false | [ q∉Fₑ ] | yes (p , p∈Fₑ , n₂ , q→εᵏp) | wᵉ , w≡wᵉ , n₁ , prf₁ | wᵉ₁ , []≡wᵉ , prf₂
+    = wᵉ ++ wᵉ₁ , trans (subst (λ wᵉ₁ → w ≡ toΣ* wᵉ ++ wᵉ₁) []≡wᵉ (trans w≡wᵉ (sym (List-lem₂ (toΣ* wᵉ))))) (Σᵉ*-lem₁ wᵉ wᵉ₁)  , p , p∈Fₑ , n₁ + n₂ , q₀→p
+      where
+        q₀→q : (q₀ₑ , wᵉ ++ wᵉ₁) ⊢ᵏₑ n₁ ─ (q , wᵉ₁)
+        q₀→q = lem₄ q₀ wᵉ n₁ q wᵉ₁ prf₁
+        q₀→p : (q₀ₑ , wᵉ ++ wᵉ₁) ⊢ᵏₑ n₁ + n₂ ─ (p , []) 
+        q₀→p = ⊢*-lem₄ q₀ (wᵉ ++ wᵉ₁) n₁ q wᵉ₁ n₂ p [] q₀→q prf₂
+  lem₁ w (q ,  () , n , prf) | false | [ q∉Fₑ ] | no  _
 
-Lᵉᴺ⊇Lᴺ : ∀ nfa → Lᵉᴺ nfa ⊇ Lᴺ (remove-ε-step nfa)
+
+Lᵉᴺ⊇Lᴺ : ∀ ε-nfa → Lᵉᴺ ε-nfa ⊇ Lᴺ (remove-ε-step ε-nfa)
 Lᵉᴺ⊇Lᴺ = Lᵉᴺ⊇Lᴺ.lem₁

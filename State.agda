@@ -8,15 +8,17 @@
 
 module State where
 
-open import Level
-open import Data.List
+--open import Level
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Unit
 open import Data.Empty
+open import Data.Nat
+open import Data.Vec hiding (init)
 
 open import Util
 open import Subset renaming (Ø to ø)
+open import Subset.DecidableSubset
 
 {- Ø states -}
 data Ø-State : Set where
@@ -25,8 +27,8 @@ data Ø-State : Set where
 DecEq-Ø : DecEq Ø-State
 DecEq-Ø init init = yes refl
 
-Ø-List : List Ø-State
-Ø-List = init ∷ []
+Ø-Vec : Vec Ø-State 1
+Ø-Vec = init ∷ []
 
 
 
@@ -37,8 +39,8 @@ data ε-State : Set where
 DecEq-ε : DecEq ε-State
 DecEq-ε init init = yes refl
 
-ε-List : List ε-State
-ε-List = init ∷ []
+ε-Vec : Vec ε-State 1
+ε-Vec = init ∷ []
 
 
 
@@ -53,7 +55,7 @@ DecEq-σ init accept   = no (λ ())
 DecEq-σ accept accept = yes refl
 DecEq-σ accept init   = no (λ ())
 
-σ-List : List σ-State
+σ-List : Vec σ-State 2
 σ-List = init ∷ accept ∷ []
 
 
@@ -92,8 +94,15 @@ DecEq-⊍ decA decB (⊍inj₂ q) (⊍inj₂ .q) | yes refl = yes refl
 DecEq-⊍ decA decB (⊍inj₂ q) (⊍inj₂ q') | no ¬q≡q' = no (⊍-lem₄ refl refl ¬q≡q')
 DecEq-⊍ decA decB (⊍inj₂ q) (⊍inj₁ _) = no (λ ())
 
-⊍-List : {A B : Set} → List A → List B → List (A ⊍ B)
-⊍-List as bs = init ∷ map ⊍inj₁ as ++ map ⊍inj₂ bs
+⊍-Vec : {A B : Set}{n m : ℕ} → Vec A n → Vec B m → Vec (A ⊍ B) (suc n + m)
+⊍-Vec as bs = init ∷ map ⊍inj₁ as ++ map ⊍inj₂ bs
+
+⊍inj₁-Injective : {A B : Set} → Injective {A} {A ⊍ B} ⊍inj₁
+⊍inj₁-Injective x .x refl = refl
+
+⊍inj₂-Injective : {A B : Set} → Injective {B} {A ⊍ B} ⊍inj₂
+⊍inj₂-Injective x .x refl = refl
+
 
 
 
@@ -131,8 +140,14 @@ DecEq-⍟ decA decB mid       mid        = yes refl
 DecEq-⍟ decA decB mid       (⍟inj₁ q') = no (λ ())
 DecEq-⍟ decA decB mid       (⍟inj₂ q') = no (λ ())
 
-⍟-List : {A B : Set} → List A → List B → List (A ⍟ B)
-⍟-List as bs = map ⍟inj₁ as ++ mid ∷ map ⍟inj₂ bs
+⍟-Vec : {A B : Set}{n m : ℕ} → Vec A n → Vec B m → Vec (A ⍟ B) (n + suc m)
+⍟-Vec as bs = map ⍟inj₁ as ++ mid ∷ map ⍟inj₂ bs
+
+⍟inj₁-Injective : {A B : Set} → Injective {A} {A ⍟ B} ⍟inj₁
+⍟inj₁-Injective x .x refl = refl
+
+⍟inj₂-Injective : {A B : Set} → Injective {B} {A ⍟ B} ⍟inj₂
+⍟inj₂-Injective x .x refl = refl
 
 
 
@@ -155,5 +170,8 @@ DecEq-* dec (inj q) (inj .q) | yes refl = yes refl
 DecEq-* dec (inj q) (inj q') | no ¬q≡q' = no (*-lem₂ ¬q≡q')
 DecEq-* dec (inj _) init     = no (λ ())
 
-*-List : {A : Set} → List A → List (A *-State)
-*-List as = init ∷ map inj as
+*-Vec : {A : Set}{n : ℕ} → Vec A n → Vec (A *-State) (suc n)
+*-Vec as = init ∷ map inj as
+
+inj-Injective : {A : Set} → Injective {A} {A *-State} inj
+inj-Injective x .x refl = refl

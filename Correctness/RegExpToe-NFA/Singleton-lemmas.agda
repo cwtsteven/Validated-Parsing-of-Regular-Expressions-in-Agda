@@ -17,7 +17,7 @@ open import Data.Empty
 open import Data.Nat
 
 open import Subset
-open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_) hiding (_⊆_ ; _⊇_ ; _≈_)
+open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_)
 open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
@@ -36,7 +36,7 @@ open ε-NFA-Operations nfa
 module Lᴿ⊆Lᴺ where
   lem₁ : Lᴿ e ⊆ Lᵉᴺ nfa
   lem₁ []           ()
-  lem₁ (.a ∷ [])    refl with accept ∈ᵈ δ init (α a) | inspect (δ init (α a)) accept
+  lem₁ (.a ∷ [])    refl with accept ∈ᵈ? δ init (α a) | inspect (δ init (α a)) accept
   lem₁ (.a ∷ [])    refl | true  | [ eq ]
     = α a ∷ [] , refl , accept , refl , 1 , accept , α a , [] , refl , (refl , eq) , (refl , refl)
   lem₁ (.a ∷ [])    refl | false | [ eq ] with dec a a

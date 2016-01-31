@@ -18,7 +18,7 @@ open import Data.Empty
 open import Data.Nat
 
 open import Subset
-open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_)
+open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_)
 open import Language Σ
 open import Automata Σ
 open import Translation Σ dec
@@ -53,7 +53,7 @@ module Lᴿ⊆Lᴺ where
   lem₅ : ∀ q w w'
          → (q₀₂ , w) ⊢*ₑ₂ (q , w')
          → (q₀ , E ∷ w) ⊢* (⊍inj₂ q , w')
-  lem₅ q w w' (n , prf) with ⊍inj₂ q₀₂ ∈ᵈ δ q₀ E | inspect (δ q₀ E) (⊍inj₂ q₀₂)
+  lem₅ q w w' (n , prf) with ⊍inj₂ q₀₂ ∈ᵈ? δ q₀ E | inspect (δ q₀ E) (⊍inj₂ q₀₂)
   lem₅ q w w' (n , prf) | true  | [ eq ]
     = suc n , ⊍inj₂ q₀₂ , E , w , refl , (refl , eq) , lem₆ q₀₂ w n q w' prf
   lem₅ q w w' (n , prf) | false | [ eq ] with Q₂? q₀₂ q₀₂
@@ -80,7 +80,7 @@ module Lᴿ⊆Lᴺ where
   lem₂ : ∀ q w w'
          → (q₀₁ , w) ⊢*ₑ₁ (q , w')
          → (q₀ , E ∷ w) ⊢* (⊍inj₁ q , w')
-  lem₂ q w w' (n , prf) with ⊍inj₁ q₀₁ ∈ᵈ δ q₀ E | inspect (δ q₀ E) (⊍inj₁ q₀₁)
+  lem₂ q w w' (n , prf) with ⊍inj₁ q₀₁ ∈ᵈ? δ q₀ E | inspect (δ q₀ E) (⊍inj₁ q₀₁)
   lem₂ q w w' (n , prf) | true  | [ eq ]
     = suc n , ⊍inj₁ q₀₁ , E , w , refl , (refl , eq) , lem₃ q₀₁ w n q w' prf
   lem₂ q w w' (n , prf) | false | [ eq ] with Q₁? q₀₁ q₀₁

@@ -18,7 +18,7 @@ open import Data.Empty
 open import Data.Nat
 
 open import Subset
-open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_)
+open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_)
 open import Language Σ
 open import Automata Σ
 open import Translation Σ dec
@@ -55,14 +55,14 @@ module Lᴿ⊆Lᴺ where
   lem₅ : ∀ m q₂ vᵉ
          → (q₀₂ , vᵉ) ⊢ᵏₑ₂ m ─ (q₂ , [])
          → (mid , E ∷ vᵉ) ⊢ᵏ suc m ─ (⍟inj₂ q₂ , [])
-  lem₅ m q₂ vᵉ prf with (⍟inj₂ q₀₂) ∈ᵈ δ mid E | inspect (δ mid E) (⍟inj₂ q₀₂)
+  lem₅ m q₂ vᵉ prf with (⍟inj₂ q₀₂) ∈ᵈ? δ mid E | inspect (δ mid E) (⍟inj₂ q₀₂)
   lem₅ m q₂ vᵉ prf | true  | [ eq ] = ⍟inj₂ q₀₂ , E , vᵉ , refl , (refl , eq) , lem₆ q₀₂ vᵉ m q₂ prf
   lem₅ m q₂ vᵉ prf | false | [ eq ] with Q₂? q₀₂ q₀₂
   lem₅ m q₂ vᵉ prf | false | [ () ] | yes refl
   lem₅ m q₂ vᵉ prf | false | [ eq ] | no  q₀₂≢q₀₂ = ⊥-elim (q₀₂≢q₀₂ refl)
   
   lem₄ : ∀ p sᵉ n q₁ vᵉ
-         → q₁ ∈ᵍ F₁
+         → q₁ ∈ᵈ F₁
          → (p , sᵉ) ⊢ᵏₑ₁ n ─ (q₁ , [])
          → (⍟inj₁ p , sᵉ ++ E ∷ vᵉ) ⊢ᵏ suc n ─ (mid , vᵉ)
   lem₄ .q₁ .[] zero    q₁ vᵉ q₁∈F₁ (refl , refl) = mid , E , vᵉ , refl , (refl , q₁∈F₁) , (refl , refl)
@@ -71,7 +71,7 @@ module Lᴿ⊆Lᴺ where
   
   
   lem₃ : ∀ uᵉ q₁ vᵉ n
-         → q₁ ∈ᵍ F₁
+         → q₁ ∈ᵈ F₁
          → (q₀₁ , uᵉ) ⊢ᵏₑ₁ n ─ (q₁ , [])
          → (q₀ , uᵉ ++ E ∷ E ∷ vᵉ) ⊢ᵏ suc n ─ (mid , E ∷ vᵉ)
   lem₃ .[] .q₀₁ vᵉ zero    q₁∈F₁ (refl , refl) = mid , E , E ∷ vᵉ , refl , (refl , q₁∈F₁) , (refl , refl)
@@ -80,7 +80,7 @@ module Lᴿ⊆Lᴺ where
   
   
   lem₂ : ∀ uᵉ q₁ vᵉ q₂
-         → q₁ ∈ᵍ F₁
+         → q₁ ∈ᵈ F₁
          → (q₀₁ , uᵉ) ⊢*ₑ₁ (q₁ , [])
          → (q₀₂ , vᵉ) ⊢*ₑ₂ (q₂ , [])
          → (q₀ , uᵉ ++ E ∷ E ∷ vᵉ) ⊢* (⍟inj₂ q₂ , [])
@@ -123,7 +123,7 @@ module Lᴿ⊇Lᴺ where
 
 
   lem₉ : ∀ q vᵉ m
-         → ⍟inj₂ q ∈ᵍ F
+         → ⍟inj₂ q ∈ᵈ F
          → (mid , vᵉ) ⊢ᵏ m ─ (⍟inj₂ q , [])
          → toΣ* vᵉ ∈ Lᵉᴺ nfa₂
   lem₉ q vᵉ zero    q∈F (() , _)
@@ -174,7 +174,7 @@ module Lᴿ⊇Lᴺ where
          → (prf  : (⍟inj₁ q  , wᵉ) ⊢ᵏ suc n ─ (mid , vᵉ))
          → Σ[ n₁ ∈ ℕ ] Σ[ p ∈ Q₁ ] Σ[ uᵉ ∈ Σᵉ* ] Σ[ prf₁ ∈ (⍟inj₁ q , wᵉ) ⊢ᵏ n₁ ─ (⍟inj₁ p , uᵉ) ]
            ( toΣ* (find-uᵉ (⍟inj₁ q) wᵉ (suc n) mid vᵉ prf) ≡ toΣ* (find-uᵉ (⍟inj₁ q) wᵉ n₁ (⍟inj₁ p) uᵉ prf₁)
-             × p ∈ᵍ F₁
+             × p ∈ᵈ F₁
              × (q , find-uᵉ (⍟inj₁ q) wᵉ n₁ (⍟inj₁ p) uᵉ prf₁) ⊢ᵏₑ₁ n₁ ─ (p , []) )
   lem₄ q ._ zero    vᵉ (.mid , α _ , .vᵉ  , refl , (refl ,   ()) , (refl , refl)) 
   lem₄ q ._ zero    vᵉ (.mid , E   , .vᵉ  , refl , (refl , q∈F₁) , (refl , refl)) = zero , q , E ∷ vᵉ , (refl , refl) , refl , q∈F₁ , (refl , refl)
@@ -278,7 +278,7 @@ module Lᴿ⊇Lᴺ where
   
   lem₂ : ∀ q w wᵉ
          → w ≡ toΣ* wᵉ
-         → ⍟inj₂ q ∈ᵍ F
+         → ⍟inj₂ q ∈ᵈ F
          → (q₀ , wᵉ) ⊢*₂ (⍟inj₂ q , [])
          → Σ[ u ∈ Σ* ] Σ[ v ∈ Σ* ] (u ∈ Lᵉᴺ nfa₁ × v ∈ Lᵉᴺ nfa₂ × w ≡ u ++ v)
   lem₂ q w wᵉ w≡wᵉ q∈F prf with lem₁₆ wᵉ q prf

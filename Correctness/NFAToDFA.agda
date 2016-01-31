@@ -20,7 +20,7 @@ open import Data.Empty
 open import Data.Nat
 
 open import Subset renaming (Ø to ø)
-open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ)
+open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ)
 open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
