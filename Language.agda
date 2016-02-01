@@ -20,7 +20,7 @@ open import Data.Empty
 open import Data.Unit
 open import Data.Nat
 
-open import Util
+open import Util hiding (_^_)
 open import Subset renaming (Ø to ø ; ⟦_⟧ to ⟦_⟧₁ ; _⋃_ to _⊎_)
 
 open ≡-Reasoning

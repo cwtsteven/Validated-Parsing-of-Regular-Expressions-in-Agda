@@ -21,6 +21,7 @@ open import Data.Nat
 
 open import Subset renaming (Ø to ø)
 open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ)
+open import Subset.VectorRep
 open import Language Σ
 open import RegularExpression Σ
 open import Automata Σ
@@ -32,7 +33,7 @@ module Lᴺ⊆Lᴰ (nfa : NFA) where
  dfa = powerset-construction nfa
 
  open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; It to It₁) 
- open NFA-Operations nfa
+ open NFA-Operations nfa renaming (_⊢_ to _⊢₁_ ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
  open DFA dfa
  open DFA-Operations dfa
 
@@ -48,9 +49,36 @@ Lᴺ⊆Lᴰ nfa w prf = lem₁ w prf
  where open Lᴺ⊆Lᴰ nfa
 
 
+module Lᴺ⊇Lᴰ (nfa : NFA) where
+ dfa : DFA
+ dfa = powerset-construction nfa
+
+ open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; It to It₁) 
+ open NFA-Operations nfa renaming (_⊢_ to _⊢₁_ ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
+ open DFA dfa
+ open DFA-Operations dfa
+
+ 
+
+
+ lem₂ : ∀ qs q w n qs' w'
+        → q ∈ᵈ qs
+        → (qs , w) ⊢ᵏ n ─ (qs' , w')
+        → Σ[ q' ∈ Q₁ ] ( q' ∈ᵈ qs' × (q , w) ⊢ᵏ₁ n ─ (q' , w') )
+ lem₂ qs q w  zero    .qs .w  q∈qs (refl , refl) = q , q∈qs , (refl , refl)
+ lem₂ qs q ._ (suc n)  qs' w' q∈qs (ps , a , u , refl , (refl , prf₁) , prf₂) = undefined
+ 
+
+ lem₁ : ∀ w
+        → w ∈ Lᴰ dfa
+        → w ∈ Lᴺ nfa
+ lem₁ w (qs , qs∈F , n , prf) with Dec-∈F qs
+ lem₁ w (qs , qs∈F , n , prf) | yes prf₁ with lem₂ (⟦ q₀₁ ⟧ᵈ {{Q₁?}}) q₀₁ w n qs [] (⟦a⟧-lem₁ Q₁? q₀₁) prf
+ lem₁ w (qs , qs∈F , n , prf) | yes prf₁ | q' , q'∈qs' , prf₂ = q' , prf₁ q' q'∈qs' , n , prf₂
+ lem₁ w (qs ,   () , n , prf) | no  prf₁
 
 
 
 
 Lᴺ⊇Lᴰ : ∀ nfa → Lᴺ nfa ⊇ Lᴰ (powerset-construction nfa)
-Lᴺ⊇Lᴰ = undefined
+Lᴺ⊇Lᴰ = Lᴺ⊇Lᴰ.lem₁

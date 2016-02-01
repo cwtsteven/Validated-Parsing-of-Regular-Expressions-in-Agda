@@ -142,7 +142,7 @@ regexToε-NFA (e *) =
 -- remove ε-steps
 remove-ε-step : ε-NFA → NFA
 remove-ε-step nfa =
-  record { Q = Q ; Q? = Q? ; δ = δ' ; q₀ = q₀ ; F = F' ; It = It }
+  record { Q = Q ; Q? = Q? ; δ = δ' ; q₀ = q₀ ; F = F' ; ∣Q∣ = _ ; It = It ; ∀q∈It = ∀q∈It }
     where
       open ε-NFA nfa
       open ε-NFA-Operations nfa
@@ -167,19 +167,24 @@ powerset-construction nfa =
   record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' }
     where
       open NFA nfa
+      open NFA-Operations nfa
       Q' : Set
       Q' = DecSubset Q
       
       δ' : Q' → Σ → Q'
-      --      = λ q → Σ[ p ∈ Q ] (p ∈ qs × q ∈ δ p a)
-      δ' qs a = λ q → undefined --Data.List.any (λ p → p ∈ qs ∧ q ∈ δ p a) It
+      --      = λ q' → ∀ q → q ∈ qs → q' ∈ δ q a
+      δ' qs a q with Dec-⊢ qs a q
+      ... | yes _ = true
+      ... | no  _ = false
       
       q₀' : Q'
       q₀' = ⟦ q₀ ⟧ {{Q?}}
       
       F' : DecSubset Q'
-      -- = λ qs → Σ[ p ∈ Q ] (p ∈ qs × p ∈ F)
-      F' = λ qs → undefined --any (λ p → p ∈ qs ∧ p ∈ F) It 
+      -- = λ qs → ∀ q → q ∈ qs → q ∈ F
+      F' qs with Dec-∈F qs
+      ... | yes _ = true
+      ... | no  _ = false
 
 
 

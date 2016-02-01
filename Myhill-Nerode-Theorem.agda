@@ -42,9 +42,9 @@ module Condition1 (dfa : DFA) where
   Rm-Right-invariant : Right-invariant _Rm_
   Rm-Right-invariant {w} {u} wRmu z
     = begin
-      δ₀ (w ++ z)     ≡⟨ lem₁ q₀ w z ⟩
+      δ₀ (w ++ z)     ≡⟨ undefined ⟩ -- lem₁ q₀ w z ⟩
       δ* (δ* q₀ w) z  ≡⟨ cong (λ q → δ* q z) wRmu ⟩
-      δ* (δ* q₀ u) z  ≡⟨ sym (lem₁ q₀ u z) ⟩
+      δ* (δ* q₀ u) z  ≡⟨ undefined ⟩ --sym (lem₁ q₀ u z) ⟩
       δ₀ (u ++ z)
       ∎
 

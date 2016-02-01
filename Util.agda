@@ -107,6 +107,9 @@ _-_ : (n m : ℕ) → {{m<n : m ≤ n}} → ℕ
 (zero  - suc n) {{()}}
 (suc n - suc m) {{s≤s m≤n}} = (n - m) {{m≤n}}
 
+_^_ : ℕ → ℕ → ℕ
+n ^ zero    = suc zero
+n ^ (suc m) = n * (n ^ m)
 
 ℕ-lem₁ : ∀ n
          → n ≡ n + zero

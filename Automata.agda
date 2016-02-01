@@ -7,10 +7,10 @@
   Steven Cheung 2015.
   Version 10-01-2016
 -}
-
+open import Util
 module Automata (Σ : Set) where
 
-open import Data.List
+open import Data.List hiding (any ; all)
 open import Data.Bool
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
@@ -20,7 +20,7 @@ open import Data.Unit hiding (_≤_ ; _≤?_)
 open import Data.Empty
 open import Data.Nat
 
-open import Util
+
 open import Subset
 open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; Ø to ø ; _⋃_ to _⋃ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ)
 open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_)
@@ -101,8 +101,6 @@ module ε-NFA-Operations (N : ε-NFA) where
              → q →εᵏ n ─ q'
              → Σ[ n₁ ∈ ℕ ] ( n₁ < ∣Q∣ × q →εᵏ n₁ ─ q' )
   →εᵏ-lem₂ q n q' prf = undefined
-  
-  
 
   open Vec-Rep-Lemmas Q? It ∀q∈It
 
@@ -113,33 +111,33 @@ module ε-NFA-Operations (N : ε-NFA) where
   _→ε*_⊢_ : Q → Σ → Q → Set
   q →ε* a ⊢ q' = Σ[ p ∈ Q ] ( q' ∈ᵈ δ p (α a) × q →ε* p )
 
-  Dec-apply→ε*⊢ : ∀ q a q' → Dec (apply (λ p → q' ∈ᵈ δ p (α a) × q →ε* p) It)
-  Dec-apply→ε*⊢ q a q' = helper It
+  Dec-any→ε*⊢ : ∀ q a q' → Dec (any (λ p → q' ∈ᵈ δ p (α a) × q →ε* p) It)
+  Dec-any→ε*⊢ q a q' = helper It
     where
-      helper : {n : ℕ}(ps : Vec Q n) → Dec (apply (λ p → q' ∈ᵈ δ p (α a) × q →ε* p) ps)
+      helper : {n : ℕ}(ps : Vec Q n) → Dec (any (λ p → q' ∈ᵈ δ p (α a) × q →ε* p) ps)
       helper []       = no (λ z → z)
       helper (p ∷ ps) with q' ∈ᵈ? δ p (α a)
       helper (p ∷ ps) | true  with Dec-→ε* q p
       helper (p ∷ ps) | true  | yes q→ε*p = yes (inj₁ (refl , q→ε*p))
       helper (p ∷ ps) | true  | no  _     with helper ps
       helper (p ∷ ps) | true  | no  _     | yes prf₂ = yes (inj₂ prf₂)
-      helper (p ∷ ps) | true  | no  prf₁  | no  prf₂ = no ¬apply
+      helper (p ∷ ps) | true  | no  prf₁  | no  prf₂ = no ¬any
         where
-          ¬apply : ¬ (true ≡ true × q →ε* p ⊎ apply (λ p₁ → q' ∈ᵈ δ p₁ (α a) × q →ε* p₁) ps)
-          ¬apply (inj₁ (_ , prf₃)) = prf₁ prf₃
-          ¬apply (inj₂ apply) = prf₂ apply
+          ¬any : ¬ (true ≡ true × q →ε* p ⊎ any (λ p₁ → q' ∈ᵈ δ p₁ (α a) × q →ε* p₁) ps)
+          ¬any (inj₁ (_ , prf₃)) = prf₁ prf₃
+          ¬any (inj₂ any) = prf₂ any
       helper (p ∷ ps) | false with helper ps
       helper (p ∷ ps) | false | yes prf = yes (inj₂ prf)
-      helper (p ∷ ps) | false | no  prf = no ¬apply
+      helper (p ∷ ps) | false | no  prf = no ¬any
         where
-          ¬apply : ¬ (false ≡ true × q →ε* p ⊎ apply (λ p₁ → q' ∈ᵈ δ p₁ (α a) × q →ε* p₁) ps)
-          ¬apply (inj₁ (() , _))
-          ¬apply (inj₂ prf₁) = prf prf₁
+          ¬any : ¬ (false ≡ true × q →ε* p ⊎ any (λ p₁ → q' ∈ᵈ δ p₁ (α a) × q →ε* p₁) ps)
+          ¬any (inj₁ (() , _))
+          ¬any (inj₂ prf₁) = prf prf₁
 
   Dec-→ε*⊢ : ∀ q a q' → Dec (q →ε* a ⊢ q')
-  Dec-→ε*⊢ q a q' with Dec-apply→ε*⊢ q a q'
-  Dec-→ε*⊢ q a q' | yes prf = yes (Vec-Rep-lem₂ (λ p → q' ∈ᵈ δ p (α a) × q →ε* p) prf)
-  Dec-→ε*⊢ q a q' | no  prf = no  (Vec-Rep-lem₄ (λ p → q' ∈ᵈ δ p (α a) × q →ε* p) prf)
+  Dec-→ε*⊢ q a q' with Dec-any→ε*⊢ q a q'
+  Dec-→ε*⊢ q a q' | yes prf = yes (Vec-any-lem₂ (λ p → q' ∈ᵈ δ p (α a) × q →ε* p) prf)
+  Dec-→ε*⊢ q a q' | no  prf = no  (Vec-any-lem₄ (λ p → q' ∈ᵈ δ p (α a) × q →ε* p) prf)
 
   ∃q⊢a-q'? : ∀ {q a q'} → Dec (q →ε* a ⊢ q') → Bool
   ∃q⊢a-q'? (yes _) = true
@@ -149,33 +147,33 @@ module ε-NFA-Operations (N : ε-NFA) where
   _→ε*∈F : Q → Set
   q →ε*∈F = Σ[ p ∈ Q ] ( p ∈ᵈ F × q →ε* p )
 
-  Dec-apply→ε*∈F : ∀ q → Dec (apply (λ p → p ∈ᵈ F × q →ε* p) It)
-  Dec-apply→ε*∈F q = helper It
+  Dec-any→ε*∈F : ∀ q → Dec (any (λ p → p ∈ᵈ F × q →ε* p) It)
+  Dec-any→ε*∈F q = helper It
     where
-      helper : {n : ℕ}(ps : Vec Q n) → Dec (apply (λ p → p ∈ᵈ F × q →ε* p) ps)
+      helper : {n : ℕ}(ps : Vec Q n) → Dec (any (λ p → p ∈ᵈ F × q →ε* p) ps)
       helper []       = no (λ z → z)
       helper (p ∷ ps) with p ∈ᵈ? F
       helper (p ∷ ps) | true  with Dec-→ε* q p
       helper (p ∷ ps) | true  | yes q→ε*p = yes (inj₁ (refl , q→ε*p))
       helper (p ∷ ps) | true  | no  _     with helper ps
       helper (p ∷ ps) | true  | no  _     | yes prf₂ = yes (inj₂ prf₂)
-      helper (p ∷ ps) | true  | no  prf₁  | no  prf₂ = no ¬apply
+      helper (p ∷ ps) | true  | no  prf₁  | no  prf₂ = no ¬any
         where
-          ¬apply : ¬ (true ≡ true × q →ε* p ⊎ apply (λ p₁ → p₁ ∈ᵈ F × q →ε* p₁) ps)
-          ¬apply (inj₁ (_ , prf₃)) = prf₁ prf₃
-          ¬apply (inj₂ apply) = prf₂ apply
+          ¬any : ¬ (true ≡ true × q →ε* p ⊎ any (λ p₁ → p₁ ∈ᵈ F × q →ε* p₁) ps)
+          ¬any (inj₁ (_ , prf₃)) = prf₁ prf₃
+          ¬any (inj₂ any) = prf₂ any
       helper (p ∷ ps) | false with helper ps
       helper (p ∷ ps) | false | yes prf = yes (inj₂ prf)
-      helper (p ∷ ps) | false | no  prf = no ¬apply
+      helper (p ∷ ps) | false | no  prf = no ¬any
         where
-          ¬apply : ¬ (false ≡ true × q →ε* p ⊎ apply (λ p₁ → p₁ ∈ᵈ F × q →ε* p₁) ps)
-          ¬apply (inj₁ (() , _))
-          ¬apply (inj₂ prf₁) = prf prf₁
+          ¬any : ¬ (false ≡ true × q →ε* p ⊎ any (λ p₁ → p₁ ∈ᵈ F × q →ε* p₁) ps)
+          ¬any (inj₁ (() , _))
+          ¬any (inj₂ prf₁) = prf prf₁
 
   Dec-→ε*∈F : ∀ q → Dec (q →ε*∈F)
-  Dec-→ε*∈F q with Dec-apply→ε*∈F q
-  Dec-→ε*∈F q | yes prf = yes (Vec-Rep-lem₂ (λ p → p ∈ᵈ F × q →ε* p) prf)
-  Dec-→ε*∈F q | no  prf = no  (Vec-Rep-lem₄ (λ p → p ∈ᵈ F × q →ε* p) prf)
+  Dec-→ε*∈F q with Dec-any→ε*∈F q
+  Dec-→ε*∈F q | yes prf = yes (Vec-any-lem₂ (λ p → p ∈ᵈ F × q →ε* p) prf)
+  Dec-→ε*∈F q | no  prf = no  (Vec-any-lem₄ (λ p → p ∈ᵈ F × q →ε* p) prf)
 
   ∃q∈F? : ∀ {q} → Dec (q →ε*∈F) → Bool
   ∃q∈F? (yes _) = true
@@ -314,13 +312,14 @@ Lᵉᴺ nfa = λ w → Σ[ wᵉ ∈ Σᵉ* ] (w ≡ toΣ* wᵉ × Σ[ q ∈ Q ] 
 -- section 2.2.3: Finite Automata
 record NFA : Set₁ where
   field
-    Q   : Set
-    Q?  : DecEq Q
-    δ   : Q → Σ → DecSubset Q
-    q₀  : Q
-    F   : DecSubset Q
-    ∣Q∣ : ℕ
-    It  : Vec Q ∣Q∣
+    Q     : Set
+    Q?    : DecEq Q
+    δ     : Q → Σ → DecSubset Q
+    q₀    : Q
+    F     : DecSubset Q
+    ∣Q∣   : ℕ
+    It    : Vec Q ∣Q∣
+    ∀q∈It : ∀ q → q ∈ⱽ It
 
 module NFA-Operations (N : NFA) where
   open NFA N
@@ -345,6 +344,109 @@ module NFA-Operations (N : NFA) where
              → (q , wᵉ) ⊢ᵏ suc n ─ (q' , wᵉ')
   ⊢ᵏ₂-lem₉ {.p} {._} {zero}  {p} {a} {q'} {wᵉ'} (refl , refl) prf = q' , a , wᵉ' , refl , prf , (refl , refl)
   ⊢ᵏ₂-lem₉ {q}  {._} {suc n} {p} {a} {q'} {wᵉ'} (p₁ , a₁ , u₁ , refl , prf₁ , prf₂) prf₃ = p₁ , a₁ , u₁ , refl , prf₁ , ⊢ᵏ₂-lem₉ {p₁} {u₁} {n} {p} {a} {q'} {wᵉ'} prf₂ prf₃
+
+  open Vec-Rep-Lemmas Q? It ∀q∈It
+
+  _⊢_─_ : DecSubset Q → Σ → Q → Set
+  qs ⊢ a ─ q' = ∀ p → p ∈ᵈ qs → q' ∈ᵈ δ p a
+
+  Dec-all-δ : ∀ qs a q' → Dec (all (λ p → p ∈ᵈ qs → q' ∈ᵈ δ p a) It)
+  Dec-all-δ qs a q' = helper It
+    where
+      helper : {n : ℕ}(ps : Vec Q n) → Dec (all (λ p → p ∈ᵈ qs → q' ∈ᵈ δ p a) ps)
+      helper []       = yes tt
+      helper (p ∷ ps) with p ∈ᵈ? qs
+      helper (p ∷ ps) | true  with q' ∈ᵈ? δ p a
+      helper (p ∷ ps) | true  | true  with helper ps
+      helper (p ∷ ps) | true  | true  | yes  allps = yes ((λ _ → refl) , allps)
+      helper (p ∷ ps) | true  | true  | no  ¬allps = no  ¬all
+        where
+          ¬all : ¬ ((true ≡ true → true ≡ true) × all (λ p → p ∈ᵈ qs → q' ∈ᵈ δ p a) ps)
+          ¬all (_ , all) = ¬allps all
+      helper (p ∷ ps) | true  | false = no ¬all
+        where
+          ¬all : ¬ ((true ≡ true → false ≡ true) × all (λ p → p ∈ᵈ qs → q' ∈ᵈ δ p a) ps)
+          ¬all (absurd , _) = ⊥-elim (Bool-lem₁₂ (absurd refl))
+      helper (p ∷ ps) | false with helper ps
+      helper (p ∷ ps) | false | yes  allps = yes ((λ ()) , allps)
+      helper (p ∷ ps) | false | no  ¬allps = no  ¬all
+        where
+          ¬all : ¬ ((false ≡ true → q' ∈ᵈ δ p a) × all (λ p → p ∈ᵈ qs → q' ∈ᵈ δ p a) ps)
+          ¬all (_ , all) = ¬allps all
+
+  Dec-⊢ : ∀ qs a q' → Dec (qs ⊢ a ─ q')
+  Dec-⊢ qs a q' with Dec-all-δ qs a q'
+  ... | yes prf = yes (Vec-all-lem₂ (λ p → p ∈ᵈ qs → q' ∈ᵈ δ p a) prf)
+  ... | no  prf = no  (Vec-all-lem₄ (λ p → p ∈ᵈ qs → q' ∈ᵈ δ p a) prf)
+
+  _⊢_─ˢ_ : DecSubset Q → Σ → DecSubset Q → Set
+  qs ⊢ a ─ˢ ps = Σ[ p ∈ Q ] ( p ∈ᵈ ps × qs ⊢ a ─ p )
+
+  Dec-any-⊢? : ∀ qs a ps → Dec (any (λ p → p ∈ᵈ ps × qs ⊢ a ─ p) It)
+  Dec-any-⊢? qs a ps = helper It
+    where
+      helper : {n : ℕ}(rs : Vec Q n) → Dec (any (λ p → p ∈ᵈ ps × qs ⊢ a ─ p) rs)
+      helper []       = no (λ z → z)
+      helper (r ∷ rs) with r ∈ᵈ? ps
+      helper (r ∷ rs) | true  with Dec-⊢ qs a r
+      helper (r ∷ rs) | true  | yes prf = yes (inj₁ (refl , prf))
+      helper (r ∷ rs) | true  | no  prf with helper rs
+      helper (r ∷ rs) | true  | no  prf | yes  anyrs = yes (inj₂ anyrs)
+      helper (r ∷ rs) | true  | no  prf | no  ¬anyrs = no ¬any
+        where
+          ¬any : ¬ ((true ≡ true) × qs ⊢ a ─ r ⊎ any (λ p → p ∈ᵈ ps × qs ⊢ a ─ p) rs)
+          ¬any (inj₁ (refl , qs⊢a-r)) = prf qs⊢a-r
+          ¬any (inj₂ any) = ¬anyrs any
+      helper (r ∷ rs) | false with helper rs
+      helper (r ∷ rs) | false | yes  anyrs = yes (inj₂ anyrs)
+      helper (r ∷ rs) | false | no  ¬anyrs = no ¬any
+        where
+          ¬any : ¬ ((false ≡ true) × qs ⊢ a ─ r ⊎ any (λ p → p ∈ᵈ ps × qs ⊢ a ─ p) rs)
+          ¬any (inj₁ (() , qs⊢a-r))
+          ¬any (inj₂ any) = ¬anyrs any
+  
+
+  Dec-⊢? : ∀ qs a ps → Dec (qs ⊢ a ─ˢ ps)
+  Dec-⊢? qs a ps with Dec-any-⊢? qs a ps
+  ... | yes prf = yes (Vec-any-lem₂ (λ p → p ∈ᵈ ps × qs ⊢ a ─ p) prf)
+  ... | no  prf = no  (Vec-any-lem₄ (λ p → p ∈ᵈ ps × qs ⊢ a ─ p) prf)
+
+  _⊢_─ : DecSubset Q → Σ → Set
+  qs ⊢ a ─ = Σ[ ps ∈ DecSubset Q ] qs ⊢ a ─ˢ ps
+  
+
+  _∈F : DecSubset Q → Set
+  qs ∈F = ∀ p → p ∈ᵈ qs → p ∈ᵈ F
+
+  Dec-all-∈F : ∀ qs → Dec (all (λ p → p ∈ᵈ qs → p ∈ᵈ F) It)
+  Dec-all-∈F qs = helper It
+    where
+      helper : {n : ℕ}(ps : Vec Q n) → Dec (all (λ p → p ∈ᵈ qs → p ∈ᵈ F) ps)
+      helper []       = yes tt
+      helper (p ∷ ps) with p ∈ᵈ? qs
+      helper (p ∷ ps) | true  with p ∈ᵈ? F
+      helper (p ∷ ps) | true  | true  with helper ps
+      helper (p ∷ ps) | true  | true  | yes  allps = yes ((λ _ → refl) , allps)
+      helper (p ∷ ps) | true  | true  | no  ¬allps = no  ¬all
+        where
+          ¬all : ¬ ((true ≡ true → true ≡ true) × all (λ p → p ∈ᵈ qs → p ∈ᵈ F) ps)
+          ¬all (_ , all) = ¬allps all
+      helper (p ∷ ps) | true  | false = no ¬all
+        where
+          ¬all : ¬ ((true ≡ true → false ≡ true) × all (λ p → p ∈ᵈ qs → p ∈ᵈ F) ps)
+          ¬all (absurd , _) = ⊥-elim (Bool-lem₁₂ (absurd refl))
+      helper (p ∷ ps) | false with helper ps
+      helper (p ∷ ps) | false | yes  allps = yes ((λ ()) , allps)
+      helper (p ∷ ps) | false | no  ¬allps = no  ¬all
+        where
+          ¬all : ¬ ((false ≡ true → p ∈ᵈ F) × all (λ p → p ∈ᵈ qs → p ∈ᵈ F) ps)
+          ¬all (_ , all) = ¬allps all
+
+  Dec-∈F : ∀ qs → Dec (qs ∈F)
+  Dec-∈F qs with Dec-all-∈F qs
+  ... | yes prf = yes (Vec-all-lem₂ (λ p → p ∈ᵈ qs → p ∈ᵈ F) prf)
+  ... | no  prf = no  (Vec-all-lem₄ (λ p → p ∈ᵈ qs → p ∈ᵈ F) prf)
+  
                                   
   -- transitive closure of ⊢
   infix 7 _⊢*_
@@ -366,13 +468,38 @@ Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵈ F × (q₀ , w) ⊢* (q , []))
 -- section 2.2.3: Finite Automata
 record DFA : Set₁ where
   field
-    Q  : Set
-    δ  : Q → Σ → Q
-    q₀ : Q
-    F  : DecSubset Q
+    Q     : Set
+    --Q?    : DecEq Q
+    δ     : Q → Σ → Q
+    q₀    : Q
+    F     : DecSubset Q
+    --∣Q∣   : ℕ
+    --It    : Vec Q ∣Q∣
+    --∀q∈It : ∀ q → q ∈ⱽ It
   
 module DFA-Operations (D : DFA) where
   open DFA D
+
+  -- a move from (q , aw) to (q' , w)
+  infix 7 _⊢_
+  _⊢_ : (Q × Σ × Σ*) → (Q × Σ*) → Set
+  (q , a , w) ⊢ (q' , w') = w ≡ w' × q' ≡ δ q a
+
+  
+  -- k moves from (q , w) to (q' , w')
+  infix 7 _⊢ᵏ_─_
+  _⊢ᵏ_─_ : (Q × Σ*) → ℕ → (Q × Σ*) → Set
+  (q , w) ⊢ᵏ zero    ─ (q' , w')
+    = q ≡ q' × w ≡ w'
+  (q , w) ⊢ᵏ (suc n) ─ (q' , w')
+    = Σ[ p ∈ Q ] Σ[ a ∈ Σ ] Σ[ u ∈ Σ* ]
+      (w ≡ a ∷ u × (q , a , u) ⊢ (p , u) × (p , u) ⊢ᵏ n ─ (q' , w'))
+
+  -- transitive closure of ⊢
+  infix 7 _⊢*_
+  _⊢*_ : (Q × Σ*) → (Q × Σ*) → Set
+  (q , w) ⊢* (q' , w') = Σ[ n ∈ ℕ ] (q , w) ⊢ᵏ n ─ (q' , w')
+
 
   δ* : Q → Σ* → Q
   δ* q []      = q
@@ -381,14 +508,43 @@ module DFA-Operations (D : DFA) where
   δ₀ : Σ* → Q
   δ₀ w = δ* q₀ w
 
-  δ*-lem₁ : ∀ q w u → δ* q (w ++ u) ≡ δ* (δ* q w) u
-  δ*-lem₁ q []      u = refl
-  δ*-lem₁ q (a ∷ w) u = δ*-lem₁ (δ q a) w u
-  
+  δ₀-lem₅ : ∀ q w n q'
+           → q' ∈ᵈ F
+           → (q , w) ⊢ᵏ n ─ (q' , [])
+           → δ* q w ∈ᵈ F
+  δ₀-lem₅ q .[] zero   .q  q'∈F (refl , refl) = q'∈F
+  δ₀-lem₅ q ._  (suc n) q' q'∈F (p , a , u , refl , (refl , prf₁) , prf₂)
+    = subst (λ p → δ* p u ∈ᵈ F) prf₁ (δ₀-lem₅ p u n q' q'∈F prf₂)
+
+  δ₀-lem₃ : ∀ w
+            → Σ[ q ∈ Q ] ( q ∈ᵈ F × (q₀ , w) ⊢* (q , []) )
+            → δ₀ w ∈ᵈ F  
+  δ₀-lem₃ w (q , q∈F , n , prf) = δ₀-lem₅ q₀ w n q q∈F prf
+
+  δ₀-lem₆ : ∀ q w
+            → δ* q w ∈ᵈ F
+            → Σ[ q' ∈ Q ] ( q' ∈ᵈ F × Σ[ n ∈ ℕ ] (q , w) ⊢ᵏ n ─ (q' , []) )
+  δ₀-lem₆ q []      prf = q  , prf , zero , (refl , refl)
+  δ₀-lem₆ q (a ∷ w) prf with δ₀-lem₆ (δ q a) w prf
+  ... | q' , q'∈F , n , prf₁ = q' , q'∈F , suc n , (δ q a , a , w , refl , (refl , refl) , prf₁)
+
+  δ₀-lem₂ : ∀ w
+            → δ₀ w ∈ᵈ F
+            → Σ[ q ∈ Q ] ( q ∈ᵈ F × (q₀ , w) ⊢* (q , []) )
+  δ₀-lem₂ w prf = δ₀-lem₆ q₀ w prf
+
+  δ₀-lem₁ : ∀ w
+            → δ₀ w ∈ᵈ F ⇔ Σ[ q ∈ Q ] ( q ∈ᵈ F × (q₀ , w) ⊢* (q , []) )
+  δ₀-lem₁ w = δ₀-lem₂ w , δ₀-lem₃ w
+
+  δ₀-lem₄ : ∀ w
+            → ¬ δ₀ w ∈ᵈ F 
+            → ¬ (Σ[ q ∈ Q ] ( q ∈ᵈ F × (q₀ , w) ⊢* (q , []) ))
+  δ₀-lem₄ w ¬δ₀w∈F prf = ⊥-elim (¬δ₀w∈F (δ₀-lem₃ w prf))
 
 -- Language denoted by a DFA
 Lᴰ : DFA → Language
-Lᴰ dfa = λ w → δ₀ w ∈ᵈ F
+Lᴰ dfa = λ w → Σ[ q ∈ Q ] ( q ∈ᵈ F × (q₀ , w) ⊢* (q , []) )
   where
     open DFA dfa
     open DFA-Operations dfa
@@ -396,9 +552,15 @@ Lᴰ dfa = λ w → δ₀ w ∈ᵈ F
 
 {- ∀dfa∈DFA. L(dfa) is decidable -}
 Dec-Lᴰ : ∀ dfa → Decidable (Lᴰ dfa)
-Dec-Lᴰ dfa w with (δ₀ w) ∈ᵈ? F
+Dec-Lᴰ dfa w with (δ₀ w) ∈ᵈ? F | inspect (λ w → (δ₀ w) ∈ᵈ? F) w
  where
   open DFA dfa
   open DFA-Operations dfa
-... | true  = yes refl
-... | false = no (λ ())
+... | true  | [ prf ] = yes (δ₀-lem₂ w prf)
+ where
+  open DFA dfa
+  open DFA-Operations dfa
+... | false | [ prf ] = no (δ₀-lem₄ w (Subset.DecidableSubset.∈-lem₂ {Q} {δ₀ w} {F} prf))
+ where
+  open DFA dfa
+  open DFA-Operations dfa
