@@ -21,10 +21,10 @@ open import Data.Nat
 open import Induction.Nat
 
 open import Subset renaming (Ø to ø)
-open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ)
-open import Language Σ
-open import RegularExpression Σ
-open import Automata Σ
+open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ) hiding (_⊆_ ; _⊇_)
+open import Language Σ dec
+open import RegularExpression Σ dec
+open import Automata Σ dec
 open import Translation Σ dec
 open import State
 
@@ -44,7 +44,13 @@ module Lᵉᴺ⊆Lᴺ (ε-nfa : ε-NFA) where
   lem₂ : ∀ q wᵉ n q' wᵉ'
          → (q , wᵉ) ⊢ᵏₑ n ─ (q' , wᵉ')
          → Σ[ p ∈ Qₑ ] Σ[ a ∈ Σ ] Σ[ n₁ ∈ ℕ ] ( n₁ <′ n ×  (q , wᵉ) ⊢ᵏₑ n₁ ─ (p , α a ∷ wᵉ') × (p , α a , wᵉ') ⊢ₑ (q' , wᵉ') )
-           ⊎ Σ[ p ∈ Qₑ ] Σ[ a ∈ Σ ] Σ[ uᵉ ∈ Σᵉ* ] Σ[ n₁ ∈ ℕ ] ( n₁ <′ n × Σ[ p₁ ∈ Qₑ ] ( toΣ* uᵉ ≡ toΣ* wᵉ' × (q , wᵉ) ⊢ᵏₑ n₁ ─ (p , α a ∷ uᵉ) × (p , α a , uᵉ) ⊢ₑ (p₁ , uᵉ) × (p₁ →ε* q') ) )
+           ⊎ ( Σ[ p ∈ Qₑ ] Σ[ a ∈ Σ ] Σ[ uᵉ ∈ Σᵉ* ] Σ[ n₁ ∈ ℕ ]
+               ( n₁ <′ n
+                 × ( Σ[ p₁ ∈ Qₑ ]
+                     ( toΣ* uᵉ ≡ toΣ* wᵉ'
+                       × (q , wᵉ) ⊢ᵏₑ n₁ ─ (p , α a ∷ uᵉ)
+                       × (p , α a , uᵉ) ⊢ₑ (p₁ , uᵉ)
+                       × (p₁ →ε* q') ) ) ) )
            ⊎ toΣ* wᵉ ≡ toΣ* wᵉ' × q →ε* q'
   lem₂ q wᵉ zero   .q .wᵉ  (refl , refl) = inj₂ (inj₂ (refl , (zero , refl)))
   lem₂ q wᵉ (suc n) q' wᵉ' prf with ⊢ᵏ₂-lem₂ {q} {wᵉ} {suc n} {q'} {wᵉ'} prf
@@ -62,7 +68,7 @@ module Lᵉᴺ⊆Lᴺ (ε-nfa : ε-NFA) where
          → w ≡ toΣ* wᵉ
          → (q , wᵉ) ⊢ᵏₑ n ─ (p , α a ∷ uᵉ)
          → (p , α a , uᵉ) ⊢ₑ (q' , uᵉ)
-         → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) )
+         → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × ( Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) ) )
   lem₃ = <-rec _ helper
     where
       helper : ∀ n
@@ -72,12 +78,12 @@ module Lᵉᴺ⊆Lᴺ (ε-nfa : ε-NFA) where
                    → w ≡ toΣ* wᵉ
                    → (q , wᵉ) ⊢ᵏₑ m₁ ─ (p , α a ∷ uᵉ)
                    → (p , α a , uᵉ) ⊢ₑ (q' , uᵉ)
-                   → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) ))
+                   → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × ( Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) ) ))
                → ∀ w q wᵉ p a uᵉ q'
                  → w ≡ toΣ* wᵉ
                  → (q , wᵉ) ⊢ᵏₑ n ─ (p , α a ∷ uᵉ)
                  → (p , α a , uᵉ) ⊢ₑ (q' , uᵉ)
-                 → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) )
+                 → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × ( Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) ) )
       helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) with lem₂ q wᵉ n p (α a ∷ uᵉ) prf₁
       helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₁ (p₁ , a₁ , n₁ , n₁<n , prf₃ , prf₄) with rec n₁ n₁<n w q wᵉ p₁ a₁ (α a ∷ uᵉ) p w≡wᵉ prf₃ prf₄
       helper n rec w q wᵉ p a uᵉ q' w≡wᵉ prf₁ (refl , prf₂) | inj₁ (p₁ , a₁ , n₁ , n₁<n , prf₃ , prf₄) | ._ , refl , n₂ , prf₅
@@ -148,7 +154,7 @@ module Lᵉᴺ⊇Lᴺ (ε-nfa : ε-NFA) where
 
   lem₂ : ∀ q w n q'
          → (q , w) ⊢ᵏ n ─ (q' , [])
-         → Σ[ wᵉ ∈ Σᵉ* ] ( w ≡ toΣ* wᵉ × Σ[ n₁ ∈ ℕ ] (q , wᵉ) ⊢ᵏₑ n₁ ─ (q' , []) )
+         → Σ[ wᵉ ∈ Σᵉ* ] ( w ≡ toΣ* wᵉ × ( Σ[ n₁ ∈ ℕ ] (q , wᵉ) ⊢ᵏₑ n₁ ─ (q' , []) ) )
   lem₂ q .[] zero    .q  (refl , refl) = [] , refl , zero , (refl , refl)
   lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) with p ∈ᵈ? δₑ q (α a) | inspect (δₑ q (α a)) p
   lem₂ q ._  (suc n)  q' (p , a , u , refl , (refl , prf₁) , prf₂) | true  | [ p∈δqa ] with lem₂ p u n q' prf₂

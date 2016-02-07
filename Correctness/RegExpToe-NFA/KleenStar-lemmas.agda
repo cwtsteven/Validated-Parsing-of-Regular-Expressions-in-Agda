@@ -6,7 +6,7 @@
 -}
 open import Util
 open import RegularExpression
-module Correctness.RegExpToe-NFA.KleenStar-lemmas (Σ : Set)(dec : DecEq Σ)(e : RegularExpression.RegExp Σ) where
+module Correctness.RegExpToe-NFA.KleenStar-lemmas (Σ : Set)(dec : DecEq Σ)(e : RegularExpression.RegExp Σ dec) where
 
 open import Data.List
 open import Data.Bool
@@ -20,8 +20,8 @@ open import Data.Nat
 
 open import Subset
 open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_)
-open import Language Σ
-open import Automata Σ
+open import Language Σ dec
+open import Automata Σ dec
 open import Translation Σ dec
 open import State
 
@@ -197,11 +197,22 @@ module Lᴿ⊇Lᴺ where
   lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  | false | [ eq ] | true   | [ eq₁ ] with lem₅ q₀₁ uᵉ n q' wᵉ' prf₂
   lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  | false | [ eq ] | true   | [ eq₁ ] | inj₁ prf₃ = inj₁ (inj₂ (λ ()) , prf₃)
   lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  | false | [ eq ] | true   | [ eq₁ ] | inj₂ (n₁ , m₁ , p₁ , u₁ , prf₃ , NoLoop-prf₃ , q₀₁∈F , prf₅ , w≡uv , m₁<n)
-       = inj₂ (suc n₁ , m₁ , p₁ , u₁ ,(inj q₀₁ , E , uᵉ , refl , (refl , Bool-lem₆ (q₀₁ ∈ᵈ? δ₁ q E) (q ∈ᵈ? F₁ ∧ decEqToBool Q₁? q₀₁ q₀₁) eq₁) , prf₃) , (inj₂ (∈-lem₂ {Q₁} {q} {F₁} eq) , NoLoop-prf₃) , q₀₁∈F , prf₅ , cong (λ u → E ∷ u) w≡uv , ≤′-step m₁<n)
+    = inj₂ (suc n₁ , m₁ , p₁ , u₁
+            , (inj q₀₁ , E , uᵉ , refl , (refl , Bool-lem₆ (q₀₁ ∈ᵈ? δ₁ q E) (q ∈ᵈ? F₁ ∧ decEqToBool Q₁? q₀₁ q₀₁) eq₁) , prf₃)
+            , (inj₂ (∈-lem₂ {Q₁} {q} {F₁} eq) , NoLoop-prf₃)
+            , q₀₁∈F , prf₅
+            , cong (λ u → E ∷ u) w≡uv
+            , ≤′-step m₁<n)
   lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl ,   ()) , prf₂) | yes refl  | false | [ eq ] | false  | [ eq₁ ]
   lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) | no  p≢q₀₁ | q∈?F₁ | [ eq ] | true   | [ eq₁ ] with lem₅ p uᵉ n q' wᵉ' prf₂
   lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) | no  p≢q₀₁ | q∈?F₁ | [ eq ] | true   | [ eq₁ ] | inj₁ prf₃ = inj₁ (inj₁ p≢q₀₁ , prf₃)
   lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) | no  p≢q₀₁ | q∈?F₁ | [ eq ] | true   | [ eq₁ ] | inj₂ (n₁ , m₁ , p₁ , u₁ , prf₃ , NoLoop-prf₃ , p₁∈F , prf₅ , w≡uv , m₁<n)
-    = inj₂ (suc n₁ , m₁ , p₁ , u₁ ,(inj p , E , uᵉ , refl , (refl , Bool-lem₆ (p ∈ᵈ? δ₁ q E) (q ∈ᵈ? F₁ ∧ decEqToBool Q₁? p q₀₁) eq₁) , prf₃) , (inj₁ p≢q₀₁ , NoLoop-prf₃) , p₁∈F , prf₅ , cong (λ u → E ∷ u) w≡uv , ≤′-step m₁<n)
-  lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) | no  p≢q₀₁ | q∈?F₁ | [ eq ] | false  | [ eq₁ ] = ⊥-elim (Bool-lem₈ {q∈?F₁} prf₁)
+    = inj₂ (suc n₁ , m₁ , p₁ , u₁
+            , (inj p , E , uᵉ , refl , (refl , Bool-lem₆ (p ∈ᵈ? δ₁ q E) (q ∈ᵈ? F₁ ∧ decEqToBool Q₁? p q₀₁) eq₁) , prf₃)
+            , (inj₁ p≢q₀₁ , NoLoop-prf₃)
+            , p₁∈F , prf₅
+            , cong (λ u → E ∷ u) w≡uv
+            , ≤′-step m₁<n)
+  lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) | no  p≢q₀₁ | q∈?F₁ | [ eq ] | false  | [ eq₁ ]
+    = ⊥-elim (Bool-lem₈ {q∈?F₁} prf₁)
             

@@ -14,6 +14,7 @@ module Translation (Σ : Set)(dec : DecEq Σ) where
 open import Level
 open import Data.Bool
 open import Relation.Nullary
+open import Relation.Binary
 open import Relation.Binary.PropositionalEquality
 open import Data.Sum hiding (map)
 open import Data.Product hiding (Σ ; map)
@@ -25,9 +26,9 @@ open import Data.Vec renaming (_∈_ to _∈ⱽ_) hiding (init)
 open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 
 open import Subset.DecidableSubset renaming (Ø to ø ; _⋃_ to _⋃ᵈ_)
-open import Language Σ hiding (⟦_⟧)
-open import RegularExpression Σ
-open import Automata Σ
+open import Language Σ dec hiding (⟦_⟧)
+open import RegularExpression Σ dec 
+open import Automata Σ dec
 open import State
 
 open ≡-Reasoning
@@ -150,30 +151,31 @@ remove-ε-step nfa =
       δ' : Q → Σ → DecSubset Q
       --     = { q' | q' ∈ δ q (α a) ∨ ∃p∈Q. q' ∈ δ p (α a) ∧ p ∈ ε-closure(q) }
       --     = λ q' → q' ∈ δ q (α a) ⊎ Σ[ p ∈ Q ] (q' ∈ δ p (α a) × p ∈ ε-closure q)
-      --     = λ q' → q' ∈ δ q (α a) ∨ any (λ p → q' ∈ δ p (α a) ∧ p ∈ ε-closure q) It
       δ' q a = λ q' → q' ∈? δ q (α a) ∨ ∃q⊢a-q'? (Dec-→ε*⊢ q a q')
 
       F' : DecSubset Q
       -- = { q | q ∈ F ∨ ∃p∈Q. p ∈ F ∧ p ∈ ε-closure(q) }
       -- = λ q → q ∈ F ⊎ Σ[ p ∈ Q ] (p ∈ F × p ∈ ε-closure q)
-      -- = λ q → q ∈ F ∨ any (λ p → p ∈ F ∧ p ∈ ε-closure q) It
       F' = λ q → q ∈? F ∨ ∃q∈F? (Dec-→ε*∈F q)
 
-
+--open import Data.Vec renaming (_∈_ to _∈ⱽ_)
+--open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_ ; Ø to Øⱽ)
 
 -- determinise the NFA by powerset construction
 powerset-construction : NFA → DFA
 powerset-construction nfa =
-  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' }
+  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≈_ ; ≋-refl = ≈-refl; ≋-sym = ≈-sym ; ≋-trans = ≈-trans ; ≋-subst = ≈-subst}
     where
       open NFA nfa
       open NFA-Operations nfa
+      open Vec-Rep {Q} {∣Q∣} Q? It ∀q∈It
       Q' : Set
       Q' = DecSubset Q
       
       δ' : Q' → Σ → Q'
-      --      = λ q' → ∀ q → q ∈ qs → q' ∈ δ q a
-      δ' qs a q with Dec-⊢ qs a q
+      -- qs a = { q' | ∃q∈Q.q ∈ qs ∧ q' ∈ δ q a }
+      -- qs a = λ q' → Σ[ q ∈ Q ] ( q ∈ qs × q' ∈ᵈ δ q a )
+      δ' qs a q' with Dec-⊢ qs a q'
       ... | yes _ = true
       ... | no  _ = false
       
@@ -181,8 +183,9 @@ powerset-construction nfa =
       q₀' = ⟦ q₀ ⟧ {{Q?}}
       
       F' : DecSubset Q'
-      -- = λ qs → ∀ q → q ∈ qs → q ∈ F
-      F' qs with Dec-∈F qs
+      -- = { qs | ∃q∈Q. q ∈ qs ∧ q ∈ F }
+      -- = λ qs → Σ[ q ∈ Q ] ( q ∈ qs × q ∈ F )
+      F' qs with Dec-qs∈F qs
       ... | yes _ = true
       ... | no  _ = false
 

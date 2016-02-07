@@ -6,7 +6,7 @@
 -}
 open import Util
 open import RegularExpression
-module Correctness.RegExpToe-NFA.Union-lemmas (Σ : Set)(dec : DecEq Σ)(e₁ : RegularExpression.RegExp Σ)(e₂ : RegularExpression.RegExp Σ) where
+module Correctness.RegExpToe-NFA.Union-lemmas (Σ : Set)(dec : DecEq Σ)(e₁ : RegularExpression.RegExp Σ dec)(e₂ : RegularExpression.RegExp Σ dec) where
 
 open import Data.List
 open import Data.Bool
@@ -19,8 +19,8 @@ open import Data.Nat
 
 open import Subset
 open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_)
-open import Language Σ
-open import Automata Σ
+open import Language Σ dec
+open import Automata Σ dec
 open import Translation Σ dec
 open import State
 

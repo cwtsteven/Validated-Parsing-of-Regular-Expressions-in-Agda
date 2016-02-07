@@ -19,9 +19,9 @@ open import Data.Empty
 open import Data.Nat
 
 open import Subset
-open import Language Σ
-open import RegularExpression Σ
-open import Automata Σ
+open import Language Σ dec
+open import RegularExpression Σ dec
+open import Automata Σ dec
 open import Translation Σ dec
 open import State
 

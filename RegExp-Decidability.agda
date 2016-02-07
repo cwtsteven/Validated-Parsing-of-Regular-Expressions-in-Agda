@@ -9,8 +9,8 @@ open import Util
 module RegExp-Decidability (Σ : Set)(dec : DecEq Σ) where
 
 open import Subset
-open import RegularExpression Σ
-open import Automata Σ
+open import RegularExpression Σ dec
+open import Automata Σ dec
 open import Translation Σ dec
 open import Correctness Σ dec
 

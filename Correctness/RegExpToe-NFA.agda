@@ -21,10 +21,10 @@ open import Data.Nat
 open import Induction.Nat
 
 open import Subset renaming (Ø to ø)
-open import Subset.DecidableSubset renaming (Ø to ø ; _∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_)
-open import Language Σ
-open import RegularExpression Σ
-open import Automata Σ
+open import Subset.DecidableSubset renaming (Ø to ø ; _∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_) hiding (_⊆_ ; _⊇_)
+open import Language Σ dec
+open import RegularExpression Σ dec
+open import Automata Σ dec
 open import Translation Σ dec
 open import State
 

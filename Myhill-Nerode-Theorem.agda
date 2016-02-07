@@ -8,9 +8,9 @@ open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Product hiding (Σ)
 
-open import Language Σ
-open import RegularExpression Σ
-open import Automata Σ
+open import Language Σ dec
+open import RegularExpression Σ dec
+open import Automata Σ dec
 open import Translation Σ dec
 
 open ≡-Reasoning
@@ -19,7 +19,7 @@ Right-invariant : Rel Σ* _ → Set
 Right-invariant rel = ∀ {w u} → rel w u → ∀ z → rel (w ++ z) (u ++ z)
 
 
-module Condition1 (dfa : DFA) where
+module Condition (dfa : DFA) where
   open DFA dfa
   open DFA-Operations dfa
 
@@ -51,11 +51,11 @@ module Condition1 (dfa : DFA) where
 lem₃ : ∀ L
        → Regular L
        → Σ[ rm ∈ Rel Σ* _ ] ( Right-invariant rm × IsEquivalence rm ) -- ∧ finite index ∧ L is the union of its equivalence classes
-lem₃ L (e , L≡Lᴿe) = _Rm_ , Rm-Right-invariant , record { refl = Rm-refl ; sym = Rm-sym ; trans = Rm-trans }
+lem₃ L prf = _Rm_ , Rm-Right-invariant , record { refl = Rm-refl ; sym = Rm-sym ; trans = Rm-trans }
   where
     dfa : DFA
-    dfa = regexToDFA e
-    open Condition1 dfa
+    dfa = regexToDFA undefined
+    open Condition dfa
 
 
 lem₂ : ∀ L

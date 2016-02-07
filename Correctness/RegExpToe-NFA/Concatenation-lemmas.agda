@@ -6,7 +6,7 @@
 -}
 open import Util
 open import RegularExpression
-module Correctness.RegExpToe-NFA.Concatenation-lemmas (Σ : Set)(dec : DecEq Σ)(e₁ : RegularExpression.RegExp Σ)(e₂ : RegularExpression.RegExp Σ) where
+module Correctness.RegExpToe-NFA.Concatenation-lemmas (Σ : Set)(dec : DecEq Σ)(e₁ : RegularExpression.RegExp Σ dec)(e₂ : RegularExpression.RegExp Σ dec) where
 
 open import Data.List
 open import Data.Bool
@@ -19,8 +19,8 @@ open import Data.Nat
 
 open import Subset
 open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_)
-open import Language Σ
-open import Automata Σ
+open import Language Σ dec
+open import Automata Σ dec
 open import Translation Σ dec
 open import State
 
@@ -291,7 +291,7 @@ module Lᴿ⊇Lᴺ where
 
   lem₁ : ∀ w
          → w ∈ Lᵉᴺ nfa
-         → Σ[ u ∈ Σ* ] Σ[ v ∈ Σ* ] (u ∈ Lᵉᴺ nfa₁ × v ∈ Lᵉᴺ nfa₂ × w ≡ u ++ v)
+         → Σ[ u ∈ Σ* ] Σ[ v ∈ Σ* ] ( u ∈ Lᵉᴺ nfa₁ × v ∈ Lᵉᴺ nfa₂ × w ≡ u ++ v )
   lem₁ w (wᵉ , w≡wᵉ , ⍟inj₁ _ , ()  , prf)
   lem₁ w (wᵉ , w≡wᵉ , mid     , ()  , prf)
   lem₁ w (wᵉ , w≡wᵉ , ⍟inj₂ q , q∈F , prf) = lem₂ q w wᵉ w≡wᵉ q∈F (⊢*-lem₃ prf)

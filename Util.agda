@@ -20,17 +20,20 @@ open ≡-Reasoning
 
 postulate undefined : ∀ {α} → {A : Set α} → A
 
+
 -- Logic
 infix 0 _⇔_
 _⇔_ : ∀ {α ℓ} → Set α → Set ℓ → Set (ℓ Level.⊔ α)
 P ⇔ Q = (P → Q) × (Q → P)
 
+{-
 -- Function
 Injective : {A B : Set}(f : A → B) → Set
 Injective f = ∀ x y → f x ≡ f y → x ≡ y
 
 Inj-lem₁ : {A B : Set}(f : A → B) → Injective f → ∀ x y → f x ≢ f y → x ≢ y
 Inj-lem₁ f f-inj x y fx≢fy x≡y = fx≢fy (cong f x≡y)
+-}
 
 
 -- Decidable Equality
@@ -42,10 +45,12 @@ decEqToBool dec x  y with dec x y
 decEqToBool dec x .x | yes refl = true
 decEqToBool dec x  y | no  x≢y  = false
 
+{-
 decEq-lem₂ : {A B : Set} → (f : B → A) → Injective f → DecEq A → DecEq B
 decEq-lem₂ f f-inj decA b₁ b₂ with decA (f b₁) (f b₂)
 decEq-lem₂ f f-inj decA b₁ b₂ | yes prf = yes (f-inj b₁ b₂ prf)
 decEq-lem₂ f f-inj decA b₁ b₂ | no  prf = no  (Inj-lem₁ f f-inj b₁ b₂ prf)
+-}
 
 decEq-lem₁ : {A : Set} → (dec : DecEq A) → ∀ a → decEqToBool dec a a ≡ true
 decEq-lem₁ dec a with dec a a
@@ -59,15 +64,16 @@ tail : {A : Set} → List A → List A
 tail []       = []
 tail (x ∷ xs) = xs
 
-
 DecEq-List : {A : Set} → DecEq A → DecEq (List A)
 DecEq-List dec []         []       = yes refl
 DecEq-List dec ( x ∷  xs) []       = no (λ ())
 DecEq-List dec []         (y ∷ ys) = no (λ ())
 DecEq-List dec ( x ∷  xs) (y ∷ ys) with dec x y
 DecEq-List dec (.y ∷  xs) (y ∷ ys) | yes refl with DecEq-List dec xs ys
-DecEq-List dec (.y ∷ .ys) (y ∷ ys) | yes refl | yes refl  = yes refl
-DecEq-List dec (.y ∷  xs) (y ∷ ys) | yes refl | no  xs≢ys = no  (λ yxs≡yys → xs≢ys (cong tail yxs≡yys))
+DecEq-List dec (.y ∷ .ys) (y ∷ ys) | yes refl | yes refl
+  = yes refl
+DecEq-List dec (.y ∷  xs) (y ∷ ys) | yes refl | no  xs≢ys
+  = no  (λ yxs≡yys → xs≢ys (cong tail yxs≡yys))
 DecEq-List dec ( x ∷  xs) (y ∷ ys) | no  x≢y  = no (λ xxs≡yys → x≢y (lem₁ xxs≡yys))
   where
     lem₁ : {A : Set}{x y : A}{xs ys : List A} → x ∷ xs ≡ y ∷ ys → x ≡ y

@@ -7,8 +7,8 @@
   Steven Cheung 2015.
   Version 10-01-2016
 -}
-
-module Language (Σ : Set) where
+open import Util hiding (_^_)
+module Language (Σ : Set)(dec : DecEq Σ) where
 
 open import Level renaming (zero to lzero ; suc to lsuc ; _⊔_ to _⊔ˡ_)
 open import Data.Bool
@@ -20,7 +20,6 @@ open import Data.Empty
 open import Data.Unit
 open import Data.Nat
 
-open import Util hiding (_^_)
 open import Subset renaming (Ø to ø ; ⟦_⟧ to ⟦_⟧₁ ; _⋃_ to _⊎_)
 
 open ≡-Reasoning
@@ -29,6 +28,9 @@ open ≡-Reasoning
 -- section 0.2.2: Languages
 Σ* : Set
 Σ* = List Σ
+
+Dec-Σ* : (u v : Σ*) → Dec (u ≡ v)
+Dec-Σ* = DecEq-List dec 
 
 -- Language as a subset of Σ*
 -- section 0.2.2: Languages
@@ -54,7 +56,7 @@ Language = Subset Σ*
 -- section 0.2.3: Operations on Languages
 infix 11 _⋃_
 _⋃_ : Language → Language → Language
-as ⋃ bs = as ⊎ bs
+L₁ ⋃ L₂ = L₁ ⊎ L₂
 
 -- Concatenation
 -- section 0.2.3: Operations on Languages
@@ -72,7 +74,7 @@ L ^ (suc n) = L • (L ^ n)
 infix 13 _⋆
 _⋆ : Language → Language
 L ⋆ = λ w → Σ[ n ∈ ℕ ] w ∈ L ^ n
-
+  
 
 {- Here we define the set of alphabet containing ε -}
 
@@ -94,6 +96,20 @@ toΣ* : Σᵉ* → Σ*
 toΣ* []         = []
 toΣ* (E   ∷ xs) = toΣ* xs
 toΣ* (α a ∷ xs) = a ∷ toΣ* xs
+
+-- Decidable Equality of Σᵉ
+DecEq-Σᵉ : DecEq Σ → DecEq Σᵉ
+DecEq-Σᵉ dec E     E      = yes refl
+DecEq-Σᵉ dec E     (α  _) = no (λ ())
+DecEq-Σᵉ dec (α a) E      = no (λ ())
+DecEq-Σᵉ dec (α a) (α  b) with dec a b
+DecEq-Σᵉ dec (α a) (α .a) | yes refl = yes refl
+DecEq-Σᵉ dec (α a) (α  b) | no ¬a≡b  = no  (λ p → ¬σa≡σb ¬a≡b p)
+  where
+    lem : {a b : Σ} → α a ≡ α b → a ≡ b
+    lem refl = refl
+    ¬σa≡σb : ¬ (a ≡ b) → ¬ (α a ≡ α b)
+    ¬σa≡σb ¬a≡b σa≡σb = ¬a≡b (lem σa≡σb)
 
 -- Lemmas on Σᵉ
 Σᵉ*-lem₁ : ∀ w u
@@ -130,11 +146,12 @@ toΣ* (α a ∷ xs) = a ∷ toΣ* xs
 Σᵉ*-lem₄ : ∀ wᵉ uᵉ vᵉ
            → wᵉ ≡ uᵉ ++ E ∷ vᵉ
            → toΣ* wᵉ ≡ toΣ* uᵉ ++ toΣ* vᵉ
-Σᵉ*-lem₄ wᵉ uᵉ vᵉ wᵉ≡uv = begin
-                          toΣ* wᵉ             ≡⟨ cong toΣ* wᵉ≡uv ⟩
-                          toΣ* (uᵉ ++ E ∷ vᵉ) ≡⟨ sym (Σᵉ*-lem₁ uᵉ (E ∷ vᵉ)) ⟩
-                          toΣ* uᵉ ++ toΣ* vᵉ
-                          ∎
+Σᵉ*-lem₄ wᵉ uᵉ vᵉ wᵉ≡uv
+  = begin
+    toΣ* wᵉ             ≡⟨ cong toΣ* wᵉ≡uv ⟩
+    toΣ* (uᵉ ++ E ∷ vᵉ) ≡⟨ sym (Σᵉ*-lem₁ uᵉ (E ∷ vᵉ)) ⟩
+    toΣ* uᵉ ++ toΣ* vᵉ
+    ∎
 
 
 Σᵉ*-lem₅ : ∀ w u v uᵉ vᵉ
@@ -186,18 +203,3 @@ toΣ* (α a ∷ xs) = a ∷ toΣ* xs
     toΣ* (uᵉ ++ vᵉ)    ≡⟨ sym (Σᵉ*-lem₁ uᵉ vᵉ) ⟩ 
     toΣ* uᵉ ++ toΣ* vᵉ
     ∎
-
-
--- Decidable Equality of Σᵉ
-DecEq-Σᵉ : DecEq Σ → DecEq Σᵉ
-DecEq-Σᵉ dec E     E      = yes refl
-DecEq-Σᵉ dec E     (α  _) = no (λ ())
-DecEq-Σᵉ dec (α a) E      = no (λ ())
-DecEq-Σᵉ dec (α a) (α  b) with dec a b
-DecEq-Σᵉ dec (α a) (α .a) | yes refl = yes refl
-DecEq-Σᵉ dec (α a) (α  b) | no ¬a≡b  = no  (λ p → ¬σa≡σb ¬a≡b p)
-  where
-    lem : {a b : Σ} → α a ≡ α b → a ≡ b
-    lem refl = refl
-    ¬σa≡σb : ¬ (a ≡ b) → ¬ (α a ≡ α b)
-    ¬σa≡σb ¬a≡b σa≡σb = ¬a≡b (lem σa≡σb)

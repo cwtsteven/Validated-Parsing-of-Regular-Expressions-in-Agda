@@ -8,7 +8,7 @@
 module Subset where
 
 --open import Util
---open import Level
+open import Level
 open import Data.Bool hiding (_≟_)
 open import Relation.Nullary
 open import Relation.Binary.PropositionalEquality
@@ -90,7 +90,12 @@ as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
           → as ≈ bs
           → bs ≈ cs
           → as ≈ cs
-≈-trans (as⊆bs , as⊇bs) (bs⊆cs , bs⊇cs) = (λ a a∈as → bs⊆cs a (as⊆bs a a∈as)) , (λ a a∈cs → as⊇bs a (bs⊇cs a a∈cs))
+≈-trans (as⊆bs , as⊇bs) (bs⊆cs , bs⊇cs)
+  = (λ a a∈as → bs⊆cs a (as⊆bs a a∈as)) , (λ a a∈cs → as⊇bs a (bs⊇cs a a∈cs))
+
+-- Can we prove subsitution of ≈ ?
+postulate ≈-subst : ∀ {ℓ}{A : Set}{as bs : Subset A} → (P : Subset A → Set ℓ) → as ≈ bs → P as → P bs
+
 
 -- Equality and decidability
 Decidable-lem₁ : {A : Set}{as bs : Subset A}

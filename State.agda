@@ -97,12 +97,13 @@ DecEq-⊍ decA decB (⊍inj₂ q) (⊍inj₁ _) = no (λ ())
 ⊍-Vec : {A B : Set}{n m : ℕ} → Vec A n → Vec B m → Vec (A ⊍ B) (suc n + m)
 ⊍-Vec as bs = init ∷ map ⊍inj₁ as ++ map ⊍inj₂ bs
 
+{-
 ⊍inj₁-Injective : {A B : Set} → Injective {A} {A ⊍ B} ⊍inj₁
 ⊍inj₁-Injective x .x refl = refl
 
 ⊍inj₂-Injective : {A B : Set} → Injective {B} {A ⊍ B} ⊍inj₂
 ⊍inj₂-Injective x .x refl = refl
-
+-}
 
 
 
@@ -143,12 +144,13 @@ DecEq-⍟ decA decB mid       (⍟inj₂ q') = no (λ ())
 ⍟-Vec : {A B : Set}{n m : ℕ} → Vec A n → Vec B m → Vec (A ⍟ B) (n + suc m)
 ⍟-Vec as bs = map ⍟inj₁ as ++ mid ∷ map ⍟inj₂ bs
 
+{-
 ⍟inj₁-Injective : {A B : Set} → Injective {A} {A ⍟ B} ⍟inj₁
 ⍟inj₁-Injective x .x refl = refl
 
 ⍟inj₂-Injective : {A B : Set} → Injective {B} {A ⍟ B} ⍟inj₂
 ⍟inj₂-Injective x .x refl = refl
-
+-}
 
 
 {- kleen star states -}
@@ -173,5 +175,7 @@ DecEq-* dec (inj _) init     = no (λ ())
 *-Vec : {A : Set}{n : ℕ} → Vec A n → Vec (A *-State) (suc n)
 *-Vec as = init ∷ map inj as
 
+{-
 inj-Injective : {A : Set} → Injective {A} {A *-State} inj
 inj-Injective x .x refl = refl
+-}
