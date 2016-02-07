@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.5)  5 FEB 2016 23:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.5)  7 FEB 2016 20:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -548,13 +548,17 @@ Underfull \hbox (badness 10000) in paragraph at lines 140--141
 LaTeX Warning: Command \O invalid in math mode on input line 184.
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 199.
-
-
-LaTeX Warning: Command \O invalid in math mode on input line 199.
+LaTeX Warning: Command \O invalid in math mode on input line 198.
 
 [8]
-Underfull \hbox (badness 10000) in paragraph at lines 224--226
+
+LaTeX Warning: Command \O invalid in math mode on input line 209.
+
+
+LaTeX Warning: Command \O invalid in math mode on input line 209.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 227--229
 
  []
 
@@ -568,11 +572,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 224--226
 Here is how much of TeX's memory you used:
  4517 strings out of 493089
  60581 string characters out of 6134842
- 134319 words of memory out of 5000000
+ 140319 words of memory out of 5000000
  7934 multiletter control sequences out of 15000+600000
  9025 words of font info for 33 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,7n,32p,253b,1070s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,7n,32p,253b,1610s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmbx10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmbx12.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/c
@@ -585,7 +589,7 @@ mmi7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
 .pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pf
 b></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 ></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on Report.pdf (10 pages, 202688 bytes).
+Output written on Report.pdf (10 pages, 203238 bytes).
 PDF statistics:
  88 PDF objects out of 1000 (max. 8388607)
  61 compressed objects within 1 object stream

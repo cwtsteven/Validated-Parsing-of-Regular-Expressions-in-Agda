@@ -21,13 +21,11 @@
 \contentsline {paragraph}{Agda}{8}
 \contentsline {paragraph}{Definition 3.1}{8}
 \contentsline {paragraph}{Definition 3.2}{9}
-\contentsline {paragraph}{Theorem 1.1}{9}
-\contentsline {paragraph}{Proof 1.1}{9}
 \contentsline {subsection}{\numberline {4.4}Non-deterministic Finite Automata with \(\epsilon \)-transitions}{9}
 \contentsline {paragraph}{Agda}{9}
 \contentsline {paragraph}{Definition 4.1}{9}
 \contentsline {paragraph}{Definition 4.2}{9}
-\contentsline {paragraph}{Definition 4.3}{9}
+\contentsline {paragraph}{Definition 4.3}{10}
 \contentsline {subsection}{\numberline {4.5}Thompson's Construction}{10}
 \contentsline {paragraph}{Theorem 1.1}{10}
 \contentsline {subsection}{\numberline {4.6}Non-deterministic Finite Automata without \(\epsilon \)-transitions}{10}

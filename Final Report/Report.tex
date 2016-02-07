@@ -123,7 +123,7 @@ unknown until it is proved.
 Bool\). Unlike \(Subset\), its decidability is ensured by its
 definition. \\
 
-\par The two definition has different purposes. \(Subset\) was used to represent \(Language\) as not every
+\par The two definitions has different purposes. \(Subset\) was used to represent \(Language\) as not every
 language is decidable. For other parts in the project 
 such as the subset of states of an automata, \(DecSubset\) was used
 as the decidability is assumed in the definition. The two definition
@@ -192,6 +192,16 @@ L \(L\ast\) is defined as \( \bigcup_{n \in N} L^n \) where
     \end{enumerate}
   \item nothing else is a regular language
 \end{enumerate}
+The equivalent Agda definition: 
+\begin{lstlisting}[mathescape=true,aboveskip=0pt,belowskip=0pt]
+data Regular : Language $\to$ Set$_1$ where
+  nullL : Regular $\O$
+  empty : Regular $[\![ \epsilon ]\!]$
+  singleton : (a : $\Sigma$) $\to$ Regular $[\![ a ]\!]$
+  union : $\forall$ $L_1$ $L_2$ $\to$ Regular $L_1$ $\to$ Regular $L_2$ $\to$ Regular ($L_1\ \cup\ L_2$)
+  conca : $\forall$ $L_1$ $L_2$ $\to$ Regular $L_1$ $\to$ Regular $L_2$ $\to$ Regular ($L_1\ \bullet\ L_2$) 
+  kleen : $\forall$ $L$   $\to$ Regular $L$   $\to$ Regular ($L\ \star$)
+\end{lstlisting}
 
 \paragraph{Definition 3.2} Here we define regular expressions over
 \(\Sigma\) as follows: 
@@ -212,20 +222,13 @@ L \(L\ast\) is defined as \( \bigcup_{n \in N} L^n \) where
   \item nothing else is a regular expression 
 \end{enumerate}
 
-\paragraph{Theorem 1.1} A language is regular if and only if it can be
-denoted by a regular expression. 
-
-\paragraph{Proof 1.1} In order to prove it, we will have to prove
-the statement from both directions. 
-
-
 \subsection{Non-deterministic Finite Automata with
   \(\epsilon\)-transitions}
 \paragraph{Agda} Please refers to module \textbf{\(\epsilon\)-NFA} in
 Automata.agda \\
 
-\par By now, every string we have considered are in the form of \(List
-\Sigma^*\). However, this definition gives us no way to pattern match
+\par By now, every string we have considered are in the form of
+\(List\ \Sigma^*\). However, this definition gives us no way to pattern match
 an \(\epsilon\)-step in the automata. Therefore, we need to introduce another
 set of alphabet that includes \(\epsilon\). (For Definition 4.1 and
 4.2, please refers to Language.agda)
