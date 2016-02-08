@@ -109,9 +109,6 @@ as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
 ≈-trans (as⊆bs , as⊇bs) (bs⊆cs , bs⊇cs)
   = (λ a z → bs⊆cs a (as⊆bs a z)) , (λ a z → as⊇bs a (bs⊇cs a z))
 
--- Can we prove this ?
-postulate ≈-subst : {A : Set}{as bs : DecSubset A} → (P : DecSubset A → Set) → as ≈ bs → P as → P bs
-
 {-
 open import Data.Nat
 open import Data.Vec renaming (_∈_ to _∈ⱽ_)

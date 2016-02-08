@@ -164,7 +164,7 @@ remove-ε-step nfa =
 -- determinise the NFA by powerset construction
 powerset-construction : NFA → DFA
 powerset-construction nfa =
-  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≈_ ; ≋-refl = ≈-refl; ≋-sym = ≈-sym ; ≋-trans = ≈-trans ; ≋-subst = ≈-subst}
+  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≈_ ; ≋-refl = ≈-refl; ≋-sym = ≈-sym ; ≋-trans = ≈-trans ; F-lem = F-lem ; δ-lem = δ-lem }
     where
       open NFA nfa
       open NFA-Operations nfa
@@ -188,6 +188,44 @@ powerset-construction nfa =
       F' qs with Dec-qs∈F qs
       ... | yes _ = true
       ... | no  _ = false
+
+      δ-lem : ∀ {qs ps : Q'} a
+              → qs ≈ ps
+              → δ' qs a ≈ δ' ps a
+      δ-lem {qs} {ps} a qs≈ps = δ-lem₁ , δ-lem₂
+        where
+          δ-lem₁ : δ' qs a ⊆ δ' ps a
+          δ-lem₁ q q∈δqsa with q ∈? δ' ps a | inspect (δ' ps a) q
+          δ-lem₁ q q∈δqsa | true  | [ q∈δpsa ] = refl
+          δ-lem₁ q q∈δqsa | false | [ q∉δpsa ] with Dec-⊢ ps a q
+          δ-lem₁ q q∈δqsa | false | [     () ] | yes _
+          δ-lem₁ q q∈δqsa | false | [ q∉δpsa ] | no  ¬∃q with Dec-⊢ qs a q
+          δ-lem₁ q q∈δqsa | false | [ q∉δpsa ] | no  ¬∃q | yes (q₁ , q₁∈qs , q∈δq₁a)
+            = ⊥-elim (¬∃q (q₁ , proj₁ qs≈ps q₁ q₁∈qs , q∈δq₁a))
+          δ-lem₁ q     () | false | [ q∉δpsa ] | no  ¬∃q | no  _
+          δ-lem₂ : δ' qs a ⊇ δ' ps a
+          δ-lem₂ q q∈δpsa with q ∈? δ' qs a | inspect (δ' qs a) q
+          δ-lem₂ q q∈δpsa | true  | [ q∈δqsa ] = refl
+          δ-lem₂ q q∈δpsa | false | [ q∉δqsa ] with Dec-⊢ qs a q
+          δ-lem₂ q q∈δpsa | false | [     () ] | yes _
+          δ-lem₂ q q∈δpsa | false | [ q∉δqsa ] | no  ¬∃q with Dec-⊢ ps a q
+          δ-lem₂ q q∈δpsa | false | [ q∉δqsa ] | no  ¬∃q | yes (q₁ , q₁∈ps , q∈δq₁a)
+            = ⊥-elim (¬∃q (q₁ , proj₂ qs≈ps q₁ q₁∈ps , q∈δq₁a))
+          δ-lem₂ q     () | false | [ q∉δqsa ] | no  ¬∃q | no  _
+
+      F-lem : ∀ {qs ps}
+              → qs ≈ ps
+              → qs ∈ F'
+              → ps ∈ F'
+      F-lem {qs} {ps} qs≈ps qs∈F with ps ∈? F' | inspect F' ps
+      F-lem {qs} {ps} qs≈ps qs∈F | true  | [ ps∈F ] = refl
+      F-lem {qs} {ps} qs≈ps qs∈F | false | [ ps∉F ] with Dec-qs∈F ps
+      F-lem {qs} {ps} qs≈ps qs∈F | false | [   () ] | yes prf
+      F-lem {qs} {ps} qs≈ps qs∈F | false | [ ps∉F ] | no  ¬∃p with Dec-qs∈F qs
+      F-lem {qs} {ps} qs≈ps qs∈F | false | [ ps∉F ] | no  ¬∃p | yes (q , q∈qs , q∈F)
+        = ⊥-elim (¬∃p (q , proj₁ qs≈ps q q∈qs , q∈F))
+      F-lem {qs} {ps} qs≈ps   () | false | [ ps∉F ] | no  ¬∃p | no  _
+      
 
 
 

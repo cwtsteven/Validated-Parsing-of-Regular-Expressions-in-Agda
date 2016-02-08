@@ -460,7 +460,6 @@ Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵈ F × (q₀ , w) ⊢* (q , []))
 record DFA : Set₁ where
   field
     Q  : Set
-    --Q? : DecEq Q
     δ  : Q → Σ → Q
     q₀ : Q
     F  : DecSubset Q
@@ -468,7 +467,8 @@ record DFA : Set₁ where
     ≋-refl  : Reflexive _≋_
     ≋-sym   : Symmetric _≋_
     ≋-trans : Transitive _≋_
-    ≋-subst : {q q' : Q} → (P : Q → Set) → q ≋ q' → P q → P q'
+    F-lem   : ∀ {q} {p}   → q ≋ p → q ∈ᵈ F → p ∈ᵈ F
+    δ-lem   : ∀ {q} {p} a → q ≋ p → δ q a ≋ δ p a
   
 module DFA-Operations (D : DFA) where
   open DFA D
@@ -503,14 +503,21 @@ module DFA-Operations (D : DFA) where
 
 
   -- proving the two definitons are equivalent, i.e. δ₀ w ∈ᵈ F ⇔ Σ[ q ∈ Q ] ( q ∈ᵈ F × (q₀ , w) ⊢* (q , []) )
+  δ₀-lem₇ : ∀ q w p
+            → q ≋ p
+            → δ* q w ≋ δ* p w
+  δ₀-lem₇ q []      p q≋p = q≋p
+  δ₀-lem₇ q (a ∷ w) p q≋p = δ₀-lem₇ (δ q a) w (δ p a) (δ-lem a q≋p)
+
   δ₀-lem₅ : ∀ q w n q'
            → q' ∈ᵈ F
            → (q , w) ⊢ᵏ n ─ (q' , [])
            → δ* q w ∈ᵈ F
   δ₀-lem₅ q .[] zero    q' q'∈F (q≋q' , refl)
-    = ≋-subst (λ q' → q' ∈ᵈ F) (≋-sym q≋q') q'∈F
+    = F-lem (≋-sym q≋q') q'∈F
   δ₀-lem₅ q ._  (suc n) q' q'∈F (p , a , u , refl , (refl , prf₁) , prf₂)
-    = ≋-subst (λ p → δ* p u ∈ᵈ F) prf₁ (δ₀-lem₅ p u n q' q'∈F prf₂)
+    = let prf₃ = δ₀-lem₇ p u (δ q a) prf₁ in
+      F-lem prf₃ (δ₀-lem₅ p u n q' q'∈F prf₂)
 
   δ₀-lem₃ : ∀ w
             → Σ[ q ∈ Q ] ( q ∈ᵈ F × (q₀ , w) ⊢* (q , []) )
