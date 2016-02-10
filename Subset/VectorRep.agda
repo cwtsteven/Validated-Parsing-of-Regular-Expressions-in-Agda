@@ -1,4 +1,4 @@
-open import Util
+open import Util hiding (tail) 
 module Subset.VectorRep where
 
 --open import Level
@@ -24,6 +24,31 @@ _∈?_ : {A : Set}(a : A){n : ℕ} → (as : Vec A n) → {{dec : DecEq A}} → 
 (a ∈? ( x ∷ as)) {{dec}} | no  _    with (a ∈? as) {{dec}}
 (a ∈? ( x ∷ as)) {{dec}} | no  _    | yes a∈as = yes (there a∈as)
 (a ∈? ( x ∷ as)) {{dec}} | no  a≢x  | no  a∉as = no (λ a∈xas →  a≢x (∈-lem₁ a x as a∈xas a∉as))
+
+Unique : {A : Set}{n : ℕ}(as : Vec A (suc n)) → Set
+Unique (a ∷ []) = ⊤
+Unique (a ∷ (b ∷ as)) = ¬ a ∈ (b ∷ as) × Unique (b ∷ as)
+
+Unique-lem₁ : {A B : Set}{n : ℕ}(f : A → B) → Injective f → (as : Vec A (suc n)) → Unique as → Unique (map f as)
+Unique-lem₁ f f-inj (a ∷ [])     un-as = tt
+Unique-lem₁ f f-inj (a ∷ x ∷ as) un-as = prf f f-inj a x as (proj₁ un-as) , (Unique-lem₁ f f-inj (x ∷ as) (proj₂ un-as))
+  where
+    lem₁ : {A : Set}{a x : A} → a ∈ x ∷ [] → a ≡ x
+    lem₁ here = refl
+    lem₁ (there ())
+    lem₂ : {A : Set}{n : ℕ}{a x : A}{as : Vec A n} → ¬ a ∈ x ∷ as → a ≢ x
+    lem₂ a∉xas refl = a∉xas here
+    lem₃ : {A : Set}{n : ℕ}{a x : A}{as : Vec A n} → a ∈ x ∷ as → a ≡ x ⊎ a ∈ as
+    lem₃ here = inj₁ refl
+    lem₃ (there prf) = inj₂ prf
+    lem₄ : {A : Set}{n : ℕ}{a x : A}{as : Vec A n} → ¬ a ∈ x ∷ as → ¬ a ∈ as
+    lem₄ a∉xas here = a∉xas (there here)
+    lem₄ a∉xas (there prf) = lem₄ (λ z → a∉xas (there z)) prf
+    prf : {A B : Set}{n : ℕ}(f : A → B) → Injective f → (a x : A)(as : Vec A n) → ¬ a ∈ x ∷ as → ¬ f a ∈ f x ∷ (map f as)
+    prf f f-inj a x []       ¬a∈xas fafxas = let a≢x = lem₂ ¬a∈xas in Injective-lem₁ f-inj a≢x (lem₁ fafxas)
+    prf f f-inj a x (y ∷ as) ¬a∈xas fafxas with lem₃ fafxas
+    ... | inj₁ fa≡fx   = let a≢x = lem₂ ¬a∈xas in Injective-lem₁ f-inj a≢x fa≡fx
+    ... | inj₂ fa∈fyas = prf f f-inj a y as (lem₄ ¬a∈xas) fa∈fyas
 
 
 ∈-lem₂ : {A B : Set}{n : ℕ}(decA : DecEq A)(decB : DecEq B)(f : A → B) → (a : A)(as : Vec A n)
@@ -56,8 +81,6 @@ _∈?_ : {A : Set}(a : A){n : ℕ} → (as : Vec A n) → {{dec : DecEq A}} → 
 ∈-lem₆ dec a as bs (inj₁ a∈as) = ∈-lem₄ dec a as bs a∈as
 ∈-lem₆ dec a as bs (inj₂ a∈bs) = ∈-lem₅ dec a as bs a∈bs
 
-
-
 any : {A : Set}{n : ℕ}(P : A → Set) → Vec A n → Set
 any P []       = ⊥
 any P (a ∷ as) = P a ⊎ any P as
@@ -73,7 +96,6 @@ any-lem₂ (a ∷ as) P (.a , Pa , here)       = inj₁ Pa
 any-lem₂ (a ∷ as) P ( x , Pa , there a∈as) = inj₂ (any-lem₂ as P (x , Pa , a∈as))
 
 
-
 all : {A : Set}{n : ℕ}(P : A → Set) → Vec A n → Set
 all P []       = ⊤
 all P (a ∷ as) = P a × all P as
@@ -87,7 +109,8 @@ all-lem₂ : {A : Set}{n : ℕ}(as : Vec A n) → ∀ P → (∀ a → P a) → 
 all-lem₂ []       P ∀aPa = tt
 all-lem₂ (a ∷ as) P ∀aPa = ∀aPa a , all-lem₂ as P ∀aPa
 
-module Vec-Rep {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A n)(∀a∈It : ∀ a → a ∈ It) where
+
+module Vec-Rep {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It : ∀ a → a ∈ It)(unique : Unique It) where
 
   Vec-any-lem₃ : ∀ P → Σ[ a ∈ A ] P a → any P It
   Vec-any-lem₃ P (a , Pa) = any-lem₂ It P (a , Pa , ∀a∈It a)
@@ -112,6 +135,52 @@ module Vec-Rep {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A n)(∀a∈It : ∀ a
 
   Vec-all-lem₄ : ∀ P → ¬ (all P It) → ¬ (∀ a → P a)
   Vec-all-lem₄ P ¬allP ∀aPa = ¬allP (Vec-all-lem₃ P ∀aPa)
+
+  It-lem₃ : {k j n : ℕ}(as : Vec A k)(bs : Vec A j)(cs : Vec A n)
+            → (prf : k + j ≡ n)
+            → cs ≡ subst (λ n → Vec A n) prf (as ++ bs)
+            → ∀ a → a ∈ cs → a ∈ as ⊎ a ∈ bs
+  It-lem₃ []      .cs cs refl refl  x x∈cs = inj₂ x∈cs
+  It-lem₃ (a ∷ as) bs ._ refl refl .a here = inj₁ here
+  It-lem₃ {suc k} {j} (a ∷ as) bs ._ refl refl  x (there x∈cs) with It-lem₃ {k} {j} as bs (as ++ bs) refl refl x x∈cs
+  It-lem₃ {suc k} {j} (a ∷ as) bs ._ refl refl  x (there x∈cs) | inj₁ prf = inj₁ (there prf)
+  It-lem₃ {suc k} {j} (a ∷ as) bs ._ refl refl  x (there x∈cs) | inj₂ prf = inj₂ prf
+
+  It-lem₂ : {k j : ℕ}(as : Vec A k)(bs : Vec A (suc j))
+            → (lenght-prf : k + suc j ≡ suc n)
+            → It ≡ subst (λ n → Vec A n) lenght-prf (as ++ bs)
+            → ∀ a → ¬ a ∈ as → a ≡ head bs ⊎ a ∈ tail bs
+  It-lem₂ {k} {j} as bs prf It≡asbs a a∉as with It-lem₃ {k} {suc j} as bs It prf It≡asbs a (∀a∈It a)
+  It-lem₂ as bs       prf It≡asbs  a a∉as | inj₁ a∈as = ⊥-elim (a∉as a∈as)
+  It-lem₂ as (x ∷ bs) prf It≡asbs .x a∉as | inj₂ here = inj₁ refl
+  It-lem₂ as (x ∷ bs) prf It≡asbs  a a∉as | inj₂ (there a∈bs) = inj₂ a∈bs
+
+  It-lem₅ : {n : ℕ}(as : Vec A (suc n))
+            → Unique as
+            → ∀ a → a ∈ as → a ≡ head as → ¬ a ∈ tail as
+  It-lem₅ (a ∷ [])     uni .a a∈as refl ()
+  It-lem₅ (a ∷ x ∷ as) (a∉xas , uni-xas) .a a∈as refl a∈tail = ⊥-elim (a∉xas a∈tail)
+
+  It-lem₇ : {n : ℕ}(as : Vec A (suc n))
+            → ∀ a → a ∈ as → a ≡ head as ⊎ a ∈ tail as
+  It-lem₇ (a ∷ []) .a here = inj₁ refl
+  It-lem₇ (a ∷ []) b (there ())
+  It-lem₇ (a ∷ x ∷ as) .a here = inj₁ refl
+  It-lem₇ (a ∷ x ∷ as) b (there b∈as) = inj₂ b∈as
+
+  It-lem₁ : ∀ a → a ≡ head It ⊎ a ∈ tail It
+  It-lem₁ a = It-lem₂ [] It refl refl a (λ ())
+
+  It-lem₄ : ∀ a → a ≢ head It → a ∈ tail It
+  It-lem₄ a a≢head with It-lem₁ a
+  It-lem₄ a a≢head | inj₁ a≡head = ⊥-elim (a≢head a≡head)
+  It-lem₄ a a≢head | inj₂ a∈tail = a∈tail
+
+  It-lem₆ : ∀ a → a ≡ head It → ¬ a ∈ tail It
+  It-lem₆ a = It-lem₅ It unique a (∀a∈It a)
+
+  It-lem₈ : {n : ℕ} → ∀ {b a} {as : Vec A n} → ¬ b ∈ a ∷ as → ¬ b ∈ as
+  It-lem₈ ¬b∈aas b∈as = ¬b∈aas (there b∈as)
 
 {-
   data Sub A : Set where

@@ -7,7 +7,7 @@
   Steven Cheung 2015.
   Version 10-01-2016
 -}
-open import Util hiding (_^_)
+open import Util
 module Language (Σ : Set)(dec : DecEq Σ) where
 
 open import Level renaming (zero to lzero ; suc to lsuc ; _⊔_ to _⊔ˡ_)

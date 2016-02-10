@@ -109,36 +109,12 @@ as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
 ≈-trans (as⊆bs , as⊇bs) (bs⊆cs , bs⊇cs)
   = (λ a z → bs⊆cs a (as⊆bs a z)) , (λ a z → as⊇bs a (bs⊇cs a z))
 
-{-
 open import Data.Nat
 open import Data.Vec renaming (_∈_ to _∈ⱽ_)
 open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 -- Vector Representation
-module DSub-VSub {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A n)(∀a∈It : ∀ a → a ∈ⱽ It) where
-  open Vec-Rep {A} {n} dec It ∀a∈It renaming (Ø to Øⱽ)
-  
-
-  VSub→DSub-lem₁ : {n : ℕ}{it : Vec A n} → VecSubset it → DecSubset A
-  VSub→DSub-lem₁ [] = Ø
-  VSub→DSub-lem₁ (keep a ∷ as)  b with dec a b
-  VSub→DSub-lem₁ (keep a ∷ as) .a | yes refl = true
-  VSub→DSub-lem₁ (keep a ∷ as)  b | no  _    = false
-  VSub→DSub-lem₁ (skip a ∷ as)  b = false
-
-  DSub→VSub-lem₁ : {n : ℕ} → (it : Vec A n) → DecSubset A → VecSubset it
-  DSub→VSub-lem₁ []       bs = []
-  DSub→VSub-lem₁ (a ∷ as) bs with a ∈? bs
-  DSub→VSub-lem₁ (a ∷ as) bs | true  = keep a ∷ DSub→VSub-lem₁ as bs
-  DSub→VSub-lem₁ (a ∷ as) bs | false = skip a ∷ DSub→VSub-lem₁ as bs
-
-  DSub→VSub : DecSubset A → VecSubset It
-  DSub→VSub as = DSub→VSub-lem₁ It as
-
-  VSub→DSub : VecSubset It → DecSubset A
-  VSub→DSub as = VSub→DSub-lem₁ {it = It} as
-
-  VSub⇔DSub : VecSubset It ⇔ DecSubset A
-  VSub⇔DSub = VSub→DSub , DSub→VSub
+module DSub-VSub {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It : ∀ a → a ∈ⱽ It)(unique : Unique It) where
+  open Vec-Rep {A} {n} dec It ∀a∈It unique
       
 
   Dec-⊇ : (as bs : DecSubset A) → Dec (as ⊇ bs)
@@ -210,4 +186,27 @@ module DSub-VSub {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A n)(∀a∈It : ∀
     where
       ¬eq : ¬ (as ≈ bs)
       ¬eq (_ , as⊇bs) = as⊉bs as⊇bs
--}
+
+
+{-
+  VSub→DSub-lem₁ : {n : ℕ}{it : Vec A n} → VecSubset it → DecSubset A
+  VSub→DSub-lem₁ [] = Ø
+  VSub→DSub-lem₁ (keep a ∷ as)  b with dec a b
+  VSub→DSub-lem₁ (keep a ∷ as) .a | yes refl = true
+  VSub→DSub-lem₁ (keep a ∷ as)  b | no  _    = false
+  VSub→DSub-lem₁ (skip a ∷ as)  b = false
+
+  DSub→VSub-lem₁ : {n : ℕ} → (it : Vec A n) → DecSubset A → VecSubset it
+  DSub→VSub-lem₁ []       bs = []
+  DSub→VSub-lem₁ (a ∷ as) bs with a ∈? bs
+  DSub→VSub-lem₁ (a ∷ as) bs | true  = keep a ∷ DSub→VSub-lem₁ as bs
+  DSub→VSub-lem₁ (a ∷ as) bs | false = skip a ∷ DSub→VSub-lem₁ as bs
+
+  DSub→VSub : DecSubset A → VecSubset It
+  DSub→VSub as = DSub→VSub-lem₁ It as
+
+  VSub→DSub : VecSubset It → DecSubset A
+  VSub→DSub as = VSub→DSub-lem₁ {it = It} as
+
+  VSub⇔DSub : VecSubset It ⇔ DecSubset A
+  VSub⇔DSub = VSub→DSub , DSub→VSub-}

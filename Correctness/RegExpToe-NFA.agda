@@ -6,7 +6,7 @@
   Steven Cheung 2015.
   Version 10-01-2016
 -}
-open import Util hiding (_^_)
+open import Util
 module Correctness.RegExpToe-NFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List

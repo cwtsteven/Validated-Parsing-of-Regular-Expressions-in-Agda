@@ -8,7 +8,7 @@
   Steven Cheung 2015.
   Version 07-01-2016
 -}
-open import Util hiding (_^_)
+open import Util
 module RegularExpression (Σ : Set)(dec : DecEq Σ) where
 
 

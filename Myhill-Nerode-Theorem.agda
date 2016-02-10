@@ -15,6 +15,8 @@ open import Translation Σ dec
 
 open ≡-Reasoning
 
+postulate undefined : ∀ {α} → {A : Set α} → A 
+
 Right-invariant : Rel Σ* _ → Set
 Right-invariant rel = ∀ {w u} → rel w u → ∀ z → rel (w ++ z) (u ++ z)
 
@@ -42,9 +44,9 @@ module Condition (dfa : DFA) where
   Rm-Right-invariant : Right-invariant _Rm_
   Rm-Right-invariant {w} {u} wRmu z
     = begin
-      δ₀ (w ++ z)     ≡⟨ undefined ⟩ -- lem₁ q₀ w z ⟩
+      δ₀ (w ++ z)     ≡⟨ {!!} ⟩ -- lem₁ q₀ w z ⟩
       δ* (δ* q₀ w) z  ≡⟨ cong (λ q → δ* q z) wRmu ⟩
-      δ* (δ* q₀ u) z  ≡⟨ undefined ⟩ --sym (lem₁ q₀ u z) ⟩
+      δ* (δ* q₀ u) z  ≡⟨ {!!} ⟩ --sym (lem₁ q₀ u z) ⟩
       δ₀ (u ++ z)
       ∎
 
@@ -54,17 +56,17 @@ lem₃ : ∀ L
 lem₃ L prf = _Rm_ , Rm-Right-invariant , record { refl = Rm-refl ; sym = Rm-sym ; trans = Rm-trans }
   where
     dfa : DFA
-    dfa = regexToDFA undefined
+    dfa = regexToDFA {!!}
     open Condition dfa
 
 
 lem₂ : ∀ L
        → Σ[ rm ∈ Rel Σ* _ ] ( Right-invariant rm × IsEquivalence rm ) -- ∧ finite index ∧ L is the union of its equivalence classes
        → Regular L
-lem₂ = undefined
+lem₂ = {!!}
 
 
 lem₁ : ∀ L
        → Regular L
          ⇔ Σ[ rm ∈ Rel Σ* _ ] ( Right-invariant rm × IsEquivalence rm ) -- ∧ finite index ∧ L is the union of its equivalence classes
-lem₁ = undefined
+lem₁ = {!!}

@@ -34,17 +34,17 @@ module base (nfa : NFA) where
   dfa : DFA
   dfa = powerset-construction nfa
 
-  open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣ to ∣Q₁∣ ; It to It₁) 
+  open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣-1 to ∣Q₁∣-1 ; It to It₁ ; unique to unique₁) 
   open NFA-Operations nfa renaming (_⊢_ to _⊢₁_ ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
   open DFA dfa
   open DFA-Operations dfa
   
-  open Vec-Rep {Q₁} {∣Q₁∣} Q₁? It₁ ∀q∈It
+  open Vec-Rep {Q₁} {∣Q₁∣-1} Q₁? It₁ ∀q∈It unique₁
   
   mutual
     lem₈ : ∀ q a u m q'
            → Dec (any (λ p → p ∈ᵈ δ₁ q a × (p , u) ⊢ᵏ₁ m ─ (q' , [])) It₁)
-    lem₈ q a u m q' = helper {∣Q₁∣} It₁
+    lem₈ q a u m q' = helper {suc ∣Q₁∣-1} It₁
       where
         helper : {n : ℕ}(ps : Vec Q₁ n) → Dec (any (λ p → p ∈ᵈ δ₁ q a × (p , u) ⊢ᵏ₁ m ─ (q' , [])) ps)
         helper []       = no (λ z → z)
@@ -97,7 +97,7 @@ module base (nfa : NFA) where
   
   lem₅ : ∀ qs w m q'
          → Dec (any (λ q → q ∈ᵈ qs × (q , w) ⊢ᵏ₁ m ─ (q' , [])) It₁)
-  lem₅ qs w m q' = helper {∣Q₁∣} It₁
+  lem₅ qs w m q' = helper {suc ∣Q₁∣-1} It₁
     where
       helper : {n : ℕ}(ps : Vec Q₁ n) → Dec (any (λ q → q ∈ᵈ qs × (q , w) ⊢ᵏ₁ m ─ (q' , [])) ps)
       helper []       = no (λ z → z)
@@ -161,7 +161,7 @@ module base (nfa : NFA) where
 module Lᴺ⊆Lᴰ (nfa : NFA) where
   open base nfa
  
-  open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣ to ∣Q₁∣ ; It to It₁) 
+  open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣-1 to ∣Q₁∣-1 ; It to It₁ ; unique to unique₁) 
   open NFA-Operations nfa renaming (_⊢_ to _⊢₁_ ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
   open DFA dfa 
   open DFA-Operations dfa 
@@ -197,7 +197,7 @@ Lᴺ⊆Lᴰ = Lᴺ⊆Lᴰ.lem₁
 module Lᴺ⊇Lᴰ (nfa : NFA) where
   open base nfa
  
-  open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣ to ∣Q₁∣ ; It to It₁) 
+  open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣-1 to ∣Q₁∣-1 ; It to It₁) 
   open NFA-Operations nfa renaming (_⊢_ to _⊢₁_ ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
   open DFA dfa
   open DFA-Operations dfa
