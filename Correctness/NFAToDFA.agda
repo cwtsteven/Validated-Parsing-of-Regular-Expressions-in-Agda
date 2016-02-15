@@ -73,7 +73,7 @@ module base (nfa : NFA) where
   
     lem₆ : ∀ q w n q'
            → Dec ( (q , w) ⊢ᵏ₁ n ─ (q' , []) )
-    lem₆ q w zero q'    with Q₁? q q' | Dec-Σ* w []
+    lem₆ q w zero q'    with Q₁? q q' | DecEq-Σ* w []
     lem₆ q .[] zero .q  | yes refl | yes refl = yes (refl , refl)
     lem₆ q w zero .q    | yes refl | no  w≢[] = no  prf
       where

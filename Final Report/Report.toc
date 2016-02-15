@@ -1,17 +1,19 @@
 \contentsline {section}{\numberline {1}List of Abbreviations}{6}
 \contentsline {section}{\numberline {2}Introduction}{6}
 \contentsline {section}{\numberline {3}Literature Review}{6}
-\contentsline {subsection}{\numberline {3.1}Curry-Howard Isomorphism}{6}
-\contentsline {subsection}{\numberline {3.2}Agda}{6}
-\contentsline {subsection}{\numberline {3.3}Related Work}{6}
-\contentsline {section}{\numberline {4}Formalisation using Type Theory}{6}
+\contentsline {subsection}{\numberline {3.1}Constructive Logic and Constructive Mathematics}{6}
+\contentsline {subsection}{\numberline {3.2}Curry-Howard Isomorphism}{6}
+\contentsline {subsection}{\numberline {3.3}Intuitionistic Type Theory}{6}
+\contentsline {subsection}{\numberline {3.4}Agda}{6}
+\contentsline {subsection}{\numberline {3.5}Related Work}{6}
+\contentsline {section}{\numberline {4}Formalisation in Type Theory}{7}
 \contentsline {subsection}{\numberline {4.1}Subsets and Decidable Subsets}{7}
 \contentsline {paragraph}{Agda}{7}
 \contentsline {paragraph}{Definition 1.1}{7}
 \contentsline {paragraph}{Definition 1.2}{7}
-\contentsline {subsection}{\numberline {4.2}Languages}{7}
-\contentsline {paragraph}{Agda}{7}
-\contentsline {paragraph}{Definition 2.1}{7}
+\contentsline {subsection}{\numberline {4.2}Languages}{8}
+\contentsline {paragraph}{Agda}{8}
+\contentsline {paragraph}{Definition 2.1}{8}
 \contentsline {paragraph}{Definition 2.2}{8}
 \contentsline {subsubsection}{\numberline {4.2.1}Operations on Languages}{8}
 \contentsline {paragraph}{Definition 2.3}{8}
@@ -19,21 +21,29 @@
 \contentsline {paragraph}{Definition 2.5}{8}
 \contentsline {subsection}{\numberline {4.3}Regular Languages and Regular Expressions}{8}
 \contentsline {paragraph}{Agda}{8}
-\contentsline {paragraph}{Definition 3.1}{8}
+\contentsline {paragraph}{Definition 3.1}{9}
 \contentsline {paragraph}{Definition 3.2}{9}
-\contentsline {subsection}{\numberline {4.4}Non-deterministic Finite Automata with \(\epsilon \)-transitions}{10}
+\contentsline {subsection}{\numberline {4.4}\(\epsilon \)-Non Deterministic Finite Automata}{10}
 \contentsline {paragraph}{Agda}{10}
 \contentsline {paragraph}{Definition 4.1}{10}
 \contentsline {paragraph}{Definition 4.2}{10}
-\contentsline {paragraph}{Definition 4.3}{10}
-\contentsline {subsection}{\numberline {4.5}Thompson's Construction}{10}
-\contentsline {paragraph}{Theorem 1.1}{10}
-\contentsline {subsection}{\numberline {4.6}Non-deterministic Finite Automata without \(\epsilon \)-transitions}{11}
-\contentsline {subsection}{\numberline {4.7}Removing \(\epsilon \)-transitions}{11}
-\contentsline {subsection}{\numberline {4.8}Deterministic Finite Automata}{11}
-\contentsline {subsection}{\numberline {4.9}Powerset Construction}{11}
-\contentsline {subsection}{\numberline {4.10}Myhill-Nerode Theorem}{11}
-\contentsline {section}{\numberline {5}Evaluation}{11}
-\contentsline {section}{\numberline {6}Conclusion}{11}
-\contentsline {section}{\numberline {7}References}{11}
-\contentsline {section}{\numberline {8}Appendix}{11}
+\contentsline {paragraph}{Definition 4.3}{11}
+\contentsline {paragraph}{Definition 4.4}{11}
+\contentsline {paragraph}{Definition 4.5}{12}
+\contentsline {paragraph}{Definition 4.6}{12}
+\contentsline {paragraph}{Definition 4.7}{12}
+\contentsline {paragraph}{Definition 4.8}{12}
+\contentsline {subsection}{\numberline {4.5}Thompson's Construction}{12}
+\contentsline {paragraph}{Agda}{12}
+\contentsline {paragraph}{Definition 5.1}{12}
+\contentsline {paragraph}{Theorem 1.1}{14}
+\contentsline {paragraph}{Proof 1.1}{14}
+\contentsline {subsection}{\numberline {4.6}Non-deterministic Finite Automata}{14}
+\contentsline {subsection}{\numberline {4.7}Removing \(\epsilon \)-transitions}{14}
+\contentsline {subsection}{\numberline {4.8}Deterministic Finite Automata}{14}
+\contentsline {subsection}{\numberline {4.9}Powerset Construction}{14}
+\contentsline {subsection}{\numberline {4.10}Myhill-Nerode Theorem}{14}
+\contentsline {section}{\numberline {5}Evaluation}{14}
+\contentsline {section}{\numberline {6}Conclusion}{14}
+\contentsline {section}{\numberline {7}References}{14}
+\contentsline {section}{\numberline {8}Appendix}{15}

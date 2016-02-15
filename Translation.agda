@@ -187,6 +187,7 @@ remove-ε-step nfa =
     where
       open ε-NFA nfa
       open ε-NFA-Operations nfa
+      open import eNFA-Properties Σ dec nfa
 
       δ' : Q → Σ → DecSubset Q
       --     = { q' | q' ∈ δ q (α a) ∨ ∃p∈Q. q' ∈ δ p (α a) ∧ p ∈ ε-closure(q) }

@@ -2,7 +2,7 @@
   This module contains the definition of Decidable Subset and its operations.
 
   Steven Cheung 2015.
-  Version 10-01-2016
+  Version 11-02-2016
 -}
 open import Util
 module Subset.DecidableSubset where
@@ -18,7 +18,7 @@ open import Data.Unit
 open import Data.Empty
 
 -- Decidable Subset
-DecSubset : (A : Set) → Set
+DecSubset : Set → Set
 DecSubset A = A → Bool
 
 -- Empty set
@@ -56,23 +56,24 @@ a ∉ p = ¬ (a ∈ p)
 
 {- a ∉ p ⇔ a ∈? p ≡ false -}
 ∈-lem₃ : {A : Set}{a : A}{p : DecSubset A}
-          → a ∉ p
-          → a ∈? p ≡ false
+         → a ∉ p
+         → a ∈? p ≡ false
 ∈-lem₃ {A} {a} {p} a∉p with a ∈? p
 ∈-lem₃ {A} {a} {p} a∉p | true  = ⊥-elim (a∉p refl)
 ∈-lem₃ {A} {a} {p} a∉p | false = refl
 
 ∈-lem₂ : {A : Set}{a : A}{p : DecSubset A}
-          → a ∈? p ≡ false
-          → a ∉ p
+         → a ∈? p ≡ false
+         → a ∉ p
 ∈-lem₂ {A} {a} {p} a∈?p≡false a∈p with a ∈? p
 ∈-lem₂ {A} {a} {p} ()         a∈p | true 
 ∈-lem₂ {A} {a} {p} a∈?p≡false ()  | false
 
 ∈-lem₁ : {A : Set}{a : A}{p : DecSubset A}
-          → a ∈? p ≡ false ⇔ a ∉ p
+         → a ∈? p ≡ false ⇔ a ∉ p
 ∈-lem₁ {A} {a} {p} = ∈-lem₂ {A} {a} {p} , ∈-lem₃ {A} {a} {p}
 {- a ∉ p ⇔ a ∈? p ≡ false -}
+
 
 -- Intersection
 infix 11 _⋂_
@@ -99,24 +100,33 @@ infix 10 _≈_
 _≈_ : {A : Set} → DecSubset A → DecSubset A → Set
 as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
 
+-- Reflexivity of ≈
 ≈-refl : {A : Set} → Reflexive {A = DecSubset A} _≈_
 ≈-refl = (λ a z → z) , (λ a z → z)
 
+-- Symmetry of ≈
 ≈-sym : {A : Set} → Symmetric {A = DecSubset A} _≈_
 ≈-sym (as⊆bs , as⊇bs) = as⊇bs , as⊆bs
 
+-- Transitivity of ≈
 ≈-trans : {A : Set} → Transitive {A = DecSubset A} _≈_
 ≈-trans (as⊆bs , as⊇bs) (bs⊆cs , bs⊇cs)
   = (λ a z → bs⊆cs a (as⊆bs a z)) , (λ a z → as⊇bs a (bs⊇cs a z))
 
+-- ≈ is a Equivalence relation
+≈-isEquiv : {A : Set} → IsEquivalence {A = DecSubset A} _≈_
+≈-isEquiv = record { refl = ≈-refl ; sym = ≈-sym ; trans = ≈-trans }
+
+
+-- Proving the decidability of ≈ using vector representation
 open import Data.Nat
 open import Data.Vec renaming (_∈_ to _∈ⱽ_)
-open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
--- Vector Representation
-module DSub-VSub {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It : ∀ a → a ∈ⱽ It)(unique : Unique It) where
-  open Vec-Rep {A} {n} dec It ∀a∈It unique
-      
+open import Subset.VectorRep hiding (_∈?_)
 
+module Decidable-≈ {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It : ∀ a → a ∈ⱽ It)(unique : Unique It) where
+  open Vec-Rep {A} {n} dec It ∀a∈It unique
+
+  -- ⊇ is decidable
   Dec-⊇ : (as bs : DecSubset A) → Dec (as ⊇ bs)
   Dec-⊇ as bs with Dec-all as bs
     where
@@ -145,7 +155,7 @@ module DSub-VSub {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It
   ... | yes prf = yes (Vec-all-lem₂ (λ a → a ∈ bs → a ∈ as) prf)
   ... | no  prf = no  (Vec-all-lem₄ (λ a → a ∈ bs → a ∈ as) prf)
   
-  
+  -- ⊆ is decidable
   Dec-⊆ : (as bs : DecSubset A) → Dec (as ⊆ bs)
   Dec-⊆ as bs with Dec-all as bs
     where
@@ -174,7 +184,7 @@ module DSub-VSub {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It
   ... | yes prf = yes (Vec-all-lem₂ (λ a → a ∈ as → a ∈ bs) prf)
   ... | no  prf = no  (Vec-all-lem₄ (λ a → a ∈ as → a ∈ bs) prf)
   
-  
+  -- ≈ is decidable
   Dec-≈ : (as bs : DecSubset A) → Dec (as ≈ bs)
   Dec-≈ as bs with Dec-⊆ as bs | Dec-⊇ as bs
   Dec-≈ as bs | yes as⊆bs | yes as⊇bs = yes (as⊆bs , as⊇bs)
@@ -186,27 +196,3 @@ module DSub-VSub {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It
     where
       ¬eq : ¬ (as ≈ bs)
       ¬eq (_ , as⊇bs) = as⊉bs as⊇bs
-
-
-{-
-  VSub→DSub-lem₁ : {n : ℕ}{it : Vec A n} → VecSubset it → DecSubset A
-  VSub→DSub-lem₁ [] = Ø
-  VSub→DSub-lem₁ (keep a ∷ as)  b with dec a b
-  VSub→DSub-lem₁ (keep a ∷ as) .a | yes refl = true
-  VSub→DSub-lem₁ (keep a ∷ as)  b | no  _    = false
-  VSub→DSub-lem₁ (skip a ∷ as)  b = false
-
-  DSub→VSub-lem₁ : {n : ℕ} → (it : Vec A n) → DecSubset A → VecSubset it
-  DSub→VSub-lem₁ []       bs = []
-  DSub→VSub-lem₁ (a ∷ as) bs with a ∈? bs
-  DSub→VSub-lem₁ (a ∷ as) bs | true  = keep a ∷ DSub→VSub-lem₁ as bs
-  DSub→VSub-lem₁ (a ∷ as) bs | false = skip a ∷ DSub→VSub-lem₁ as bs
-
-  DSub→VSub : DecSubset A → VecSubset It
-  DSub→VSub as = DSub→VSub-lem₁ It as
-
-  VSub→DSub : VecSubset It → DecSubset A
-  VSub→DSub as = VSub→DSub-lem₁ {it = It} as
-
-  VSub⇔DSub : VecSubset It ⇔ DecSubset A
-  VSub⇔DSub = VSub→DSub , DSub→VSub-}

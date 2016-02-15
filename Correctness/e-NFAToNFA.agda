@@ -38,7 +38,9 @@ module Lᵉᴺ⊆Lᴺ (ε-nfa : ε-NFA) where
   open NFA-Operations nfa
   open ε-NFA ε-nfa renaming (Q to Qₑ ; Q? to Qₑ? ; δ to δₑ ; q₀ to q₀ₑ ; F to Fₑ ; It to Itₑ) 
   open ε-NFA-Operations ε-nfa
-    renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ; _⊢*₂_ to _⊢*₂ₑ_ ; _⊢ᵏ_─_ to _⊢ᵏₑ_─_ ; ⊢ᵏ₂-lem₉ to ⊢ᵏ₂-lem₉ₑ)
+    renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ;  _⊢ᵏ_─_ to _⊢ᵏₑ_─_)
+  open import eNFA-Properties Σ dec ε-nfa
+    renaming (_⊢*₂_ to _⊢*₂ₑ_ ; ⊢ᵏ₂-lem₉ to ⊢ᵏ₂-lem₉ₑ)
 
 
   lem₂ : ∀ q wᵉ n q' wᵉ'
@@ -143,7 +145,9 @@ module Lᵉᴺ⊇Lᴺ (ε-nfa : ε-NFA) where
   open NFA-Operations nfa
   open ε-NFA ε-nfa renaming (Q to Qₑ ; Q? to Qₑ? ; δ to δₑ ; q₀ to q₀ₑ ; F to Fₑ ; It to Itₑ) 
   open ε-NFA-Operations ε-nfa
-    renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ; _⊢*₂_ to _⊢*₂ₑ_ ; _⊢ᵏ_─_ to _⊢ᵏₑ_─_)
+    renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ;  _⊢ᵏ_─_ to _⊢ᵏₑ_─_)
+  open import eNFA-Properties Σ dec ε-nfa
+    renaming (_⊢*₂_ to _⊢*₂ₑ_ ; ⊢ᵏ₂-lem₉ to ⊢ᵏ₂-lem₉ₑ)
 
   lem₃ : ∀ q n q' uᵉ
          → q →εᵏ n ─ q'

@@ -10,7 +10,7 @@
 open import Util
 module Language (Σ : Set)(dec : DecEq Σ) where
 
-open import Level renaming (zero to lzero ; suc to lsuc ; _⊔_ to _⊔ˡ_)
+--open import Level renaming (zero to lzero ; suc to lsuc ; _⊔_ to _⊔ˡ_)
 open import Data.Bool
 open import Data.List
 open import Relation.Binary.PropositionalEquality
@@ -20,7 +20,7 @@ open import Data.Empty
 open import Data.Unit
 open import Data.Nat
 
-open import Subset renaming (Ø to ø ; ⟦_⟧ to ⟦_⟧₁ ; _⋃_ to _⊎_)
+open import Subset renaming (Ø to Øˢ ; ⟦_⟧ to ⟦_⟧ˢ ; _⋃_ to _⋃ˢ_)
 
 open ≡-Reasoning
 
@@ -29,8 +29,10 @@ open ≡-Reasoning
 Σ* : Set
 Σ* = List Σ
 
-Dec-Σ* : (u v : Σ*) → Dec (u ≡ v)
-Dec-Σ* = DecEq-List dec 
+-- Decidable Equality of Σ*
+DecEq-Σ* : (u v : Σ*) → Dec (u ≡ v)
+DecEq-Σ* = DecEq-List dec 
+
 
 -- Language as a subset of Σ*
 -- section 0.2.2: Languages
@@ -39,24 +41,24 @@ Language = Subset Σ*
 
 -- Null set
 Ø : Language
-Ø = ø
+Ø = Øˢ
 
 -- Set of empty string
 ⟦ε⟧ : Language
-⟦ε⟧ = ⟦ [] ⟧₁
+⟦ε⟧ = ⟦ [] ⟧ˢ
 
 -- Set of single alphabet
 ⟦_⟧ : Σ → Language
-⟦ a ⟧ = ⟦ a ∷ [] ⟧₁
+⟦ a ⟧ = ⟦ a ∷ [] ⟧ˢ
 
 
-{- Here we define the operations on language -}
+{- Here we define some operations on languages -}
 
 -- Union
 -- section 0.2.3: Operations on Languages
 infix 11 _⋃_
 _⋃_ : Language → Language → Language
-L₁ ⋃ L₂ = L₁ ⊎ L₂
+L₁ ⋃ L₂ = L₁ ⋃ˢ L₂
 
 -- Concatenation
 -- section 0.2.3: Operations on Languages
@@ -87,9 +89,12 @@ data Σᵉ : Set where
 Σᵉ* : Set
 Σᵉ* = List Σᵉ
 
+{-
 -- Transform a word over Σ to a word over Σᵉ
 toΣᵉ* : Σ* → Σᵉ*
 toΣᵉ* = Data.List.map α
+-}
+
 
 -- Transform a word over Σᵉ to a word over Σ*
 toΣ* : Σᵉ* → Σ*
@@ -110,6 +115,8 @@ DecEq-Σᵉ dec (α a) (α  b) | no ¬a≡b  = no  (λ p → ¬σa≡σb ¬a≡b
     lem refl = refl
     ¬σa≡σb : ¬ (a ≡ b) → ¬ (α a ≡ α b)
     ¬σa≡σb ¬a≡b σa≡σb = ¬a≡b (lem σa≡σb)
+
+
 
 -- Lemmas on Σᵉ
 Σᵉ*-lem₁ : ∀ w u
@@ -170,12 +177,12 @@ DecEq-Σᵉ dec (α a) (α  b) | no ¬a≡b  = no  (λ p → ¬σa≡σb ¬a≡b
     toΣ* uᵉ
     ∎
 
-
+{-
 Σᵉ*-lem₆ : ∀ w
            → w ≡ toΣ* (toΣᵉ* w)
 Σᵉ*-lem₆ []       = refl
 Σᵉ*-lem₆ (x ∷ xs) = cong (λ xs → x ∷ xs) (Σᵉ*-lem₆ xs)
-
+-}
 
 Σᵉ*-lem₇ : ∀ w u v uᵉ vᵉ
            → w ≡ u ++ v

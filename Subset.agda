@@ -2,15 +2,16 @@
   This module contains the definition of Subset and its operations.
 
   Steven Cheung 2015.
-  Version 07-01-2016
+  Version 11-02-2016
 -}
 
 module Subset where
 
 --open import Util
-open import Level
-open import Data.Bool hiding (_≟_)
+--open import Level
+--open import Data.Bool hiding (_≟_)
 open import Relation.Nullary
+open import Relation.Binary hiding (Decidable)
 open import Relation.Binary.PropositionalEquality
 open import Data.Sum
 open import Data.Product
@@ -75,23 +76,21 @@ _≈_ : {A : Set} → Subset A → Subset A → Set
 as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
 
 -- Reflexivity of ≈
-≈-refl : {A : Set}{as : Subset A}
-         → as ≈ as
+≈-refl : {A : Set} → Reflexive {A = Subset A} _≈_
 ≈-refl = (λ a a∈as → a∈as) , (λ a a∈as → a∈as)
 
 -- Symmetry of ≈
-≈-sym : {A : Set}{as bs : Subset A}
-        → as ≈ bs
-        → bs ≈ as
+≈-sym : {A : Set} → Symmetric {A = Subset A} _≈_
 ≈-sym (as⊆bs , as⊇bs) = as⊇bs , as⊆bs
 
 -- Transitivity of ≈
-≈-trans : {A : Set}{as bs cs : Subset A}
-          → as ≈ bs
-          → bs ≈ cs
-          → as ≈ cs
+≈-trans : {A : Set} → Transitive {A = Subset A} _≈_
 ≈-trans (as⊆bs , as⊇bs) (bs⊆cs , bs⊇cs)
   = (λ a a∈as → bs⊆cs a (as⊆bs a a∈as)) , (λ a a∈cs → as⊇bs a (bs⊇cs a a∈cs))
+
+-- ≈ is a Equivalence relation
+≈-isEquiv : {A : Set} → IsEquivalence {A = Subset A} _≈_
+≈-isEquiv = record { refl = ≈-refl ; sym = ≈-sym ; trans = ≈-trans }
 
 
 -- Equality and decidability

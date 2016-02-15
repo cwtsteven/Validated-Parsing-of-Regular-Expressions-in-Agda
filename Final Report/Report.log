@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.5)  8 FEB 2016 14:09
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.5)  14 FEB 2016 23:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -275,6 +275,17 @@ Now handling font encoding U ...
    defining Unicode char U+2122 (decimal 8482)
    defining Unicode char U+2423 (decimal 9251)
 ))
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\@emptytoks=\toks17
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2013/01/14 v2.14 AMS math features
 \@mathmargin=\skip43
@@ -285,7 +296,7 @@ Package: amstext 2000/06/29 v2.01
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
-\@emptytoks=\toks17
+\@emptytoks=\toks18
 \ex@=\dimen105
 ))
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsmath/amsbsy.sty
@@ -315,28 +326,28 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
 \dotsspace@=\muskip10
 \c@parentequation=\count95
 \dspbrk@lvl=\count96
-\tag@help=\toks18
+\tag@help=\toks19
 \row@=\count97
 \column@=\count98
 \maxfields@=\count99
-\andhelp@=\toks19
+\andhelp@=\toks20
 \eqnshift@=\dimen108
 \alignsep@=\dimen109
 \tagshift@=\dimen110
 \tagwidth@=\dimen111
 \totwidth@=\dimen112
 \lineht@=\dimen113
-\@envbody=\toks20
+\@envbody=\toks21
 \multlinegap=\skip44
 \multlinetaggap=\skip45
-\mathdisplay@stack=\toks21
+\mathdisplay@stack=\toks22
 LaTeX Info: Redefining \[ on input line 2665.
 LaTeX Info: Redefining \] on input line 2666.
 )
 (/usr/local/texlive/2015/texmf-dist/tex/latex/listings/listings.sty
 \lst@mode=\count100
 \lst@gtempboxa=\box28
-\lst@token=\toks22
+\lst@token=\toks23
 \lst@length=\count101
 \lst@currlwidth=\dimen114
 \lst@column=\count102
@@ -383,14 +394,14 @@ Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 \Gm@layoutheight=\dimen123
 \Gm@layouthoffset=\dimen124
 \Gm@layoutvoffset=\dimen125
-\Gm@dimlist=\toks23
+\Gm@dimlist=\toks24
 )
 (/usr/local/texlive/2015/texmf-dist/tex/latex/tools/indentfirst.sty
 Package: indentfirst 1995/11/23 v1.03 Indent first paragraph (DPC)
 )
 (/usr/local/texlive/2015/texmf-dist/tex/latex/tools/enumerate.sty
 Package: enumerate 2014/10/28 v3.00 enumerate extensions (DPC)
-\@enLab=\toks24
+\@enLab=\toks25
 )
 (/usr/local/texlive/2015/texmf-dist/tex/latex/oberdiek/letltxmacro.sty
 Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
@@ -398,18 +409,18 @@ Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
 (./Report.aux)
 \openout1 = `Report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
 
 (/usr/local/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -418,12 +429,12 @@ LaTeX Font Info:    ... okay on input line 23.
 \scratchbox=\box30
 \nofMPsegments=\count112
 \nofMParguments=\count113
-\everyMPshowfont=\toks25
+\everyMPshowfont=\toks26
 \MPscratchCnt=\count114
 \MPscratchDim=\dimen127
 \MPnumerator=\count115
 \makeMPintoPDFobject=\count116
-\everyMPtoPDFconversion=\toks26
+\everyMPtoPDFconversion=\toks27
 ) (/usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
 )
@@ -507,102 +518,179 @@ e
 <crest.png, id=1, 341.275pt x 341.275pt>
 File: crest.png Graphic file (type png)
  <use crest.png>
-Package pdftex.def Info: crest.png used on input line 24.
+Package pdftex.def Info: crest.png used on input line 27.
 (pdftex.def)             Requested size: 85.35498pt x 85.35498pt.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 24.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 27.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 24.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 27.
  [1
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./crest
 .png>]
-Underfull \hbox (badness 10000) in paragraph at lines 27--35
+Underfull \hbox (badness 10000) in paragraph at lines 30--38
 
  []
 
-[2] [3] [4] (./Report.toc)
+[2] [3] [4] (./Report.toc
+LaTeX Font Info:    Try loading font information for U+msa on input line 4.
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 4.
+
+(/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+))
 \tf@toc=\write3
 \openout3 = `Report.toc'.
 
  [5] [6]
-Underfull \hbox (badness 10000) in paragraph at lines 109--111
+Underfull \hbox (badness 10000) in paragraph at lines 117--119
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--125
+Underfull \hbox (badness 10000) in paragraph at lines 130--133
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 140--141
+Underfull \hbox (badness 10000) in paragraph at lines 148--149
 
  []
 
 [7]
+Underfull \hbox (badness 10000) in paragraph at lines 155--158
 
-LaTeX Warning: Command \O invalid in math mode on input line 187.
+ []
 
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 201.
 
-LaTeX Warning: Command \o invalid in math mode on input line 201.
+LaTeX Warning: Command \O invalid in math mode on input line 201.
 
 [8]
-Overfull \hbox (17.63783pt too wide) in paragraph at lines 204--205
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 213.
+
+
+LaTeX Warning: Command \o invalid in math mode on input line 213.
+
+
+Overfull \hbox (17.63783pt too wide) in paragraph at lines 216--217
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][] 
  []
 
 
-Overfull \hbox (15.97116pt too wide) in paragraph at lines 205--206
+Overfull \hbox (15.97116pt too wide) in paragraph at lines 217--218
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][] 
  []
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 213.
+LaTeX Warning: Command \O invalid in math mode on input line 225.
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 213.
+LaTeX Warning: Command \O invalid in math mode on input line 225.
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 234.
-
-
-LaTeX Warning: Command \O invalid in math mode on input line 244.
-
-
-LaTeX Warning: Command \o invalid in math mode on input line 244.
+LaTeX Warning: Command \O invalid in math mode on input line 246.
 
 [9]
-Underfull \hbox (badness 10000) in paragraph at lines 254--256
+
+LaTeX Warning: Command \O invalid in math mode on input line 256.
+
+
+LaTeX Warning: Command \o invalid in math mode on input line 256.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 265--267
 
  []
 
 
-Underfull \vbox (badness 4518) has occurred while \output is active []
+Underfull \hbox (badness 10000) in paragraph at lines 283--286
 
- [10]
-[11] (./Report.aux) )
+ []
+
+[10] [11]
+Overfull \hbox (22.82793pt too wide) in paragraph at lines 359--360
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (71.07489pt too wide) in paragraph at lines 376--377
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+LaTeX Warning: Command \O invalid in math mode on input line 389.
+
+
+LaTeX Warning: Command \O invalid in math mode on input line 390.
+
+<images/null.png, id=53, 38.7849pt x 59.2614pt>
+File: images/null.png Graphic file (type png)
+ <use images/null.png>
+Package pdftex.def Info: images/null.png used on input line 390.
+(pdftex.def)             Requested size: 38.78479pt x 59.26123pt.
+ [12 <./images/null.png>] <images/epsilon.png, id=58, 38.7849pt x 59.2614pt>
+File: images/epsilon.png Graphic file (type png)
+
+<use images/epsilon.png>
+Package pdftex.def Info: images/epsilon.png used on input line 391.
+(pdftex.def)             Requested size: 38.78479pt x 59.26123pt.
+ <images/singleton.png, id=59, 119.2455pt x 59.2614pt>
+File: images/singleton.png Graphic file (type png)
+
+<use images/singleton.png>
+Package pdftex.def Info: images/singleton.png used on input line 392.
+(pdftex.def)             Requested size: 119.2452pt x 59.26123pt.
+ <images/union.png, id=60, 241.3818pt x 172.4844pt>
+File: images/union.png Graphic file (type png)
+
+<use images/union.png>
+Package pdftex.def Info: images/union.png used on input line 399.
+(pdftex.def)             Requested size: 241.38121pt x 172.48398pt.
+ <images/concat.png, id=61, 440.847pt x 81.4242pt>
+File: images/concat.png Graphic file (type png)
+
+<use images/concat.png>
+Package pdftex.def Info: images/concat.png used on input line 401.
+(pdftex.def)             Requested size: 440.84592pt x 81.424pt.
+
+Overfull \hbox (57.84132pt too wide) in paragraph at lines 401--401
+ [] 
+ []
+
+<images/star.png, id=62, 240.6591pt x 116.1138pt>
+File: images/star.png Graphic file (type png)
+ <use images/star.png>
+Package pdftex.def Info: images/star.png used on input line 404.
+(pdftex.def)             Requested size: 240.65851pt x 116.11351pt.
+
+[13 <./images/epsilon.png> <./images/singleton.png> <./images/union.png> <./ima
+ges/concat.png>] [14 <./images/star.png>] [15] (./Report.aux) )
 (\end occurred inside a group at level 3)
 
-### semi simple group (level 3) entered at line 47 (\begingroup)
-### semi simple group (level 2) entered at line 36 (\begingroup)
-### semi simple group (level 1) entered at line 26 (\begingroup)
+### semi simple group (level 3) entered at line 50 (\begingroup)
+### semi simple group (level 2) entered at line 39 (\begingroup)
+### semi simple group (level 1) entered at line 29 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 4524 strings out of 493089
- 60689 string characters out of 6134842
- 147319 words of memory out of 5000000
- 7941 multiletter control sequences out of 15000+600000
- 9025 words of font info for 33 fonts, out of 8000000 for 9000
+ 4845 strings out of 493089
+ 64471 string characters out of 6134842
+ 148819 words of memory out of 5000000
+ 8239 multiletter control sequences out of 15000+600000
+ 11505 words of font info for 45 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,7n,32p,253b,1610s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,7n,32p,253b,1613s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmbx10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmbx12.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/c
@@ -614,11 +702,13 @@ mmi7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
 10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12
 .pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pf
 b></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
-></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on Report.pdf (11 pages, 206193 bytes).
+></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><
+/usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.p
+fb>
+Output written on Report.pdf (15 pages, 326186 bytes).
 PDF statistics:
- 91 PDF objects out of 1000 (max. 8388607)
- 63 compressed objects within 1 object stream
+ 120 PDF objects out of 1000 (max. 8388607)
+ 75 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 6 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 36 words of extra memory for PDF output out of 10000 (max. 10000000)
 

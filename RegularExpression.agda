@@ -28,7 +28,7 @@ open import Subset hiding (Ø ; ⟦_⟧ ; _⋃_)
 data Regular : Language → Set₁ where
   nullL : ∀ {L} → L ≈ ø  → Regular L
   empty : ∀ {L} → L ≈ ⟦ε⟧ → Regular L
-  singleton : ∀ {L} → (a : Σ) → L ≈ ⟦ a ⟧ → Regular L
+  singl : ∀ {L} → (a : Σ) → L ≈ ⟦ a ⟧ → Regular L
   union : ∀ {L} L₁ L₂ → Regular L₁ → Regular L₂ → L ≈ L₁ ⋃ L₂ → Regular L
   conca : ∀ {L} L₁ L₂ → Regular L₁ → Regular L₂ → L ≈ L₁ • L₂ → Regular L
   kleen : ∀ {L} L₁    → Regular L₁ → L ≈ L₁ ⋆ → Regular L
@@ -60,27 +60,33 @@ Lᴿ (e *)     = (Lᴿ e) ⋆
 
 
 -- A language is Regular if and only if there is a Regular Expression denoting it
+Soundness : ∀ L → Σ[ e ∈ RegExp ] (Lᴿ e ≈ L) → Regular L
+Completeness : ∀ L → Regular L → Σ[ e ∈ RegExp ] (Lᴿ e ≈ L)
+
+L⇔Lᴿ : ∀ L → Regular L ⇔ ( Σ[ e ∈ RegExp ] (Lᴿ e ≈ L) )
+L⇔Lᴿ L = Completeness L , Soundness L
+
+
 Lemma₁ : ∀ e → Regular (Lᴿ e)
 Lemma₁ Ø = nullL ≈-refl
 Lemma₁ ε = empty ≈-refl
-Lemma₁ (σ x) = singleton x ≈-refl
+Lemma₁ (σ x) = singl x ≈-refl
 Lemma₁ (e ∣ e₁) = union (Lᴿ e) (Lᴿ e₁) (Lemma₁ e) (Lemma₁ e₁) ((λ x x₁ → x₁) , (λ x x₁ → x₁))
 Lemma₁ (e ∙ e₁) = conca (Lᴿ e) (Lᴿ e₁) (Lemma₁ e) (Lemma₁ e₁) ((λ x x₁ → x₁) , (λ x x₁ → x₁))
 Lemma₁ (e *) = kleen (Lᴿ e) (Lemma₁ e) ((λ x x₁ → x₁) , (λ x x₁ → x₁))
 
-Soundness : ∀ L → Σ[ e ∈ RegExp ] (Lᴿ e ≈ L) → Regular L
+
 Soundness _ (Ø , Ø≈L) = nullL (≈-sym Ø≈L)
 Soundness _ (ε , ⟦ε⟧≈L) = empty (≈-sym ⟦ε⟧≈L)
-Soundness _ (σ a , ⟦a⟧≈L) = singleton a (≈-sym ⟦a⟧≈L)
+Soundness _ (σ a , ⟦a⟧≈L) = singl a (≈-sym ⟦a⟧≈L)
 Soundness _ (e₁ ∣ e₂ , prf) = union (Lᴿ e₁) (Lᴿ e₂) (Lemma₁ e₁) (Lemma₁ e₂) (≈-sym prf)
 Soundness _ (e₁ ∙ e₂ , prf) = conca (Lᴿ e₁) (Lᴿ e₂) (Lemma₁ e₁) (Lemma₁ e₂) (≈-sym prf)
 Soundness _ (e * , prf) = kleen (Lᴿ e) (Lemma₁ e) (≈-sym prf)
 
 
-Completeness : ∀ L → Regular L → Σ[ e ∈ RegExp ] (Lᴿ e ≈ L)
 Completeness ._ (nullL L≈Ø) = Ø , proj₂ L≈Ø , proj₁ L≈Ø
 Completeness ._ (empty L≈⟦ε⟧) = ε , proj₂ L≈⟦ε⟧ , proj₁ L≈⟦ε⟧
-Completeness ._ (singleton a ⟦a⟧≈L) = σ a , proj₂ ⟦a⟧≈L , proj₁ ⟦a⟧≈L
+Completeness ._ (singl a ⟦a⟧≈L) = σ a , proj₂ ⟦a⟧≈L , proj₁ ⟦a⟧≈L
 Completeness ._  (union L₁ L₂ RL₁ RL₂ L≈L₁⋃L₂) with Completeness L₁ RL₁ | Completeness L₂ RL₂
 Completeness ._  (union L₁ L₂ RL₁ RL₂ L≈L₁⋃L₂) | e₁ , Lᴿe₁=L₁ | e₂ , Lᴿe₂=L₂ = e₁ ∣ e₂ , (lem₁ , lem₂)
   where
@@ -115,7 +121,3 @@ Completeness ._  (kleen L RL L≈L⋆) | e , Lᴿe=L = e * , (lem₁ , lem₂)
         lem : ∀ n → (Lᴿ e) ^ n ⊇ L ^ n
         lem zero    w w∈L = w∈L
         lem (suc n) w (u , v , u∈L , v∈Lⁿ , w≡uv) = u , v , proj₂ Lᴿe=L u u∈L , lem n v v∈Lⁿ , w≡uv
-
-
-L⇔Lᴿ : ∀ L → Regular L ⇔ ( Σ[ e ∈ RegExp ] (Lᴿ e ≈ L) )
-L⇔Lᴿ L = Completeness L , Soundness L

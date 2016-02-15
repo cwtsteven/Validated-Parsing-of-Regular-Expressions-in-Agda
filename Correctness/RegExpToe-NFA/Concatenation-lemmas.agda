@@ -37,10 +37,15 @@ open ε-NFA nfa
 open ε-NFA nfa₁ renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)
 open ε-NFA nfa₂ renaming (Q to Q₂ ; Q? to Q₂? ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂)
 open ε-NFA-Operations nfa
+open import eNFA-Properties Σ dec nfa
 open ε-NFA-Operations nfa₁
-  renaming (_⊢_ to _⊢ₑ₁_ ; _⊢*_ to _⊢*ₑ₁_ ; _⊢*₂_ to _⊢*₂ₑ₁_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₁_─_ ; ⊢*-lem₁ to ⊢*-lem₁ₑ₁ ; ⊢*-lem₂ to ⊢*-lem₂ₑ₁ ; ⊢*-lem₃ to ⊢*-lem₃ₑ₁ ; ⊢ᵏ₂-lem₂ to ⊢ᵏ₂ₑ₁-lem₂)
+  renaming (_⊢_ to _⊢ₑ₁_ ; _⊢*_ to _⊢*ₑ₁_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₁_─_)
+open import eNFA-Properties Σ dec nfa₁
+  renaming (_⊢*₂_ to _⊢*₂ₑ₁_ ; ⊢*⇔⊢*₂ to ⊢*⇔⊢*₂ₑ₁ ; ⊢*-lem₂ to ⊢*-lem₂ₑ₁ ; ⊢*-lem₃ to ⊢*-lem₃ₑ₁ ; ⊢ᵏ₂-lem₂ to ⊢ᵏ₂-lem₂ₑ₁)
 open ε-NFA-Operations nfa₂
-  renaming (_⊢_ to _⊢ₑ₂_ ; _⊢*_ to _⊢*ₑ₂_ ; _⊢*₂_ to _⊢*₂ₑ₂_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₂_─_ ; ⊢*-lem₁ to ⊢*-lem₁ₑ₂ ; ⊢*-lem₂ to ⊢*-lem₂ₑ₂ ; ⊢*-lem₃ to ⊢*-lem₃ₑ₂ ; ⊢ᵏ₂-lem₂ to ⊢ᵏ₂ₑ₂-lem₂)
+  renaming (_⊢_ to _⊢ₑ₂_ ; _⊢*_ to _⊢*ₑ₂_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₂_─_)
+open import eNFA-Properties Σ dec nfa₂
+  renaming (_⊢*₂_ to _⊢*₂ₑ₁_ ; ⊢*⇔⊢*₂ to ⊢*⇔⊢*₂ₑ₁ ; ⊢*-lem₂ to ⊢*-lem₂ₑ₁ ; ⊢*-lem₃ to ⊢*-lem₃ₑ₁ ; ⊢ᵏ₂-lem₂ to ⊢ᵏ₂-lem₂ₑ₂)
 
 open ≡-Reasoning 
 

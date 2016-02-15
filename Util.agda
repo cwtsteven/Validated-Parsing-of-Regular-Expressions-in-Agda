@@ -1,8 +1,8 @@
 {-
-  This module contains some miscellaneous definitions and proofs that will be used.
+  This module contains some miscellaneous definitions and proofs that was used in other modules.
 
   Steven Cheung 2015.
-  Version 10-01-2016
+  Version 11-02-2016
 -}
 module Util where
 
@@ -22,13 +22,12 @@ open ≡-Reasoning
 
 
 -- Logic
+-- if and only if
 infix 0 _⇔_
 _⇔_ : ∀ {α ℓ} → Set α → Set ℓ → Set (ℓ Level.⊔ α)
 P ⇔ Q = (P → Q) × (Q → P)
 
-¬∃≡∀¬ : {A : Set}{P : A → Set} → ¬ ( Σ[ a ∈ A ] P a ) → ∀ a → ¬ P a
-¬∃≡∀¬ ¬ex a Pa = ¬ex (a , Pa)
-
+-- It is used in ε-NFA
 postulate ¬∀≡∃¬ : {A : Set}{P : A → Set} → ¬ (∀ a → P a) → Σ[ a ∈ A ] ¬ P a
 
 
@@ -47,6 +46,8 @@ decEq-lem₁ dec a with dec a a
 ... | yes refl = refl
 ... | no  a≢a  = ⊥-elim (a≢a refl)
 
+
+
 -- Injective function
 Injective : {A B : Set}(f : A → B) → Set
 Injective f = ∀ {a b} → f a ≡ f b → a ≡ b
@@ -56,7 +57,7 @@ Injective-lem₁ f-inj a≢b fa≡fb = a≢b (f-inj fa≡fb)
 
 
 
--- List lemmas
+-- List operations and lemmas
 tail : {A : Set} → List A → List A
 tail []       = []
 tail (x ∷ xs) = xs
@@ -103,13 +104,6 @@ List-lem₄ ._ ._ vs xs ys refl refl = List-lem₃ xs ys vs
 
 
 -- ℕ-lemmas
-infix 6 _-_
-_-_ : (n m : ℕ) → {{m<n : m ≤ n}} → ℕ
-(n     - zero)  {{_}}  = n
-(zero  - suc n) {{()}}
-(suc n - suc m) {{s≤s m≤n}} = (n - m) {{m≤n}}
-
-
 ℕ-lem₁ : ∀ n
          → n ≡ n + zero
 ℕ-lem₁ zero    = refl
@@ -256,42 +250,6 @@ _-_ : (n m : ℕ) → {{m<n : m ≤ n}} → ℕ
 ℕ-lem₁₈ {suc n} {suc k} (s≤s n≤sk) (s≤s n≥ssk) = ℕ-lem₁₈ n≤sk n≥ssk
 
 
-{-
-ℕ-lem₂ : ∀ n m
-         → n > m
-         → ¬ n ≤ m
-ℕ-lem₂ zero    m        () n≤m
-ℕ-lem₂ (suc n) zero    n>m ()
-ℕ-lem₂ (suc n) (suc m) (s≤s sm≤n) (s≤s n≤m) = ℕ-lem₂ n m sm≤n n≤m
-
-
-ℕ-lem₃ : ∀ n m
-         → (n≤m : m ≤ n)
-         → (n≤sm : suc m ≤ n)
-         → suc (n - suc m) ≡ n - m
-ℕ-lem₃ zero    zero    _    ()
-ℕ-lem₃ (suc n) zero    z≤sn (s≤s z≤n) = cong suc refl
-ℕ-lem₃ zero    (suc m) ()   sm≤n
-ℕ-lem₃ (suc n) (suc m) (s≤s m≤n) (s≤s sm≤n) = ℕ-lem₃ n m m≤n sm≤n
-
-
-ℕ-lem₄ : ∀ n m
-         → suc n ≤ m
-         → n ≤ m
-ℕ-lem₄ zero    m sn≤m = z≤n
-ℕ-lem₄ (suc n) zero    ()
-ℕ-lem₄ (suc n) (suc m) (s≤s n≤m) = s≤s (ℕ-lem₄ n m n≤m)
-
-
-ℕ-lem₅ : ∀ n m
-         → n ≤′ m
-         → suc n ≤′ suc m
-ℕ-lem₅ zero    zero    ≤′-refl = ≤′-refl
-ℕ-lem₅ zero    (suc m) (≤′-step n≤m) = ≤′-step (ℕ-lem₅ zero m n≤m)
-ℕ-lem₅ (suc n) zero ()
-ℕ-lem₅ (suc n) (suc .n) ≤′-refl = ≤′-refl
-ℕ-lem₅ (suc n) (suc m) (≤′-step n≤m) = ≤′-step (ℕ-lem₅ (suc n) m n≤m)
--}
 
 -- Bool-lemmas
 Bool-lem₁ : ∀ p
