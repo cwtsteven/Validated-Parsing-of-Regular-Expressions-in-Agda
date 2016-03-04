@@ -24,7 +24,8 @@ open import Subset renaming (Ø to ø)
 open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ) hiding (_⊆_ ; _⊇_)
 open import Language Σ dec
 open import RegularExpression Σ dec
-open import Automata Σ dec
+open import eNFA Σ dec
+open import NFA Σ dec
 open import Translation Σ dec
 open import State
 
@@ -36,10 +37,11 @@ module Lᵉᴺ⊆Lᴺ (ε-nfa : ε-NFA) where
 
   open NFA nfa
   open NFA-Operations nfa
+  open NFA-Properties nfa
   open ε-NFA ε-nfa renaming (Q to Qₑ ; Q? to Qₑ? ; δ to δₑ ; q₀ to q₀ₑ ; F to Fₑ ; It to Itₑ) 
   open ε-NFA-Operations ε-nfa
     renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ;  _⊢ᵏ_─_ to _⊢ᵏₑ_─_)
-  open import eNFA-Properties Σ dec ε-nfa
+  open ε-NFA-Properties ε-nfa
     renaming (_⊢*₂_ to _⊢*₂ₑ_ ; ⊢ᵏ₂-lem₉ to ⊢ᵏ₂-lem₉ₑ)
 
 
@@ -146,7 +148,7 @@ module Lᵉᴺ⊇Lᴺ (ε-nfa : ε-NFA) where
   open ε-NFA ε-nfa renaming (Q to Qₑ ; Q? to Qₑ? ; δ to δₑ ; q₀ to q₀ₑ ; F to Fₑ ; It to Itₑ) 
   open ε-NFA-Operations ε-nfa
     renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ;  _⊢ᵏ_─_ to _⊢ᵏₑ_─_)
-  open import eNFA-Properties Σ dec ε-nfa
+  open ε-NFA-Properties ε-nfa
     renaming (_⊢*₂_ to _⊢*₂ₑ_ ; ⊢ᵏ₂-lem₉ to ⊢ᵏ₂-lem₉ₑ)
 
   lem₃ : ∀ q n q' uᵉ

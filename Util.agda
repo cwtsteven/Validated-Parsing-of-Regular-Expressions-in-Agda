@@ -18,7 +18,7 @@ open import Data.Nat
 
 open ≡-Reasoning
 
---postulate undefined : ∀ {α} → {A : Set α} → A
+postulate undefined : ∀ {α} → {A : Set α} → A
 
 
 -- Logic
@@ -26,9 +26,6 @@ open ≡-Reasoning
 infix 0 _⇔_
 _⇔_ : ∀ {α ℓ} → Set α → Set ℓ → Set (ℓ Level.⊔ α)
 P ⇔ Q = (P → Q) × (Q → P)
-
--- It is used in ε-NFA
-postulate ¬∀≡∃¬ : {A : Set}{P : A → Set} → ¬ (∀ a → P a) → Σ[ a ∈ A ] ¬ P a
 
 
 

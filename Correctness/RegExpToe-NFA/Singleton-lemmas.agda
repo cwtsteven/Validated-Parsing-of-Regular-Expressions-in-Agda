@@ -20,7 +20,7 @@ open import Subset
 open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_) hiding (_⊆_ ; _⊇_)
 open import Language Σ dec 
 open import RegularExpression Σ dec
-open import Automata Σ dec
+open import eNFA Σ dec
 open import Translation Σ dec
 open import State
 

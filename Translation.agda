@@ -28,7 +28,9 @@ open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 open import Subset.DecidableSubset renaming (Ø to ø ; _⋃_ to _⋃ᵈ_)
 open import Language Σ dec hiding (⟦_⟧)
 open import RegularExpression Σ dec 
-open import Automata Σ dec
+open import eNFA Σ dec
+open import NFA Σ dec
+open import DFA Σ dec
 open import State
 
 open ≡-Reasoning
@@ -187,7 +189,7 @@ remove-ε-step nfa =
     where
       open ε-NFA nfa
       open ε-NFA-Operations nfa
-      open import eNFA-Properties Σ dec nfa
+      open ε-NFA-Properties nfa
 
       δ' : Q → Σ → DecSubset Q
       --     = { q' | q' ∈ δ q (α a) ∨ ∃p∈Q. q' ∈ δ p (α a) ∧ p ∈ ε-closure(q) }
@@ -205,10 +207,11 @@ remove-ε-step nfa =
 -- determinise the NFA by powerset construction
 powerset-construction : NFA → DFA
 powerset-construction nfa =
-  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≈_ ; ≋-refl = ≈-refl; ≋-sym = ≈-sym ; ≋-trans = ≈-trans ; F-lem = F-lem ; δ-lem = δ-lem }
+  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≈_ ; Dec-≋ = Decidable-≈.Dec-≈ {Q} {∣Q∣-1} Q? It ∀q∈It unique ; ≋-isEquiv = ≈-isEquiv ; F-lem = F-lem ; δ-lem = δ-lem ; Q? = undefined ; ∣Q∣-1 = undefined ; It = undefined ; ∀q∈It = undefined ; unique = undefined }
     where
       open NFA nfa
       open NFA-Operations nfa
+      open NFA-Properties nfa
       open Vec-Rep {Q} {∣Q∣-1} Q? It ∀q∈It unique
       Q' : Set
       Q' = DecSubset Q
@@ -229,6 +232,8 @@ powerset-construction nfa =
       F' qs with Dec-qs∈F qs
       ... | yes _ = true
       ... | no  _ = false
+
+      
 
       δ-lem : ∀ {qs ps : Q'} a
               → qs ≈ ps
@@ -266,8 +271,14 @@ powerset-construction nfa =
       F-lem {qs} {ps} qs≈ps qs∈F | false | [ ps∉F ] | no  ¬∃p | yes (q , q∈qs , q∈F)
         = ⊥-elim (¬∃p (q , proj₁ qs≈ps q q∈qs , q∈F))
       F-lem {qs} {ps} qs≈ps   () | false | [ ps∉F ] | no  ¬∃p | no  _
-      
 
+
+minimise : (dfa : DFA) → Minimal dfa
+minimise dfa = record { Qᴹ = {!!} ; ∀qAccess = {!!} ; δᴹ = {!!} ; q₀∈Qᴹ = {!!} ; Fᴹ = {!!} ; Fᴹ⊆Qᴹ = {!!} }
+  where
+    open DFA dfa
+    open DFA-Properties dfa
+    
 
 
 -- translating a regular expression to a NFA w/o ε-step
@@ -278,3 +289,8 @@ regexToNFA = remove-ε-step ∘ regexToε-NFA
 -- translating a regular expression to a DFA
 regexToDFA : RegExp → DFA
 regexToDFA = powerset-construction ∘ remove-ε-step ∘ regexToε-NFA
+
+
+-- translating a regular expression to a MDFA
+regexToMDFA : (r : RegExp) → Minimal (regexToDFA r)
+regexToMDFA r = minimise (regexToDFA r)

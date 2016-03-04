@@ -22,7 +22,9 @@ open import Data.Nat
 open import Subset renaming (Ø to ø)
 open import Language Σ dec 
 open import RegularExpression Σ dec
-open import Automata Σ dec
+open import eNFA Σ dec
+open import NFA Σ dec
+open import DFA Σ dec
 open import Translation Σ dec
 open import State
 

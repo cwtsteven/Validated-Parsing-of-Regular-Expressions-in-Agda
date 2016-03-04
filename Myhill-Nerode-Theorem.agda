@@ -10,12 +10,10 @@ open import Data.Product hiding (Σ)
 
 open import Language Σ dec
 open import RegularExpression Σ dec
-open import Automata Σ dec
+open import DFA Σ dec
 open import Translation Σ dec
 
 open ≡-Reasoning
-
-postulate undefined : ∀ {α} → {A : Set α} → A 
 
 Right-invariant : Rel Σ* _ → Set
 Right-invariant rel = ∀ {w u} → rel w u → ∀ z → rel (w ++ z) (u ++ z)

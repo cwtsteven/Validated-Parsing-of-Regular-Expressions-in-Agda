@@ -24,7 +24,7 @@ open import Subset renaming (Ø to ø)
 open import Subset.DecidableSubset renaming (Ø to ø ; _∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_) hiding (_⊆_ ; _⊇_)
 open import Language Σ dec
 open import RegularExpression Σ dec
-open import Automata Σ dec
+open import eNFA Σ dec
 open import Translation Σ dec
 open import State
 
@@ -59,8 +59,7 @@ Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡u
     open ε-NFA nfa
     open ε-NFA nfa₁ renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)
     open ε-NFA-Operations nfa
-    open import eNFA-Properties Σ dec nfa
-    open ≡-Reasoning
+    open ε-NFA-Properties nfa
     lem₁ : ∀ w u v n
            → w ≡ u ++ v
            → u ∈ Lᵉᴺ nfa₁
@@ -116,12 +115,11 @@ Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
     open ε-NFA nfa
     open ε-NFA nfa₁ renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)
     open ε-NFA-Operations nfa
-    open import eNFA-Properties Σ dec nfa
+    open ε-NFA-Properties nfa
     open ε-NFA-Operations nfa₁
       renaming (_⊢_ to _⊢ₑ₁_ ; _⊢*_ to _⊢*ₑ₁_ ; _⊢ᵏ_─_ to _⊢ᵏₑ₁_─_)
-    open import eNFA-Properties Σ dec nfa₁
+    open ε-NFA-Properties nfa₁
       renaming (_⊢*₂_ to _⊢*₂ₑ₁_ ; ⊢*⇔⊢*₂ to ⊢*⇔⊢*₂ₑ₁ ; ⊢*-lem₂ to ⊢*-lem₂ₑ₁ ; ⊢*-lem₃ to ⊢*-lem₃ₑ₁)
-    open ≡-Reasoning
 
     NoLoop-lem₁ : ∀ w wᵉ n q vᵉ
                   → w ≡ toΣ* wᵉ

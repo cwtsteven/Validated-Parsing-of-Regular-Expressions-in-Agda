@@ -232,7 +232,7 @@ module Vec-Rep {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It :
       aas≢abs : {n : ℕ}{it : Vec A n}{a b : Sub A}{as bs : VecSubset it} → a ≢ b → a ∷ as ≢ b ∷ bs
       aas≢abs a≢s refl = a≢s refl
 
-{-
+
   open import Subset.DecidableSubset renaming (Ø to Øᵈ ; _∈_ to _∈ᵈ_ ; _∈?_ to _∈ᵈ?_)
 
   VSub→DSub-lem₁ : {n : ℕ}{it : Vec A n} → VecSubset it → DecSubset A
@@ -256,57 +256,4 @@ module Vec-Rep {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It :
 
   VSub⇔DSub : VecSubset It ⇔ DecSubset A
   VSub⇔DSub = VSub→DSub , DSub→VSub
-
-
-  ≈-lem₁ : ∀ as → as ≡ Ø ⊎ as ≢ Ø
-  ≈-lem₁ as = lem It as
-    where
-      lem : {n : ℕ}(it : Vec A n) → (as : VecSubset it) → as ≡ map skip it ⊎ as ≢ map skip it
-      lem []       []             = inj₁ refl
-      lem ( b ∷ bs) (keep a ∷ as) = inj₂ (λ ())
-      lem ( b ∷ bs) (skip a ∷ as) with dec b a
-      lem (.a ∷ bs) (skip a ∷ as) | yes refl with lem bs as
-      lem (.a ∷ bs) (skip a ∷ as) | yes refl | inj₁ as≡Ø = inj₁ (cong (λ as → skip a ∷ as) as≡Ø)
-      lem (.a ∷ bs) (skip a ∷ as) | yes refl | inj₂ as≢Ø = inj₂ (aas≢abs as≢Ø)
-        where
-          lem' : {n : ℕ}{bs : Vec A n} → ∀ {a as} → skip a ∷ as ≡ skip a ∷ map skip bs → as ≡ map skip bs
-          lem' refl = refl
-          aas≢abs : {n : ℕ}{bs : Vec A n} → ∀ {a as} → as ≢ map skip bs → skip a ∷ as ≢ skip a ∷ map skip bs
-          aas≢abs as≢bs as≡bs = as≢bs (lem' as≡bs)
-      lem ( b ∷ bs) (skip a ∷ as) | no  b≢a  = inj₂ (aas≢abs b≢a)
-        where
-          aas≢abs : {n : ℕ}{bs : Vec A n} → ∀ {a as} → b ≢ a → skip a ∷ as ≢ skip b ∷ map skip bs
-          aas≢abs b≢a refl = b≢a refl
-
-  ≈-lem₂ : ∀ as bs → as ≡ bs → VSub→DSub as ≈ VSub→DSub bs
-  ≈-lem₂ = ≈-lem₂' {n} {It}
-    where
-      ≈-lem₂' : {n : ℕ}{it : Vec A n}(as bs : VecSubset it) → as ≡ bs → VSub→DSub-lem₁ {n} {it} as ≈ VSub→DSub-lem₁ {n} {it} bs
-      ≈-lem₂' as .as refl = (λ x x₁ → x₁) , (λ x x₁ → x₁)
-
-  ≈-lem₃ : ∀ as bs → as ≈ bs → DSub→VSub as ≡ DSub→VSub bs
-  ≈-lem₃ = ≈-lem₃' It
-    where
-      ≈-lem₃' : {n : ℕ} → (it : Vec A n) → ∀ as bs → as ≈ bs → DSub→VSub-lem₁ it as ≡ DSub→VSub-lem₁ it bs
-      ≈-lem₃' []       as bs as≈bs = refl
-      ≈-lem₃' (x ∷ xs) as bs as≈bs with x ∈ᵈ? as | inspect as x | x ∈ᵈ? bs | inspect bs x
-      ≈-lem₃' (x ∷ xs) as bs as≈bs | true  | [ x∈as ] | true  | [ x∈bs ] = cong (λ as → keep x ∷ as) (≈-lem₃' xs as bs as≈bs)
-      ≈-lem₃' (x ∷ xs) as bs (as⊆bs , as⊇bs) | true  | [ x∈as ] | false | [ x∉bs ] = ⊥-elim (Subset.DecidableSubset.∈-lem₂ {A} {x} {bs} x∉bs (as⊆bs x x∈as))
-      ≈-lem₃' (x ∷ xs) as bs (as⊆bs , as⊇bs) | false | [ x∉as ] | true  | [ x∈bs ] = ⊥-elim (Subset.DecidableSubset.∈-lem₂ {A} {x} {as} x∉as (as⊇bs x x∈bs))
-      ≈-lem₃' (x ∷ xs) as bs as≈bs | false | [ x∉as ] | false | [ x∉bs ] = cong (λ as → skip x ∷ as) (≈-lem₃' xs as bs as≈bs)
-
-  ≈-lem₄ : ∀ as → VSub→DSub (DSub→VSub as) ≈ as
-  ≈-lem₄ as = undefined
-
-  ≈-lem₅ : ∀ as → as ≡ Ø → VSub→DSub as ≈ Øᵈ
-  ≈-lem₅ = undefined
-
-  ≈-lem₆ : ∀ as → as ≢ Ø → ¬ (VSub→DSub as ≈ Øᵈ)
-  ≈-lem₆ = undefined
-
-  ≈-lem₇ : (as : DecSubset A) → as ≈ Øᵈ ⊎ ¬ (as ≈ Øᵈ)
-  ≈-lem₇ as with ≈-lem₁ (DSub→VSub as)
-  ... | inj₁ prf = inj₁ (≈-trans (≈-sym (≈-lem₄ as)) (≈-lem₅ (DSub→VSub as) prf))
-  ... | inj₂ prf = inj₂ undefined
--}
 -}

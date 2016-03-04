@@ -121,7 +121,7 @@ as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
 -- Proving the decidability of ≈ using vector representation
 open import Data.Nat
 open import Data.Vec renaming (_∈_ to _∈ⱽ_)
-open import Subset.VectorRep hiding (_∈?_)
+open import Subset.VectorRep hiding (_∈?_ ; ∈-lem₂)
 
 module Decidable-≈ {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It : ∀ a → a ∈ⱽ It)(unique : Unique It) where
   open Vec-Rep {A} {n} dec It ∀a∈It unique
@@ -196,3 +196,41 @@ module Decidable-≈ {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a�
     where
       ¬eq : ¬ (as ≈ bs)
       ¬eq (_ , as⊇bs) = as⊉bs as⊇bs
+
+
+  ⊆-lem₁ : {as bs : DecSubset A} → ¬ (Σ[ a ∈ A ] (a ∈ as × a ∉ bs)) → as ⊆ bs
+  ⊆-lem₁ {as} {bs} ¬∃a∈as a a∈as with a ∈? bs | inspect (λ a → a ∈? bs) a
+  ... | true  | [ a∈bs ] = refl
+  ... | false | [ a∉bs ] = ⊥-elim (¬∃a∈as (a , a∈as , ∈-lem₂ {A} {a} {bs} a∉bs))
+
+  Dec-any-⊆? : (as bs : DecSubset A) → Dec (any (λ a → a ∈ as × a ∉ bs) It)
+  Dec-any-⊆? as bs = helper It
+    where
+      helper : {n : ℕ}(ps : Vec A n) → Dec (any (λ a → a ∈ as × a ∉ bs) ps)
+      helper [] = no (λ z → z)
+      helper (p ∷ ps) with p ∈? as | p ∈? bs
+      helper (p ∷ ps) | true  | false = yes (inj₁ (refl , (λ ())))
+      helper (p ∷ ps) | true  | true  with helper ps
+      helper (p ∷ ps) | true  | true  | yes anyps = yes (inj₂ anyps)
+      helper (p ∷ ps) | true  | true  | no ¬anyps = no  ¬any
+        where
+          ¬any : ¬ (true ≡ true × (true ≡ true → ⊥) ⊎ any (λ a → a ∈ as × a ∉ bs) ps)
+          ¬any (inj₁ (_ , prf)) = ⊥-elim (prf refl)
+          ¬any (inj₂ anyps) = ¬anyps anyps
+      helper (p ∷ ps) | false | p∈?F  with helper ps
+      helper (p ∷ ps) | false | p∈?F  | yes anyps = yes (inj₂ anyps)
+      helper (p ∷ ps) | false | p∈?F  | no ¬anyps = no  ¬any
+        where
+          ¬any : ¬ (false ≡ true × (p∈?F ≡ true → ⊥) ⊎ any (λ a → a ∈ as × a ∉ bs) ps)
+          ¬any (inj₁ (() , _))
+          ¬any (inj₂ anyps) = ¬anyps anyps
+
+  Dec-⊆? : (as bs : DecSubset A) → Dec (Σ[ a ∈ A ] (a ∈ as × a ∉ bs))
+  Dec-⊆? as bs with Dec-any-⊆? as bs
+  Dec-⊆? as bs | yes prf = yes (Vec-any-lem₂ (λ a → a ∈ as × a ∉ bs) prf)
+  Dec-⊆? as bs | no  prf = no  (Vec-any-lem₄ (λ a → a ∈ as × a ∉ bs) prf)
+
+  ⊆-lem₂ : {as bs : DecSubset A} → ¬ as ⊆ bs → Σ[ a ∈ A ] (a ∈ as × a ∉ bs)
+  ⊆-lem₂ {as} {bs} as⊈bs with Dec-⊆? as bs
+  ... | yes (a , a∈as , a∉bs) = a , a∈as , a∉bs
+  ... | no  ¬∃a∈as            = ⊥-elim (as⊈bs (⊆-lem₁ ¬∃a∈as))

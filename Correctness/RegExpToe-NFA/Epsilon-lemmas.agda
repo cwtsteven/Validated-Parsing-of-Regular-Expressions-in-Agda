@@ -21,7 +21,7 @@ open import Data.Nat
 open import Subset
 open import Language Σ dec
 open import RegularExpression Σ dec
-open import Automata Σ dec
+open import eNFA Σ dec
 open import Translation Σ dec
 open import State
 
