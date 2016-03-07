@@ -24,6 +24,7 @@ open import Subset
 open import Subset.DecidableSubset
   renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_ ; Ø to Øᵈ ; _⋃_ to _⋃ᵈ_ ; _⋂_ to _⋂ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ
                  ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ≈-refl to ≈ᵈ-refl ; ≈-trans to ≈ᵈ-trans ; ≈-sym to ≈ᵈ-sym)
+open import QuotientSet
 open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_ ; tail to tailⱽ)
 open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 open import Language Σ dec
@@ -40,8 +41,8 @@ record DFA : Set₁ where
     _≋_ : (q q' : Q) → Set
     Dec-≋ : ∀ q q' → Dec (q ≋ q')
     ≋-isEquiv : IsEquivalence _≋_
-    F-lem   : ∀ {q} {p}   → q ≋ p → q ∈ᵈ F → p ∈ᵈ F
     δ-lem   : ∀ {q} {p} a → q ≋ p → δ q a ≋ δ p a
+    F-lem   : ∀ {q} {p}   → q ≋ p → q ∈ᵈ F → p ∈ᵈ F
     Q?  : DecEq Q
     ∣Q∣-1 : ℕ
     It  : Vec Q (suc ∣Q∣-1)
@@ -152,6 +153,7 @@ Dec-Lᴰ dfa w with (δ₀ w) ∈ᵈ? F | inspect (λ w → (δ₀ w) ∈ᵈ? F)
 
 module DFA-Properties (D : DFA) where
 
+  -- remember!!
   postulate ∣Σ∣-1 : ℕ
   postulate Σ-It : Vec Σ (suc ∣Σ∣-1)
   postulate ∀a∈Σ-It : ∀ a → a ∈ⱽ Σ-It
@@ -161,7 +163,7 @@ module DFA-Properties (D : DFA) where
   open DFA-Operations D
   open IsEquivalence ≋-isEquiv renaming (refl to ≋-refl ; sym to ≋-sym ; trans to ≋-trans)
 
-  -- Reachable
+  -- Reachable from q₀
   Reachable : Q → Set
   Reachable q = Σ[ w ∈ Σ* ] (q₀ , w) ⊢* (q , [])
 
@@ -232,36 +234,51 @@ module DFA-Properties (D : DFA) where
   Qᵣ : Q → Subset Q
   Qᵣ q = λ q' → Σ[ n ∈ ℕ ] ( q' ∈ᵈ n-path q n )
 
+  Q₀ᵣ : Subset Q
+  Q₀ᵣ = Qᵣ q₀
 
+  -- needs to prove
 
+  Dec-Qᵣ : ∀ p q → Dec (p ∈ Qᵣ q)
+  Dec-Qᵣ = undefined
 
-record Minimal (D : DFA) : Set₁ where
-  open DFA D
-  open DFA-Operations D
-  open DFA-Properties D
-  field
-    Qᴹ    : DecSubset Q
-    ∀qAccess : ∀ q → q ∈ᵈ Qᴹ ⇔ Reachable q
-    δᴹ    : ∀ (q : Q) → q ∈ᵈ Qᴹ → Σ → Σ[ q' ∈ Q ] q' ∈ᵈ Qᴹ
-    q₀∈Qᴹ : q₀ ∈ᵈ Qᴹ
-    Fᴹ    : DecSubset Q
-    Fᴹ⊆Qᴹ : Fᴹ ⊆ᵈ Qᴹ
+  -- needs to prove
+  Qᵣ-lem : ∀ q → Reachable q ⇔ q ∈ Q₀ᵣ
+  Qᵣ-lem = undefined
 
-
-module MDFA-Operations (D : DFA)(M : Minimal D) where
-  open DFA D
-  open Minimal M
-               
-  δ* : (q : Q) → q ∈ᵈ Qᴹ → Σ* → Q
-  δ* q q∈Qᴹ []      = q
-  δ* q q∈Qᴹ (a ∷ w) = δ* (proj₁ (δᴹ q q∈Qᴹ a)) (proj₂ (δᴹ q q∈Qᴹ a)) w
   
-  δ₀ : Σ* → Q
-  δ₀ w = δ* q₀ q₀∈Qᴹ w
+  -- Equivalence states
+  infix 0 _∼_
+  _∼_ : Q → Q → Set
+  q ∼ q' = ∀ w → δ* q w ∈ᵈ F ⇔ δ* q' w ∈ᵈ F
 
+  ∼-Equiv : IsEquivalence _∼_
+  ∼-Equiv = undefined
 
-Lᴹ : ∀ {D : DFA} → Minimal D → Language
-Lᴹ {D} M = λ w → δ₀ w ∈ᵈ Fᴹ
+  -- Equivalence classes
+  infix 0 ⟪_⟫
+  ⟪_⟫ : Q → (Q → Set)
+  ⟪ p ⟫ = λ q → q ∼ p
+  
+
+  ∼-lem₁ : ∀ p q → (p ∼ q) ⇔ (⟪ p ⟫ ≈ ⟪ q ⟫)
+  ∼-lem₁ = undefined
+
+All-Reachable-States : DFA → Set
+All-Reachable-States D = ∀ q → Reachable q
   where
-    open Minimal M
-    open MDFA-Operations D M
+    open DFA D
+    open DFA-Properties D
+
+
+
+{-
+record All-Reachable-States (D : DFA) : Set₁ where
+  field
+    Qᴹ   : DecSubset (DFA.Q D)
+    all-reachable : ∀ q → q ∈ᵈ Qᴹ ⇔ DFA-Properties.Reachable D q
+    δ    : (q : DFA.Q D) → q ∈ᵈ Qᴹ → Σ → Σ[ q' ∈ DFA.Q D ] q' ∈ᵈ Qᴹ
+    q₀   : DFA.Q D
+    F    : DecSubset (DFA.Q D)
+    F⊆Qᴹ : F ⊆ᵈ Qᴹ
+-}
