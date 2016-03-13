@@ -1,5 +1,5 @@
 module QuotientSet where
-
+open import Util
 open import Data.Unit
 
 open import Subset
@@ -10,7 +10,7 @@ module Quot (A : Set)(_∼_ : A → A → Set) where
   ⟪ a ⟫ = λ b → b ∼ a
 
   A/∼ : Set₁
-  A/∼ = ?
+  A/∼ = undefined
 
 
 _/_ : (A : Set) → (A → A → Set) → Set₁
@@ -21,7 +21,7 @@ open import Data.Product
 open import Relation.Binary.PropositionalEquality
 open import Relation.Binary
 open ≡-Reasoning
-
+{-
 Pair : Set
 Pair = ℕ × ℕ
 
@@ -30,10 +30,11 @@ _∼_ : Pair → Pair → Set
 
 ∼-sym : Transitive _∼_
 ∼-sym {a , b} {c , d} {e , f} prf₁ prf₂ = begin
-                                          a + f ≡⟨ {!!} ⟩
+                                          a + f ≡⟨ undefined ⟩
                                           e + b
                                           ∎
                                           
 
 ∼-isEquiv : IsEquivalence _∼_
-∼-isEquiv = record { refl = refl ; sym = λ prf → sym prf ; trans = λ prf₁ prf₂ → {!!} } -- } trans prf₁ prf₂ }
+∼-isEquiv = record { refl = refl ; sym = λ prf → sym prf ; trans = λ prf₁ prf₂ → undefined } -- } trans prf₁ prf₂ }
+-}

@@ -42,29 +42,29 @@ module Condition (dfa : DFA) where
   Rm-Right-invariant : Right-invariant _Rm_
   Rm-Right-invariant {w} {u} wRmu z
     = begin
-      δ₀ (w ++ z)     ≡⟨ {!!} ⟩ -- lem₁ q₀ w z ⟩
+      δ₀ (w ++ z)     ≡⟨ undefined ⟩ -- lem₁ q₀ w z ⟩
       δ* (δ* q₀ w) z  ≡⟨ cong (λ q → δ* q z) wRmu ⟩
-      δ* (δ* q₀ u) z  ≡⟨ {!!} ⟩ --sym (lem₁ q₀ u z) ⟩
+      δ* (δ* q₀ u) z  ≡⟨ undefined ⟩ --sym (lem₁ q₀ u z) ⟩
       δ₀ (u ++ z)
       ∎
 
 lem₃ : ∀ L
        → Regular L
        → Σ[ rm ∈ Rel Σ* _ ] ( Right-invariant rm × IsEquivalence rm ) -- ∧ finite index ∧ L is the union of its equivalence classes
-lem₃ L prf = _Rm_ , Rm-Right-invariant , record { refl = Rm-refl ; sym = Rm-sym ; trans = Rm-trans }
+lem₃ L prf = _Rm_ , undefined , undefined
   where
     dfa : DFA
-    dfa = regexToDFA {!!}
+    dfa = regexToDFA undefined
     open Condition dfa
 
 
 lem₂ : ∀ L
        → Σ[ rm ∈ Rel Σ* _ ] ( Right-invariant rm × IsEquivalence rm ) -- ∧ finite index ∧ L is the union of its equivalence classes
        → Regular L
-lem₂ = {!!}
+lem₂ = undefined
 
 
 lem₁ : ∀ L
        → Regular L
          ⇔ Σ[ rm ∈ Rel Σ* _ ] ( Right-invariant rm × IsEquivalence rm ) -- ∧ finite index ∧ L is the union of its equivalence classes
-lem₁ = {!!}
+lem₁ = undefined

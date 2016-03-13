@@ -1,0 +1,45 @@
+\message{ !name(Report.tex)}\documentclass[twoside,openright,final]{bhamthesis}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{geometry}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{enumerate,letltxmacro}
+\usepackage{enumitem}
+\LetLtxMacro\itemold\item
+\renewcommand{\item}{\itemindent0.5cm\itemold}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\usepackage{etoolbox}
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+\pagestyle{plain}
+
+\setlength{\oddsidemargin}{1cm} % 2cm margin on the left for odd pages
+\setlength{\evensidemargin}{0cm} % 2cm margin on the right for even pages
+
+\title{Certified Parsing of Regular Expressions in Agda}
+\department{Computer Science}
+\degree{BSc. Computer Science}
+\author{Wai Tak, Cheung}
+\studentid{1465388}
+\supervisor{Dr. Martín Escardó}
+
+\begin{document}
+
+\message{ !name(Report.tex) !offset(-3) }
+
+\maketitle
+
+
+\message{ !name(Report.tex) !offset(530) }
+
+\end{document}

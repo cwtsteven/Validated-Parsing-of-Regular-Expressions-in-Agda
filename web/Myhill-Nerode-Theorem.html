@@ -1,0 +1,1457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >Myhill-Nerode-Theorem</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Keyword"
+      >open</a
+      ><a name="5"
+      > </a
+      ><a name="6" class="Keyword"
+      >import</a
+      ><a name="12"
+      > </a
+      ><a name="13" href="Util.html#1" class="Module"
+      >Util</a
+      ><a name="17"
+      >
+</a
+      ><a name="18" class="Keyword"
+      >module</a
+      ><a name="24"
+      > </a
+      ><a name="25" href="Myhill-Nerode-Theorem.html#1" class="Module"
+      >Myhill-Nerode-Theorem</a
+      ><a name="46"
+      > </a
+      ><a name="47" class="Symbol"
+      >(</a
+      ><a name="48" href="Myhill-Nerode-Theorem.html#48" class="Bound"
+      >&#931;</a
+      ><a name="49"
+      > </a
+      ><a name="50" class="Symbol"
+      >:</a
+      ><a name="51"
+      > </a
+      ><a name="52" class="PrimitiveType"
+      >Set</a
+      ><a name="55" class="Symbol"
+      >)</a
+      ><a name="56"
+      > </a
+      ><a name="57" class="Symbol"
+      >(</a
+      ><a name="58" href="Myhill-Nerode-Theorem.html#58" class="Bound"
+      >dec</a
+      ><a name="61"
+      > </a
+      ><a name="62" class="Symbol"
+      >:</a
+      ><a name="63"
+      > </a
+      ><a name="64" href="Util.html#644" class="Function"
+      >DecEq</a
+      ><a name="69"
+      > </a
+      ><a name="70" href="Myhill-Nerode-Theorem.html#48" class="Bound"
+      >&#931;</a
+      ><a name="71" class="Symbol"
+      >)</a
+      ><a name="72"
+      > </a
+      ><a name="73" class="Keyword"
+      >where</a
+      ><a name="78"
+      >
+
+</a
+      ><a name="80" class="Keyword"
+      >open</a
+      ><a name="84"
+      > </a
+      ><a name="85" class="Keyword"
+      >import</a
+      ><a name="91"
+      > </a
+      ><a name="92" href="Level.html#1" class="Module"
+      >Level</a
+      ><a name="97"
+      >
+</a
+      ><a name="98" class="Keyword"
+      >open</a
+      ><a name="102"
+      > </a
+      ><a name="103" class="Keyword"
+      >import</a
+      ><a name="109"
+      > </a
+      ><a name="110" href="Data.List.html#1" class="Module"
+      >Data.List</a
+      ><a name="119"
+      >
+</a
+      ><a name="120" class="Keyword"
+      >open</a
+      ><a name="124"
+      > </a
+      ><a name="125" class="Keyword"
+      >import</a
+      ><a name="131"
+      > </a
+      ><a name="132" href="Relation.Binary.html#1" class="Module"
+      >Relation.Binary</a
+      ><a name="147"
+      >
+</a
+      ><a name="148" class="Keyword"
+      >open</a
+      ><a name="152"
+      > </a
+      ><a name="153" class="Keyword"
+      >import</a
+      ><a name="159"
+      > </a
+      ><a name="160" href="Relation.Binary.PropositionalEquality.html#1" class="Module"
+      >Relation.Binary.PropositionalEquality</a
+      ><a name="197"
+      >
+</a
+      ><a name="198" class="Keyword"
+      >open</a
+      ><a name="202"
+      > </a
+      ><a name="203" class="Keyword"
+      >import</a
+      ><a name="209"
+      > </a
+      ><a name="210" href="Relation.Nullary.html#1" class="Module"
+      >Relation.Nullary</a
+      ><a name="226"
+      >
+</a
+      ><a name="227" class="Keyword"
+      >open</a
+      ><a name="231"
+      > </a
+      ><a name="232" class="Keyword"
+      >import</a
+      ><a name="238"
+      > </a
+      ><a name="239" href="Data.Product.html#1" class="Module"
+      >Data.Product</a
+      ><a name="251"
+      > </a
+      ><a name="252" class="Keyword"
+      >hiding</a
+      ><a name="258"
+      > </a
+      ><a name="259" class="Symbol"
+      >(</a
+      ><a name="260"
+      >&#931;</a
+      ><a name="261" class="Symbol"
+      >)</a
+      ><a name="262"
+      >
+
+</a
+      ><a name="264" class="Keyword"
+      >open</a
+      ><a name="268"
+      > </a
+      ><a name="269" class="Keyword"
+      >import</a
+      ><a name="275"
+      > </a
+      ><a name="276" href="Language.html#1" class="Module"
+      >Language</a
+      ><a name="284"
+      > </a
+      ><a name="285" href="Myhill-Nerode-Theorem.html#48" class="Bound"
+      >&#931;</a
+      ><a name="286"
+      > </a
+      ><a name="287" href="Myhill-Nerode-Theorem.html#58" class="Bound"
+      >dec</a
+      ><a name="290"
+      >
+</a
+      ><a name="291" class="Keyword"
+      >open</a
+      ><a name="295"
+      > </a
+      ><a name="296" class="Keyword"
+      >import</a
+      ><a name="302"
+      > </a
+      ><a name="303" href="RegularExpression.html#1" class="Module"
+      >RegularExpression</a
+      ><a name="320"
+      > </a
+      ><a name="321" href="Myhill-Nerode-Theorem.html#48" class="Bound"
+      >&#931;</a
+      ><a name="322"
+      > </a
+      ><a name="323" href="Myhill-Nerode-Theorem.html#58" class="Bound"
+      >dec</a
+      ><a name="326"
+      >
+</a
+      ><a name="327" class="Keyword"
+      >open</a
+      ><a name="331"
+      > </a
+      ><a name="332" class="Keyword"
+      >import</a
+      ><a name="338"
+      > </a
+      ><a name="339" href="DFA.html#1" class="Module"
+      >DFA</a
+      ><a name="342"
+      > </a
+      ><a name="343" href="Myhill-Nerode-Theorem.html#48" class="Bound"
+      >&#931;</a
+      ><a name="344"
+      > </a
+      ><a name="345" href="Myhill-Nerode-Theorem.html#58" class="Bound"
+      >dec</a
+      ><a name="348"
+      >
+</a
+      ><a name="349" class="Keyword"
+      >open</a
+      ><a name="353"
+      > </a
+      ><a name="354" class="Keyword"
+      >import</a
+      ><a name="360"
+      > </a
+      ><a name="361" href="Translation.html#1" class="Module"
+      >Translation</a
+      ><a name="372"
+      > </a
+      ><a name="373" href="Myhill-Nerode-Theorem.html#48" class="Bound"
+      >&#931;</a
+      ><a name="374"
+      > </a
+      ><a name="375" href="Myhill-Nerode-Theorem.html#58" class="Bound"
+      >dec</a
+      ><a name="378"
+      >
+
+</a
+      ><a name="380" class="Keyword"
+      >open</a
+      ><a name="384"
+      > </a
+      ><a name="385" href="Relation.Binary.PropositionalEquality.html#5746" class="Module"
+      >&#8801;-Reasoning</a
+      ><a name="396"
+      >
+
+</a
+      ><a name="398" href="Myhill-Nerode-Theorem.html#398" class="Function"
+      >Right-invariant</a
+      ><a name="413"
+      > </a
+      ><a name="414" class="Symbol"
+      >:</a
+      ><a name="415"
+      > </a
+      ><a name="416" href="Relation.Binary.Core.html#740" class="Function"
+      >Rel</a
+      ><a name="419"
+      > </a
+      ><a name="420" href="Language.html#767" class="Function"
+      >&#931;*</a
+      ><a name="422"
+      > </a
+      ><a name="423" class="Symbol"
+      >_</a
+      ><a name="424"
+      > </a
+      ><a name="425" class="Symbol"
+      >&#8594;</a
+      ><a name="426"
+      > </a
+      ><a name="427" class="PrimitiveType"
+      >Set</a
+      ><a name="430"
+      >
+</a
+      ><a name="431" href="Myhill-Nerode-Theorem.html#398" class="Function"
+      >Right-invariant</a
+      ><a name="446"
+      > </a
+      ><a name="447" href="Myhill-Nerode-Theorem.html#447" class="Bound"
+      >rel</a
+      ><a name="450"
+      > </a
+      ><a name="451" class="Symbol"
+      >=</a
+      ><a name="452"
+      > </a
+      ><a name="453" class="Symbol"
+      >&#8704;</a
+      ><a name="454"
+      > </a
+      ><a name="455" class="Symbol"
+      >{</a
+      ><a name="456" href="Myhill-Nerode-Theorem.html#456" class="Bound"
+      >w</a
+      ><a name="457"
+      > </a
+      ><a name="458" href="Myhill-Nerode-Theorem.html#458" class="Bound"
+      >u</a
+      ><a name="459" class="Symbol"
+      >}</a
+      ><a name="460"
+      > </a
+      ><a name="461" class="Symbol"
+      >&#8594;</a
+      ><a name="462"
+      > </a
+      ><a name="463" href="Myhill-Nerode-Theorem.html#447" class="Bound"
+      >rel</a
+      ><a name="466"
+      > </a
+      ><a name="467" href="Myhill-Nerode-Theorem.html#456" class="Bound"
+      >w</a
+      ><a name="468"
+      > </a
+      ><a name="469" href="Myhill-Nerode-Theorem.html#458" class="Bound"
+      >u</a
+      ><a name="470"
+      > </a
+      ><a name="471" class="Symbol"
+      >&#8594;</a
+      ><a name="472"
+      > </a
+      ><a name="473" class="Symbol"
+      >&#8704;</a
+      ><a name="474"
+      > </a
+      ><a name="475" href="Myhill-Nerode-Theorem.html#475" class="Bound"
+      >z</a
+      ><a name="476"
+      > </a
+      ><a name="477" class="Symbol"
+      >&#8594;</a
+      ><a name="478"
+      > </a
+      ><a name="479" href="Myhill-Nerode-Theorem.html#447" class="Bound"
+      >rel</a
+      ><a name="482"
+      > </a
+      ><a name="483" class="Symbol"
+      >(</a
+      ><a name="484" href="Myhill-Nerode-Theorem.html#456" class="Bound"
+      >w</a
+      ><a name="485"
+      > </a
+      ><a name="486" href="Data.List.Base.html#1098" class="Function Operator"
+      >++</a
+      ><a name="488"
+      > </a
+      ><a name="489" href="Myhill-Nerode-Theorem.html#475" class="Bound"
+      >z</a
+      ><a name="490" class="Symbol"
+      >)</a
+      ><a name="491"
+      > </a
+      ><a name="492" class="Symbol"
+      >(</a
+      ><a name="493" href="Myhill-Nerode-Theorem.html#458" class="Bound"
+      >u</a
+      ><a name="494"
+      > </a
+      ><a name="495" href="Data.List.Base.html#1098" class="Function Operator"
+      >++</a
+      ><a name="497"
+      > </a
+      ><a name="498" href="Myhill-Nerode-Theorem.html#475" class="Bound"
+      >z</a
+      ><a name="499" class="Symbol"
+      >)</a
+      ><a name="500"
+      >
+
+
+</a
+      ><a name="503" class="Keyword"
+      >module</a
+      ><a name="509"
+      > </a
+      ><a name="510" href="Myhill-Nerode-Theorem.html#510" class="Module"
+      >Condition</a
+      ><a name="519"
+      > </a
+      ><a name="520" class="Symbol"
+      >(</a
+      ><a name="521" href="Myhill-Nerode-Theorem.html#521" class="Bound"
+      >dfa</a
+      ><a name="524"
+      > </a
+      ><a name="525" class="Symbol"
+      >:</a
+      ><a name="526"
+      > </a
+      ><a name="527" href="DFA.html#1191" class="Record"
+      >DFA</a
+      ><a name="530" class="Symbol"
+      >)</a
+      ><a name="531"
+      > </a
+      ><a name="532" class="Keyword"
+      >where</a
+      ><a name="537"
+      >
+  </a
+      ><a name="540" class="Keyword"
+      >open</a
+      ><a name="544"
+      > </a
+      ><a name="545" href="DFA.html#1191" class="Module"
+      >DFA</a
+      ><a name="548"
+      > </a
+      ><a name="549" href="Myhill-Nerode-Theorem.html#521" class="Bound"
+      >dfa</a
+      ><a name="552"
+      >
+  </a
+      ><a name="555" class="Keyword"
+      >open</a
+      ><a name="559"
+      > </a
+      ><a name="560" href="DFA.html#1596" class="Module"
+      >DFA-Operations</a
+      ><a name="574"
+      > </a
+      ><a name="575" href="Myhill-Nerode-Theorem.html#521" class="Bound"
+      >dfa</a
+      ><a name="578"
+      >
+
+  </a
+      ><a name="582" class="Keyword"
+      >infix</a
+      ><a name="587"
+      > </a
+      ><a name="588" class="Number"
+      >3</a
+      ><a name="589"
+      > _Rm_
+  </a
+      ><a name="597" href="Myhill-Nerode-Theorem.html#597" class="Function Operator"
+      >_Rm_</a
+      ><a name="601"
+      > </a
+      ><a name="602" class="Symbol"
+      >:</a
+      ><a name="603"
+      > </a
+      ><a name="604" href="Relation.Binary.Core.html#740" class="Function"
+      >Rel</a
+      ><a name="607"
+      > </a
+      ><a name="608" href="Language.html#767" class="Function"
+      >&#931;*</a
+      ><a name="610"
+      > </a
+      ><a name="611" class="Symbol"
+      >_</a
+      ><a name="612"
+      >
+  </a
+      ><a name="615" href="Myhill-Nerode-Theorem.html#615" class="Bound"
+      >w</a
+      ><a name="616"
+      > </a
+      ><a name="617" href="Myhill-Nerode-Theorem.html#597" class="Function Operator"
+      >Rm</a
+      ><a name="619"
+      > </a
+      ><a name="620" href="Myhill-Nerode-Theorem.html#620" class="Bound"
+      >u</a
+      ><a name="621"
+      > </a
+      ><a name="622" class="Symbol"
+      >=</a
+      ><a name="623"
+      > </a
+      ><a name="624" href="DFA.html#2432" class="Function"
+      >&#948;&#8320;</a
+      ><a name="626"
+      > </a
+      ><a name="627" href="Myhill-Nerode-Theorem.html#615" class="Bound"
+      >w</a
+      ><a name="628"
+      > </a
+      ><a name="629" href="Relation.Binary.Core.html#4497" class="Datatype Operator"
+      >&#8801;</a
+      ><a name="630"
+      > </a
+      ><a name="631" href="DFA.html#2432" class="Function"
+      >&#948;&#8320;</a
+      ><a name="633"
+      > </a
+      ><a name="634" href="Myhill-Nerode-Theorem.html#620" class="Bound"
+      >u</a
+      ><a name="635"
+      >
+
+  </a
+      ><a name="639" href="Myhill-Nerode-Theorem.html#639" class="Function"
+      >Rm-refl</a
+      ><a name="646"
+      > </a
+      ><a name="647" class="Symbol"
+      >:</a
+      ><a name="648"
+      > </a
+      ><a name="649" href="Relation.Binary.Core.html#1870" class="Function"
+      >Reflexive</a
+      ><a name="658"
+      > </a
+      ><a name="659" href="Myhill-Nerode-Theorem.html#597" class="Function Operator"
+      >_Rm_</a
+      ><a name="663"
+      >
+  </a
+      ><a name="666" href="Myhill-Nerode-Theorem.html#639" class="Function"
+      >Rm-refl</a
+      ><a name="673"
+      > </a
+      ><a name="674" class="Symbol"
+      >=</a
+      ><a name="675"
+      > </a
+      ><a name="676" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="680"
+      >
+
+  </a
+      ><a name="684" href="Myhill-Nerode-Theorem.html#684" class="Function"
+      >Rm-sym</a
+      ><a name="690"
+      > </a
+      ><a name="691" class="Symbol"
+      >:</a
+      ><a name="692"
+      > </a
+      ><a name="693" href="Relation.Binary.Core.html#2293" class="Function"
+      >Symmetric</a
+      ><a name="702"
+      > </a
+      ><a name="703" href="Myhill-Nerode-Theorem.html#597" class="Function Operator"
+      >_Rm_</a
+      ><a name="707"
+      >
+  </a
+      ><a name="710" href="Myhill-Nerode-Theorem.html#684" class="Function"
+      >Rm-sym</a
+      ><a name="716"
+      > </a
+      ><a name="717" class="Symbol"
+      >{</a
+      ><a name="718" href="Myhill-Nerode-Theorem.html#718" class="Bound"
+      >w</a
+      ><a name="719" class="Symbol"
+      >}</a
+      ><a name="720"
+      > </a
+      ><a name="721" class="Symbol"
+      >{</a
+      ><a name="722" href="Myhill-Nerode-Theorem.html#722" class="Bound"
+      >u</a
+      ><a name="723" class="Symbol"
+      >}</a
+      ><a name="724"
+      > </a
+      ><a name="725" href="Myhill-Nerode-Theorem.html#725" class="Bound"
+      >wRmu</a
+      ><a name="729"
+      > </a
+      ><a name="730" class="Keyword"
+      >with</a
+      ><a name="734"
+      > </a
+      ><a name="735" href="DFA.html#2432" class="Function"
+      >&#948;&#8320;</a
+      ><a name="737"
+      > </a
+      ><a name="738" href="Myhill-Nerode-Theorem.html#718" class="Bound"
+      >w</a
+      ><a name="739"
+      > </a
+      ><a name="740" class="Symbol"
+      >|</a
+      ><a name="741"
+      > </a
+      ><a name="742" href="DFA.html#2432" class="Function"
+      >&#948;&#8320;</a
+      ><a name="744"
+      > </a
+      ><a name="745" href="Myhill-Nerode-Theorem.html#722" class="Bound"
+      >u</a
+      ><a name="746"
+      >
+  </a
+      ><a name="749" href="Myhill-Nerode-Theorem.html#684" class="Function"
+      >Rm-sym</a
+      ><a name="755"
+      > </a
+      ><a name="756" class="Symbol"
+      >{</a
+      ><a name="757" href="Myhill-Nerode-Theorem.html#757" class="Bound"
+      >w</a
+      ><a name="758" class="Symbol"
+      >}</a
+      ><a name="759"
+      > </a
+      ><a name="760" class="Symbol"
+      >{</a
+      ><a name="761" href="Myhill-Nerode-Theorem.html#761" class="Bound"
+      >u</a
+      ><a name="762" class="Symbol"
+      >}</a
+      ><a name="763"
+      > </a
+      ><a name="764" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="768"
+      > </a
+      ><a name="769" class="Symbol"
+      >|</a
+      ><a name="770"
+      > </a
+      ><a name="771" href="Myhill-Nerode-Theorem.html#771" class="Bound"
+      >q</a
+      ><a name="772"
+      > </a
+      ><a name="773" class="Symbol"
+      >|</a
+      ><a name="774"
+      > </a
+      ><a name="775" class="DottedPattern Symbol"
+      >.</a
+      ><a name="776" href="Myhill-Nerode-Theorem.html#771" class="DottedPattern Bound"
+      >q</a
+      ><a name="777"
+      > </a
+      ><a name="778" class="Symbol"
+      >=</a
+      ><a name="779"
+      > </a
+      ><a name="780" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="784"
+      >
+
+  </a
+      ><a name="788" href="Myhill-Nerode-Theorem.html#788" class="Function"
+      >Rm-trans</a
+      ><a name="796"
+      > </a
+      ><a name="797" class="Symbol"
+      >:</a
+      ><a name="798"
+      > </a
+      ><a name="799" href="Relation.Binary.Core.html#2772" class="Function"
+      >Transitive</a
+      ><a name="809"
+      > </a
+      ><a name="810" href="Myhill-Nerode-Theorem.html#597" class="Function Operator"
+      >_Rm_</a
+      ><a name="814"
+      >
+  </a
+      ><a name="817" href="Myhill-Nerode-Theorem.html#788" class="Function"
+      >Rm-trans</a
+      ><a name="825"
+      > </a
+      ><a name="826" class="Symbol"
+      >{</a
+      ><a name="827" href="Myhill-Nerode-Theorem.html#827" class="Bound"
+      >w</a
+      ><a name="828" class="Symbol"
+      >}</a
+      ><a name="829"
+      > </a
+      ><a name="830" class="Symbol"
+      >{</a
+      ><a name="831" href="Myhill-Nerode-Theorem.html#831" class="Bound"
+      >u</a
+      ><a name="832" class="Symbol"
+      >}</a
+      ><a name="833"
+      > </a
+      ><a name="834" class="Symbol"
+      >{</a
+      ><a name="835" href="Myhill-Nerode-Theorem.html#835" class="Bound"
+      >v</a
+      ><a name="836" class="Symbol"
+      >}</a
+      ><a name="837"
+      > </a
+      ><a name="838" href="Myhill-Nerode-Theorem.html#838" class="Bound"
+      >wRmu</a
+      ><a name="842"
+      > </a
+      ><a name="843" href="Myhill-Nerode-Theorem.html#843" class="Bound"
+      >uRmv</a
+      ><a name="847"
+      > </a
+      ><a name="848" class="Keyword"
+      >with</a
+      ><a name="852"
+      > </a
+      ><a name="853" href="DFA.html#2432" class="Function"
+      >&#948;&#8320;</a
+      ><a name="855"
+      > </a
+      ><a name="856" href="Myhill-Nerode-Theorem.html#827" class="Bound"
+      >w</a
+      ><a name="857"
+      > </a
+      ><a name="858" class="Symbol"
+      >|</a
+      ><a name="859"
+      > </a
+      ><a name="860" href="DFA.html#2432" class="Function"
+      >&#948;&#8320;</a
+      ><a name="862"
+      > </a
+      ><a name="863" href="Myhill-Nerode-Theorem.html#831" class="Bound"
+      >u</a
+      ><a name="864"
+      > </a
+      ><a name="865" class="Symbol"
+      >|</a
+      ><a name="866"
+      > </a
+      ><a name="867" href="DFA.html#2432" class="Function"
+      >&#948;&#8320;</a
+      ><a name="869"
+      > </a
+      ><a name="870" href="Myhill-Nerode-Theorem.html#835" class="Bound"
+      >v</a
+      ><a name="871"
+      >
+  </a
+      ><a name="874" href="Myhill-Nerode-Theorem.html#788" class="Function"
+      >Rm-trans</a
+      ><a name="882"
+      > </a
+      ><a name="883" class="Symbol"
+      >{</a
+      ><a name="884" href="Myhill-Nerode-Theorem.html#884" class="Bound"
+      >w</a
+      ><a name="885" class="Symbol"
+      >}</a
+      ><a name="886"
+      > </a
+      ><a name="887" class="Symbol"
+      >{</a
+      ><a name="888" href="Myhill-Nerode-Theorem.html#888" class="Bound"
+      >u</a
+      ><a name="889" class="Symbol"
+      >}</a
+      ><a name="890"
+      > </a
+      ><a name="891" class="Symbol"
+      >{</a
+      ><a name="892" href="Myhill-Nerode-Theorem.html#892" class="Bound"
+      >v</a
+      ><a name="893" class="Symbol"
+      >}</a
+      ><a name="894"
+      > </a
+      ><a name="895" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="899"
+      > </a
+      ><a name="900" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="904"
+      > </a
+      ><a name="905" class="Symbol"
+      >|</a
+      ><a name="906"
+      > </a
+      ><a name="907" href="Myhill-Nerode-Theorem.html#907" class="Bound"
+      >q</a
+      ><a name="908"
+      > </a
+      ><a name="909" class="Symbol"
+      >|</a
+      ><a name="910"
+      > </a
+      ><a name="911" class="DottedPattern Symbol"
+      >.</a
+      ><a name="912" href="Myhill-Nerode-Theorem.html#907" class="DottedPattern Bound"
+      >q</a
+      ><a name="913"
+      > </a
+      ><a name="914" class="Symbol"
+      >|</a
+      ><a name="915"
+      > </a
+      ><a name="916" class="DottedPattern Symbol"
+      >.</a
+      ><a name="917" href="Myhill-Nerode-Theorem.html#907" class="DottedPattern Bound"
+      >q</a
+      ><a name="918"
+      > </a
+      ><a name="919" class="Symbol"
+      >=</a
+      ><a name="920"
+      > </a
+      ><a name="921" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="925"
+      >
+
+
+  </a
+      ><a name="930" href="Myhill-Nerode-Theorem.html#930" class="Function"
+      >Rm-Right-invariant</a
+      ><a name="948"
+      > </a
+      ><a name="949" class="Symbol"
+      >:</a
+      ><a name="950"
+      > </a
+      ><a name="951" href="Myhill-Nerode-Theorem.html#398" class="Function"
+      >Right-invariant</a
+      ><a name="966"
+      > </a
+      ><a name="967" href="Myhill-Nerode-Theorem.html#597" class="Function Operator"
+      >_Rm_</a
+      ><a name="971"
+      >
+  </a
+      ><a name="974" href="Myhill-Nerode-Theorem.html#930" class="Function"
+      >Rm-Right-invariant</a
+      ><a name="992"
+      > </a
+      ><a name="993" class="Symbol"
+      >{</a
+      ><a name="994" href="Myhill-Nerode-Theorem.html#994" class="Bound"
+      >w</a
+      ><a name="995" class="Symbol"
+      >}</a
+      ><a name="996"
+      > </a
+      ><a name="997" class="Symbol"
+      >{</a
+      ><a name="998" href="Myhill-Nerode-Theorem.html#998" class="Bound"
+      >u</a
+      ><a name="999" class="Symbol"
+      >}</a
+      ><a name="1000"
+      > </a
+      ><a name="1001" href="Myhill-Nerode-Theorem.html#1001" class="Bound"
+      >wRmu</a
+      ><a name="1005"
+      > </a
+      ><a name="1006" href="Myhill-Nerode-Theorem.html#1006" class="Bound"
+      >z</a
+      ><a name="1007"
+      >
+    </a
+      ><a name="1012" class="Symbol"
+      >=</a
+      ><a name="1013"
+      > </a
+      ><a name="1014" href="Relation.Binary.PreorderReasoning.html#1154" class="Function Operator"
+      >begin</a
+      ><a name="1019"
+      >
+      </a
+      ><a name="1026" href="DFA.html#2432" class="Function"
+      >&#948;&#8320;</a
+      ><a name="1028"
+      > </a
+      ><a name="1029" class="Symbol"
+      >(</a
+      ><a name="1030" href="Myhill-Nerode-Theorem.html#994" class="Bound"
+      >w</a
+      ><a name="1031"
+      > </a
+      ><a name="1032" href="Data.List.Base.html#1098" class="Function Operator"
+      >++</a
+      ><a name="1034"
+      > </a
+      ><a name="1035" href="Myhill-Nerode-Theorem.html#1006" class="Bound"
+      >z</a
+      ><a name="1036" class="Symbol"
+      >)</a
+      ><a name="1037"
+      >     </a
+      ><a name="1042" href="Relation.Binary.PreorderReasoning.html#1220" class="Function Operator"
+      >&#8801;&#10216;</a
+      ><a name="1044"
+      > </a
+      ><a name="1045" href="Util.html#466" class="Postulate"
+      >undefined</a
+      ><a name="1054"
+      > </a
+      ><a name="1055" href="Relation.Binary.PreorderReasoning.html#1220" class="Function Operator"
+      >&#10217;</a
+      ><a name="1056"
+      > </a
+      ><a name="1057" class="Comment"
+      >-- lem&#8321; q&#8320; w z &#10217;</a
+      ><a name="1073"
+      >
+      </a
+      ><a name="1080" href="DFA.html#2362" class="Function"
+      >&#948;*</a
+      ><a name="1082"
+      > </a
+      ><a name="1083" class="Symbol"
+      >(</a
+      ><a name="1084" href="DFA.html#2362" class="Function"
+      >&#948;*</a
+      ><a name="1086"
+      > </a
+      ><a name="1087" href="DFA.html#1252" class="Field"
+      >q&#8320;</a
+      ><a name="1089"
+      > </a
+      ><a name="1090" href="Myhill-Nerode-Theorem.html#994" class="Bound"
+      >w</a
+      ><a name="1091" class="Symbol"
+      >)</a
+      ><a name="1092"
+      > </a
+      ><a name="1093" href="Myhill-Nerode-Theorem.html#1006" class="Bound"
+      >z</a
+      ><a name="1094"
+      >  </a
+      ><a name="1096" href="Relation.Binary.PreorderReasoning.html#1220" class="Function Operator"
+      >&#8801;&#10216;</a
+      ><a name="1098"
+      > </a
+      ><a name="1099" href="Relation.Binary.PropositionalEquality.html#1036" class="Function"
+      >cong</a
+      ><a name="1103"
+      > </a
+      ><a name="1104" class="Symbol"
+      >(&#955;</a
+      ><a name="1106"
+      > </a
+      ><a name="1107" href="Myhill-Nerode-Theorem.html#1107" class="Bound"
+      >q</a
+      ><a name="1108"
+      > </a
+      ><a name="1109" class="Symbol"
+      >&#8594;</a
+      ><a name="1110"
+      > </a
+      ><a name="1111" href="DFA.html#2362" class="Function"
+      >&#948;*</a
+      ><a name="1113"
+      > </a
+      ><a name="1114" href="Myhill-Nerode-Theorem.html#1107" class="Bound"
+      >q</a
+      ><a name="1115"
+      > </a
+      ><a name="1116" href="Myhill-Nerode-Theorem.html#1006" class="Bound"
+      >z</a
+      ><a name="1117" class="Symbol"
+      >)</a
+      ><a name="1118"
+      > </a
+      ><a name="1119" href="Myhill-Nerode-Theorem.html#1001" class="Bound"
+      >wRmu</a
+      ><a name="1123"
+      > </a
+      ><a name="1124" href="Relation.Binary.PreorderReasoning.html#1220" class="Function Operator"
+      >&#10217;</a
+      ><a name="1125"
+      >
+      </a
+      ><a name="1132" href="DFA.html#2362" class="Function"
+      >&#948;*</a
+      ><a name="1134"
+      > </a
+      ><a name="1135" class="Symbol"
+      >(</a
+      ><a name="1136" href="DFA.html#2362" class="Function"
+      >&#948;*</a
+      ><a name="1138"
+      > </a
+      ><a name="1139" href="DFA.html#1252" class="Field"
+      >q&#8320;</a
+      ><a name="1141"
+      > </a
+      ><a name="1142" href="Myhill-Nerode-Theorem.html#998" class="Bound"
+      >u</a
+      ><a name="1143" class="Symbol"
+      >)</a
+      ><a name="1144"
+      > </a
+      ><a name="1145" href="Myhill-Nerode-Theorem.html#1006" class="Bound"
+      >z</a
+      ><a name="1146"
+      >  </a
+      ><a name="1148" href="Relation.Binary.PreorderReasoning.html#1220" class="Function Operator"
+      >&#8801;&#10216;</a
+      ><a name="1150"
+      > </a
+      ><a name="1151" href="Util.html#466" class="Postulate"
+      >undefined</a
+      ><a name="1160"
+      > </a
+      ><a name="1161" href="Relation.Binary.PreorderReasoning.html#1220" class="Function Operator"
+      >&#10217;</a
+      ><a name="1162"
+      > </a
+      ><a name="1163" class="Comment"
+      >--sym (lem&#8321; q&#8320; u z) &#10217;</a
+      ><a name="1184"
+      >
+      </a
+      ><a name="1191" href="DFA.html#2432" class="Function"
+      >&#948;&#8320;</a
+      ><a name="1193"
+      > </a
+      ><a name="1194" class="Symbol"
+      >(</a
+      ><a name="1195" href="Myhill-Nerode-Theorem.html#998" class="Bound"
+      >u</a
+      ><a name="1196"
+      > </a
+      ><a name="1197" href="Data.List.Base.html#1098" class="Function Operator"
+      >++</a
+      ><a name="1199"
+      > </a
+      ><a name="1200" href="Myhill-Nerode-Theorem.html#1006" class="Bound"
+      >z</a
+      ><a name="1201" class="Symbol"
+      >)</a
+      ><a name="1202"
+      >
+      </a
+      ><a name="1209" href="Relation.Binary.PreorderReasoning.html#1519" class="Function Operator"
+      >&#8718;</a
+      ><a name="1210"
+      >
+
+</a
+      ><a name="1212" href="Myhill-Nerode-Theorem.html#1212" class="Function"
+      >lem&#8323;</a
+      ><a name="1216"
+      > </a
+      ><a name="1217" class="Symbol"
+      >:</a
+      ><a name="1218"
+      > </a
+      ><a name="1219" class="Symbol"
+      >&#8704;</a
+      ><a name="1220"
+      > </a
+      ><a name="1221" href="Myhill-Nerode-Theorem.html#1221" class="Bound"
+      >L</a
+      ><a name="1222"
+      >
+       </a
+      ><a name="1230" class="Symbol"
+      >&#8594;</a
+      ><a name="1231"
+      > </a
+      ><a name="1232" href="RegularExpression.html#766" class="Datatype"
+      >Regular</a
+      ><a name="1239"
+      > </a
+      ><a name="1240" href="Myhill-Nerode-Theorem.html#1221" class="Bound"
+      >L</a
+      ><a name="1241"
+      >
+       </a
+      ><a name="1249" class="Symbol"
+      >&#8594;</a
+      ><a name="1250"
+      > </a
+      ><a name="1251" href="Data.Product.html#706" class="Function"
+      >&#931;[</a
+      ><a name="1253"
+      > </a
+      ><a name="1254" href="Myhill-Nerode-Theorem.html#1254" class="Bound"
+      >rm</a
+      ><a name="1256"
+      > </a
+      ><a name="1257" href="Data.Product.html#706" class="Function"
+      >&#8712;</a
+      ><a name="1258"
+      > </a
+      ><a name="1259" href="Relation.Binary.Core.html#740" class="Function"
+      >Rel</a
+      ><a name="1262"
+      > </a
+      ><a name="1263" href="Language.html#767" class="Function"
+      >&#931;*</a
+      ><a name="1265"
+      > </a
+      ><a name="1266" class="Symbol"
+      >_</a
+      ><a name="1267"
+      > </a
+      ><a name="1268" href="Data.Product.html#706" class="Function"
+      >]</a
+      ><a name="1269"
+      > </a
+      ><a name="1270" class="Symbol"
+      >(</a
+      ><a name="1271"
+      > </a
+      ><a name="1272" href="Myhill-Nerode-Theorem.html#398" class="Function"
+      >Right-invariant</a
+      ><a name="1287"
+      > </a
+      ><a name="1288" href="Myhill-Nerode-Theorem.html#1254" class="Bound"
+      >rm</a
+      ><a name="1290"
+      > </a
+      ><a name="1291" href="Data.Product.html#1073" class="Function Operator"
+      >&#215;</a
+      ><a name="1292"
+      > </a
+      ><a name="1293" href="Relation.Binary.Core.html#4978" class="Record"
+      >IsEquivalence</a
+      ><a name="1306"
+      > </a
+      ><a name="1307" href="Myhill-Nerode-Theorem.html#1254" class="Bound"
+      >rm</a
+      ><a name="1309"
+      > </a
+      ><a name="1310" class="Symbol"
+      >)</a
+      ><a name="1311"
+      > </a
+      ><a name="1312" class="Comment"
+      >-- &#8743; finite index &#8743; L is the union of its equivalence classes</a
+      ><a name="1373"
+      >
+</a
+      ><a name="1374" href="Myhill-Nerode-Theorem.html#1212" class="Function"
+      >lem&#8323;</a
+      ><a name="1378"
+      > </a
+      ><a name="1379" href="Myhill-Nerode-Theorem.html#1379" class="Bound"
+      >L</a
+      ><a name="1380"
+      > </a
+      ><a name="1381" href="Myhill-Nerode-Theorem.html#1381" class="Bound"
+      >prf</a
+      ><a name="1384"
+      > </a
+      ><a name="1385" class="Symbol"
+      >=</a
+      ><a name="1386"
+      > </a
+      ><a name="1387" href="Myhill-Nerode-Theorem.html#597" class="Function Operator"
+      >_Rm_</a
+      ><a name="1391"
+      > </a
+      ><a name="1392" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1393"
+      > </a
+      ><a name="1394" href="Util.html#466" class="Postulate"
+      >undefined</a
+      ><a name="1403"
+      > </a
+      ><a name="1404" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1405"
+      > </a
+      ><a name="1406" href="Util.html#466" class="Postulate"
+      >undefined</a
+      ><a name="1415"
+      >
+  </a
+      ><a name="1418" class="Keyword"
+      >where</a
+      ><a name="1423"
+      >
+    </a
+      ><a name="1428" href="Myhill-Nerode-Theorem.html#1428" class="Function"
+      >dfa</a
+      ><a name="1431"
+      > </a
+      ><a name="1432" class="Symbol"
+      >:</a
+      ><a name="1433"
+      > </a
+      ><a name="1434" href="DFA.html#1191" class="Record"
+      >DFA</a
+      ><a name="1437"
+      >
+    </a
+      ><a name="1442" href="Myhill-Nerode-Theorem.html#1428" class="Function"
+      >dfa</a
+      ><a name="1445"
+      > </a
+      ><a name="1446" class="Symbol"
+      >=</a
+      ><a name="1447"
+      > </a
+      ><a name="1448" href="Translation.html#12558" class="Function"
+      >regexToDFA</a
+      ><a name="1458"
+      > </a
+      ><a name="1459" href="Util.html#466" class="Postulate"
+      >undefined</a
+      ><a name="1468"
+      >
+    </a
+      ><a name="1473" class="Keyword"
+      >open</a
+      ><a name="1477"
+      > </a
+      ><a name="1478" href="Myhill-Nerode-Theorem.html#510" class="Module"
+      >Condition</a
+      ><a name="1487"
+      > </a
+      ><a name="1488" href="Myhill-Nerode-Theorem.html#1428" class="Function"
+      >dfa</a
+      ><a name="1491"
+      >
+
+
+</a
+      ><a name="1494" href="Myhill-Nerode-Theorem.html#1494" class="Function"
+      >lem&#8322;</a
+      ><a name="1498"
+      > </a
+      ><a name="1499" class="Symbol"
+      >:</a
+      ><a name="1500"
+      > </a
+      ><a name="1501" class="Symbol"
+      >&#8704;</a
+      ><a name="1502"
+      > </a
+      ><a name="1503" href="Myhill-Nerode-Theorem.html#1503" class="Bound"
+      >L</a
+      ><a name="1504"
+      >
+       </a
+      ><a name="1512" class="Symbol"
+      >&#8594;</a
+      ><a name="1513"
+      > </a
+      ><a name="1514" href="Data.Product.html#706" class="Function"
+      >&#931;[</a
+      ><a name="1516"
+      > </a
+      ><a name="1517" href="Myhill-Nerode-Theorem.html#1517" class="Bound"
+      >rm</a
+      ><a name="1519"
+      > </a
+      ><a name="1520" href="Data.Product.html#706" class="Function"
+      >&#8712;</a
+      ><a name="1521"
+      > </a
+      ><a name="1522" href="Relation.Binary.Core.html#740" class="Function"
+      >Rel</a
+      ><a name="1525"
+      > </a
+      ><a name="1526" href="Language.html#767" class="Function"
+      >&#931;*</a
+      ><a name="1528"
+      > </a
+      ><a name="1529" class="Symbol"
+      >_</a
+      ><a name="1530"
+      > </a
+      ><a name="1531" href="Data.Product.html#706" class="Function"
+      >]</a
+      ><a name="1532"
+      > </a
+      ><a name="1533" class="Symbol"
+      >(</a
+      ><a name="1534"
+      > </a
+      ><a name="1535" href="Myhill-Nerode-Theorem.html#398" class="Function"
+      >Right-invariant</a
+      ><a name="1550"
+      > </a
+      ><a name="1551" href="Myhill-Nerode-Theorem.html#1517" class="Bound"
+      >rm</a
+      ><a name="1553"
+      > </a
+      ><a name="1554" href="Data.Product.html#1073" class="Function Operator"
+      >&#215;</a
+      ><a name="1555"
+      > </a
+      ><a name="1556" href="Relation.Binary.Core.html#4978" class="Record"
+      >IsEquivalence</a
+      ><a name="1569"
+      > </a
+      ><a name="1570" href="Myhill-Nerode-Theorem.html#1517" class="Bound"
+      >rm</a
+      ><a name="1572"
+      > </a
+      ><a name="1573" class="Symbol"
+      >)</a
+      ><a name="1574"
+      > </a
+      ><a name="1575" class="Comment"
+      >-- &#8743; finite index &#8743; L is the union of its equivalence classes</a
+      ><a name="1636"
+      >
+       </a
+      ><a name="1644" class="Symbol"
+      >&#8594;</a
+      ><a name="1645"
+      > </a
+      ><a name="1646" href="RegularExpression.html#766" class="Datatype"
+      >Regular</a
+      ><a name="1653"
+      > </a
+      ><a name="1654" href="Myhill-Nerode-Theorem.html#1503" class="Bound"
+      >L</a
+      ><a name="1655"
+      >
+</a
+      ><a name="1656" href="Myhill-Nerode-Theorem.html#1494" class="Function"
+      >lem&#8322;</a
+      ><a name="1660"
+      > </a
+      ><a name="1661" class="Symbol"
+      >=</a
+      ><a name="1662"
+      > </a
+      ><a name="1663" href="Util.html#466" class="Postulate"
+      >undefined</a
+      ><a name="1672"
+      >
+
+
+</a
+      ><a name="1675" href="Myhill-Nerode-Theorem.html#1675" class="Function"
+      >lem&#8321;</a
+      ><a name="1679"
+      > </a
+      ><a name="1680" class="Symbol"
+      >:</a
+      ><a name="1681"
+      > </a
+      ><a name="1682" class="Symbol"
+      >&#8704;</a
+      ><a name="1683"
+      > </a
+      ><a name="1684" href="Myhill-Nerode-Theorem.html#1684" class="Bound"
+      >L</a
+      ><a name="1685"
+      >
+       </a
+      ><a name="1693" class="Symbol"
+      >&#8594;</a
+      ><a name="1694"
+      > </a
+      ><a name="1695" href="RegularExpression.html#766" class="Datatype"
+      >Regular</a
+      ><a name="1702"
+      > </a
+      ><a name="1703" href="Myhill-Nerode-Theorem.html#1684" class="Bound"
+      >L</a
+      ><a name="1704"
+      >
+         </a
+      ><a name="1714" href="Util.html#543" class="Function Operator"
+      >&#8660;</a
+      ><a name="1715"
+      > </a
+      ><a name="1716" href="Data.Product.html#706" class="Function"
+      >&#931;[</a
+      ><a name="1718"
+      > </a
+      ><a name="1719" href="Myhill-Nerode-Theorem.html#1719" class="Bound"
+      >rm</a
+      ><a name="1721"
+      > </a
+      ><a name="1722" href="Data.Product.html#706" class="Function"
+      >&#8712;</a
+      ><a name="1723"
+      > </a
+      ><a name="1724" href="Relation.Binary.Core.html#740" class="Function"
+      >Rel</a
+      ><a name="1727"
+      > </a
+      ><a name="1728" href="Language.html#767" class="Function"
+      >&#931;*</a
+      ><a name="1730"
+      > </a
+      ><a name="1731" class="Symbol"
+      >_</a
+      ><a name="1732"
+      > </a
+      ><a name="1733" href="Data.Product.html#706" class="Function"
+      >]</a
+      ><a name="1734"
+      > </a
+      ><a name="1735" class="Symbol"
+      >(</a
+      ><a name="1736"
+      > </a
+      ><a name="1737" href="Myhill-Nerode-Theorem.html#398" class="Function"
+      >Right-invariant</a
+      ><a name="1752"
+      > </a
+      ><a name="1753" href="Myhill-Nerode-Theorem.html#1719" class="Bound"
+      >rm</a
+      ><a name="1755"
+      > </a
+      ><a name="1756" href="Data.Product.html#1073" class="Function Operator"
+      >&#215;</a
+      ><a name="1757"
+      > </a
+      ><a name="1758" href="Relation.Binary.Core.html#4978" class="Record"
+      >IsEquivalence</a
+      ><a name="1771"
+      > </a
+      ><a name="1772" href="Myhill-Nerode-Theorem.html#1719" class="Bound"
+      >rm</a
+      ><a name="1774"
+      > </a
+      ><a name="1775" class="Symbol"
+      >)</a
+      ><a name="1776"
+      > </a
+      ><a name="1777" class="Comment"
+      >-- &#8743; finite index &#8743; L is the union of its equivalence classes</a
+      ><a name="1838"
+      >
+</a
+      ><a name="1839" href="Myhill-Nerode-Theorem.html#1675" class="Function"
+      >lem&#8321;</a
+      ><a name="1843"
+      > </a
+      ><a name="1844" class="Symbol"
+      >=</a
+      ><a name="1845"
+      > </a
+      ><a name="1846" href="Util.html#466" class="Postulate"
+      >undefined</a
+      ><a name="1855"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

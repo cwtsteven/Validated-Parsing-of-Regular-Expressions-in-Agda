@@ -280,13 +280,13 @@ remove-inaccessible-states D = R , prf
   where
     open DFA D
     R : DFA
-    R = record { Q = {!!} ; δ = {!!} ; q₀ = {!!} ; F = {!!} ; _≋_ = {!!} ; Dec-≋ = {!!} ; ≋-isEquiv = {!!} ; δ-lem = {!!} ; F-lem = {!!} ; Q? = {!!} ; ∣Q∣-1 = {!!} ; It = {!!} ; ∀q∈It = {!!} ; unique = {!!} }
+    R = record { Q = undefined ; δ = undefined ; q₀ = undefined ; F = undefined ; _≋_ = undefined ; Dec-≋ = undefined ; ≋-isEquiv = undefined ; δ-lem = undefined ; F-lem = undefined ; Q? = undefined ; ∣Q∣-1 = undefined ; It = undefined ; ∀q∈It = undefined ; unique = undefined }
     prf : All-Reachable-States R
-    prf = {!!}
+    prf = undefined
 
 
 quotient-construciton : DFA → DFA
-quotient-construciton D = record { Q = {!!} ; δ = {!!} ; q₀ = {!!} ; F = {!!} ; _≋_ = {!!} ; Dec-≋ = {!!} ; ≋-isEquiv = {!!} ; δ-lem = {!!} ; F-lem = {!!} ; Q? = {!!} ; ∣Q∣-1 = {!!} ; It = {!!} ; ∀q∈It = {!!} ; unique = {!!} }
+quotient-construciton D = record { Q = undefined ; δ = undefined ; q₀ = undefined ; F = undefined ; _≋_ = undefined ; Dec-≋ = undefined ; ≋-isEquiv = undefined ; δ-lem = undefined ; F-lem = undefined ; Q? = undefined ; ∣Q∣-1 = undefined ; It = undefined ; ∀q∈It = undefined ; unique = undefined }
   where
     open DFA D
     open DFA-Operations D

@@ -1,0 +1,447 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >RegExp-Decidability</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Comment"
+      >{-
+  This module contains the following proofs:
+    &#8704;e&#8712;RegExp. L(e) is decidable
+
+  Steven Cheung 2015.
+  Version 04-12-2015
+-}</a
+      ><a name="128"
+      >
+</a
+      ><a name="129" class="Keyword"
+      >open</a
+      ><a name="133"
+      > </a
+      ><a name="134" class="Keyword"
+      >import</a
+      ><a name="140"
+      > </a
+      ><a name="141" href="Util.html#1" class="Module"
+      >Util</a
+      ><a name="145"
+      >
+</a
+      ><a name="146" class="Keyword"
+      >module</a
+      ><a name="152"
+      > </a
+      ><a name="153" href="RegExp-Decidability.html#1" class="Module"
+      >RegExp-Decidability</a
+      ><a name="172"
+      > </a
+      ><a name="173" class="Symbol"
+      >(</a
+      ><a name="174" href="RegExp-Decidability.html#174" class="Bound"
+      >&#931;</a
+      ><a name="175"
+      > </a
+      ><a name="176" class="Symbol"
+      >:</a
+      ><a name="177"
+      > </a
+      ><a name="178" class="PrimitiveType"
+      >Set</a
+      ><a name="181" class="Symbol"
+      >)(</a
+      ><a name="183" href="RegExp-Decidability.html#183" class="Bound"
+      >dec</a
+      ><a name="186"
+      > </a
+      ><a name="187" class="Symbol"
+      >:</a
+      ><a name="188"
+      > </a
+      ><a name="189" href="Util.html#644" class="Function"
+      >DecEq</a
+      ><a name="194"
+      > </a
+      ><a name="195" href="RegExp-Decidability.html#174" class="Bound"
+      >&#931;</a
+      ><a name="196" class="Symbol"
+      >)</a
+      ><a name="197"
+      > </a
+      ><a name="198" class="Keyword"
+      >where</a
+      ><a name="203"
+      >
+
+</a
+      ><a name="205" class="Keyword"
+      >open</a
+      ><a name="209"
+      > </a
+      ><a name="210" class="Keyword"
+      >import</a
+      ><a name="216"
+      > </a
+      ><a name="217" href="Subset.html#1" class="Module"
+      >Subset</a
+      ><a name="223"
+      >
+</a
+      ><a name="224" class="Keyword"
+      >open</a
+      ><a name="228"
+      > </a
+      ><a name="229" class="Keyword"
+      >import</a
+      ><a name="235"
+      > </a
+      ><a name="236" href="RegularExpression.html#1" class="Module"
+      >RegularExpression</a
+      ><a name="253"
+      > </a
+      ><a name="254" href="RegExp-Decidability.html#174" class="Bound"
+      >&#931;</a
+      ><a name="255"
+      > </a
+      ><a name="256" href="RegExp-Decidability.html#183" class="Bound"
+      >dec</a
+      ><a name="259"
+      >
+</a
+      ><a name="260" class="Keyword"
+      >open</a
+      ><a name="264"
+      > </a
+      ><a name="265" class="Keyword"
+      >import</a
+      ><a name="271"
+      > </a
+      ><a name="272" href="eNFA.html#1" class="Module"
+      >eNFA</a
+      ><a name="276"
+      > </a
+      ><a name="277" href="RegExp-Decidability.html#174" class="Bound"
+      >&#931;</a
+      ><a name="278"
+      > </a
+      ><a name="279" href="RegExp-Decidability.html#183" class="Bound"
+      >dec</a
+      ><a name="282"
+      >
+</a
+      ><a name="283" class="Keyword"
+      >open</a
+      ><a name="287"
+      > </a
+      ><a name="288" class="Keyword"
+      >import</a
+      ><a name="294"
+      > </a
+      ><a name="295" href="NFA.html#1" class="Module"
+      >NFA</a
+      ><a name="298"
+      > </a
+      ><a name="299" href="RegExp-Decidability.html#174" class="Bound"
+      >&#931;</a
+      ><a name="300"
+      > </a
+      ><a name="301" href="RegExp-Decidability.html#183" class="Bound"
+      >dec</a
+      ><a name="304"
+      >
+</a
+      ><a name="305" class="Keyword"
+      >open</a
+      ><a name="309"
+      > </a
+      ><a name="310" class="Keyword"
+      >import</a
+      ><a name="316"
+      > </a
+      ><a name="317" href="DFA.html#1" class="Module"
+      >DFA</a
+      ><a name="320"
+      > </a
+      ><a name="321" href="RegExp-Decidability.html#174" class="Bound"
+      >&#931;</a
+      ><a name="322"
+      > </a
+      ><a name="323" href="RegExp-Decidability.html#183" class="Bound"
+      >dec</a
+      ><a name="326"
+      >
+</a
+      ><a name="327" class="Keyword"
+      >open</a
+      ><a name="331"
+      > </a
+      ><a name="332" class="Keyword"
+      >import</a
+      ><a name="338"
+      > </a
+      ><a name="339" href="Translation.html#1" class="Module"
+      >Translation</a
+      ><a name="350"
+      > </a
+      ><a name="351" href="RegExp-Decidability.html#174" class="Bound"
+      >&#931;</a
+      ><a name="352"
+      > </a
+      ><a name="353" href="RegExp-Decidability.html#183" class="Bound"
+      >dec</a
+      ><a name="356"
+      >
+</a
+      ><a name="357" class="Keyword"
+      >open</a
+      ><a name="361"
+      > </a
+      ><a name="362" class="Keyword"
+      >import</a
+      ><a name="368"
+      > </a
+      ><a name="369" href="Correctness.html#1" class="Module"
+      >Correctness</a
+      ><a name="380"
+      > </a
+      ><a name="381" href="RegExp-Decidability.html#174" class="Bound"
+      >&#931;</a
+      ><a name="382"
+      > </a
+      ><a name="383" href="RegExp-Decidability.html#183" class="Bound"
+      >dec</a
+      ><a name="386"
+      >
+
+</a
+      ><a name="388" class="Comment"
+      >{- proving L(Regex) is decidable -}</a
+      ><a name="423"
+      >
+</a
+      ><a name="424" href="RegExp-Decidability.html#424" class="Function"
+      >Dec-L&#7487;</a
+      ><a name="430"
+      > </a
+      ><a name="431" class="Symbol"
+      >:</a
+      ><a name="432"
+      > </a
+      ><a name="433" class="Symbol"
+      >&#8704;</a
+      ><a name="434"
+      > </a
+      ><a name="435" href="RegExp-Decidability.html#435" class="Bound"
+      >e</a
+      ><a name="436"
+      > </a
+      ><a name="437" class="Symbol"
+      >&#8594;</a
+      ><a name="438"
+      > </a
+      ><a name="439" href="Subset.html#746" class="Function"
+      >Decidable</a
+      ><a name="448"
+      > </a
+      ><a name="449" class="Symbol"
+      >(</a
+      ><a name="450" href="RegularExpression.html#1512" class="Function"
+      >L&#7487;</a
+      ><a name="452"
+      > </a
+      ><a name="453" href="RegExp-Decidability.html#435" class="Bound"
+      >e</a
+      ><a name="454" class="Symbol"
+      >)</a
+      ><a name="455"
+      >
+</a
+      ><a name="456" href="RegExp-Decidability.html#424" class="Function"
+      >Dec-L&#7487;</a
+      ><a name="462"
+      > </a
+      ><a name="463" href="RegExp-Decidability.html#463" class="Bound"
+      >e</a
+      ><a name="464"
+      > </a
+      ><a name="465" class="Symbol"
+      >=</a
+      ><a name="466"
+      > </a
+      ><a name="467" href="Subset.html#2123" class="Function"
+      >Decidable-lem&#8321;</a
+      ><a name="481"
+      >
+             </a
+      ><a name="495" class="Symbol"
+      >(</a
+      ><a name="496" href="Subset.html#1655" class="Function"
+      >&#8776;-sym</a
+      ><a name="501"
+      > </a
+      ><a name="502" class="Symbol"
+      >(</a
+      ><a name="503" href="Subset.html#1764" class="Function"
+      >&#8776;-trans</a
+      ><a name="510"
+      > </a
+      ><a name="511" class="Symbol"
+      >(</a
+      ><a name="512" href="Correctness.html#791" class="Function"
+      >L&#7487;&#8776;L&#7497;&#7482;</a
+      ><a name="518"
+      > </a
+      ><a name="519" href="RegExp-Decidability.html#463" class="Bound"
+      >e</a
+      ><a name="520" class="Symbol"
+      >)</a
+      ><a name="521"
+      > </a
+      ><a name="522" class="Symbol"
+      >(</a
+      ><a name="523" href="Subset.html#1764" class="Function"
+      >&#8776;-trans</a
+      ><a name="530"
+      > </a
+      ><a name="531" class="Symbol"
+      >(</a
+      ><a name="532" href="Correctness.html#971" class="Function"
+      >L&#7497;&#7482;&#8776;L&#7482;</a
+      ><a name="538"
+      > </a
+      ><a name="539" href="RegExp-Decidability.html#613" class="Function"
+      >&#949;-nfa</a
+      ><a name="544" class="Symbol"
+      >)</a
+      ><a name="545"
+      > </a
+      ><a name="546" class="Symbol"
+      >(</a
+      ><a name="547" href="Correctness.html#1167" class="Function"
+      >L&#7482;&#8776;L&#7472;</a
+      ><a name="552"
+      > </a
+      ><a name="553" href="RegExp-Decidability.html#672" class="Function"
+      >nfa</a
+      ><a name="556" class="Symbol"
+      >))))</a
+      ><a name="560"
+      >
+             </a
+      ><a name="574" class="Symbol"
+      >(</a
+      ><a name="575" href="DFA.html#4224" class="Function"
+      >Dec-L&#7472;</a
+      ><a name="581"
+      > </a
+      ><a name="582" href="RegExp-Decidability.html#723" class="Function"
+      >dfa</a
+      ><a name="585" class="Symbol"
+      >)</a
+      ><a name="586"
+      >
+         </a
+      ><a name="596" class="Keyword"
+      >where</a
+      ><a name="601"
+      >
+           </a
+      ><a name="613" href="RegExp-Decidability.html#613" class="Function"
+      >&#949;-nfa</a
+      ><a name="618"
+      > </a
+      ><a name="619" class="Symbol"
+      >:</a
+      ><a name="620"
+      > </a
+      ><a name="621" href="eNFA.html#1135" class="Record"
+      >&#949;-NFA</a
+      ><a name="626"
+      >
+           </a
+      ><a name="638" href="RegExp-Decidability.html#613" class="Function"
+      >&#949;-nfa</a
+      ><a name="643"
+      > </a
+      ><a name="644" class="Symbol"
+      >=</a
+      ><a name="645"
+      > </a
+      ><a name="646" href="Translation.html#1232" class="Function"
+      >regexTo&#949;-NFA</a
+      ><a name="658"
+      > </a
+      ><a name="659" href="RegExp-Decidability.html#463" class="Bound"
+      >e</a
+      ><a name="660"
+      >
+           </a
+      ><a name="672" href="RegExp-Decidability.html#672" class="Function"
+      >nfa</a
+      ><a name="675"
+      > </a
+      ><a name="676" class="Symbol"
+      >:</a
+      ><a name="677"
+      > </a
+      ><a name="678" href="NFA.html#1133" class="Record"
+      >NFA</a
+      ><a name="681"
+      >
+           </a
+      ><a name="693" href="RegExp-Decidability.html#672" class="Function"
+      >nfa</a
+      ><a name="696"
+      > </a
+      ><a name="697" class="Symbol"
+      >=</a
+      ><a name="698"
+      > </a
+      ><a name="699" href="Translation.html#12443" class="Function"
+      >regexToNFA</a
+      ><a name="709"
+      > </a
+      ><a name="710" href="RegExp-Decidability.html#463" class="Bound"
+      >e</a
+      ><a name="711"
+      >
+           </a
+      ><a name="723" href="RegExp-Decidability.html#723" class="Function"
+      >dfa</a
+      ><a name="726"
+      > </a
+      ><a name="727" class="Symbol"
+      >:</a
+      ><a name="728"
+      > </a
+      ><a name="729" href="DFA.html#1191" class="Record"
+      >DFA</a
+      ><a name="732"
+      >
+           </a
+      ><a name="744" href="RegExp-Decidability.html#723" class="Function"
+      >dfa</a
+      ><a name="747"
+      > </a
+      ><a name="748" class="Symbol"
+      >=</a
+      ><a name="749"
+      > </a
+      ><a name="750" href="Translation.html#12558" class="Function"
+      >regexToDFA</a
+      ><a name="760"
+      > </a
+      ><a name="761" href="RegExp-Decidability.html#463" class="Bound"
+      >e</a
+      ><a name="762"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

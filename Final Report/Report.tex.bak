@@ -1,0 +1,576 @@
+\documentclass[twoside,openright,final]{bhamthesis}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{geometry}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{enumerate,letltxmacro}
+\usepackage{enumitem}
+\LetLtxMacro\itemold\item
+\renewcommand{\item}{\itemindent0.5cm\itemold}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\usepackage{etoolbox}
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+\pagestyle{plain}
+
+\setlength{\oddsidemargin}{1cm} % 2cm margin on the left for odd pages
+\setlength{\evensidemargin}{0cm} % 2cm margin on the right for even pages
+
+\title{Certified Parsing of Regular Expressions in Agda}
+\department{Computer Science}
+\degree{BSc. Computer Science}
+\author{Wai Tak, Cheung}
+\studentid{1465388}
+\supervisor{Dr. Martín Escardó}
+
+\begin{document}
+\maketitle
+
+\abstract
+\par Blah blah blah. Blah blah blah. Blah blah blah. Blah blah blah. Blah
+blah blah. Blah blah blah. Blah blah blah. Blah blah blah.
+Blah blah blah. Blah blah blah. Blah blah blah. Blah blah blah. Blah
+blah blah.
+Blah blah blah. Blah blah blah. Blah blah blah. Blah blah blah.
+Blah blah blah. Blah blah blah. Blah blah blah. Blah blah blah. \\ \\
+Keywords: language, regular expression, finite automata, agda,
+thompson's construction, powerset construction, proofs
+
+\acknowledgments
+\par Blah blah blah. Blah blah blah. Blah blah blah. Blah blah blah. Blah
+blah blah. Blah blah blah. Blah blah blah.
+Blah blah blah. Blah blah blah. Blah blah blah.
+Blah blah blah. Blah blah blah. Blah blah blah. Blah blah blah. Blah
+blah blah. Blah blah blah. Blah blah blah.
+Blah blah blah. Blah blah blah. Blah blah blah. Blah blah blah. Blah
+blah blah. Blah blah blah.
+Blah blah blah. Blah blah blah. Blah blah blah. Blah blah blah. Blah
+blah blah.
+
+\repository
+\vspace{7cm}
+\begin{center}
+  All software for this project can be found at \\
+  https://codex.cs.bham.ac.uk/svn/projects/2015/wtc488/
+\end{center}
+
+\newpage
+\section*{List of Abbreviations}
+\addcontentsline{toc}{section}{List of Abbreviations}
+\begin{tabular}{ll}
+  \textbf{\(\epsilon\)-NFA} & Non-deterministic finite automata with
+                              \(\epsilon\)-transition \\
+  \textbf{NFA} & Non-deterministic finite automata \\
+  \textbf{DFA} & Deterministic finite automata 
+\end{tabular}
+\newpage
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introduction}
+This work aims to formalise the parts in Automata Theory and Formal
+Language Theory that are related to regular languages and finite automata
+using Agda. The project is separated into three parts: 1) translating any
+regular expression to a DFA, 2) proving the correctness of
+the translation and 3) formalising the Myhill-Nerode Theorem. 
+
+\par (Here will be a paragraph emphasising the importance of
+parsing/automata)
+
+\par The next section will be an introduction on proof assistance and
+a review on related research topic. The third section will
+be a detail description of our approach followed by the
+evaluation. Finally, the conclusions will be drawn. (more elaboration)
+
+
+\section{Literature Review}
+\subsection{Constructive Logic and Constructive Mathematics}
+Blah
+\subsection{Curry-Howard Isomorphism}
+Relations between programs and proofs.
+\subsection{Intuitionistic Type Theory}
+Blah
+\subsection{Agda}
+Brief introduction on how agda works as a proof assistant, and how to
+write proofs in agda.
+\subsection{Related Work}
+The matrix representation.
+
+
+\section{Formalisation in Type Theory}
+Let us recall the three objectives of the project: 1) translating any
+regular expression to a DFA 2) proving the correctness of the translation 
+and 3) formalising the Myhill-Nerode Theorem. In part 1), we first followed Thompson's
+construction algorithm to build an \(\epsilon\)-NFA from a
+regular expression. Then we removed all its \(\epsilon\)-transitions by computing the
+\(\epsilon\)-closure for every states. After that, we used powerset
+construction to determinise the automata. Finally, the DFA is
+minimised by removing unreachable states and quotient construction. 
+While in part 2), we proved the correctness of the above
+translation by proving the language accepted by any given regular expression is
+equal to the language accepted by its translated automata. All the
+proofs written in this report are translated according to the formal
+proofs in Agda. In part 3), (pending...)
+
+\par In this section, we will walk through the formalisation of
+each of these steps together with their correctness proofs. However,
+before we do that, we will have to define a
+representation of subset as it is one of the fundamental elements in
+the theory.
+
+\subsection{Subsets and Decidable Subsets}
+\paragraph{Agda} Please refers to Subset.agda and Subset/DecidableSubset.agda
+
+\paragraph{Definition 1.1} Suppose \(A\) is a set, in type theory, we represent its subsets as a unary function on
+\(A\), i.e. \(Subset\ A = A \to Set\). \\
+
+\par When declaring a subset, we can write \(SubA =
+\lambda\ a \to\ ?\) in Agda, the \(?\) here corresponds to the
+condition for an element of \(A\) to be included in \(SubA\). This construction is
+very similar to set comprehension. For example, the subset 
+\(\{a\ | \ a \in A,\ P(a)\}\) corresponds to \(\lambda\ a \to P\
+a\). Subset is also a unary predicate of \(A\); therefore, the decidability of Subset will remain
+unknown until it is proved. 
+
+\paragraph{Definition 1.2} The other representation of subset is \(DecSubset\ A = A \to
+Bool\). Unlike \(Subset\), its decidability is ensured by its
+definition. \\
+
+\par The two definitions have different purposes. \(Subset\) was used to represent \(Language\) because not every
+language is decidable. For other parts in the project 
+such as the subset of states of an automata, \(DecSubset\) was used
+as the decidability was assumed in the definition. The two definitions
+are defined in Subset.agda and Subset/DecidableSubset.agda
+respectively as stated at the top. Operators such as membership (\(\in\)), subset
+(\(\subseteq\)), superset (\(\supseteq\)) and equality (\(=\)) can
+also be found in the two files. 
+
+\par Now, by using the subset representation, we can define languages, regular expressions and finite
+automata. Their formalisation in this project followed tightly to the
+definition written by Aho, A. and Ullman, J \cite{aho1972}. 
+
+\subsection{Languages}
+\paragraph{Agda} Please refers to Language.agda \\
+
+\par Suppose we have a set of alphabets \(\Sigma\); in type theory, it
+can simply be a data type, i.e. \(\Sigma : Set\). Notice that the decidable equality of
+\(\Sigma\) is required. In Agda, they are passed to every modules as
+parameters \((\Sigma : Set)\) \((dec : DecEq\ \Sigma)\). 
+
+\paragraph{Definition 2.1} We first define \(\Sigma^*\) as the set of all
+strings over \(\Sigma\). In our approach, it was defined as a list of
+\(\Sigma\), i.e. \(\Sigma^* = List\ \Sigma\). \\
+
+\par For example, (\(A :: g ::
+d :: a :: []\)) represents the string 'Agda' and the empty list \([]\)
+represents an empty string. In this way, when running the
+automata, we can pattern match on the input string to get the first
+input alphabet to run a transition. 
+
+\paragraph{Definition 2.2} A language is a subset of
+\(\Sigma^*\); in type theory, \(Language = Subset\ \Sigma^*\). 
+Notice that \(Subset\) instead of \(DecSubset\) is used because not every language is decidable. 
+
+\subsubsection{Operations on Languages}
+
+\paragraph{Definition 2.3} If \(L_1\) and \(L_2\) are languages, then
+the union of the two languages \(L_1\cup L_2\) is defined as \(\{w\
+|\  w \in L_1\ \vee \ w \in
+L_2\}\). In type theory, we defined it as \(L_1 \cup L_2 = \lambda\ w \to w \in L_1\ \uplus\ w
+\in L_2\).
+
+\paragraph{Definition 2.4} If \(L_1\) and \(L_2\) are languages, then
+the concatenation of the two languages 
+\(L_1\bullet L_2\) is defined
+as \(\{w\  |\  \exists u\in L_1.\ \exists v\in L_2.\ w = uv\}\). In
+type theory, we defined it as \(L_1\bullet L_2 = \lambda\ w \to \exists[
+u \in \Sigma^* ]\ \exists[ v \in \Sigma^* ] ( u \in L_1 \times v \in L_2 \times w \equiv u\ ++\ v ) \).
+
+\paragraph{Definition 2.5} If \(L\) is a language, then the closure of
+L, \(L\ast\) is defined as \( \bigcup_{n \in N} L^n \) where
+\( L^n = L\bullet L^{n - 1} \) and \(L^0 = \{\epsilon\}\). In type
+theory, we have \(L\ \star = \lambda w \to \exists [ n \in \mathbb{N}
+]( w \in L\ \)\^\ \(n)\) where the function \_\^ \_ is defined
+recursively as: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth,aboveskip=0pt,belowskip=0pt]
+_^_ : Language $\to$ Language $\to$ Language
+L ^ zero    = $[\![\epsilon ]\!]$
+L ^ (suc n) = L $\bullet$ L ^ n
+\end{lstlisting}
+
+\subsection{Regular Languages and Regular Expressions}
+\paragraph{Agda} Please refers to RegularExpression.agda
+
+\paragraph{Definition 3.1} We define regular languages over
+\(\Sigma\) inductively as follow:
+\begin{enumerate}[nolistsep]
+  \item \(\O\) is a regular language;
+  \item \(\{\epsilon\}\) is a regular language;
+  \item \(\forall a\in\Sigma.\ \{a\}\) is a regular language;
+  \item if \(L_1\) and \(L_2\) are regular languages, then
+    \begin{enumerate}[nolistsep]
+      \item \(L_1\cup L_2\) is a regular language;
+      \item \(L_1\bullet L_2\) is a regular language;
+      \item \(L_1\ \star\) is a regular language.
+    \end{enumerate}
+\end{enumerate}
+\vspace{1pc}
+\begin{lstlisting}[caption=Regular Language,mathescape=true]
+data Regular : Language $\to$ Set$_1$ where
+  nullL : $\forall$ {L} $\to$ L $\approx$ $\o$ $\to$ Regular L
+  empty : $\forall$ {L} $\to$ L $\approx$ $[\![\epsilon ]\!]$ $\to$ Regular L
+  singl : $\forall$ {L} $\to$ (a : $\Sigma$) $\to$ L $\approx$ $[\![a]\!]$ $\to$ Regular L
+  union : $\forall$ {L} L$_1$ L$_2$ $\to$ Regular L$_1$ $\to$ Regular L$_2$ $\to$ L $\approx$ $L_1\ \cup\ L_2$ $\to$ Regular L
+  conca : $\forall$ {L} L$_1$ L$_2$ $\to$ Regular L$_1$ $\to$ Regular L$_2$ $\to$ L $\approx$ $L_1\ \bullet\ L_2$ $\to$ Regular L
+  kleen : $\forall$ {L} L$_1$ $\to$ Regular L$_1$ $\to$ L $\approx$ L$_1\ \star$ $\to$ Regular L
+\end{lstlisting}
+
+\paragraph{Definition 3.2} Here we define regular expressions
+inductively over \(\Sigma\) as follow: 
+\begin{enumerate}[nolistsep]
+  \item \(\O\) is a regular expression denoting the regular language \(\O\);
+  \item \(\epsilon\) is a regular expression denoting the regular language \(\{\epsilon\}\);
+  \item \(\forall a\in\Sigma.\ a\) is a regular expression denoting the regular language \(\{a\}\);
+  \item if \(e_{1}\) and \(e_{2}\) are regular expressions denoting the regular
+    languages \(L_1\) and \(L_2\) respectively, then
+    \begin{enumerate}[nolistsep]
+      \item \(e_{1}\ |\ e_{2}\) is a regular expressions denoting the
+        regular language \(L_1 \cup L_2\);
+      \item \(e_{1}\cdot e_{2}\) is a regular expression denoting the
+        regular language \(L_1\bullet L_2\);
+      \item \(e_{1}^{\ *}\) is a regular expression denoting the regular
+        language \(L_1\ \star\).
+     \end{enumerate}
+\end{enumerate}
+\vspace{1pc}
+\par The Agda formalisation was separated into two parts, firstly the
+definition of regular expression and secondly the language denoted by
+it.
+
+\begin{lstlisting}[caption=Regular Expression,mathescape=true]
+data RegExp : Set where
+  $\O$    : RegExp
+  $\epsilon$    : RegExp
+  $\sigma$    : $\Sigma$ $\to$ RegExp
+  _|_ : RegExp $\to$ RegExp $\to$ RegExp
+  _$\cdot$_  : RegExp $\to$ RegExp $\to$ RegExp
+  _$^*$  : RegExp $\to$ RegExp
+\end{lstlisting} 
+
+\begin{lstlisting}[caption=Language denoted by a regular expression,mathescape=true]
+L$^R$ : RegExp $\to$ Language
+L$^R$ $\O$   = $\o$
+L$^R$ $\epsilon$   = $[\![\epsilon ]\!]$
+L$^R$ ($\sigma$ a) = $[\![a]\!]$
+L$^R$ (e$_1$ | e$_2$) = L$^R$ e$_1$ $\cup$ L$^R$ e$_2$
+L$^R$ (e$_1$ $\cdot$ e$_2$) = L$^R$ e$_1$ $\bullet$ L$^R$ e$_2$
+L$^R$ (e$^*$) = (L$^R$ e) $\star$
+\end{lstlisting}
+
+\subsection{\(\epsilon\)-Non Deterministic Finite Automata}
+\paragraph{Agda} Please refers to e-NFA.agda \\
+
+\par By now, the set of strings we have considered are in the form of
+\(List\ \Sigma^*\). However, this definition gives us no way to pattern match
+an \(\epsilon\)-transition. Therefore, we need to introduce another
+representation for a set of alphabets that includes \(\epsilon\). (For Definition 4.1 and
+4.2, please refers to Language.agda)
+
+\paragraph{Definition 4.1} We define \(\Sigma^e\) as the union of
+\(\Sigma\) and \(\{\epsilon\}\), i.e. \(\Sigma^e = \Sigma \cup
+\{\epsilon\}\). In Agda, this is simply a data type definition:
+\begin{lstlisting}[mathescape=true,xleftmargin=.4\textwidth,aboveskip=0pt,belowskip=0pt]
+data $\Sigma^e$ : Set where
+  $\alpha$ : $\Sigma \to \Sigma^e$
+  E : $\Sigma^e$
+\end{lstlisting}
+
+\paragraph{Definition 4.2} Now we define \(\Sigma^{e*}\), the set of all strings over
+\(\Sigma^e\) in a way similar to \(\Sigma^*\), i.e. \(\Sigma^{e*} =
+List\ \Sigma^e\). \\
+
+\par For example, the string 'Agda' can be
+represented by (\(\alpha\ A ::\ \alpha\ g :: E ::\ \alpha\ d :: E ::\ \alpha\
+a :: []\)) or (\(E ::\ \alpha\ A :: E :: E ::\ \alpha\ g ::\ \alpha\ d :: E ::\ \alpha\
+a :: []\)). We say that these two representation are
+\(\epsilon\)-strings of the word 'Agda'. Other operators and lemmas
+regarding \(\epsilon\)-strings such
+as \(to\Sigma^*\ :\ \Sigma^{e*} \to \Sigma^*\) can also be found in
+Language.agda. 
+
+\paragraph{Definition 4.3} An \(\epsilon\)-NFA is a 5-tuple \(M = (Q
+,\ \Sigma^e,\ \delta,\ q_0,\ F)\), where
+\begin{enumerate}[nolistsep]
+  \item \(Q\) is a finite set of states;
+  \item \(\Sigma^e\) is the union of a set of alphabets and \(\{\epsilon\}\);
+  \item \(\delta\) is a mapping from \(Q \times\ \Sigma^e\) to
+    \(\mathcal P \left({Q}\right)\) that defines the behaviour of the
+    automata. It is also named as the transition function;
+  \item \(q_0\) in \(Q\) is the initial state;
+  \item \(F \subseteq Q\) is the set of accepting states. 
+\end{enumerate}
+\begin{lstlisting}[caption=\(\epsilon\)-NFA,mathescape=true]
+record $\epsilon$-NFA : Set$_1$ where
+  field
+    Q      : Set
+    $\delta$       : Q $\to$ $\Sigma^e$ $\to$ DecSubset Q
+    q$_0$      : Q
+    F      : DecSubset Q
+    $\forall$qEq    : $\forall$ q $\to$ q $\in^d$ $\delta$ q E
+    Q?     : DecEq Q
+    |Q|-1  : $\mathbb{N}$
+    It     : Vec Q (suc |Q|-1)
+    $\forall$q$\in$It    : (q : Q) $\to$ (q $\in^V$ It)
+    unique : Unique It
+\end{lstlisting}
+\vspace{1pc}
+\par The set of alphabets \(\Sigma : Set\) and its decidable equality
+\(dec : DecEq \Sigma\) are passed to the file
+Automata.agda as parameters. Together with \(Q\), \(\delta\),
+\(q_0\) and \(F\), these five fields correspond to the 5-tuple
+\(\epsilon\)-NFA. \(\forall qEq\) is a proof that any state in \(Q\)
+can reach itself by an \(\epsilon\)-transition, \(Q?\) is
+the decidable equality of \(Q\), \(It\) is a vector containing all the
+states in \(Q\), \(|Q|-1\) is the number of states - 1, \(\forall q\in It\) is a
+proof that all states in \(Q\) are also in the vector \(It\) and
+finally \(unique\) is a proof that there is no repeating elements in
+\(It\). These extra fields are important when computing
+\(\epsilon\)-closures, we will look into them closely in later
+section. 
+
+\par Now, we want to define the set of strings \(\Sigma^*\) accepted by a given
+\(\epsilon\)-NFA. Before we can do this, we have to define some extra operations.
+
+\paragraph{Definition 4.4} A configuration is a pair \(Q \times
+\Sigma^{e*}\). Notice that the configuration is based on
+\(\Sigma^{e*}\) but not \(\Sigma^*\).
+
+\paragraph{Definition 4.5} A move by an \(\epsilon\)-NFA \(M\) is
+represented by a binary function \(\vdash\) on configurations. We say
+that \((q, aw) \vdash (q' , w)\) for all w in \(\Sigma^{e*}\)
+if and only if \(q' \in \delta (q , a)\) where \(a \in \Sigma^e\). In
+Agda, we have
+\begin{lstlisting}[mathescape=true,aboveskip=0pt,belowskip=0pt]
+  _$\vdash$_ : (Q $\times$ $\Sigma^e$ $\times$ $\Sigma^{e*}$) $\to$ (Q $\times$ $\Sigma^{e*}$) $\to$ Set
+  (q , a , w) $\vdash$ (q' , w') = w $\equiv$ w' $\times$ q' $\in^d$ $\delta$ q a
+\end{lstlisting}
+
+\paragraph{Definition 4.6} We say that \(C \vdash^0 C'\) if and only
+if \(C = C'\). We say that \(C_0 \vdash^k C_k\) for any \(k \geq 1\) if and only if there exists a chain of
+configurations \(C_1, C_2, ..., C_{k-1}\) such that \(C_i \vdash
+C_{i+1}\) for all \(0 \leq i \leq k\). In Agda, we define it
+recursively as
+\begin{lstlisting}[mathescape=true,aboveskip=0pt,belowskip=0pt]
+  _$\vdash^k$_-_ : (Q $\times$ $\Sigma^{e*}$) $\to$ $\mathbb{N}$ $\to$ (Q $\times$ $\Sigma^{e*}$) $\to$ Set
+  (q , w$^e$) $\vdash^k$ n - (q' , w$^e$') 
+    = $\exists$[ p $\in$ Q ] $\exists$[ a$^e$ $\in$ $\Sigma^e$ ] $\exists$[ u$^e$ $\in$ $\Sigma^{e*}$ ]
+      (w$^e$ $\equiv$ a$^e$ :: u$^e$ $\times$ (q , a$^e$ , u$^e$) $\vdash$ (p , u$^e$) $\times$ (p , u$^e$) $\vdash^k$ n - (q' , w$^e$'))
+\end{lstlisting}
+
+\paragraph{Definition 4.7} We say that \(C \vdash^* C'\) if and only
+if there exists a number of chains \(n\) such that \(C \vdash^n C'\). In Agda,
+we have
+\begin{lstlisting}[mathescape=true,aboveskip=0pt,belowskip=0pt]
+  _$\vdash^*$_ : (Q $\times$ $\Sigma^{e*}$) $\to$ (Q $\times$ $\Sigma^{e*}$) $\to$ Set
+  (q , w$^e$) $\vdash^*$ (q' , w$^e$') = $\exists$[ n $\in$ $\mathbb{N}$ ] (q , w$^e$) $\vdash^k$ n - (q' , w$^e$')
+\end{lstlisting}
+
+\paragraph{Definition 4.8} For any string \(w\), it is accepted by an \(\epsilon\)-NFA \(M\)
+if and only if there exists a chain of configurations from \(q_0 ,
+w^e)\) to \(q , \epsilon\) where \(w^e\) is an \(\epsilon\)-string of \(w\) and \(q \in
+F\). 
+
+\paragraph{Definition 4.9} The language accepted by an
+\(\epsilon\)-NFA is given by the set \(\{\ w\ |\ \exists w^e\in
+\Sigma^{e*}.\ w = to\Sigma^*(w^e) \wedge \exists q\in F.\ (q_0\ ,\
+w^e) \vdash^* (q\ ,\ \epsilon)\ \}\). In Agda, we have
+\begin{lstlisting}[mathescape=true,aboveskip=0pt]
+  L$^{eN}$ : $\epsilon$-NFA $\to$ Language
+  L$^{eN}$ nfa = $\lambda$ w $\to$ 
+            $\exists$[ w$^e$ $\in$ $\Sigma^{e*}$ ](w $\equiv$ $to\Sigma^*$ w$^e$ $\times$ ($\exists$[ q $\in$ Q ](q $\in^d$ F $\times$ (q$_0$ , w$^e$) $\vdash^*$ (q , []))))
+\end{lstlisting} 
+\vspace{1pc}
+\par Now that we have the definition of regular expressions and
+\(\epsilon\)-NFA, we can translate any given regular expression to an
+\(\epsilon\)-NFA using Thompson's Construction.
+
+\subsection{Thompson's Construction}
+\paragraph{Agda} Please refers to State.agda and the function
+\textbf{regexTo\(\epsilon\)-NFA} in Translation.agda
+\paragraph{Definition 5.1} The translation of regular expression to
+\(\epsilon\)-NFA is defined inductively as follow:
+\begin{enumerate}[nolistsep]
+  \item for \(\O\), we have \(M = (\{init\},\ \Sigma^e,\ \delta,\
+    init,\ \O)\) and graphically \begin{center}\includegraphics{null}\end{center}
+  \item for \(\epsilon\), we have \(M = (\{init\},\ \Sigma^e,\
+    \delta,\ init,\ \{init\})\) and graphically \begin{center}\includegraphics{epsilon}\end{center}
+  \item for \(a\), we have \(M = (\{init, accept\},\ \Sigma^e,\
+    \delta,\ init,\ \{accept\})\) and graphically \begin{center}\includegraphics{singleton}\end{center}
+  \item if \(N_1 = (Q_1,\ \delta_1,\ q_{01},\ F_1)\) and \(N_2 =
+    (Q_2,\ \delta_2,\ q_{02},\ F_2)\) are \(\epsilon\)-NFAs translated from the
+    regular expressions \(e_1\) and \(e_2\) respectively, then
+    \begin{enumerate}[nolistsep]
+      \item for \((e_1\ |\ e_2)\), we have \(M = (\{init\} \cup Q_1
+        \cup Q_2,\ \Sigma^e,\ \delta,\ init,\ F_1 \cup F_2)\) and
+        graphically \begin{center}\includegraphics{union}\end{center}
+      \item for \(e_1\cdot e_2\), we have \(M = (Q_1 \cup \{mid\}
+        \cup Q_2,\ \Sigma^e,\ \delta,\ init,\ F_2)\) and graphically \begin{center}\includegraphics{concat}\end{center}
+      \item for \(e_1^{\ *}\), we have \(M = (\{init\} \cup Q_1,\
+        \Sigma^e,\ \delta,\ init,\ \{init\} \cup F_1)\) and
+        graphically \begin{center}\includegraphics{star}\end{center}
+     \end{enumerate}
+\end{enumerate}
+
+
+\paragraph{Theorem 1.1} For any given regular expression, its accepted
+language accepted is equal to the language accepted by its translated \(\epsilon\)-NFA using Thompson's Construction. 
+
+\paragraph{Agda} Please refers to the function
+\textbf{L\(^R\approx\)L\(^{eN}\)} in Correctness.agda
+
+\paragraph{Proof 1.1} In order to prove Theorem 1.1, we have
+to prove that for any regular expression \(e\), \(L(e) \subseteq
+L(translated\ \epsilon\)-\(NFA)\) and \(L(e) \supseteq L(translated\
+\epsilon\)-\(NFA)\). They can be proved by induction on \(e\). 
+
+\par \textbf{Base cases:} For \(\O\), \(\epsilon\) and \(a\), by Definiton 5.1, it is obvious that the
+language accepted by them are equal to the language accepted by their
+translated \(\epsilon\)-NFA. 
+
+\par \textbf{Induction hypothesis:} For any regular expressions
+\(e_1\) and \(e_2\), let \(N_1 =
+(Q_1,\ \delta_1,\ q_{01},\ F_1)\) and \(N_2 = (Q_2,\ \delta_2,\
+q_{02},\ F_2)\) be their translated \(\epsilon\)-NFA using Definition
+5.1 respectively. We assume that \(L(e_1) = L(N_1)\) and \(L(e_2) =
+L(N_2)\).
+
+\par \textbf{Inductive steps:}
+\par 1) For \((e_1\ |\ e_2)\), let \(M = (Q,\ \delta,\ q_0,\ F) = (\{init\} \cup Q_1 \cup Q_2,\
+\delta,\ init,\ F_1 \cup F_2)\) be its translated \(\epsilon\)-NFA
+using Definition 5.1. Then for any string \(w\), 
+
+\par 1.1) if \((e_1\ |\ e_2)\) accepts \(w\), by Definition 3.2,
+either i) \(e_1\) accepts or ii) \(e_2\) accepts \(w\). Assuming case i), then by
+induction hypothesis, \(N_1\) also accepts \(w\). So there exists a chain
+\((q_{01} , w^e) \vdash^* (q , \epsilon)\) in \(N_1\) such that
+\(w^e\) is an \(\epsilon\)-string of \(w\) and \(q \in F_1\). Now, it is obvious that we can construct a
+chain in \(M\) from \((init , \epsilon w^e)\) to \((q , \epsilon)\)
+because \(q_{01} \in \delta\ init\ \epsilon\). Now, because \(q \in
+F_1\) implies \(q \in F\) and \(\epsilon w^e\)
+is also an \(\epsilon\)-string of \(w\); therefore \(w \in L(M)\). The same argument also applies
+for the case when \(e_2\) accepts \(w\). Since \(w \in L(e_1\ |\ e_2)
+\Rightarrow w \in L(M)\); therefore \(L(e_1\ |\ e_2) \subseteq L(M)\);
+
+\par 1.2) if \(M\) accepts \(w\), then there must exists a chain \((init , w^e) \vdash^* (q ,
+\epsilon)\) in \(M\) such that \(w^e\) is an \(\epsilon\)-string of \(w\) and \(q
+\in F\). Since \(q \in F\), therefore \(q \neq init\). By Definition
+5.1, there are only two possible ways for \(init\) to reach \(q\), an
+\(\epsilon\)-transition i) to \(q_{01}\) or ii) to
+\(q_{02}\). Assuming case i), then we have \((init , \epsilon^+w_1) \vdash
+(q_{01} , w_1)\) and \((q_{01} , w_1) \vdash^* (q , \epsilon)\) where \(w^e =
+\epsilon^+w_1\) and \(q \in Q_1\). Since \(q \in F\) and \(q \in
+Q_1\) implies \(q \in F_1\), and obviously \(w_1\) is also an
+\(\epsilon\)-string of \(w\), thus the chain \((q_{01} , w_1) \vdash^* (q , \epsilon)\)
+implies that \(w \in L(N_1)\). Therefore \(w \in L(e_1)\) and so \(w \in L(e_1\
+|\ e_2)\). The same argument also applies for case ii). Since \(w \in
+L(M) \Rightarrow w \in L(e_1\ |\ e_2)\); therefore \(L(e_1\ |\ e_2) \supseteq L(M)\);
+
+\par 1.3) combining 1.1  and 1.2, we have \(L(e_1\ |\ e_2) = L(M)\). 
+
+\par 2) For \((e_1 \cdot e_2)\), let \(M = (Q,\ \delta,\ q_0,\ F) = (Q_1 \cup \{mid\} \cup Q_2,\ \delta,\ q_{01},\ F_2)\) be its
+translated \(\epsilon\)-NFA using Definition 5.1. Then for any string
+\(w\), 
+
+\par 2.1) if \((e_1 \cdot e_2)\) accepts \(w\), then by Definition
+3.2, there exists \(u \in L(e_1)\) and \(v \in L(e_2)\) such that \(w
+= uv\). By induction hypothesis, \(u \in L(e_1)\) implies \(u \in
+L(N_1)\) and \(v \in L(e_2)\) implies \(v \in L(N_2)\). So there
+exists two chains in \(N_1\) and \(N_2\) respectively: i)\((q_{01} ,
+u^e) \vdash^* (q_1 , \epsilon)\) in \(N_1\) such that
+\(u^e\) is an \(\epsilon\)-string of \(u\) and \(q_1 \in F_1\) and
+ii) \((q_{02} , v^e) \vdash^* (q_2 , \epsilon)\) in \(N_2\)
+such that \(v^e\) is an \(\epsilon\)-string of \(v\) and \(q_2 \in
+F_2\). Now it is obvious
+that we can add an \(\epsilon\)-transition from \(q_1\) to \(mid\) and
+from \(mid\) to \(q_{02}\) in order to construct a chain in \(M\). \(q_2
+\in F_2\) implies \(q_2 \in F\). since \(u^ev^e\) is an
+\(\epsilon\)-string of \(w\), so as \(u^e\epsilon \epsilon
+v^e\), thus \(w \in L(M)\). Since \(w \in
+L(e_1 \cdot e_2) \Rightarrow w \in L(M)\), therefore \(L(e_1 \cdot
+e_2) \subseteq L(M)\);
+
+\par 2.2) if \(M\) accepts \(w\), then by Definition 5.1, there must exists
+a chain \((init , w^e) \vdash^* (q , \epsilon)\) in \(M\) such that
+\(w^e\) is an \(\epsilon\)-string of \(w\) and \(q \in F\). Since \(q
+\in F\), so \(q\) must also be in \(Q_2\). The only possible chain for
+\(q_{01}\) to reach \(q\) is to go through \(mid\). This implies that
+there exists a \(q_1 \in Q_1\), \(u^e \in \Sigma^{e*}\) and \(v^e \in
+\Sigma^{e*}\) such that \((q_{01} , u^e\epsilon^+ \epsilon^+ v^e) \vdash^*
+(q_1 , \epsilon^+ \epsilon^+ v^e)\), \(q_1 \in F_1\), \((q_{02} , v^e)
+\vdash^* (q_2 , \epsilon)\) and \(w^e = u^e\epsilon^+ \epsilon^+
+v^e\). Let \(u\) and \(v\) be the strings represented by \(u^e\) and
+\(v^e\) respectively, we have \(u \in L(N_1)\) and \(v \in
+L(N_2)\). Then, by induction hypothesis, \(u \in L(e_1)\) and \(v \in
+L(e_2)\). Since \(w^e\) is an \(\epsilon\)-string of \(w\), so as
+\(u^ev^e\) and thus \(w =
+uv\). From this, we can infer that \(w \in L(e_1 \cdot e_2)\). Since
+\(w \in L(M) \Rightarrow w \in L(e_1 \cdot e_2)\), therefore \(L(e_1 \cdot
+e_2) \supseteq L(M)\);
+
+\par 2.3) combining 2.1 and 2.2, we have \(L(e_1 \cdot e_2) = L(M)\). 
+
+\par 3) For \(e^*\), let \(M = (Q,\ \delta,\ q_0,\ F) = (Q_1 \cup \{mid\} \cup Q_2,\ \delta,\ q_{01},\ F_2)\) be its
+translated \(\epsilon\)-NFA using Definition 5.1. Then for any string
+\(w\), 
+
+\par 3.1) if \((e^*)\) accepts w, then there must exists a number
+\(n\) such that \(w \in (L\)\^\ \(n)\). Now, lets do induction on
+\(n\). \textbf{Base case:} \(n = 0\), \(L\)\^\ \(0 = \)
+
+\subsection{Non-deterministic Finite Automata}
+
+\subsection{Removing \(\epsilon\)-transitions}
+
+\subsection{Deterministic Finite Automata}
+
+\subsection{Powerset Construction}
+
+\subsection{Minimal DFA}
+
+\subsection{Minimising DFA}
+
+\subsection{Myhill-Nerode Theorem}
+
+\section{Evaluation}
+How easy/difficult to write proofs in Agda, compare to proofs written
+in paper.
+
+\section{Conclusion}
+(?)
+
+\section*{References}
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{9}
+\bibitem{aho1972}
+  Aho, A. and Ullman, J. (1972). \textit{The Theory of Parsing, Translation
+  and Compiling. Volume I: Parsing}. United States of America:
+  Prentice-Hall International, Inc.
+\end{thebibliography}
+
+\section*{Appendices}
+\addcontentsline{toc}{section}{Appendices}
+Agda Code?
+
+\end{document}

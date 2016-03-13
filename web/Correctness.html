@@ -1,0 +1,716 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >Correctness</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Comment"
+      >{-
+  This module contains the following proofs:
+    &#8704;e&#8712;RegExp.  L(e)   = L(regexTo&#949;-NFA e)
+    &#8704;nfa&#8712;&#949;-NFA. L(nfa) = L(remove-&#949;-step nfa)
+    &#8704;nfa&#8712;NFA.   L(nfa) = L(powerset-construction dfa)
+
+  Steven Cheung 2015.
+  Version 07-01-2016
+-}</a
+      ><a name="238"
+      >
+</a
+      ><a name="239" class="Keyword"
+      >open</a
+      ><a name="243"
+      > </a
+      ><a name="244" class="Keyword"
+      >import</a
+      ><a name="250"
+      > </a
+      ><a name="251" href="Util.html#1" class="Module"
+      >Util</a
+      ><a name="255"
+      >
+</a
+      ><a name="256" class="Keyword"
+      >module</a
+      ><a name="262"
+      > </a
+      ><a name="263" href="Correctness.html#1" class="Module"
+      >Correctness</a
+      ><a name="274"
+      > </a
+      ><a name="275" class="Symbol"
+      >(</a
+      ><a name="276" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="277"
+      > </a
+      ><a name="278" class="Symbol"
+      >:</a
+      ><a name="279"
+      > </a
+      ><a name="280" class="PrimitiveType"
+      >Set</a
+      ><a name="283" class="Symbol"
+      >)(</a
+      ><a name="285" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="288"
+      > </a
+      ><a name="289" class="Symbol"
+      >:</a
+      ><a name="290"
+      > </a
+      ><a name="291" href="Util.html#644" class="Function"
+      >DecEq</a
+      ><a name="296"
+      > </a
+      ><a name="297" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="298" class="Symbol"
+      >)</a
+      ><a name="299"
+      > </a
+      ><a name="300" class="Keyword"
+      >where</a
+      ><a name="305"
+      >
+
+</a
+      ><a name="307" class="Keyword"
+      >open</a
+      ><a name="311"
+      > </a
+      ><a name="312" class="Keyword"
+      >import</a
+      ><a name="318"
+      > </a
+      ><a name="319" href="Data.List.html#1" class="Module"
+      >Data.List</a
+      ><a name="328"
+      >
+</a
+      ><a name="329" class="Keyword"
+      >open</a
+      ><a name="333"
+      > </a
+      ><a name="334" class="Keyword"
+      >import</a
+      ><a name="340"
+      > </a
+      ><a name="341" href="Relation.Binary.PropositionalEquality.html#1" class="Module"
+      >Relation.Binary.PropositionalEquality</a
+      ><a name="378"
+      >
+</a
+      ><a name="379" class="Keyword"
+      >open</a
+      ><a name="383"
+      > </a
+      ><a name="384" class="Keyword"
+      >import</a
+      ><a name="390"
+      > </a
+      ><a name="391" href="Relation.Nullary.html#1" class="Module"
+      >Relation.Nullary</a
+      ><a name="407"
+      >
+</a
+      ><a name="408" class="Keyword"
+      >open</a
+      ><a name="412"
+      > </a
+      ><a name="413" class="Keyword"
+      >import</a
+      ><a name="419"
+      > </a
+      ><a name="420" href="Data.Sum.html#1" class="Module"
+      >Data.Sum</a
+      ><a name="428"
+      >
+</a
+      ><a name="429" class="Keyword"
+      >open</a
+      ><a name="433"
+      > </a
+      ><a name="434" class="Keyword"
+      >import</a
+      ><a name="440"
+      > </a
+      ><a name="441" href="Data.Product.html#1" class="Module"
+      >Data.Product</a
+      ><a name="453"
+      > </a
+      ><a name="454" class="Keyword"
+      >hiding</a
+      ><a name="460"
+      > </a
+      ><a name="461" class="Symbol"
+      >(</a
+      ><a name="462"
+      >&#931;</a
+      ><a name="463" class="Symbol"
+      >)</a
+      ><a name="464"
+      >
+</a
+      ><a name="465" class="Keyword"
+      >open</a
+      ><a name="469"
+      > </a
+      ><a name="470" class="Keyword"
+      >import</a
+      ><a name="476"
+      > </a
+      ><a name="477" href="Data.Unit.html#1" class="Module"
+      >Data.Unit</a
+      ><a name="486"
+      >
+</a
+      ><a name="487" class="Keyword"
+      >open</a
+      ><a name="491"
+      > </a
+      ><a name="492" class="Keyword"
+      >import</a
+      ><a name="498"
+      > </a
+      ><a name="499" href="Data.Empty.html#1" class="Module"
+      >Data.Empty</a
+      ><a name="509"
+      >
+</a
+      ><a name="510" class="Keyword"
+      >open</a
+      ><a name="514"
+      > </a
+      ><a name="515" class="Keyword"
+      >import</a
+      ><a name="521"
+      > </a
+      ><a name="522" href="Data.Nat.html#1" class="Module"
+      >Data.Nat</a
+      ><a name="530"
+      >
+
+</a
+      ><a name="532" class="Keyword"
+      >open</a
+      ><a name="536"
+      > </a
+      ><a name="537" class="Keyword"
+      >import</a
+      ><a name="543"
+      > </a
+      ><a name="544" href="Subset.html#1" class="Module"
+      >Subset</a
+      ><a name="550"
+      > </a
+      ><a name="551" class="Keyword"
+      >renaming</a
+      ><a name="559"
+      > </a
+      ><a name="560" class="Symbol"
+      >(</a
+      ><a name="561"
+      >&#216; </a
+      ><a name="563" class="Symbol"
+      >to</a
+      ><a name="565"
+      > &#248;</a
+      ><a name="567" class="Symbol"
+      >)</a
+      ><a name="568"
+      >
+</a
+      ><a name="569" class="Keyword"
+      >open</a
+      ><a name="573"
+      > </a
+      ><a name="574" class="Keyword"
+      >import</a
+      ><a name="580"
+      > </a
+      ><a name="581" href="Language.html#1" class="Module"
+      >Language</a
+      ><a name="589"
+      > </a
+      ><a name="590" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="591"
+      > </a
+      ><a name="592" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="595"
+      > 
+</a
+      ><a name="597" class="Keyword"
+      >open</a
+      ><a name="601"
+      > </a
+      ><a name="602" class="Keyword"
+      >import</a
+      ><a name="608"
+      > </a
+      ><a name="609" href="RegularExpression.html#1" class="Module"
+      >RegularExpression</a
+      ><a name="626"
+      > </a
+      ><a name="627" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="628"
+      > </a
+      ><a name="629" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="632"
+      >
+</a
+      ><a name="633" class="Keyword"
+      >open</a
+      ><a name="637"
+      > </a
+      ><a name="638" class="Keyword"
+      >import</a
+      ><a name="644"
+      > </a
+      ><a name="645" href="eNFA.html#1" class="Module"
+      >eNFA</a
+      ><a name="649"
+      > </a
+      ><a name="650" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="651"
+      > </a
+      ><a name="652" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="655"
+      >
+</a
+      ><a name="656" class="Keyword"
+      >open</a
+      ><a name="660"
+      > </a
+      ><a name="661" class="Keyword"
+      >import</a
+      ><a name="667"
+      > </a
+      ><a name="668" href="NFA.html#1" class="Module"
+      >NFA</a
+      ><a name="671"
+      > </a
+      ><a name="672" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="673"
+      > </a
+      ><a name="674" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="677"
+      >
+</a
+      ><a name="678" class="Keyword"
+      >open</a
+      ><a name="682"
+      > </a
+      ><a name="683" class="Keyword"
+      >import</a
+      ><a name="689"
+      > </a
+      ><a name="690" href="DFA.html#1" class="Module"
+      >DFA</a
+      ><a name="693"
+      > </a
+      ><a name="694" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="695"
+      > </a
+      ><a name="696" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="699"
+      >
+</a
+      ><a name="700" class="Keyword"
+      >open</a
+      ><a name="704"
+      > </a
+      ><a name="705" class="Keyword"
+      >import</a
+      ><a name="711"
+      > </a
+      ><a name="712" href="Translation.html#1" class="Module"
+      >Translation</a
+      ><a name="723"
+      > </a
+      ><a name="724" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="725"
+      > </a
+      ><a name="726" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="729"
+      >
+</a
+      ><a name="730" class="Keyword"
+      >open</a
+      ><a name="734"
+      > </a
+      ><a name="735" class="Keyword"
+      >import</a
+      ><a name="741"
+      > </a
+      ><a name="742" href="State.html#1" class="Module"
+      >State</a
+      ><a name="747"
+      >
+
+</a
+      ><a name="749" class="Comment"
+      >{- &#8704;e&#8712;RegExp. L(e) = L(regexTo&#949;-NFA e) -}</a
+      ><a name="790"
+      >
+</a
+      ><a name="791" href="Correctness.html#791" class="Function"
+      >L&#7487;&#8776;L&#7497;&#7482;</a
+      ><a name="797"
+      > </a
+      ><a name="798" class="Symbol"
+      >:</a
+      ><a name="799"
+      > </a
+      ><a name="800" class="Symbol"
+      >&#8704;</a
+      ><a name="801"
+      > </a
+      ><a name="802" href="Correctness.html#802" class="Bound"
+      >e</a
+      ><a name="803"
+      > </a
+      ><a name="804" class="Symbol"
+      >&#8594;</a
+      ><a name="805"
+      > </a
+      ><a name="806" href="RegularExpression.html#1512" class="Function"
+      >L&#7487;</a
+      ><a name="808"
+      > </a
+      ><a name="809" href="Correctness.html#802" class="Bound"
+      >e</a
+      ><a name="810"
+      > </a
+      ><a name="811" href="Subset.html#1443" class="Function Operator"
+      >&#8776;</a
+      ><a name="812"
+      > </a
+      ><a name="813" href="eNFA.html#2251" class="Function"
+      >L&#7497;&#7482;</a
+      ><a name="816"
+      > </a
+      ><a name="817" class="Symbol"
+      >(</a
+      ><a name="818" href="Translation.html#1232" class="Function"
+      >regexTo&#949;-NFA</a
+      ><a name="830"
+      > </a
+      ><a name="831" href="Correctness.html#802" class="Bound"
+      >e</a
+      ><a name="832" class="Symbol"
+      >)</a
+      ><a name="833"
+      >
+</a
+      ><a name="834" href="Correctness.html#791" class="Function"
+      >L&#7487;&#8776;L&#7497;&#7482;</a
+      ><a name="840"
+      > </a
+      ><a name="841" href="Correctness.html#841" class="Bound"
+      >e</a
+      ><a name="842"
+      > </a
+      ><a name="843" class="Symbol"
+      >=</a
+      ><a name="844"
+      > </a
+      ><a name="845" href="Correctness.RegExpToe-NFA.html#848" class="Function"
+      >L&#7487;&#8838;L&#7497;&#7482;</a
+      ><a name="851"
+      > </a
+      ><a name="852" href="Correctness.html#841" class="Bound"
+      >e</a
+      ><a name="853"
+      > </a
+      ><a name="854" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="855"
+      > </a
+      ><a name="856" href="Correctness.RegExpToe-NFA.html#5051" class="Function"
+      >L&#7487;&#8839;L&#7497;&#7482;</a
+      ><a name="862"
+      > </a
+      ><a name="863" href="Correctness.html#841" class="Bound"
+      >e</a
+      ><a name="864"
+      >
+  </a
+      ><a name="867" class="Keyword"
+      >where</a
+      ><a name="872"
+      >
+    </a
+      ><a name="877" class="Keyword"
+      >open</a
+      ><a name="881"
+      > </a
+      ><a name="882" class="Keyword"
+      >import</a
+      ><a name="888"
+      > </a
+      ><a name="889" href="Correctness.RegExpToe-NFA.html#1" class="Module"
+      >Correctness.RegExpToe-NFA</a
+      ><a name="914"
+      > </a
+      ><a name="915" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="916"
+      > </a
+      ><a name="917" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="920"
+      >
+
+
+</a
+      ><a name="923" class="Comment"
+      >{- &#8704;nfa&#8712;&#949;-NFA. L(nfa) = L(remove-&#949;-step nfa) -}</a
+      ><a name="970"
+      >
+</a
+      ><a name="971" href="Correctness.html#971" class="Function"
+      >L&#7497;&#7482;&#8776;L&#7482;</a
+      ><a name="977"
+      > </a
+      ><a name="978" class="Symbol"
+      >:</a
+      ><a name="979"
+      > </a
+      ><a name="980" class="Symbol"
+      >&#8704;</a
+      ><a name="981"
+      > </a
+      ><a name="982" href="Correctness.html#982" class="Bound"
+      >nfa</a
+      ><a name="985"
+      > </a
+      ><a name="986" class="Symbol"
+      >&#8594;</a
+      ><a name="987"
+      > </a
+      ><a name="988" href="eNFA.html#2251" class="Function"
+      >L&#7497;&#7482;</a
+      ><a name="991"
+      > </a
+      ><a name="992" href="Correctness.html#982" class="Bound"
+      >nfa</a
+      ><a name="995"
+      > </a
+      ><a name="996" href="Subset.html#1443" class="Function Operator"
+      >&#8776;</a
+      ><a name="997"
+      > </a
+      ><a name="998" href="NFA.html#5612" class="Function"
+      >L&#7482;</a
+      ><a name="1000"
+      > </a
+      ><a name="1001" class="Symbol"
+      >(</a
+      ><a name="1002" href="Translation.html#7684" class="Function"
+      >remove-&#949;-step</a
+      ><a name="1015"
+      > </a
+      ><a name="1016" href="Correctness.html#982" class="Bound"
+      >nfa</a
+      ><a name="1019" class="Symbol"
+      >)</a
+      ><a name="1020"
+      >
+</a
+      ><a name="1021" href="Correctness.html#971" class="Function"
+      >L&#7497;&#7482;&#8776;L&#7482;</a
+      ><a name="1027"
+      > </a
+      ><a name="1028" href="Correctness.html#1028" class="Bound"
+      >nfa</a
+      ><a name="1031"
+      > </a
+      ><a name="1032" class="Symbol"
+      >=</a
+      ><a name="1033"
+      > </a
+      ><a name="1034" href="Correctness.e-NFAToNFA.html#8730" class="Function"
+      >L&#7497;&#7482;&#8838;L&#7482;</a
+      ><a name="1040"
+      > </a
+      ><a name="1041" href="Correctness.html#1028" class="Bound"
+      >nfa</a
+      ><a name="1044"
+      > </a
+      ><a name="1045" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1046"
+      > </a
+      ><a name="1047" href="Correctness.e-NFAToNFA.html#12411" class="Function"
+      >L&#7497;&#7482;&#8839;L&#7482;</a
+      ><a name="1053"
+      > </a
+      ><a name="1054" href="Correctness.html#1028" class="Bound"
+      >nfa</a
+      ><a name="1057"
+      >
+  </a
+      ><a name="1060" class="Keyword"
+      >where</a
+      ><a name="1065"
+      >
+    </a
+      ><a name="1070" class="Keyword"
+      >open</a
+      ><a name="1074"
+      > </a
+      ><a name="1075" class="Keyword"
+      >import</a
+      ><a name="1081"
+      > </a
+      ><a name="1082" href="Correctness.e-NFAToNFA.html#1" class="Module"
+      >Correctness.e-NFAToNFA</a
+      ><a name="1104"
+      > </a
+      ><a name="1105" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="1106"
+      > </a
+      ><a name="1107" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="1110"
+      >
+
+
+</a
+      ><a name="1113" class="Comment"
+      >{- &#8704;nfa&#8712;NFA. L(nfa) = L(powerset-construction dfa) -}</a
+      ><a name="1166"
+      >
+</a
+      ><a name="1167" href="Correctness.html#1167" class="Function"
+      >L&#7482;&#8776;L&#7472;</a
+      ><a name="1172"
+      > </a
+      ><a name="1173" class="Symbol"
+      >:</a
+      ><a name="1174"
+      > </a
+      ><a name="1175" class="Symbol"
+      >&#8704;</a
+      ><a name="1176"
+      > </a
+      ><a name="1177" href="Correctness.html#1177" class="Bound"
+      >nfa</a
+      ><a name="1180"
+      > </a
+      ><a name="1181" class="Symbol"
+      >&#8594;</a
+      ><a name="1182"
+      > </a
+      ><a name="1183" href="NFA.html#5612" class="Function"
+      >L&#7482;</a
+      ><a name="1185"
+      > </a
+      ><a name="1186" href="Correctness.html#1177" class="Bound"
+      >nfa</a
+      ><a name="1189"
+      > </a
+      ><a name="1190" href="Subset.html#1443" class="Function Operator"
+      >&#8776;</a
+      ><a name="1191"
+      > </a
+      ><a name="1192" href="DFA.html#4053" class="Function"
+      >L&#7472;</a
+      ><a name="1194"
+      > </a
+      ><a name="1195" class="Symbol"
+      >(</a
+      ><a name="1196" href="Translation.html#8560" class="Function"
+      >powerset-construction</a
+      ><a name="1217"
+      > </a
+      ><a name="1218" href="Correctness.html#1177" class="Bound"
+      >nfa</a
+      ><a name="1221" class="Symbol"
+      >)</a
+      ><a name="1222"
+      >
+</a
+      ><a name="1223" href="Correctness.html#1167" class="Function"
+      >L&#7482;&#8776;L&#7472;</a
+      ><a name="1228"
+      > </a
+      ><a name="1229" href="Correctness.html#1229" class="Bound"
+      >nfa</a
+      ><a name="1232"
+      > </a
+      ><a name="1233" class="Symbol"
+      >=</a
+      ><a name="1234"
+      > </a
+      ><a name="1235" href="Correctness.NFAToDFA.html#8192" class="Function"
+      >L&#7482;&#8838;L&#7472;</a
+      ><a name="1240"
+      > </a
+      ><a name="1241" href="Correctness.html#1229" class="Bound"
+      >nfa</a
+      ><a name="1244"
+      > </a
+      ><a name="1245" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1246"
+      > </a
+      ><a name="1247" href="Correctness.NFAToDFA.html#12737" class="Function"
+      >L&#7482;&#8839;L&#7472;</a
+      ><a name="1252"
+      > </a
+      ><a name="1253" href="Correctness.html#1229" class="Bound"
+      >nfa</a
+      ><a name="1256"
+      >
+  </a
+      ><a name="1259" class="Keyword"
+      >where</a
+      ><a name="1264"
+      >
+    </a
+      ><a name="1269" class="Keyword"
+      >open</a
+      ><a name="1273"
+      > </a
+      ><a name="1274" class="Keyword"
+      >import</a
+      ><a name="1280"
+      > </a
+      ><a name="1281" href="Correctness.NFAToDFA.html#1" class="Module"
+      >Correctness.NFAToDFA</a
+      ><a name="1301"
+      > </a
+      ><a name="1302" href="Correctness.html#276" class="Bound"
+      >&#931;</a
+      ><a name="1303"
+      > </a
+      ><a name="1304" href="Correctness.html#285" class="Bound"
+      >dec</a
+      ><a name="1307"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>

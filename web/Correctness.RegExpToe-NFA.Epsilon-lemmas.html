@@ -1,0 +1,960 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><title
+    >Correctness.RegExpToe-NFA.Epsilon-lemmas</title
+    ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta http-equiv="Content-Style-Type" content="text/css"
+     /><link href="Agda.css" rel="stylesheet" type="text/css"
+     /></head
+  ><body
+  ><pre
+    ><a name="1" class="Comment"
+      >{-
+  This module contains the following proofs:
+    L(&#949;) &#8838; L(regexTo&#949;-NFA &#949;)
+    L(&#949;) &#8839; L(regexTo&#949;-NFA &#949;)
+
+  Steven Cheung 2015.
+  Version 07-01-2016
+-}</a
+      ><a name="153"
+      >
+
+</a
+      ><a name="155" class="Keyword"
+      >open</a
+      ><a name="159"
+      > </a
+      ><a name="160" class="Keyword"
+      >import</a
+      ><a name="166"
+      > </a
+      ><a name="167" href="Util.html#1" class="Module"
+      >Util</a
+      ><a name="171"
+      >
+</a
+      ><a name="172" class="Keyword"
+      >module</a
+      ><a name="178"
+      > </a
+      ><a name="179" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1" class="Module"
+      >Correctness.RegExpToe-NFA.Epsilon-lemmas</a
+      ><a name="219"
+      > </a
+      ><a name="220" class="Symbol"
+      >(</a
+      ><a name="221" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#221" class="Bound"
+      >&#931;</a
+      ><a name="222"
+      > </a
+      ><a name="223" class="Symbol"
+      >:</a
+      ><a name="224"
+      > </a
+      ><a name="225" class="PrimitiveType"
+      >Set</a
+      ><a name="228" class="Symbol"
+      >)(</a
+      ><a name="230" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#230" class="Bound"
+      >dec</a
+      ><a name="233"
+      > </a
+      ><a name="234" class="Symbol"
+      >:</a
+      ><a name="235"
+      > </a
+      ><a name="236" href="Util.html#644" class="Function"
+      >DecEq</a
+      ><a name="241"
+      > </a
+      ><a name="242" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#221" class="Bound"
+      >&#931;</a
+      ><a name="243" class="Symbol"
+      >)</a
+      ><a name="244"
+      > </a
+      ><a name="245" class="Keyword"
+      >where</a
+      ><a name="250"
+      >
+
+</a
+      ><a name="252" class="Keyword"
+      >open</a
+      ><a name="256"
+      > </a
+      ><a name="257" class="Keyword"
+      >import</a
+      ><a name="263"
+      > </a
+      ><a name="264" href="Data.List.html#1" class="Module"
+      >Data.List</a
+      ><a name="273"
+      >
+</a
+      ><a name="274" class="Keyword"
+      >open</a
+      ><a name="278"
+      > </a
+      ><a name="279" class="Keyword"
+      >import</a
+      ><a name="285"
+      > </a
+      ><a name="286" href="Relation.Binary.PropositionalEquality.html#1" class="Module"
+      >Relation.Binary.PropositionalEquality</a
+      ><a name="323"
+      >
+</a
+      ><a name="324" class="Keyword"
+      >open</a
+      ><a name="328"
+      > </a
+      ><a name="329" class="Keyword"
+      >import</a
+      ><a name="335"
+      > </a
+      ><a name="336" href="Relation.Nullary.html#1" class="Module"
+      >Relation.Nullary</a
+      ><a name="352"
+      >
+</a
+      ><a name="353" class="Keyword"
+      >open</a
+      ><a name="357"
+      > </a
+      ><a name="358" class="Keyword"
+      >import</a
+      ><a name="364"
+      > </a
+      ><a name="365" href="Data.Sum.html#1" class="Module"
+      >Data.Sum</a
+      ><a name="373"
+      >
+</a
+      ><a name="374" class="Keyword"
+      >open</a
+      ><a name="378"
+      > </a
+      ><a name="379" class="Keyword"
+      >import</a
+      ><a name="385"
+      > </a
+      ><a name="386" href="Data.Product.html#1" class="Module"
+      >Data.Product</a
+      ><a name="398"
+      > </a
+      ><a name="399" class="Keyword"
+      >hiding</a
+      ><a name="405"
+      > </a
+      ><a name="406" class="Symbol"
+      >(</a
+      ><a name="407"
+      >&#931;</a
+      ><a name="408" class="Symbol"
+      >)</a
+      ><a name="409"
+      >
+</a
+      ><a name="410" class="Keyword"
+      >open</a
+      ><a name="414"
+      > </a
+      ><a name="415" class="Keyword"
+      >import</a
+      ><a name="421"
+      > </a
+      ><a name="422" href="Data.Empty.html#1" class="Module"
+      >Data.Empty</a
+      ><a name="432"
+      >
+</a
+      ><a name="433" class="Keyword"
+      >open</a
+      ><a name="437"
+      > </a
+      ><a name="438" class="Keyword"
+      >import</a
+      ><a name="444"
+      > </a
+      ><a name="445" href="Data.Nat.html#1" class="Module"
+      >Data.Nat</a
+      ><a name="453"
+      >
+
+</a
+      ><a name="455" class="Keyword"
+      >open</a
+      ><a name="459"
+      > </a
+      ><a name="460" class="Keyword"
+      >import</a
+      ><a name="466"
+      > </a
+      ><a name="467" href="Subset.html#1" class="Module"
+      >Subset</a
+      ><a name="473"
+      >
+</a
+      ><a name="474" class="Keyword"
+      >open</a
+      ><a name="478"
+      > </a
+      ><a name="479" class="Keyword"
+      >import</a
+      ><a name="485"
+      > </a
+      ><a name="486" href="Language.html#1" class="Module"
+      >Language</a
+      ><a name="494"
+      > </a
+      ><a name="495" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#221" class="Bound"
+      >&#931;</a
+      ><a name="496"
+      > </a
+      ><a name="497" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#230" class="Bound"
+      >dec</a
+      ><a name="500"
+      >
+</a
+      ><a name="501" class="Keyword"
+      >open</a
+      ><a name="505"
+      > </a
+      ><a name="506" class="Keyword"
+      >import</a
+      ><a name="512"
+      > </a
+      ><a name="513" href="RegularExpression.html#1" class="Module"
+      >RegularExpression</a
+      ><a name="530"
+      > </a
+      ><a name="531" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#221" class="Bound"
+      >&#931;</a
+      ><a name="532"
+      > </a
+      ><a name="533" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#230" class="Bound"
+      >dec</a
+      ><a name="536"
+      >
+</a
+      ><a name="537" class="Keyword"
+      >open</a
+      ><a name="541"
+      > </a
+      ><a name="542" class="Keyword"
+      >import</a
+      ><a name="548"
+      > </a
+      ><a name="549" href="eNFA.html#1" class="Module"
+      >eNFA</a
+      ><a name="553"
+      > </a
+      ><a name="554" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#221" class="Bound"
+      >&#931;</a
+      ><a name="555"
+      > </a
+      ><a name="556" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#230" class="Bound"
+      >dec</a
+      ><a name="559"
+      >
+</a
+      ><a name="560" class="Keyword"
+      >open</a
+      ><a name="564"
+      > </a
+      ><a name="565" class="Keyword"
+      >import</a
+      ><a name="571"
+      > </a
+      ><a name="572" href="Translation.html#1" class="Module"
+      >Translation</a
+      ><a name="583"
+      > </a
+      ><a name="584" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#221" class="Bound"
+      >&#931;</a
+      ><a name="585"
+      > </a
+      ><a name="586" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#230" class="Bound"
+      >dec</a
+      ><a name="589"
+      >
+</a
+      ><a name="590" class="Keyword"
+      >open</a
+      ><a name="594"
+      > </a
+      ><a name="595" class="Keyword"
+      >import</a
+      ><a name="601"
+      > </a
+      ><a name="602" href="State.html#1" class="Module"
+      >State</a
+      ><a name="607"
+      >
+
+</a
+      ><a name="609" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#609" class="Function"
+      >nfa</a
+      ><a name="612"
+      > </a
+      ><a name="613" class="Symbol"
+      >:</a
+      ><a name="614"
+      > </a
+      ><a name="615" href="eNFA.html#1135" class="Record"
+      >&#949;-NFA</a
+      ><a name="620"
+      >
+</a
+      ><a name="621" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#609" class="Function"
+      >nfa</a
+      ><a name="624"
+      > </a
+      ><a name="625" class="Symbol"
+      >=</a
+      ><a name="626"
+      > </a
+      ><a name="627" href="Translation.html#1232" class="Function"
+      >regexTo&#949;-NFA</a
+      ><a name="639"
+      > </a
+      ><a name="640" href="RegularExpression.html#1289" class="InductiveConstructor"
+      >&#949;</a
+      ><a name="641"
+      >
+
+</a
+      ><a name="643" class="Keyword"
+      >open</a
+      ><a name="647"
+      > </a
+      ><a name="648" href="eNFA.html#1135" class="Module"
+      >&#949;-NFA</a
+      ><a name="653"
+      > </a
+      ><a name="654" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#609" class="Function"
+      >nfa</a
+      ><a name="657"
+      >
+</a
+      ><a name="658" class="Keyword"
+      >open</a
+      ><a name="662"
+      > </a
+      ><a name="663" href="eNFA.html#1448" class="Module"
+      >&#949;-NFA-Operations</a
+      ><a name="679"
+      > </a
+      ><a name="680" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#609" class="Function"
+      >nfa</a
+      ><a name="683"
+      >
+
+</a
+      ><a name="685" class="Keyword"
+      >module</a
+      ><a name="691"
+      > </a
+      ><a name="692" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#692" class="Module"
+      >L&#7487;&#8838;L&#7482;</a
+      ><a name="697"
+      > </a
+      ><a name="698" class="Keyword"
+      >where</a
+      ><a name="703"
+      >
+  </a
+      ><a name="706" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#706" class="Function"
+      >lem&#8321;</a
+      ><a name="710"
+      > </a
+      ><a name="711" class="Symbol"
+      >:</a
+      ><a name="712"
+      > </a
+      ><a name="713" href="RegularExpression.html#1512" class="Function"
+      >L&#7487;</a
+      ><a name="715"
+      > </a
+      ><a name="716" href="RegularExpression.html#1289" class="InductiveConstructor"
+      >&#949;</a
+      ><a name="717"
+      > </a
+      ><a name="718" href="Subset.html#1254" class="Function Operator"
+      >&#8838;</a
+      ><a name="719"
+      > </a
+      ><a name="720" href="eNFA.html#2251" class="Function"
+      >L&#7497;&#7482;</a
+      ><a name="723"
+      > </a
+      ><a name="724" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#609" class="Function"
+      >nfa</a
+      ><a name="727"
+      >
+  </a
+      ><a name="730" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#706" class="Function"
+      >lem&#8321;</a
+      ><a name="734"
+      > </a
+      ><a name="735" href="Data.List.Base.html#706" class="InductiveConstructor"
+      >[]</a
+      ><a name="737"
+      >       </a
+      ><a name="744" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="748"
+      > </a
+      ><a name="749" class="Symbol"
+      >=</a
+      ><a name="750"
+      > </a
+      ><a name="751" href="Data.List.Base.html#706" class="InductiveConstructor"
+      >[]</a
+      ><a name="753"
+      > </a
+      ><a name="754" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="755"
+      > </a
+      ><a name="756" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="760"
+      > </a
+      ><a name="761" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="762"
+      > </a
+      ><a name="763" href="State.html#807" class="InductiveConstructor"
+      >init</a
+      ><a name="767"
+      > </a
+      ><a name="768" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="769"
+      > </a
+      ><a name="770" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="774"
+      > </a
+      ><a name="775" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="776"
+      > </a
+      ><a name="777" href="Data.Nat.Base.html#698" class="InductiveConstructor"
+      >zero</a
+      ><a name="781"
+      > </a
+      ><a name="782" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="783"
+      > </a
+      ><a name="784" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="788"
+      > </a
+      ><a name="789" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="790"
+      > </a
+      ><a name="791" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="795"
+      >
+  </a
+      ><a name="798" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#706" class="Function"
+      >lem&#8321;</a
+      ><a name="802"
+      > </a
+      ><a name="803" class="Symbol"
+      >(</a
+      ><a name="804" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#804" class="Bound"
+      >x</a
+      ><a name="805"
+      > </a
+      ><a name="806" href="Data.List.Base.html#721" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="807"
+      > </a
+      ><a name="808" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#808" class="Bound"
+      >xs</a
+      ><a name="810" class="Symbol"
+      >)</a
+      ><a name="811"
+      > </a
+      ><a name="812" class="Symbol"
+      >()</a
+      ><a name="814"
+      >
+
+</a
+      ><a name="816" class="Keyword"
+      >module</a
+      ><a name="822"
+      > </a
+      ><a name="823" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#823" class="Module"
+      >L&#7487;&#8839;L&#7482;</a
+      ><a name="828"
+      > </a
+      ><a name="829" class="Keyword"
+      >where</a
+      ><a name="834"
+      >
+  </a
+      ><a name="837" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#837" class="Function"
+      >lem&#8321;</a
+      ><a name="841"
+      > </a
+      ><a name="842" class="Symbol"
+      >:</a
+      ><a name="843"
+      > </a
+      ><a name="844" href="RegularExpression.html#1512" class="Function"
+      >L&#7487;</a
+      ><a name="846"
+      > </a
+      ><a name="847" href="RegularExpression.html#1289" class="InductiveConstructor"
+      >&#949;</a
+      ><a name="848"
+      > </a
+      ><a name="849" href="Subset.html#1356" class="Function Operator"
+      >&#8839;</a
+      ><a name="850"
+      > </a
+      ><a name="851" href="eNFA.html#2251" class="Function"
+      >L&#7497;&#7482;</a
+      ><a name="854"
+      > </a
+      ><a name="855" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#609" class="Function"
+      >nfa</a
+      ><a name="858"
+      >
+  </a
+      ><a name="861" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#837" class="Function"
+      >lem&#8321;</a
+      ><a name="865"
+      > </a
+      ><a name="866" href="Data.List.Base.html#706" class="InductiveConstructor"
+      >[]</a
+      ><a name="868"
+      >       </a
+      ><a name="875" class="Symbol"
+      >_</a
+      ><a name="876"
+      > </a
+      ><a name="877" class="Symbol"
+      >=</a
+      ><a name="878"
+      > </a
+      ><a name="879" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="883"
+      >
+  </a
+      ><a name="886" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#837" class="Function"
+      >lem&#8321;</a
+      ><a name="890"
+      > </a
+      ><a name="891" class="Symbol"
+      >(</a
+      ><a name="892" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#892" class="Bound"
+      >x</a
+      ><a name="893"
+      > </a
+      ><a name="894" href="Data.List.Base.html#721" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="895"
+      > </a
+      ><a name="896" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#896" class="Bound"
+      >xs</a
+      ><a name="898" class="Symbol"
+      >)</a
+      ><a name="899"
+      > </a
+      ><a name="900" class="Symbol"
+      >(</a
+      ><a name="901" class="DottedPattern Symbol"
+      >.</a
+      ><a name="902" href="Data.List.Base.html#706" class="DottedPattern InductiveConstructor"
+      >[]</a
+      ><a name="904"
+      > </a
+      ><a name="905" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="906"
+      > </a
+      ><a name="907" class="Symbol"
+      >()</a
+      ><a name="909"
+      >   </a
+      ><a name="912" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="913"
+      > </a
+      ><a name="914" href="State.html#807" class="InductiveConstructor"
+      >init</a
+      ><a name="918"
+      > </a
+      ><a name="919" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="920"
+      > </a
+      ><a name="921" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="925"
+      > </a
+      ><a name="926" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="927"
+      > </a
+      ><a name="928" href="Data.Nat.Base.html#698" class="InductiveConstructor"
+      >zero</a
+      ><a name="932"
+      >  </a
+      ><a name="934" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="935"
+      > </a
+      ><a name="936" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="940"
+      > </a
+      ><a name="941" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="942"
+      > </a
+      ><a name="943" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="947" class="Symbol"
+      >)</a
+      ><a name="948"
+      >
+  </a
+      ><a name="951" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#837" class="Function"
+      >lem&#8321;</a
+      ><a name="955"
+      > </a
+      ><a name="956" class="Symbol"
+      >(</a
+      ><a name="957" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#957" class="Bound"
+      >x</a
+      ><a name="958"
+      > </a
+      ><a name="959" href="Data.List.Base.html#721" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="960"
+      > </a
+      ><a name="961" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#961" class="Bound"
+      >xs</a
+      ><a name="963" class="Symbol"
+      >)</a
+      ><a name="964"
+      > </a
+      ><a name="965" class="Symbol"
+      >(</a
+      ><a name="966" class="DottedPattern Symbol"
+      >._</a
+      ><a name="968"
+      >  </a
+      ><a name="970" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="971"
+      > </a
+      ><a name="972" class="Symbol"
+      >_</a
+      ><a name="973"
+      >    </a
+      ><a name="977" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="978"
+      > </a
+      ><a name="979" href="State.html#807" class="InductiveConstructor"
+      >init</a
+      ><a name="983"
+      > </a
+      ><a name="984" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="985"
+      > </a
+      ><a name="986" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="990"
+      > </a
+      ><a name="991" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="992"
+      > </a
+      ><a name="993" href="Data.Nat.Base.html#709" class="InductiveConstructor"
+      >suc</a
+      ><a name="996"
+      > </a
+      ><a name="997" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#997" class="Bound"
+      >n</a
+      ><a name="998"
+      > </a
+      ><a name="999" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1000"
+      > </a
+      ><a name="1001" href="State.html#807" class="InductiveConstructor"
+      >init</a
+      ><a name="1005"
+      > </a
+      ><a name="1006" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1007"
+      > </a
+      ><a name="1008" href="Language.html#1811" class="InductiveConstructor"
+      >&#945;</a
+      ><a name="1009"
+      > </a
+      ><a name="1010" class="Symbol"
+      >_</a
+      ><a name="1011"
+      > </a
+      ><a name="1012" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1013"
+      > </a
+      ><a name="1014" class="Symbol"
+      >_</a
+      ><a name="1015"
+      >  </a
+      ><a name="1017" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1018"
+      > </a
+      ><a name="1019" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="1023"
+      > </a
+      ><a name="1024" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1025"
+      > </a
+      ><a name="1026" class="Symbol"
+      >(</a
+      ><a name="1027" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="1031"
+      > </a
+      ><a name="1032" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1033"
+      > </a
+      ><a name="1034" class="Symbol"
+      >())</a
+      ><a name="1037"
+      > </a
+      ><a name="1038" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1039"
+      >   </a
+      ><a name="1042" class="Symbol"
+      >_)</a
+      ><a name="1044"
+      >
+  </a
+      ><a name="1047" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#837" class="Function"
+      >lem&#8321;</a
+      ><a name="1051"
+      > </a
+      ><a name="1052" class="Symbol"
+      >(</a
+      ><a name="1053" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1053" class="Bound"
+      >x</a
+      ><a name="1054"
+      > </a
+      ><a name="1055" href="Data.List.Base.html#721" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1056"
+      > </a
+      ><a name="1057" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1057" class="Bound"
+      >xs</a
+      ><a name="1059" class="Symbol"
+      >)</a
+      ><a name="1060"
+      > </a
+      ><a name="1061" class="Symbol"
+      >(</a
+      ><a name="1062" class="DottedPattern Symbol"
+      >._</a
+      ><a name="1064"
+      >  </a
+      ><a name="1066" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1067"
+      > </a
+      ><a name="1068" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1068" class="Bound"
+      >w&#8801;w&#7497;</a
+      ><a name="1072"
+      > </a
+      ><a name="1073" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1074"
+      > </a
+      ><a name="1075" href="State.html#807" class="InductiveConstructor"
+      >init</a
+      ><a name="1079"
+      > </a
+      ><a name="1080" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1081"
+      > </a
+      ><a name="1082" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="1086"
+      > </a
+      ><a name="1087" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1088"
+      > </a
+      ><a name="1089" href="Data.Nat.Base.html#709" class="InductiveConstructor"
+      >suc</a
+      ><a name="1092"
+      > </a
+      ><a name="1093" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1093" class="Bound"
+      >n</a
+      ><a name="1094"
+      > </a
+      ><a name="1095" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1096"
+      > </a
+      ><a name="1097" href="State.html#807" class="InductiveConstructor"
+      >init</a
+      ><a name="1101"
+      > </a
+      ><a name="1102" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1103"
+      > </a
+      ><a name="1104" href="Language.html#1802" class="InductiveConstructor"
+      >E</a
+      ><a name="1105"
+      >   </a
+      ><a name="1108" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1109"
+      > </a
+      ><a name="1110" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1110" class="Bound"
+      >u&#7497;</a
+      ><a name="1112"
+      > </a
+      ><a name="1113" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1114"
+      > </a
+      ><a name="1115" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="1119"
+      > </a
+      ><a name="1120" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1121"
+      > </a
+      ><a name="1122" class="Symbol"
+      >(</a
+      ><a name="1123" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="1127"
+      > </a
+      ><a name="1128" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1129"
+      >  </a
+      ><a name="1131" class="Symbol"
+      >_)</a
+      ><a name="1133"
+      > </a
+      ><a name="1134" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1135"
+      > </a
+      ><a name="1136" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1136" class="Bound"
+      >prf</a
+      ><a name="1139" class="Symbol"
+      >)</a
+      ><a name="1140"
+      >
+    </a
+      ><a name="1145" class="Symbol"
+      >=</a
+      ><a name="1146"
+      > </a
+      ><a name="1147" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#837" class="Function"
+      >lem&#8321;</a
+      ><a name="1151"
+      > </a
+      ><a name="1152" class="Symbol"
+      >(</a
+      ><a name="1153" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1053" class="Bound"
+      >x</a
+      ><a name="1154"
+      > </a
+      ><a name="1155" href="Data.List.Base.html#721" class="InductiveConstructor Operator"
+      >&#8759;</a
+      ><a name="1156"
+      > </a
+      ><a name="1157" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1057" class="Bound"
+      >xs</a
+      ><a name="1159" class="Symbol"
+      >)</a
+      ><a name="1160"
+      > </a
+      ><a name="1161" class="Symbol"
+      >(</a
+      ><a name="1162" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1110" class="Bound"
+      >u&#7497;</a
+      ><a name="1164"
+      > </a
+      ><a name="1165" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1166"
+      > </a
+      ><a name="1167" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1068" class="Bound"
+      >w&#8801;w&#7497;</a
+      ><a name="1171"
+      > </a
+      ><a name="1172" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1173"
+      > </a
+      ><a name="1174" href="State.html#807" class="InductiveConstructor"
+      >init</a
+      ><a name="1178"
+      > </a
+      ><a name="1179" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1180"
+      > </a
+      ><a name="1181" href="Relation.Binary.Core.html#4547" class="InductiveConstructor"
+      >refl</a
+      ><a name="1185"
+      > </a
+      ><a name="1186" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1187"
+      > </a
+      ><a name="1188" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1093" class="Bound"
+      >n</a
+      ><a name="1189"
+      > </a
+      ><a name="1190" href="Data.Product.html#509" class="InductiveConstructor Operator"
+      >,</a
+      ><a name="1191"
+      > </a
+      ><a name="1192" href="Correctness.RegExpToe-NFA.Epsilon-lemmas.html#1136" class="Bound"
+      >prf</a
+      ><a name="1195" class="Symbol"
+      >)</a
+      ><a name="1196"
+      >
+</a
+      ></pre
+    ></body
+  ></html
+>
