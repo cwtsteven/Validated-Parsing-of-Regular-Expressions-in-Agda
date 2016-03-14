@@ -27,10 +27,12 @@
   \mathrel{\vcenter{\offinterlineskip
   \hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}}}}
 
+\usepackage{cite}
+
 \setlength{\oddsidemargin}{1cm} % 2cm margin on the left for odd pages
 \setlength{\evensidemargin}{0cm} % 2cm margin on the right for even pages
 
-\title{\textbf{Formalising Automata Theory in Agda} \\ Certified Translation from Regular Expression to Finite Automata}
+\title{\textbf{Parsing Regular Expressions in Agda}}
 \department{Computer Science}
 \degree{BSc. Computer Science}
 \author{Wai Tak, Cheung}
@@ -88,7 +90,7 @@ blah blah.
 \section{Introduction}
 \par This project aims to study the feasibility of formalising
 Automata theory in Type theory with the aid of a dependently-typed
-functional programming language, Agda. Automata thoery is a very
+functional programming language, Agda \cite{agdawiki2016}. Automata thoery is a very
 extensive piece of work; therefore, this project will only focus on the theorems and
 proofs that are related to the translation between regular expressions
 and finite automata. This work also gives a brief introduction
@@ -114,26 +116,26 @@ be some descriptions of all the types that are frequently used in the project. W
 will also look into some small Agda proofs so that readers can
 have a taste of how proofs are formalised in Type
 theory. In the end of section two, we will look at the reseach
-\cite{Firsov2013} conducted by Denis Firsov and Tarmo Uustalu. Following the
+\cite{firsov2013} conducted by Firsov and Uustalu. Following the
 literature review, the third section will
 be a detail description of our work. We will walk through the Agda
-formalisation of the three objectives. After that, we will evaluate
-the whole project in terms of ... and ... . Finally, the conclusions will be
+formalisation of the three objectives. After that, there will an evaluation
+of the whole project. Finally, the conclusions will be
 drawn. 
 
 \newpage
-\section{Literature Review}
+\section{Background}
 
 \subsection{Agda} 
 \par Agda is a dependently typed functional programming language and a
 proof assistant based on Intuitionistic Type theory
-\cite{martin1984}. The current version (Agda 2) is rewritten by Ulf
-Norell \cite{norell2007} at Chalmers University of
+\cite{martin1984}. The current version (Agda 2) is rewritten by Norell
+\cite{norell2007} at Chalmers University of
 Technology. In this section, we will describe the basic features of
 Agda and how dependent types are employed to build programs and
 proofs. Most of the materials presented below can also be
 found in the two tutorial papers \cite{bove2009} and
-\cite{norell2009}. Interested readers can take a look at them and get
+\cite{norell2009}. Interested readers can take a look and get
 a more precise idea on how to work with Agda. 
 
 \subsubsection{Simply Typed Functional Programming}
@@ -151,8 +153,7 @@ data Bool : Set where
 \end{lstlisting}
 \par \(Bool\) is a data type having two
 constructors: \(true\) and \(false\). Note that these two constructors
-are also elements of \(Bool\) since they do not take any
-arguments. Their types are explicitly declared by '\(:
+are also elements of \(Bool\) since they take no argument. Their types are explicitly declared by '\(:
 Bool\)'. On the other hand, \(Bool\) is a member of the type \(Set\). \(Set\)
 represents the set of all \textit{small types}. \(Bool\) is a
 \textit{small type} but \(Set\) itself is not, it is a \textit{large
@@ -165,7 +166,7 @@ not false = true
 \end{lstlisting}
 \par Similar to Haskell or other functional programming languages, we
 declare the type of the function and define the function body by
-pattern matching the argument. We can declare partial
+pattern matching the arguments. Note that we can declare partial
 functions in Haskell but not in Agda. For instance, the function below
 will be rejected by the Agda compiler:
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
@@ -173,14 +174,14 @@ not : Bool $\to$ Bool
 not true  = false
 \end{lstlisting}
 
-\paragraph{Natural Number} The type of natural numbers is defined inductively as
-the data type below: 
+\paragraph{Natural Number} The type of natural numbers is defined
+inductively as follow: 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data $\mathbb N$ : Set where
   zero : $\mathbb N$
   suc  : $\mathbb N$ $\to$ $\mathbb N$
 \end{lstlisting} 
-\par Let us define the addition function recursively:
+\par Let us also define the addition function recursively as follow:
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 _+_ : $\mathbb N$ $\to$ $\mathbb N$ $\to$ $\mathbb N$: Set where
 zero  + m = m
@@ -195,31 +196,108 @@ data List (A : Set) : Set where
   _::_ : A $\to$ List A $\to$ List A
 \end{lstlisting} 
 
+\subsubsection{Universe}
+\par ...
+
 \subsubsection{Dependent Types}
 \par Dependent types are types that depend on values of other
 types. For example, \(A^n\) is the type of vectors with
-length \(n\). This kind of data type are impossible to be declared in
-simple-typed system. Now, we define the vector type in Agda
+length \(n\) (depends on \(n\)). These kinds of types not possible in
+simply-typed systems. Now, let us define the vector type in Agda
 inductively as follow:
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data Vec (A : Set) : $\mathbb N$ $\to$ Set where
   []   : Vec A zero
   _::_ : $\forall$ {n} $\to$ A $\to$ Vec A n $\to$ Vec A (suc n)
 \end{lstlisting} 
+\par With the use of dependent types, we can define data types and
+functions which are more expressive and precise. For example, we can
+define the function \(head\) which returns the first element in a
+vector as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+head : {A : Set}{n : $\mathbb N$} $\to$ Vec A (suc n) $\to$ A
+head (x :: xs) = x 
+\end{lstlisting} 
+\par Unlike in Haskell which we need to pattern match on \([]\)
+and produce an error, we only need to pattern match on the case (\(x :: xs\)) here
+because the type \(Vec\ A\ (suc\ n)\) ensures that the argument will never
+be \([]\). Apart from vectors, we can also define the type of binary
+search tree such that the order of elements in the tree is guranteed by
+the type declaration. However, we will not be looking into that as it
+is not our major concern. Interersted readers can take a look at
+Section 6 in \cite{bove2009}. Apart from data type declaration,
+dependent types are also used to encode predicate logic and
+program specifications. We will look into them later parts. 
 
 \subsubsection{Propositions as Types}
-\paragraph{Propositional Logic} ...
-\paragraph{Predicate Logic} ...
+\par In the 1930s, Curry identified the
+correspondence between propositions in propositional logic and types
+\cite{curry1934}. In the 1960s, de Bruijn and Howard extended
+Curry's correspondence to predicate logic by introducing dependent
+types \cite{bruijn1968, howard1969}. Later on, Martin-Lof published
+his work, Intuitionistic Type theory\cite{martin1984}, which turned the correspondence into a new
+foundational system for constructive mathematics. 
+\par In the paragraphs below, we will show how the correspondence is
+formalised in Agda. Note that the Intuitionistic Type
+theory is based on constructive logic; therefore, in this project, we
+are working with constructive logic rather than classical logic. Interested readers can take a look at
+\cite{avigad2000} which describes the difference between them. 
 
-\subsubsection{Universe}
-\par ...
+\paragraph{Propositional Logic} In general, Curry's correspondence
+states that a proposition can be interpreted as a set of its proofs. A
+proposition is true if and only if its set of proofs is inhabited,
+i.e. there is at least an element in the set; it is false if and only
+if its set is empty. We will first begin with conjunction, the
+connective 'and'. 
 
-\subsubsection{Termination Checker}
+\subparagraph{Conjunction} Suppose A and B are propositions, then the
+proofs of \(A \wedge B\) should consist of
+a proof of \(P\) and a proof of \(Q\). In Type theory, it corresponds
+to the product type:  
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+data _$\times$_ (P Q : Set) : Set where
+  _,_ : P $\to$ Q $\to$ P $\times$ Q
+\end{lstlisting} 
+\par The above construction corresponds to the introduction rule of
+conjunction while the elimination rules corresponds to the functions
+\(fst\) and \(snd\):
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+fst : {P Q : Set} $\to$ P $\times$ Q $\to$ P
+fst (p , q) = p
+
+snd : {P Q : Set} $\to$ P $\times$ Q $\to$ Q
+snd (p , q) = q
+\end{lstlisting} 
+
+\subparagraph{Disjunction} ...
+
+\subparagraph{Negation} ... 
+
+\subparagraph{Implication} ...
+
+\subparagraph{Truth} ...
+
+\subparagraph{Falsehood} ...
+
+\paragraph{Predicate Logic} We will now move to predicate logic and
+introduce the correpsonding types of universal (\(\forall\)) and
+existenial (\(exists\) quantifiers. 
+
+\subparagraph{Universal Quantifier} The interpretaion of the universal quantifier is similar to
+implication. In order for \(\forall x\in A. B(x)\) to be true, we will have
+to transform every proofs \(a\) of \(A\) to a proof of the proposition
+\(B[x:=a]\). In Type theory, it is represented by the function \((x :
+A) \to B x\). 
+
+\subparagraph{Existential Quantifier} ...
+
+\paragraph{Propositional Equality} ... 
+
+\subsubsection{Encoding Specifications as Types}
 \par ...
 
 \subsection{Related Work}
-\subsubsection{Certified Parsing of Regular Languages}
-\par The matrix representation.
+\par Certified Parsing of Regular Languages. The matrix representation.
 
 \newpage
 \section{Formalisation in Type Theory}
@@ -890,36 +968,8 @@ in paper. In terms of managament, in terms of technical issue?
 \newpage
 \section*{References}
 \addcontentsline{toc}{section}{References}
-\begin{thebibliography}{9}
-\bibitem{aho1972}
-  Aho, A. V. and Ullman, J. D. (1972). \textit{The Theory of Parsing, Translation
-  and Compiling. Volume I: Parsing}. United States of America:
-  Prentice-Hall International, Inc.
-\bibitem{bove2009}
-  Bove, A. and Dybjer, P. (2009). Dependent Types at Work. In: Bove,
-  A., Barbosa, L., Pardo, A. and Pinto, J. Language Engineering and
-  Rigorous Software Development. Berlin: Springer Berlin
-  Heidelberg. p57-99. 
-\bibitem{Firsov2013}
-  Firsov, D. and Uustalu, T. (2013). Certified Parsing of Regular
-  Languages. In: Gonthier, G. and Norrish, M. \textit{Certified Programs and
-  Proofs}. Melbourne: Springer International Publishing. p98-113. 
-\bibitem{martin1984}
-  Martin-Lof, P. (1984), \textit{Intuitionistic
-  Type Theory}.
-\bibitem{norell2007}
-  Norell, U. (2007). \textit{Towards a practical programming language based on
-  dependent type theory}, Goteborg.
-\bibitem{norell2009}
-  Norell, U. and Chapman, J. (2009). Dependently Typed Programming in
-  Agda. In: Koopman, P., Plasmeijer, R. and Swierstra, D. Advanced
-  Functional Programming. Berlin: Springer Berlin
-  Heidelberg. p230-266. 
-\bibitem{agdawiki2016}
-  Norell, U. et al (2016), Available at:
-  http://wiki.portal.chalmers.se/agda/pmwiki.php?n=Main.HomePage
-  (Accessed: 12th March 2016). 
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{references}
 
 \newpage
 \section*{Appendices}

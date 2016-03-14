@@ -1,0 +1,53 @@
+\begin{thebibliography}{10}
+
+\bibitem{aho1972}
+Alfred~V. Aho and Jeffery~V. Ullman.
+\newblock The theory of parsing, translation and compiling. volume i: Parsing,
+  1972.
+
+\bibitem{avigad2000}
+Jeremy Avigad.
+\newblock Classical and constructive logic, 2000.
+
+\bibitem{bove2009}
+Ana Bove and Peter Dybjer.
+\newblock Dependent types at work.
+\newblock In {\em LERNET 2008. LNCS}, pages 57--99. Springer, 2009.
+
+\bibitem{curry1934}
+Haskell Curry.
+\newblock Functionality in combinatory logic, 1934.
+
+\bibitem{bruijn1968}
+Nicolaas de~Bruijn.
+\newblock Automath, a language for mathematics, 1968.
+
+\bibitem{firsov2013}
+Denis Firsov and Tarmo Uustalu.
+\newblock Certified parsing of regular languages, 2013.
+
+\bibitem{howard1969}
+William~A. Howard.
+\newblock The formulae-as-types notion of construction, 1969.
+
+\bibitem{martin1984}
+Per Martin-Lof.
+\newblock Intuitionistic type theory, 1984.
+
+\bibitem{norell2007}
+Ulf Norell.
+\newblock Towards a practical programming language based on dependent type
+  theory, 2007.
+
+\bibitem{norell2009}
+Ulf Norell and James Chapman.
+\newblock Dependently typed programming in agda.
+\newblock In {\em In Lecture Notes from the Summer School in Advanced
+  Functional Programming}, 2008.
+
+\bibitem{agdawiki2016}
+The agda wiki.
+\newblock \url{http://wiki.portal.chalmers.se/agda/pmwiki.php?n=Main.HomePage}.
+\newblock Accessed: 12th March 2016.
+
+\end{thebibliography}

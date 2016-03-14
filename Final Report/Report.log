@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.5)  12 MAR 2016 18:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.5)  13 MAR 2016 23:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -533,23 +533,27 @@ Package hyperref Info: Option `colorlinks' set `true' on input line 21.
 Package: etoolbox 2015/05/04 v2.2 e-TeX tools for LaTeX (JAW)
 \etb@tempcnta=\count122
 )
-(./Report.aux)
+(/usr/local/texlive/2015/texmf-dist/tex/latex/cite/cite.sty
+LaTeX Info: Redefining \cite on input line 302.
+LaTeX Info: Redefining \nocite on input line 332.
+Package: cite 2015/02/27  v 5.5
+) (./Report.aux)
 \openout1 = `Report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 42.
+LaTeX Font Info:    ... okay on input line 42.
 
 (/usr/local/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -624,7 +628,7 @@ File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 142.
 )
-Package hyperref Info: Link coloring ON on input line 40.
+Package hyperref Info: Link coloring ON on input line 42.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -634,9 +638,9 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count130
 )
-LaTeX Info: Redefining \ref on input line 40.
-LaTeX Info: Redefining \pageref on input line 40.
-LaTeX Info: Redefining \nameref on input line 40.
+LaTeX Info: Redefining \ref on input line 42.
+LaTeX Info: Redefining \pageref on input line 42.
+LaTeX Info: Redefining \nameref on input line 42.
 
 (./Report.out) (./Report.out)
 \@outlinefile=\write3
@@ -645,34 +649,34 @@ LaTeX Info: Redefining \nameref on input line 40.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/bx/sc' undefined
-(Font)              using `OT1/cmr/bx/n' instead on input line 42.
+(Font)              using `OT1/cmr/bx/n' instead on input line 44.
 
-<crest.png, id=128, 341.275pt x 341.275pt>
+<crest.png, id=124, 341.275pt x 341.275pt>
 File: crest.png Graphic file (type png)
  <use crest.png>
-Package pdftex.def Info: crest.png used on input line 42.
+Package pdftex.def Info: crest.png used on input line 44.
 (pdftex.def)             Requested size: 85.35498pt x 85.35498pt.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 42.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 44.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 42.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 44.
  [1
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./crest
 .png>]
-Underfull \hbox (badness 10000) in paragraph at lines 44--52
+Underfull \hbox (badness 10000) in paragraph at lines 46--54
 
  []
 
 [2] [3] [4]
-LaTeX Font Info:    Try loading font information for U+msa on input line 74.
+LaTeX Font Info:    Try loading font information for U+msa on input line 76.
  (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 74.
+LaTeX Font Info:    Try loading font information for U+msb on input line 76.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -681,209 +685,202 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 \tf@toc=\write4
 \openout4 = `Report.toc'.
 
- [6] [7] [8] [9]
+ [6] [7] [8]
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 208.
- [10] [11]
-Underfull \hbox (badness 10000) in paragraph at lines 258--261
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 211.
+ [9] [10] [11]
+Underfull \hbox (badness 10000) in paragraph at lines 335--338
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 270--273
+Underfull \hbox (badness 10000) in paragraph at lines 347--350
 
  []
 
 [12]
-Underfull \hbox (badness 10000) in paragraph at lines 288--289
+Underfull \hbox (badness 10000) in paragraph at lines 365--366
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 295--298
+Underfull \hbox (badness 10000) in paragraph at lines 372--375
 
  []
 
 [13]
 
-LaTeX Warning: Command \O invalid in math mode on input line 341.
+LaTeX Warning: Command \O invalid in math mode on input line 418.
 
 
-LaTeX Warning: Command \o invalid in math mode on input line 354.
+LaTeX Warning: Command \o invalid in math mode on input line 431.
 
 
-Overfull \hbox (17.63783pt too wide) in paragraph at lines 357--358
+Overfull \hbox (17.63783pt too wide) in paragraph at lines 434--435
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][] 
  []
 
 
-Overfull \hbox (15.97116pt too wide) in paragraph at lines 358--359
+Overfull \hbox (15.97116pt too wide) in paragraph at lines 435--436
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][] 
  []
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 365.
+LaTeX Warning: Command \O invalid in math mode on input line 442.
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 365.
+LaTeX Warning: Command \O invalid in math mode on input line 442.
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 386.
+LaTeX Warning: Command \O invalid in math mode on input line 463.
 
 [14]
 
-LaTeX Warning: Command \O invalid in math mode on input line 396.
+LaTeX Warning: Command \O invalid in math mode on input line 473.
 
 
-LaTeX Warning: Command \o invalid in math mode on input line 396.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 404.
+LaTeX Warning: Command \o invalid in math mode on input line 473.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\epsilon' on input line 404.
+(hyperref)                removing `math shift' on input line 481.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 405--406
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\epsilon' on input line 481.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 482--483
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 422--425
+Underfull \hbox (badness 10000) in paragraph at lines 499--502
 
  []
 
 [15] [16]
-Overfull \hbox (22.82793pt too wide) in paragraph at lines 506--507
+Overfull \hbox (22.82793pt too wide) in paragraph at lines 583--584
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (83.07501pt too wide) in paragraph at lines 529--530
+Overfull \hbox (83.07501pt too wide) in paragraph at lines 606--607
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 [17]
 
-LaTeX Warning: Command \O invalid in math mode on input line 542.
+LaTeX Warning: Command \O invalid in math mode on input line 619.
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 543.
+LaTeX Warning: Command \O invalid in math mode on input line 620.
 
-<images/null.png, id=402, 40.953pt x 61.1886pt>
+<images/null.png, id=429, 40.953pt x 61.1886pt>
 File: images/null.png Graphic file (type png)
  <use images/null.png>
-Package pdftex.def Info: images/null.png used on input line 543.
+Package pdftex.def Info: images/null.png used on input line 620.
 (pdftex.def)             Requested size: 40.95288pt x 61.18843pt.
 
-<images/epsilon.png, id=403, 40.953pt x 61.1886pt>
+<images/epsilon.png, id=430, 40.953pt x 61.1886pt>
 File: images/epsilon.png Graphic file (type png)
  <use images/epsilon.png>
-Package pdftex.def Info: images/epsilon.png used on input line 545.
+Package pdftex.def Info: images/epsilon.png used on input line 622.
 (pdftex.def)             Requested size: 40.95288pt x 61.18843pt.
 
-<images/singleton.png, id=404, 145.9854pt x 61.1886pt>
+<images/singleton.png, id=431, 145.9854pt x 61.1886pt>
 File: images/singleton.png Graphic file (type png)
 
 <use images/singleton.png>
-Package pdftex.def Info: images/singleton.png used on input line 547.
+Package pdftex.def Info: images/singleton.png used on input line 624.
 (pdftex.def)             Requested size: 145.98503pt x 61.18843pt.
- <images/union.png, id=405, 299.9205pt x 278.9622pt>
+ <images/union.png, id=432, 299.9205pt x 278.9622pt>
 File: images/union.png Graphic file (type png)
 
 <use images/union.png>
-Package pdftex.def Info: images/union.png used on input line 554.
+Package pdftex.def Info: images/union.png used on input line 631.
 (pdftex.def)             Requested size: 299.91975pt x 278.96152pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [18 <./images/null.png> <./images/epsilon.png> <./images/singleton.png>]
-<images/concat.png, id=419, 393.8715pt x 133.4586pt>
+<images/concat.png, id=446, 393.8715pt x 133.4586pt>
 File: images/concat.png Graphic file (type png)
  <use images/concat.png>
-Package pdftex.def Info: images/concat.png used on input line 556.
+Package pdftex.def Info: images/concat.png used on input line 633.
 (pdftex.def)             Requested size: 393.87053pt x 133.45827pt.
 
-Overfull \hbox (10.86594pt too wide) in paragraph at lines 556--556
+Overfull \hbox (10.86594pt too wide) in paragraph at lines 633--633
  [] 
  []
 
-<images/star.png, id=420, 276.0714pt x 176.8206pt>
+<images/star.png, id=447, 276.0714pt x 176.8206pt>
 File: images/star.png Graphic file (type png)
  <use images/star.png>
-Package pdftex.def Info: images/star.png used on input line 559.
+Package pdftex.def Info: images/star.png used on input line 636.
 (pdftex.def)             Requested size: 276.07071pt x 176.82014pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [19 <./images/union.png> <./images/concat.png>]
 
-LaTeX Warning: Command \O invalid in math mode on input line 576.
+LaTeX Warning: Command \O invalid in math mode on input line 653.
 
 [20 <./images/star.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 680--681
+Underfull \hbox (badness 10000) in paragraph at lines 757--758
 
  []
 
 [21] [22]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 770.
+(hyperref)                removing `math shift' on input line 847.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\epsilon' on input line 770.
+(hyperref)                removing `\epsilon' on input line 847.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 775--776
+Underfull \hbox (badness 10000) in paragraph at lines 852--853
 
  []
 
-[23] [24] [25] [26] [27]
-Overfull \hbox (57.77838pt too wide) in paragraph at lines 920--923
-[]\OT1/cmr/m/n/10 Norell, U. et al (2016), Avail-able at: http://wiki.portal.ch
-almers.se/agda/pmwiki.php?n=Main.HomePage
- []
-
-[28]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 930.
+[23] [24] [25] [26] [27] (./Report.bbl) [28]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 979.
  [29]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 930.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 979.
  (./Report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 930.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 930.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 979.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 979.
 Package rerunfilecheck Info: File `Report.out' has not changed.
-(rerunfilecheck)             Checksum: ADC2363004CF7C5B0B73BAE496586638;2104.
+(rerunfilecheck)             Checksum: BFD84F1892B3191698D5DE3380D866B9;2012.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 930.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 979.
  )
 (\end occurred inside a group at level 3)
 
-### semi simple group (level 3) entered at line 64 (\begingroup)
-### semi simple group (level 2) entered at line 53 (\begingroup)
-### semi simple group (level 1) entered at line 43 (\begingroup)
+### semi simple group (level 3) entered at line 66 (\begingroup)
+### semi simple group (level 2) entered at line 55 (\begingroup)
+### semi simple group (level 1) entered at line 45 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 9299 strings out of 493089
- 130759 string characters out of 6134842
- 242804 words of memory out of 5000000
- 12350 multiletter control sequences out of 15000+600000
- 11851 words of font info for 46 fonts, out of 8000000 for 9000
+ 9415 strings out of 493089
+ 132247 string characters out of 6134842
+ 243688 words of memory out of 5000000
+ 12435 multiletter control sequences out of 15000+600000
+ 12019 words of font info for 47 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,7n,32p,948b,1885s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,7n,32p,948b,1886s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmbx10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmbx12.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmcsc10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/c
 m/cmex10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm
 /cmmi10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/
 cmmi12.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/c
@@ -893,13 +890,14 @@ mmi7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
 b></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 ></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><
 /usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></
-usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pf
-b></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm1
-0.pfb>
-Output written on Report.pdf (29 pages, 465092 bytes).
+usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></u
+sr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb
+></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10
+.pfb>
+Output written on Report.pdf (29 pages, 471975 bytes).
 PDF statistics:
- 680 PDF objects out of 1000 (max. 8388607)
- 613 compressed objects within 7 object streams
- 306 named destinations out of 1000 (max. 500000)
- 284 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 713 PDF objects out of 1000 (max. 8388607)
+ 646 compressed objects within 7 object streams
+ 330 named destinations out of 1000 (max. 500000)
+ 276 words of extra memory for PDF output out of 10000 (max. 10000000)
 
