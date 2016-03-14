@@ -1,0 +1,101 @@
+digraph dependencies {
+    subgraph {
+        Correctness [label=Correctness
+                    ,shape=box
+                    ,color="#10EE20"
+                    ,style=filled];
+        Subset [label=Subset
+               ,shape=box
+               ,color="#10AAEE"
+               ,style=filled];
+        Correctness -> Subset [style=invis];
+    }
+    m62 [label="RegExpToe-NFA.Singleton-lemmas"
+        ,color="#10EE20"
+        ,style=filled];
+    m0 [label="Parsing-Regular-Expression-in-Agda"];
+    m1 [label=VectorRep
+        ,color="#10AAEE"
+       ,style=filled];
+    m63 [label="RegExpToe-NFA.Union-lemmas"
+        ,color="#10EE20"
+        ,style=filled];
+    m48 [label=QuotientSet];
+    m49 [label="Subset"
+        ,color="#10AAEE"
+        ,style=filled];
+    m50 [label=RegularExpression];
+    m52 [label=State];
+    m64 [label="RegExpToe-NFA.KleenStar-lemmas"
+        ,color="#10EE20"
+        ,style=filled];
+    m65 [label="RegExpToe-NFA.Epsilon-lemmas"
+        ,color="#10EE20"
+        ,style=filled];
+    m61 [label="RegExpToe-NFA"
+        ,color="#10EE20" 
+        ,style=filled];
+    m66 [label="RegExpToe-NFA.Concatenation-lemmas"
+        ,color="#10EE20"
+        ,style=filled];
+    m54 [label="Myhill-Nerode-Theorem"];
+    m53 [label=DecidableSubset
+        ,color="#10AAEE"
+        ,style=filled];
+    m55 [label=Translation];
+    m33 [label=Util];
+    m51 [label=Language];
+    m85 [label=NFAToDFA
+        ,color="#10EE20"
+        ,style=filled];
+    m56 [label=DFA];
+    m57 [label=NFA];
+    m59 [label="RegExp-Decidability"];
+    m60 [label="Correctness"
+        ,color="#10EE20"
+        ,style=filled];
+    m86 [label="e-NFAToNFA"
+        ,color="#10EE20"
+        ,style=filled];
+    m58 [label=eNFA];
+    m0 -> m54;
+    m0 -> m59;
+    m1 -> m33;
+    m48 -> m33;
+    m48 -> m49;
+    m50 -> m51;
+    m51 -> m33;
+    m51 -> m49;
+    m52 -> m49;
+    m52 -> m53;
+    m53 -> m1;
+    m54 -> m55;
+    m55 -> m50;
+    m55 -> m52;
+    m55 -> m56;
+    m55 -> m57;
+    m55 -> m58;
+    m56 -> m48;
+    m56 -> m51;
+    m56 -> m53;
+    m57 -> m51;
+    m57 -> m53;
+    m58 -> m51;
+    m58 -> m53;
+    m59 -> m60;
+    m60 -> m61;
+    m60 -> m85;
+    m60 -> m86;
+    m61 -> m62;
+    m61 -> m63;
+    m61 -> m64;
+    m61 -> m65;
+    m61 -> m66;
+    m62 -> m55;
+    m63 -> m55;
+    m64 -> m55;
+    m65 -> m55;
+    m66 -> m55;
+    m85 -> m55;
+    m86 -> m55;
+}
