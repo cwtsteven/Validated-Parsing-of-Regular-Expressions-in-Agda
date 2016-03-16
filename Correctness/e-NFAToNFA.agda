@@ -3,11 +3,11 @@
     ∀nfa∈ε-NFA. L(nfa) ⊆ L(remove-ε-step nfa)
     ∀nfa∈ε-NFA. L(nfa) ⊇ L(remove-ε-step nfa)
 
-  Steven Cheung 2015.
+  Steven Cheung
   Version 31-01-2015
 -}
 open import Util
-module Correctness.e-NFAToNFA (Σ : Set)(dec : DecEq Σ) where
+module Correctness.e-NFAtoNFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
 open import Data.Bool

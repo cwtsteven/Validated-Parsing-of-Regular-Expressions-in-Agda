@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.5)  14 MAR 2016 01:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.10.5)  15 MAR 2016 10:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -651,7 +651,7 @@ LaTeX Info: Redefining \nameref on input line 42.
 LaTeX Font Warning: Font shape `OT1/cmr/bx/sc' undefined
 (Font)              using `OT1/cmr/bx/n' instead on input line 44.
 
-<crest.png, id=124, 341.275pt x 341.275pt>
+<crest.png, id=136, 341.275pt x 341.275pt>
 File: crest.png Graphic file (type png)
  <use crest.png>
 Package pdftex.def Info: crest.png used on input line 44.
@@ -681,188 +681,172 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 76.
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [5]
-(./Report.toc)
+(./Report.toc [6])
 \tf@toc=\write4
 \openout4 = `Report.toc'.
 
- [6] [7] [8]
+ [7] [8] [9]
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 211.
- [9] [10] [11]
-Underfull \hbox (badness 10000) in paragraph at lines 335--338
-
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 213.
+ [10] [11]
+Overfull \hbox (5.33125pt too wide) in paragraph at lines 310--311
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][][] 
  []
 
+[12] [13] [14] [15]
 
-Underfull \hbox (badness 10000) in paragraph at lines 347--350
-
- []
-
-[12]
-Underfull \hbox (badness 10000) in paragraph at lines 365--366
-
- []
+LaTeX Warning: Command \O invalid in math mode on input line 462.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 372--375
-
- []
-
-[13]
-
-LaTeX Warning: Command \O invalid in math mode on input line 418.
+LaTeX Warning: Command \o invalid in math mode on input line 475.
 
 
-LaTeX Warning: Command \o invalid in math mode on input line 431.
-
-
-Overfull \hbox (17.63783pt too wide) in paragraph at lines 434--435
+Overfull \hbox (17.63783pt too wide) in paragraph at lines 478--479
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][] 
  []
 
 
-Overfull \hbox (15.97116pt too wide) in paragraph at lines 435--436
+Overfull \hbox (15.97116pt too wide) in paragraph at lines 479--480
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][] 
  []
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 442.
+LaTeX Warning: Command \O invalid in math mode on input line 486.
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 442.
+LaTeX Warning: Command \O invalid in math mode on input line 486.
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 463.
+LaTeX Warning: Command \O invalid in math mode on input line 507.
 
-[14]
+[16]
 
-LaTeX Warning: Command \O invalid in math mode on input line 473.
-
-
-LaTeX Warning: Command \o invalid in math mode on input line 473.
+LaTeX Warning: Command \O invalid in math mode on input line 517.
 
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 481.
+LaTeX Warning: Command \o invalid in math mode on input line 517.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\epsilon' on input line 481.
+(hyperref)                removing `math shift' on input line 525.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 482--483
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\epsilon' on input line 525.
 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 499--502
-
- []
-
-[15] [16]
-Overfull \hbox (22.82793pt too wide) in paragraph at lines 583--584
+[17] [18]
+Overfull \hbox (22.82793pt too wide) in paragraph at lines 629--630
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (83.07501pt too wide) in paragraph at lines 606--607
+Overfull \hbox (83.07501pt too wide) in paragraph at lines 653--654
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
-[17]
 
-LaTeX Warning: Command \O invalid in math mode on input line 619.
+LaTeX Warning: Command \O invalid in math mode on input line 664.
 
 
-LaTeX Warning: Command \O invalid in math mode on input line 620.
+LaTeX Warning: Command \O invalid in math mode on input line 665.
 
-<images/null.png, id=429, 40.953pt x 61.1886pt>
+<images/null.png, id=474, 40.953pt x 61.1886pt>
 File: images/null.png Graphic file (type png)
  <use images/null.png>
-Package pdftex.def Info: images/null.png used on input line 620.
+Package pdftex.def Info: images/null.png used on input line 665.
 (pdftex.def)             Requested size: 40.95288pt x 61.18843pt.
-
-<images/epsilon.png, id=430, 40.953pt x 61.1886pt>
+ [19]
+<images/epsilon.png, id=505, 40.953pt x 61.1886pt>
 File: images/epsilon.png Graphic file (type png)
  <use images/epsilon.png>
-Package pdftex.def Info: images/epsilon.png used on input line 622.
+Package pdftex.def Info: images/epsilon.png used on input line 667.
 (pdftex.def)             Requested size: 40.95288pt x 61.18843pt.
 
-<images/singleton.png, id=431, 145.9854pt x 61.1886pt>
+<images/singleton.png, id=506, 145.9854pt x 61.1886pt>
 File: images/singleton.png Graphic file (type png)
 
 <use images/singleton.png>
-Package pdftex.def Info: images/singleton.png used on input line 624.
+Package pdftex.def Info: images/singleton.png used on input line 669.
 (pdftex.def)             Requested size: 145.98503pt x 61.18843pt.
- <images/union.png, id=432, 299.9205pt x 278.9622pt>
+ <images/union.png, id=507, 299.9205pt x 278.9622pt>
 File: images/union.png Graphic file (type png)
 
 <use images/union.png>
-Package pdftex.def Info: images/union.png used on input line 631.
+Package pdftex.def Info: images/union.png used on input line 676.
 (pdftex.def)             Requested size: 299.91975pt x 278.96152pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [18 <./images/null.png> <./images/epsilon.png> <./images/singleton.png>]
-<images/concat.png, id=446, 393.8715pt x 133.4586pt>
+ [20 <./images/null.png> <./images/epsilon.png> <./images/singleton.png>]
+<images/concat.png, id=519, 393.8715pt x 133.4586pt>
 File: images/concat.png Graphic file (type png)
  <use images/concat.png>
-Package pdftex.def Info: images/concat.png used on input line 633.
+Package pdftex.def Info: images/concat.png used on input line 678.
 (pdftex.def)             Requested size: 393.87053pt x 133.45827pt.
 
-Overfull \hbox (10.86594pt too wide) in paragraph at lines 633--633
+Overfull \hbox (10.86594pt too wide) in paragraph at lines 678--678
  [] 
  []
 
-<images/star.png, id=447, 276.0714pt x 176.8206pt>
+<images/star.png, id=520, 276.0714pt x 176.8206pt>
 File: images/star.png Graphic file (type png)
  <use images/star.png>
-Package pdftex.def Info: images/star.png used on input line 636.
+Package pdftex.def Info: images/star.png used on input line 681.
 (pdftex.def)             Requested size: 276.07071pt x 176.82014pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [19 <./images/union.png> <./images/concat.png>]
+ [21 <./images/union.png> <./images/concat.png>]
 
-LaTeX Warning: Command \O invalid in math mode on input line 653.
-
-[20 <./images/star.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 757--758
-
- []
-
-[21] [22]
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 847.
+LaTeX Warning: Command \O invalid in math mode on input line 695.
 
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\epsilon' on input line 847.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 852--853
+Underfull \hbox (badness 10000) in paragraph at lines 699--706
 
  []
 
-[23] [24] [25] [26] [27] (./Report.bbl) [28]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 979.
- [29]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 979.
+[22 <./images/star.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 740--742
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 782--784
+
+ []
+
+
+Underfull \vbox (badness 6641) has occurred while \output is active []
+
+ [23]
+[24]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 889.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\epsilon' on input line 889.
+
+[25] [26] [27] [28] [29] [30] [31] (./Report.bbl) [32]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 980.
+ [33]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 980.
  (./Report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 979.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 979.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 980.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 980.
 Package rerunfilecheck Info: File `Report.out' has not changed.
-(rerunfilecheck)             Checksum: BFD84F1892B3191698D5DE3380D866B9;2012.
+(rerunfilecheck)             Checksum: 255505B5CFED4205C2E7434EAB7C4CFA;2202.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 979.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 980.
  )
 (\end occurred inside a group at level 3)
 
@@ -871,13 +855,13 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 979.
 ### semi simple group (level 1) entered at line 45 (\begingroup)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 9415 strings out of 493089
- 132247 string characters out of 6134842
- 243688 words of memory out of 5000000
- 12435 multiletter control sequences out of 15000+600000
+ 9446 strings out of 493089
+ 132568 string characters out of 6134842
+ 243722 words of memory out of 5000000
+ 12439 multiletter control sequences out of 15000+600000
  12019 words of font info for 47 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 34i,7n,32p,948b,1886s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,7n,32p,948b,1853s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmbx10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmbx12.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/c
@@ -894,10 +878,10 @@ usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></u
 sr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb
 ></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10
 .pfb>
-Output written on Report.pdf (29 pages, 471962 bytes).
+Output written on Report.pdf (33 pages, 473176 bytes).
 PDF statistics:
- 713 PDF objects out of 1000 (max. 8388607)
- 646 compressed objects within 7 object streams
- 330 named destinations out of 1000 (max. 500000)
- 276 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 771 PDF objects out of 1000 (max. 8388607)
+ 700 compressed objects within 7 object streams
+ 357 named destinations out of 1000 (max. 500000)
+ 300 words of extra memory for PDF output out of 10000 (max. 10000000)
 

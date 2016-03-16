@@ -3,7 +3,7 @@
     L(ε) ⊆ L(regexToε-NFA ε)
     L(ε) ⊇ L(regexToε-NFA ε)
 
-  Steven Cheung 2015.
+  Steven Cheung
   Version 07-01-2016
 -}
 

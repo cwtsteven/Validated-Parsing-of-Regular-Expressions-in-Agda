@@ -5,20 +5,15 @@
     Section 2.2: Regular sets, their generators, and their recognizers
       by Alfred V. Aho and Jeffery D. Ullman
 
-  Steven Cheung 2015.
-  Version 07-01-2016
+  Steven Cheung
+  Version 15-03-2016
 -}
 open import Util
 module RegularExpression (Σ : Set)(dec : DecEq Σ) where
 
-
-open import Data.List
-open import Relation.Binary.PropositionalEquality
-open import Relation.Nullary
 open import Data.Product hiding (Σ)
 open import Data.Sum
 open import Data.Nat
-open import Data.Empty
 
 open import Language Σ dec renaming (Ø to ø)
 open import Subset hiding (Ø ; ⟦_⟧ ; _⋃_)

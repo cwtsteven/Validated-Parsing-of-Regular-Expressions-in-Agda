@@ -5,13 +5,14 @@
     from The University of Birmingham, 
     School of Computer Science
 
-  Steven Cheung 2015.
-  Version 10-01-2016
+  Steven Cheung
+  Version 15-03-2016
 -}
 open import Util
 module Translation (Σ : Set)(dec : DecEq Σ) where
 
 --open import Level
+open import Data.List hiding (map)
 open import Data.Bool
 open import Relation.Nullary
 open import Relation.Binary
@@ -27,7 +28,7 @@ open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 
 open import Subset
 open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; _∈?_ to _∈ᵈ?_ ; Ø to ø ; _⋃_ to _⋃ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; _≈_ to _≈ᵈ_ ; ≈-isEquiv to ≈ᵈ-isEquiv)
-open import QuotientSet
+open import Quotient
 open import Language Σ dec hiding (⟦_⟧)
 open import RegularExpression Σ dec 
 open import eNFA Σ dec
@@ -209,7 +210,7 @@ remove-ε-step nfa =
 -- determinise the NFA by powerset construction
 powerset-construction : NFA → DFA
 powerset-construction nfa =
-  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≈ᵈ_ ; Dec-≋ = Decidable-≈.Dec-≈ {Q} {∣Q∣-1} Q? It ∀q∈It unique ; ≋-isEquiv = ≈ᵈ-isEquiv ; F-lem = F-lem ; δ-lem = δ-lem ; Q? = undefined ; ∣Q∣-1 = undefined ; It = undefined ; ∀q∈It = undefined ; unique = undefined }
+  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≈ᵈ_ ; Dec-≋ = Decidable-≈.Dec-≈ {Q} {∣Q∣-1} Q? It ∀q∈It unique ; ≋-isEquiv = ≈ᵈ-isEquiv ; F-lem = F-lem ; δ-lem = δ-lem }
     where
       open NFA nfa
       open NFA-Operations nfa
@@ -234,8 +235,6 @@ powerset-construction nfa =
       F' qs with Dec-qs∈F qs
       ... | yes _ = true
       ... | no  _ = false
-
-      
 
       δ-lem : ∀ {qs ps : Q'} a
               → qs ≈ᵈ ps
@@ -275,23 +274,94 @@ powerset-construction nfa =
       F-lem {qs} {ps} qs≈ps   () | false | [ ps∉F ] | no  ¬∃p | no  _
 
 
-remove-inaccessible-states : (D : DFA) → Σ[ R ∈ DFA ] All-Reachable-States R
-remove-inaccessible-states D = R , prf
+remove-inaccessible-states : DFA → DFA
+remove-inaccessible-states D = R
   where
     open DFA D
+    open DFA-Properties D
+    open IsEquivalence ≋-isEquiv renaming (refl to ≋-refl ; sym to ≋-sym ; trans to ≋-trans)
+    Q' : Set
+    Q' = Qᴿ
+    
+    δ' : Q' → Σ → Q'
+    δ' (reach q prf) a = reach (δ q a) (reach-lem₁ prf)
+    
+    q₀' : Q'
+    q₀' = reach q₀ q₀-reach
+    
+    F' : DecSubset Q'
+    F' (reach q prf) = q ∈ᵈ? F
+    
+    _≋'_ : Q' → Q' → Set
+    (reach q prf) ≋' (reach q' prf') = q ≋ q'
+    
+    Dec-≋' : ∀ q q' → Dec (q ≋' q')
+    Dec-≋' (reach q prf) (reach q' prf') = Dec-≋ q q'
+    
+    ≋'-refl : Reflexive _≋'_
+    ≋'-refl {reach q prf} = ≋-refl
+    
+    ≋'-sym : Symmetric _≋'_
+    ≋'-sym {reach q prf} {reach q' prf'} q≋q' = ≋-sym q≋q'
+    
+    ≋'-trans : Transitive _≋'_
+    ≋'-trans {reach q prf} {reach q' prf'} {reach q'' prf''} q≋q' q'≋q'' = ≋-trans q≋q' q'≋q''
+    
+    ≋'-isEquiv : IsEquivalence {A = Q'} _≋'_
+    ≋'-isEquiv = record { refl = λ {q} → ≋'-refl {q} ; sym = λ {q} {q'} → ≋'-sym {q} {q'} ; trans = λ {q} {q'} {q''} → ≋'-trans {q} {q'} {q''} }
+
     R : DFA
-    R = record { Q = undefined ; δ = undefined ; q₀ = undefined ; F = undefined ; _≋_ = undefined ; Dec-≋ = undefined ; ≋-isEquiv = undefined ; δ-lem = undefined ; F-lem = undefined ; Q? = undefined ; ∣Q∣-1 = undefined ; It = undefined ; ∀q∈It = undefined ; unique = undefined }
-    prf : All-Reachable-States R
-    prf = undefined
+    R = record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≋'_ ; Dec-≋ = Dec-≋' ; ≋-isEquiv = ≋'-isEquiv ; δ-lem = undefined ; F-lem = undefined }
+    
 
-
-quotient-construciton : DFA → DFA
-quotient-construciton D = record { Q = undefined ; δ = undefined ; q₀ = undefined ; F = undefined ; _≋_ = undefined ; Dec-≋ = undefined ; ≋-isEquiv = undefined ; δ-lem = undefined ; F-lem = undefined ; Q? = undefined ; ∣Q∣-1 = undefined ; It = undefined ; ∀q∈It = undefined ; unique = undefined }
+quotient-construction : DFA → DFA
+quotient-construction D
+  = record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≋'_ ; Dec-≋ = Dec-≋' ; ≋-isEquiv = ≋'-isEquiv ; δ-lem = undefined ; F-lem = undefined }
   where
     open DFA D
     open DFA-Operations D
     open DFA-Properties D
+    open Quot-Properties quot
+    open IsEquivalence ≋-isEquiv renaming (refl to ≋-refl ; sym to ≋-sym ; trans to ≋-trans)
+
+    Q' : Set
+    Q' = Quot-Set
+
+    δ' : Q' → Σ → Q'
+    δ' (class qs (q , prf)) a = class (⟪ δ q a ⟫) (δ q a , IsEquivalence.refl ≈ᵈ-isEquiv)
+
+    q₀' : Q'
+    q₀' = class (⟪ q₀ ⟫) (q₀ , IsEquivalence.refl ≈ᵈ-isEquiv)
+
+    F' : DecSubset Q'
+    F' (class qs (q , prf)) = q ∈ᵈ? F
+
+    _≋'_ : Q' → Q' → Set
+    (class qs (q , prf)) ≋' (class qs' (q' , prf')) = qs ≈ᵈ qs'
+
+    open Decidable-≈ {Q} {undefined} (undefined) (undefined) (undefined) (undefined)
+
+    Dec-≋' : ∀ q q' → Dec (q ≋' q')
+    Dec-≋' (class qs (q , prf)) (class qs' (q' , prf')) = Dec-≈ qs qs'
+
+    ≋'-refl : Reflexive _≋'_
+    ≋'-refl {class qs (q , prf)} = IsEquivalence.refl ≈ᵈ-isEquiv
     
+    ≋'-sym : Symmetric _≋'_
+    ≋'-sym {class qs (q , prf)} {class qs' (q' , prf')} q≋q' = IsEquivalence.sym ≈ᵈ-isEquiv q≋q'
+    
+    ≋'-trans : Transitive _≋'_
+    ≋'-trans {class qs (q , prf)} {class qs' (q' , prf')} {class qs'' (q'' , prf'')} q≋q' q'≋q'' = IsEquivalence.trans ≈ᵈ-isEquiv q≋q' q'≋q''
+    
+    ≋'-isEquiv : IsEquivalence {A = Q'} _≋'_
+    ≋'-isEquiv = record { refl = λ {q} → ≋'-refl {q} ; sym = λ {q} {q'} → ≋'-sym {q} {q'} ; trans = λ {q} {q'} {q''} → ≋'-trans {q} {q'} {q''} }
+    
+    
+minimise : DFA → DFA
+minimise dfa = M 
+  where
+    M : DFA
+    M = (quotient-construction ∘ remove-inaccessible-states) dfa
 
 
 -- translating a regular expression to a NFA w/o ε-step
@@ -305,5 +375,5 @@ regexToDFA = powerset-construction ∘ remove-ε-step ∘ regexToε-NFA
 
 
 -- translating a regular expression to a MDFA
---regexToMDFA : (r : RegExp) → Minimal (regexToDFA r)
---regexToMDFA r = minimise (regexToDFA r)
+regexToMDFA : (r : RegExp) → DFA
+regexToMDFA r = minimise (regexToDFA r)

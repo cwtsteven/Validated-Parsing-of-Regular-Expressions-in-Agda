@@ -1,87 +1,131 @@
 \contentsline {section}{List of Abbreviations}{5}{section*.4}
-\contentsline {section}{\numberline {1}Introduction}{7}{section.1}
-\contentsline {subsection}{\numberline {1.1}Motivation}{7}{subsection.1.1}
-\contentsline {subsection}{\numberline {1.2}Overview}{7}{subsection.1.2}
-\contentsline {section}{\numberline {2}Background}{8}{section.2}
-\contentsline {subsection}{\numberline {2.1}Agda}{8}{subsection.2.1}
-\contentsline {subsubsection}{\numberline {2.1.1}Simply Typed Functional Programming}{8}{subsubsection.2.1.1}
-\contentsline {paragraph}{Boolean}{8}{section*.6}
-\contentsline {paragraph}{Natural Number}{9}{section*.7}
-\contentsline {paragraph}{Parameterised Types}{9}{section*.8}
-\contentsline {subsubsection}{\numberline {2.1.2}Universe}{9}{subsubsection.2.1.2}
-\contentsline {subsubsection}{\numberline {2.1.3}Dependent Types}{9}{subsubsection.2.1.3}
-\contentsline {subsubsection}{\numberline {2.1.4}Propositions as Types}{10}{subsubsection.2.1.4}
-\contentsline {paragraph}{Propositional Logic}{10}{section*.9}
-\contentsline {subparagraph}{Conjunction}{10}{section*.10}
-\contentsline {subparagraph}{Disjunction}{10}{section*.11}
-\contentsline {subparagraph}{Negation}{10}{section*.12}
-\contentsline {subparagraph}{Implication}{11}{section*.13}
-\contentsline {subparagraph}{Truth}{11}{section*.14}
-\contentsline {subparagraph}{Falsehood}{11}{section*.15}
-\contentsline {paragraph}{Predicate Logic}{11}{section*.16}
-\contentsline {subparagraph}{Universal Quantifier}{11}{section*.17}
-\contentsline {subparagraph}{Existential Quantifier}{11}{section*.18}
-\contentsline {paragraph}{Propositional Equality}{11}{section*.19}
-\contentsline {subsubsection}{\numberline {2.1.5}Encoding Specifications as Types}{11}{subsubsection.2.1.5}
-\contentsline {subsection}{\numberline {2.2}Related Work}{11}{subsection.2.2}
-\contentsline {section}{\numberline {3}Formalisation in Type Theory}{12}{section.3}
-\contentsline {subsection}{\numberline {3.1}Subsets and Decidable Subsets}{12}{subsection.3.1}
-\contentsline {paragraph}{Agda}{12}{section*.20}
-\contentsline {paragraph}{Definition 1.1}{12}{section*.21}
-\contentsline {paragraph}{Definition 1.2}{12}{section*.22}
-\contentsline {subsection}{\numberline {3.2}Languages}{13}{subsection.3.2}
-\contentsline {paragraph}{Agda}{13}{section*.23}
-\contentsline {paragraph}{Definition 2.1}{13}{section*.24}
-\contentsline {paragraph}{Definition 2.2}{13}{section*.25}
-\contentsline {subsubsection}{\numberline {3.2.1}Operations on Languages}{13}{subsubsection.3.2.1}
-\contentsline {paragraph}{Definition 2.3}{13}{section*.26}
-\contentsline {paragraph}{Definition 2.4}{13}{section*.27}
-\contentsline {paragraph}{Definition 2.5}{13}{section*.28}
-\contentsline {subsection}{\numberline {3.3}Regular Languages and Regular Expressions}{14}{subsection.3.3}
-\contentsline {paragraph}{Agda}{14}{section*.29}
-\contentsline {paragraph}{Definition 3.1}{14}{section*.30}
-\contentsline {paragraph}{Definition 3.2}{14}{section*.31}
-\contentsline {subsection}{\numberline {3.4}\(\epsilon \)-Non Deterministic Finite Automata}{15}{subsection.3.4}
-\contentsline {paragraph}{Agda}{15}{section*.32}
-\contentsline {paragraph}{Definition 4.1}{15}{section*.33}
-\contentsline {paragraph}{Definition 4.2}{15}{section*.34}
-\contentsline {paragraph}{Definition 4.3}{16}{section*.35}
-\contentsline {paragraph}{Definition 4.4}{16}{section*.36}
-\contentsline {paragraph}{Definition 4.5}{17}{section*.37}
-\contentsline {paragraph}{Definition 4.6}{17}{section*.38}
-\contentsline {paragraph}{Definition 4.7}{17}{section*.39}
-\contentsline {paragraph}{Definition 4.8}{17}{section*.40}
-\contentsline {paragraph}{Definition 4.9}{17}{section*.41}
-\contentsline {subsection}{\numberline {3.5}Thompson's Construction}{17}{subsection.3.5}
-\contentsline {paragraph}{Agda}{17}{section*.42}
-\contentsline {paragraph}{Definition 5.1}{18}{section*.43}
-\contentsline {paragraph}{Theorem 1.1}{20}{section*.44}
-\contentsline {paragraph}{Agda}{20}{section*.45}
-\contentsline {paragraph}{Proof 1.1}{20}{section*.46}
-\contentsline {subsection}{\numberline {3.6}Non-deterministic Finite Automata}{21}{subsection.3.6}
-\contentsline {paragraph}{Agda}{21}{section*.47}
-\contentsline {paragraph}{Definition 6.1}{21}{section*.48}
-\contentsline {paragraph}{Definition 6.2}{22}{section*.49}
-\contentsline {paragraph}{Definition 6.3}{22}{section*.50}
-\contentsline {paragraph}{Definition 6.4}{22}{section*.51}
-\contentsline {paragraph}{Definition 6.5}{23}{section*.52}
-\contentsline {paragraph}{Definition 6.6}{23}{section*.53}
-\contentsline {paragraph}{Definition 6.7}{23}{section*.54}
-\contentsline {subsection}{\numberline {3.7}Removing \(\epsilon \)-transitions}{23}{subsection.3.7}
-\contentsline {subsection}{\numberline {3.8}Deterministic Finite Automata}{23}{subsection.3.8}
-\contentsline {paragraph}{Agda}{23}{section*.55}
-\contentsline {paragraph}{Definition 8.1}{23}{section*.56}
-\contentsline {paragraph}{Definition 6.2}{24}{section*.57}
-\contentsline {paragraph}{Definition 6.3}{24}{section*.58}
-\contentsline {paragraph}{Definition 6.4}{24}{section*.59}
-\contentsline {paragraph}{Definition 6.5}{25}{section*.60}
-\contentsline {paragraph}{Definition 6.6}{25}{section*.61}
-\contentsline {paragraph}{Definition 6.7}{25}{section*.62}
+\contentsline {section}{\numberline {1}Introduction}{8}{section.1}
+\contentsline {paragraph}{}{8}{section*.6}
+\contentsline {paragraph}{}{8}{section*.7}
+\contentsline {subsection}{\numberline {1.1}Motivation}{8}{subsection.1.1}
+\contentsline {paragraph}{}{8}{section*.8}
+\contentsline {subsection}{\numberline {1.2}Overview}{8}{subsection.1.2}
+\contentsline {paragraph}{}{8}{section*.9}
+\contentsline {section}{\numberline {2}Background}{9}{section.2}
+\contentsline {subsection}{\numberline {2.1}Agda}{9}{subsection.2.1}
+\contentsline {paragraph}{}{9}{section*.10}
+\contentsline {subsubsection}{\numberline {2.1.1}Simply Typed Functional Programming}{9}{subsubsection.2.1.1}
+\contentsline {paragraph}{}{9}{section*.11}
+\contentsline {paragraph}{Boolean}{9}{section*.12}
+\contentsline {paragraph}{}{9}{section*.13}
+\contentsline {paragraph}{}{9}{section*.14}
+\contentsline {paragraph}{Natural Number}{10}{section*.15}
+\contentsline {paragraph}{}{10}{section*.16}
+\contentsline {paragraph}{Parameterised Types}{10}{section*.17}
+\contentsline {subsubsection}{\numberline {2.1.2}Universe}{10}{subsubsection.2.1.2}
+\contentsline {paragraph}{}{10}{section*.18}
+\contentsline {subsubsection}{\numberline {2.1.3}Dependent Types}{10}{subsubsection.2.1.3}
+\contentsline {paragraph}{}{10}{section*.19}
+\contentsline {paragraph}{}{10}{section*.20}
+\contentsline {paragraph}{}{11}{section*.21}
+\contentsline {paragraph}{}{11}{section*.22}
+\contentsline {subsubsection}{\numberline {2.1.4}Propositions as Types}{11}{subsubsection.2.1.4}
+\contentsline {paragraph}{}{11}{section*.23}
+\contentsline {paragraph}{}{11}{section*.24}
+\contentsline {paragraph}{Propositional Logic}{11}{section*.25}
+\contentsline {subparagraph}{Truth}{11}{section*.26}
+\contentsline {subparagraph}{Falsehood}{11}{section*.27}
+\contentsline {subparagraph}{Conjunction}{12}{section*.28}
+\contentsline {paragraph}{}{12}{section*.29}
+\contentsline {subparagraph}{Disjunction}{12}{section*.30}
+\contentsline {paragraph}{}{12}{section*.31}
+\contentsline {subparagraph}{Negation}{12}{section*.32}
+\contentsline {subparagraph}{Implication}{12}{section*.33}
+\contentsline {paragraph}{Predicate Logic}{13}{section*.34}
+\contentsline {subparagraph}{Universal Quantifier}{13}{section*.35}
+\contentsline {subparagraph}{Existential Quantifier}{13}{section*.36}
+\contentsline {paragraph}{Propositional Equality}{13}{section*.37}
+\contentsline {subsubsection}{\numberline {2.1.5}Encoding Program Specifications}{13}{subsubsection.2.1.5}
+\contentsline {paragraph}{}{13}{section*.38}
+\contentsline {subsection}{\numberline {2.2}Related Work}{13}{subsection.2.2}
+\contentsline {paragraph}{}{13}{section*.39}
+\contentsline {section}{\numberline {3}Formalisation in Type Theory}{14}{section.3}
+\contentsline {paragraph}{}{14}{section*.40}
+\contentsline {paragraph}{}{14}{section*.41}
+\contentsline {paragraph}{}{14}{section*.42}
+\contentsline {paragraph}{}{14}{section*.43}
+\contentsline {subsection}{\numberline {3.1}Subsets and Decidable Subsets}{14}{subsection.3.1}
+\contentsline {paragraph}{Definition 1.1}{14}{section*.44}
+\contentsline {paragraph}{}{14}{section*.45}
+\contentsline {paragraph}{Definition 1.2}{14}{section*.46}
+\contentsline {paragraph}{}{14}{section*.47}
+\contentsline {paragraph}{}{15}{section*.48}
+\contentsline {subsection}{\numberline {3.2}Languages}{15}{subsection.3.2}
+\contentsline {paragraph}{}{15}{section*.49}
+\contentsline {paragraph}{Definition 2.1}{15}{section*.50}
+\contentsline {paragraph}{}{15}{section*.51}
+\contentsline {paragraph}{Definition 2.2}{15}{section*.52}
+\contentsline {subsubsection}{\numberline {3.2.1}Operations on Languages}{15}{subsubsection.3.2.1}
+\contentsline {paragraph}{Definition 2.3}{15}{section*.53}
+\contentsline {paragraph}{Definition 2.4}{15}{section*.54}
+\contentsline {paragraph}{Definition 2.5}{15}{section*.55}
+\contentsline {subsection}{\numberline {3.3}Regular Languages and Regular Expressions}{16}{subsection.3.3}
+\contentsline {paragraph}{Definition 3.1}{16}{section*.56}
+\contentsline {paragraph}{Definition 3.2}{16}{section*.57}
+\contentsline {paragraph}{}{16}{section*.58}
+\contentsline {subsection}{\numberline {3.4}\(\epsilon \)-Non-deterministic Finite Automata}{17}{subsection.3.4}
+\contentsline {paragraph}{}{17}{section*.59}
+\contentsline {paragraph}{Definition 4.1}{17}{section*.60}
+\contentsline {paragraph}{}{17}{section*.61}
+\contentsline {paragraph}{Definition 4.2}{17}{section*.62}
+\contentsline {paragraph}{}{17}{section*.63}
+\contentsline {paragraph}{}{17}{section*.64}
+\contentsline {paragraph}{Definition 4.3}{18}{section*.65}
+\contentsline {paragraph}{}{18}{section*.66}
+\contentsline {paragraph}{}{18}{section*.67}
+\contentsline {paragraph}{Definition 4.4}{18}{section*.68}
+\contentsline {paragraph}{Definition 4.5}{18}{section*.69}
+\contentsline {paragraph}{Definition 4.6}{19}{section*.70}
+\contentsline {paragraph}{Definition 4.7}{19}{section*.71}
+\contentsline {paragraph}{Definition 4.8}{19}{section*.72}
+\contentsline {paragraph}{Definition 4.9}{19}{section*.73}
+\contentsline {paragraph}{}{19}{section*.74}
+\contentsline {subsection}{\numberline {3.5}Thompson's Construction}{19}{subsection.3.5}
+\contentsline {paragraph}{Definition 5.1}{19}{section*.75}
+\contentsline {paragraph}{Theorem 1.1}{22}{section*.76}
+\contentsline {paragraph}{Proof 1.1}{22}{section*.77}
+\contentsline {subparagraph}{Base cases}{22}{section*.78}
+\contentsline {subparagraph}{Induction hypothesis}{22}{section*.79}
+\contentsline {subsection}{\numberline {3.6}Non-deterministic Finite Automata}{24}{subsection.3.6}
+\contentsline {paragraph}{Definition 6.1}{24}{section*.80}
+\contentsline {paragraph}{}{24}{section*.81}
+\contentsline {paragraph}{}{24}{section*.82}
+\contentsline {paragraph}{Definition 6.2}{24}{section*.83}
+\contentsline {paragraph}{Definition 6.3}{24}{section*.84}
+\contentsline {paragraph}{Definition 6.4}{25}{section*.85}
+\contentsline {paragraph}{Definition 6.5}{25}{section*.86}
+\contentsline {paragraph}{Definition 6.6}{25}{section*.87}
+\contentsline {paragraph}{Definition 6.7}{25}{section*.88}
+\contentsline {subsection}{\numberline {3.7}Removing \(\epsilon \)-transitions}{25}{subsection.3.7}
+\contentsline {paragraph}{}{25}{section*.89}
+\contentsline {subsection}{\numberline {3.8}Deterministic Finite Automata}{25}{subsection.3.8}
+\contentsline {paragraph}{}{25}{section*.90}
 \contentsline {subsection}{\numberline {3.9}Powerset Construction}{25}{subsection.3.9}
-\contentsline {subsection}{\numberline {3.10}Minimal DFA}{25}{subsection.3.10}
-\contentsline {subsection}{\numberline {3.11}Minimising DFA}{25}{subsection.3.11}
-\contentsline {subsection}{\numberline {3.12}Myhill-Nerode Theorem}{25}{subsection.3.12}
-\contentsline {section}{\numberline {4}Evaluation}{26}{section.4}
-\contentsline {section}{\numberline {5}Conclusion}{27}{section.5}
-\contentsline {section}{References}{28}{section*.63}
-\contentsline {section}{Appendices}{29}{section*.64}
+\contentsline {paragraph}{}{25}{section*.91}
+\contentsline {subsection}{\numberline {3.10}Minimal DFA}{26}{subsection.3.10}
+\contentsline {paragraph}{}{26}{section*.92}
+\contentsline {subsection}{\numberline {3.11}Minimising DFA}{26}{subsection.3.11}
+\contentsline {paragraph}{}{26}{section*.93}
+\contentsline {section}{\numberline {4}Further Extensions}{27}{section.4}
+\contentsline {section}{\numberline {5}Evaluation}{28}{section.5}
+\contentsline {subsection}{\numberline {5.1}Correctness and Readability}{28}{subsection.5.1}
+\contentsline {paragraph}{}{28}{section*.94}
+\contentsline {paragraph}{Correctness}{28}{section*.95}
+\contentsline {paragraph}{Readability}{28}{section*.96}
+\contentsline {subsection}{\numberline {5.2}Different Choices of Representaion}{28}{subsection.5.2}
+\contentsline {paragraph}{}{28}{section*.97}
+\contentsline {paragraph}{The set of states (\(Q\)) in an automata}{28}{section*.98}
+\contentsline {paragraph}{Subset and DecidableSubset}{29}{section*.99}
+\contentsline {section}{\numberline {6}Discussion}{30}{section.6}
+\contentsline {paragraph}{}{30}{section*.100}
+\contentsline {paragraph}{}{30}{section*.101}
+\contentsline {section}{\numberline {7}Conclusion}{31}{section.7}
+\contentsline {paragraph}{}{31}{section*.102}
+\contentsline {section}{References}{32}{section*.103}
+\contentsline {section}{Appendices}{33}{section*.104}
+\contentsline {paragraph}{}{33}{section*.105}

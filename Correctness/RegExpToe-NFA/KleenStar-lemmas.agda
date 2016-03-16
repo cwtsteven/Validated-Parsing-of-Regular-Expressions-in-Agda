@@ -1,7 +1,7 @@
 {-
   This module contains the following proofs:
 
-  Steven Cheung 2015.
+  Steven Cheung
   Version 10-01-2016
 -}
 open import Util

@@ -1,7 +1,7 @@
 {-
   This module contains some miscellaneous definitions and proofs that was used in other modules.
 
-  Steven Cheung 2015.
+  Steven Cheung
   Version 11-02-2016
 -}
 module Util where

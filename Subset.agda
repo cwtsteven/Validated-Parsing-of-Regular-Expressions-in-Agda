@@ -1,15 +1,12 @@
 {-
-  This module contains the definition of Subset and its operations.
+  Definition of Subset and its operations.
 
-  Steven Cheung 2015.
+  Steven Cheung
   Version 11-02-2016
 -}
 
 module Subset where
 
---open import Util
---open import Level
---open import Data.Bool hiding (_≟_)
 open import Relation.Nullary
 open import Relation.Binary hiding (Decidable)
 open import Relation.Binary.PropositionalEquality
@@ -104,6 +101,8 @@ Decidable-lem₁ (as⊆bs , as⊇bs) dec a with dec a
 
 
 {-
+-- here is a version that includes Level
+
 -- General Subset
 Subset : ∀ {α} → Set α → {ℓ : Level} → Set (α ⊔ suc ℓ)
 Subset A {ℓ} = A → Set ℓ

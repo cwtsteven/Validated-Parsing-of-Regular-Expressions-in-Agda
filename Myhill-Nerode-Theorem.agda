@@ -1,3 +1,9 @@
+{-
+  Myhill-Nerode Theorem
+
+  Steven Cheung
+  Version 15-03-2016
+-}
 open import Util
 module Myhill-Nerode-Theorem (Σ : Set) (dec : DecEq Σ) where
 

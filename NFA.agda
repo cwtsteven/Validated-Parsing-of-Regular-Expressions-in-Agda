@@ -4,7 +4,7 @@
     Section 2.2: Regular sets, their generators, and their recognizers
       by Alfred V. Aho and Jeffery D. Ullman
 
-  Steven Cheung 2015.
+  Steven Cheung
   Version 27-02-2016
 -}
 open import Util
@@ -16,7 +16,6 @@ open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Sum
 open import Data.Product hiding (Σ)
-open import Data.Empty
 open import Data.Nat
 
 open import Subset
@@ -66,7 +65,8 @@ module NFA-Operations (N : NFA) where
 module NFA-Properties (N : NFA) where
   open NFA N
   open NFA-Operations N
-  
+
+  -- adding a step at the end
   ⊢ᵏ₂-lem₉ : ∀ {q wᵉ n p a q' wᵉ'}
              → (q , wᵉ) ⊢ᵏ n ─ (p , a ∷ wᵉ')
              → (p , a , wᵉ') ⊢ (q' , wᵉ')

@@ -2,7 +2,7 @@
   This module contains the following proofs:
     ∀e∈RegExp. L(e) is decidable
 
-  Steven Cheung 2015.
+  Steven Cheung
   Version 04-12-2015
 -}
 open import Util

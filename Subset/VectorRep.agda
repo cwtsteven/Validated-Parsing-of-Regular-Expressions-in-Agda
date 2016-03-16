@@ -1,7 +1,12 @@
-open import Util hiding (tail) 
+{-
+  Vector representation of subsets.
+
+  Steven Cheung
+  Version 15-03-2016
+-}
 module Subset.VectorRep where
 
---open import Level
+open import Util hiding (tail)
 open import Data.Bool
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
@@ -12,10 +17,13 @@ open import Data.Vec
 open import Data.Unit
 open import Data.Empty
 
+-- Note that the membership function _∈_ is imported from Data.Vec
+
 ∈-lem₁ : {A : Set}(a x : A){n : ℕ} → (as : Vec A n) → a ∈ x ∷ as → ¬ a ∈ as → a ≡ x
 ∈-lem₁ x .x as here a∉as         = refl
 ∈-lem₁ a  x as (there a∈as) a∉as = ⊥-elim (a∉as a∈as)
 
+-- Membership decider
 infix 4 _∈?_
 _∈?_ : {A : Set}(a : A){n : ℕ} → (as : Vec A n) → {{dec : DecEq A}} → Dec (a ∈ as)
 (a ∈? [])        {{dec}} = no (λ ())
@@ -25,31 +33,7 @@ _∈?_ : {A : Set}(a : A){n : ℕ} → (as : Vec A n) → {{dec : DecEq A}} → 
 (a ∈? ( x ∷ as)) {{dec}} | no  _    | yes a∈as = yes (there a∈as)
 (a ∈? ( x ∷ as)) {{dec}} | no  a≢x  | no  a∉as = no (λ a∈xas →  a≢x (∈-lem₁ a x as a∈xas a∉as))
 
-Unique : {A : Set}{n : ℕ}(as : Vec A (suc n)) → Set
-Unique (a ∷ []) = ⊤
-Unique (a ∷ (b ∷ as)) = ¬ a ∈ (b ∷ as) × Unique (b ∷ as)
-
-Unique-lem₁ : {A B : Set}{n : ℕ}(f : A → B) → Injective f → (as : Vec A (suc n)) → Unique as → Unique (map f as)
-Unique-lem₁ f f-inj (a ∷ [])     un-as = tt
-Unique-lem₁ f f-inj (a ∷ x ∷ as) un-as = prf f f-inj a x as (proj₁ un-as) , (Unique-lem₁ f f-inj (x ∷ as) (proj₂ un-as))
-  where
-    lem₁ : {A : Set}{a x : A} → a ∈ x ∷ [] → a ≡ x
-    lem₁ here = refl
-    lem₁ (there ())
-    lem₂ : {A : Set}{n : ℕ}{a x : A}{as : Vec A n} → ¬ a ∈ x ∷ as → a ≢ x
-    lem₂ a∉xas refl = a∉xas here
-    lem₃ : {A : Set}{n : ℕ}{a x : A}{as : Vec A n} → a ∈ x ∷ as → a ≡ x ⊎ a ∈ as
-    lem₃ here = inj₁ refl
-    lem₃ (there prf) = inj₂ prf
-    lem₄ : {A : Set}{n : ℕ}{a x : A}{as : Vec A n} → ¬ a ∈ x ∷ as → ¬ a ∈ as
-    lem₄ a∉xas here = a∉xas (there here)
-    lem₄ a∉xas (there prf) = lem₄ (λ z → a∉xas (there z)) prf
-    prf : {A B : Set}{n : ℕ}(f : A → B) → Injective f → (a x : A)(as : Vec A n) → ¬ a ∈ x ∷ as → ¬ f a ∈ f x ∷ (map f as)
-    prf f f-inj a x []       ¬a∈xas fafxas = let a≢x = lem₂ ¬a∈xas in Injective-lem₁ f-inj a≢x (lem₁ fafxas)
-    prf f f-inj a x (y ∷ as) ¬a∈xas fafxas with lem₃ fafxas
-    ... | inj₁ fa≡fx   = let a≢x = lem₂ ¬a∈xas in Injective-lem₁ f-inj a≢x fa≡fx
-    ... | inj₂ fa∈fyas = prf f f-inj a y as (lem₄ ¬a∈xas) fa∈fyas
-
+-- Lemmas of _∈_
 
 ∈-lem₂ : {A B : Set}{n : ℕ}(decA : DecEq A)(decB : DecEq B)(f : A → B) → (a : A)(as : Vec A n)
          → (a ∈ as) → (f a ∈ map f as)
@@ -81,6 +65,37 @@ Unique-lem₁ f f-inj (a ∷ x ∷ as) un-as = prf f f-inj a x as (proj₁ un-as
 ∈-lem₆ dec a as bs (inj₁ a∈as) = ∈-lem₄ dec a as bs a∈as
 ∈-lem₆ dec a as bs (inj₂ a∈bs) = ∈-lem₅ dec a as bs a∈bs
 
+
+-- No repeat elements in the vector
+Unique : {A : Set}{n : ℕ}(as : Vec A n) → Set
+Unique []       = ⊤
+Unique (a ∷ []) = ⊤
+Unique (a ∷ (b ∷ as)) = ¬ a ∈ (b ∷ as) × Unique (b ∷ as)
+
+Unique-lem₁ : {A B : Set}{n : ℕ}(f : A → B) → Injective f → (as : Vec A n) → Unique as → Unique (map f as)
+Unique-lem₁ f f-inj []           un-as = tt
+Unique-lem₁ f f-inj (a ∷ [])     un-as = tt
+Unique-lem₁ f f-inj (a ∷ x ∷ as) un-as = prf f f-inj a x as (proj₁ un-as) , (Unique-lem₁ f f-inj (x ∷ as) (proj₂ un-as))
+  where
+    lem₁ : {A : Set}{a x : A} → a ∈ x ∷ [] → a ≡ x
+    lem₁ here = refl
+    lem₁ (there ())
+    lem₂ : {A : Set}{n : ℕ}{a x : A}{as : Vec A n} → ¬ a ∈ x ∷ as → a ≢ x
+    lem₂ a∉xas refl = a∉xas here
+    lem₃ : {A : Set}{n : ℕ}{a x : A}{as : Vec A n} → a ∈ x ∷ as → a ≡ x ⊎ a ∈ as
+    lem₃ here = inj₁ refl
+    lem₃ (there prf) = inj₂ prf
+    lem₄ : {A : Set}{n : ℕ}{a x : A}{as : Vec A n} → ¬ a ∈ x ∷ as → ¬ a ∈ as
+    lem₄ a∉xas here = a∉xas (there here)
+    lem₄ a∉xas (there prf) = lem₄ (λ z → a∉xas (there z)) prf
+    prf : {A B : Set}{n : ℕ}(f : A → B) → Injective f → (a x : A)(as : Vec A n) → ¬ a ∈ x ∷ as → ¬ f a ∈ f x ∷ (map f as)
+    prf f f-inj a x []       ¬a∈xas fafxas = let a≢x = lem₂ ¬a∈xas in Injective-lem₁ f-inj a≢x (lem₁ fafxas)
+    prf f f-inj a x (y ∷ as) ¬a∈xas fafxas with lem₃ fafxas
+    ... | inj₁ fa≡fx   = let a≢x = lem₂ ¬a∈xas in Injective-lem₁ f-inj a≢x fa≡fx
+    ... | inj₂ fa∈fyas = prf f f-inj a y as (lem₄ ¬a∈xas) fa∈fyas
+
+
+-- Preparing for Vector Rep
 any : {A : Set}{n : ℕ}(P : A → Set) → Vec A n → Set
 any P []       = ⊥
 any P (a ∷ as) = P a ⊎ any P as
@@ -109,9 +124,10 @@ all-lem₂ : {A : Set}{n : ℕ}(as : Vec A n) → ∀ P → (∀ a → P a) → 
 all-lem₂ []       P ∀aPa = tt
 all-lem₂ (a ∷ as) P ∀aPa = ∀aPa a , all-lem₂ as P ∀aPa
 
-
+-- This module allows us to extract information by iterating a subset
 module Vec-Rep {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It : ∀ a → a ∈ It)(unique : Unique It) where
 
+  -- Goal : ∀ P → any P It ⇔ (Σ[ a ∈ A ] P a)
   Vec-any-lem₃ : ∀ P → Σ[ a ∈ A ] P a → any P It
   Vec-any-lem₃ P (a , Pa) = any-lem₂ It P (a , Pa , ∀a∈It a)
 
@@ -124,6 +140,8 @@ module Vec-Rep {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It :
   Vec-any-lem₄ : ∀ P → ¬ (any P It) → ¬ (Σ[ a ∈ A ] P a)
   Vec-any-lem₄ P ¬any prf = ¬any (Vec-any-lem₃ P prf)
 
+
+  -- Goal : Vec-all-lem₁ : ∀ P → all P It ⇔ (∀ a → P a)
   Vec-all-lem₃ : ∀ P → (∀ a → P a) → all P It
   Vec-all-lem₃ P = all-lem₂ It P
 
@@ -136,6 +154,8 @@ module Vec-Rep {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It :
   Vec-all-lem₄ : ∀ P → ¬ (all P It) → ¬ (∀ a → P a)
   Vec-all-lem₄ P ¬allP ∀aPa = ¬allP (Vec-all-lem₃ P ∀aPa)
 
+
+  -- Other lemmas
   It-lem₃ : {k j n : ℕ}(as : Vec A k)(bs : Vec A j)(cs : Vec A n)
             → (prf : k + j ≡ n)
             → cs ≡ subst (λ n → Vec A n) prf (as ++ bs)
@@ -181,79 +201,3 @@ module Vec-Rep {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It :
 
   It-lem₈ : {n : ℕ} → ∀ {b a} {as : Vec A n} → ¬ b ∈ a ∷ as → ¬ b ∈ as
   It-lem₈ ¬b∈aas b∈as = ¬b∈aas (there b∈as)
-
-{-
-  data Sub A : Set where
-    keep : A → Sub A
-    skip : A → Sub A
-
-  DecEq-Sub : (a b : Sub A) → Dec (a ≡ b)
-  DecEq-Sub (keep a) (keep  b) with dec a b
-  DecEq-Sub (keep a) (keep .a) | yes refl = yes refl
-  DecEq-Sub (keep a) (keep  b) | no  a≢b  = no (λ prf → a≢b (lem prf))
-    where
-      lem : {a b : A} → keep a ≡ keep b → a ≡ b
-      lem refl = refl
-  DecEq-Sub (keep a) (skip  b) = no (λ ())
-  DecEq-Sub (skip a) (keep  b) = no (λ ())
-  DecEq-Sub (skip a) (skip  b) with dec a b
-  DecEq-Sub (skip a) (skip .a) | yes refl = yes refl
-  DecEq-Sub (skip a) (skip  b) | no  a≢b  = no (λ prf → a≢b (lem prf))
-    where
-      lem : {a b : A} → skip a ≡ skip b → a ≡ b
-      lem refl = refl
-                   
-  VecSubset : {n : ℕ} → Vec A n → Set
-  VecSubset {n} _ = Vec (Sub A) n
-
-  Ø : VecSubset It
-  Ø = map skip It
-
-  ⟦⟧-helper : {n : ℕ}(it : Vec A n) → A → VecSubset it
-  ⟦⟧-helper []        a = []
-  ⟦⟧-helper ( b ∷ bs) a with dec a b
-  ⟦⟧-helper (.a ∷ bs) a | yes refl = keep a ∷ ⟦⟧-helper bs a
-  ⟦⟧-helper ( b ∷ bs) a | no  a≢b  = skip b ∷ ⟦⟧-helper bs a
-
-  ⟦_⟧ : A → VecSubset It
-  ⟦ a ⟧ = ⟦⟧-helper It a
-
-  DecEq-VSub : {n : ℕ}{it : Vec A n}(as bs : VecSubset it) → Dec (as ≡ bs)
-  DecEq-VSub {.zero} {[]}     []       []         = yes refl
-  DecEq-VSub {suc n} {x ∷ xs} (a ∷ as) ( b ∷  bs) with DecEq-Sub a b
-  DecEq-VSub {suc n} {x ∷ xs} (a ∷ as) (.a ∷  bs) | yes refl with DecEq-VSub {n} {xs} as bs
-  DecEq-VSub {suc n} {x ∷ xs} (a ∷ as) (.a ∷ .as) | yes refl | yes refl  = yes refl
-  DecEq-VSub {suc n} {x ∷ xs} (a ∷ as) (.a ∷  bs) | yes refl | no  as≢bs = no  (aas≢abs {n} {xs} {a} {as} {bs} as≢bs)
-    where
-      aas≢abs : {n : ℕ}{it : Vec A n}{a : Sub A}{as bs : VecSubset it} → as ≢ bs → a ∷ as ≢ a ∷ bs
-      aas≢abs as≢bs refl = as≢bs refl
-  DecEq-VSub {suc n} {x ∷ xs} (a ∷ as) ( b ∷  bs) | no  a≢b  = no (aas≢abs {n} {xs} {a} {b} {as} {bs} a≢b)
-    where
-      aas≢abs : {n : ℕ}{it : Vec A n}{a b : Sub A}{as bs : VecSubset it} → a ≢ b → a ∷ as ≢ b ∷ bs
-      aas≢abs a≢s refl = a≢s refl
-
-
-  open import Subset.DecidableSubset renaming (Ø to Øᵈ ; _∈_ to _∈ᵈ_ ; _∈?_ to _∈ᵈ?_)
-
-  VSub→DSub-lem₁ : {n : ℕ}{it : Vec A n} → VecSubset it → DecSubset A
-  VSub→DSub-lem₁ [] = Øᵈ
-  VSub→DSub-lem₁ (keep a ∷ as)  b with dec a b
-  VSub→DSub-lem₁ (keep a ∷ as) .a | yes refl = true
-  VSub→DSub-lem₁ (keep a ∷ as)  b | no  _    = false
-  VSub→DSub-lem₁ (skip a ∷ as)  b = false
-
-  DSub→VSub-lem₁ : {n : ℕ} → (it : Vec A n) → DecSubset A → VecSubset it
-  DSub→VSub-lem₁ []       bs = []
-  DSub→VSub-lem₁ (a ∷ as) bs with a ∈ᵈ? bs
-  DSub→VSub-lem₁ (a ∷ as) bs | true  = keep a ∷ DSub→VSub-lem₁ as bs
-  DSub→VSub-lem₁ (a ∷ as) bs | false = skip a ∷ DSub→VSub-lem₁ as bs
-
-  DSub→VSub : DecSubset A → VecSubset It
-  DSub→VSub as = DSub→VSub-lem₁ It as
-
-  VSub→DSub : VecSubset It → DecSubset A
-  VSub→DSub as = VSub→DSub-lem₁ {it = It} as
-
-  VSub⇔DSub : VecSubset It ⇔ DecSubset A
-  VSub⇔DSub = VSub→DSub , DSub→VSub
--}

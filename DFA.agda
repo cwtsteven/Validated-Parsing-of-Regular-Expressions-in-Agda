@@ -4,8 +4,8 @@
     Section 2.2: Regular sets, their generators, and their recognizers
       by Alfred V. Aho and Jeffery D. Ullman
 
-  Steven Cheung 2015.
-  Version 27-02-2016
+  Steven Cheung
+  Version 15-03-2016
 -}
 open import Util
 module DFA (Σ : Set)(dec : DecEq Σ) where
@@ -24,7 +24,7 @@ open import Subset
 open import Subset.DecidableSubset
   renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_ ; Ø to Øᵈ ; _⋃_ to _⋃ᵈ_ ; _⋂_ to _⋂ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ
                  ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ≈-refl to ≈ᵈ-refl ; ≈-trans to ≈ᵈ-trans ; ≈-sym to ≈ᵈ-sym)
-open import QuotientSet
+open import Quotient
 open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_ ; tail to tailⱽ)
 open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 open import Language Σ dec
@@ -43,11 +43,6 @@ record DFA : Set₁ where
     ≋-isEquiv : IsEquivalence _≋_
     δ-lem   : ∀ {q} {p} a → q ≋ p → δ q a ≋ δ p a
     F-lem   : ∀ {q} {p}   → q ≋ p → q ∈ᵈ F → p ∈ᵈ F
-    Q?  : DecEq Q
-    ∣Q∣-1 : ℕ
-    It  : Vec Q (suc ∣Q∣-1)
-    ∀q∈It : ∀ q → q ∈ⱽ It
-    unique : Unique It
   
 module DFA-Operations (D : DFA) where
   open DFA D
@@ -72,6 +67,7 @@ module DFA-Operations (D : DFA) where
   infix 7 _⊢*_
   _⊢*_ : (Q × Σ*) → (Q × Σ*) → Set
   (q , w) ⊢* (q' , w') = Σ[ n ∈ ℕ ] (q , w) ⊢ᵏ n ─ (q' , w')
+
 
   -- Alternative definition for running the DFA
   δ* : Q → Σ* → Q
@@ -152,133 +148,86 @@ Dec-Lᴰ dfa w with (δ₀ w) ∈ᵈ? F | inspect (λ w → (δ₀ w) ∈ᵈ? F)
 
 
 module DFA-Properties (D : DFA) where
-
-  -- remember!!
-  postulate ∣Σ∣-1 : ℕ
-  postulate Σ-It : Vec Σ (suc ∣Σ∣-1)
-  postulate ∀a∈Σ-It : ∀ a → a ∈ⱽ Σ-It
-  postulate unique-Σ : Unique Σ-It
-
   open DFA D
   open DFA-Operations D
   open IsEquivalence ≋-isEquiv renaming (refl to ≋-refl ; sym to ≋-sym ; trans to ≋-trans)
+
+
+  δ*-lem : ∀ {q q'} → q ≋ q' → ∀ w → δ* q w ≋ δ* q' w
+  δ*-lem q≋q' []      = q≋q'
+  δ*-lem {q} {q'} q≋q' (a ∷ w) = δ*-lem (δ-lem a q≋q') w
 
   -- Reachable from q₀
   Reachable : Q → Set
   Reachable q = Σ[ w ∈ Σ* ] (q₀ , w) ⊢* (q , [])
 
-  Step : Q → Q → Set
-  Step q q' = Σ[ a ∈ Σ ] ( q' ≋ δ q a )
+  q₀-reach : Reachable q₀
+  q₀-reach = [] , (zero , ≋-refl , refl)
 
-  Dec-any-Step : ∀ q q' → Dec (any (λ a → q' ≋ δ q a) Σ-It)
-  Dec-any-Step q q' = helper Σ-It
-    where
-      helper : {n : ℕ}(as : Vec Σ n) → Dec (any (λ a → q' ≋ δ q a) as)
-      helper []       = no (λ z → z)
-      helper (a ∷ as) with Dec-≋ q' (δ q a)
-      helper (a ∷ as) | yes q'≋δqa = yes (inj₁ q'≋δqa)
-      helper (a ∷ as) | no  q'≠δqa with helper as
-      helper (a ∷ as) | no  q'≠δqa | yes prf₂ = yes (inj₂ prf₂)
-      helper (a ∷ as) | no  q'≠δqa | no  prf₂ = no ¬any
-        where
-          ¬any : ¬ (q' ≋ δ q a ⊎ any (λ a → q' ≋ δ q a) as)
-          ¬any (inj₁ q'≋δqa) = ⊥-elim (q'≠δqa q'≋δqa)
-          ¬any (inj₂ any) = prf₂ any
+  data Qᴿ : Set where
+    reach : ∀ q → Reachable q → Qᴿ
 
+  reach-lem : ∀ {q w a n q'}
+              → (q , w) ⊢ᵏ n ─ (q' , [])
+              → (q , w ++ a ∷ []) ⊢ᵏ suc n ─ (δ q' a , [])
+  reach-lem {q} {.[]} {a} {n = zero}  {q'} (q≋q' , refl)
+    = δ q a , a , [] , refl , (refl , ≋-refl) , (δ-lem a q≋q' , refl)
+  reach-lem {q} {._}  {a} {n = suc n} {q'} (p , b , u , refl , (refl , prf₁) , prf₂)
+    = p , b , u ++ a ∷ [] , refl , (refl , prf₁) , reach-lem {p} {u} {a} {n} {q'} prf₂
 
-  Dec-Step : ∀ q q' → Dec (Step q q')
-  Dec-Step q q' with Dec-any-Step q q'
-  Dec-Step q q' | yes prf = yes (Vec-any-lem₂ (λ a → q' ≋ δ q a) prf)
-    where open Vec-Rep dec Σ-It ∀a∈Σ-It unique-Σ
-  Dec-Step q q' | no  prf = no  (Vec-any-lem₄ (λ a → q' ≋ δ q a) prf)
-    where open Vec-Rep dec Σ-It ∀a∈Σ-It unique-Σ
-
-  open Vec-Rep Q? It ∀q∈It unique
-
-  Dec-any-⋃-δqa : ∀ qs q' → Dec (any (λ q → q ∈ᵈ qs × Step q q') It)
-  Dec-any-⋃-δqa qs q' = helper It
-     where
-      helper : {n : ℕ}(ps : Vec Q n) → Dec (any (λ q → q ∈ᵈ qs × Step q q') ps)
-      helper [] = no (λ z → z)
-      helper (p ∷ ps) with p ∈ᵈ? qs | Dec-Step p q'
-      helper (p ∷ ps) | true  | yes prf  = yes (inj₁ (refl , prf))
-      helper (p ∷ ps) | true  | no  prf with helper ps
-      helper (p ∷ ps) | true  | no  prf | yes prf₂ = yes (inj₂ prf₂)
-      helper (p ∷ ps) | true  | no  prf | no  prf₂ = no ¬any
-        where
-          ¬any : ¬ (true ≡ true × Step p q' ⊎ any (λ q → q ∈ᵈ qs × Step q q') ps)
-          ¬any (inj₁ (_ , prf')) = ⊥-elim (prf prf')
-          ¬any (inj₂ any) = prf₂ any
-      helper (p ∷ ps) | false | step? with helper ps
-      helper (p ∷ ps) | false | step? | yes prf = yes (inj₂ prf)
-      helper (p ∷ ps) | false | step? | no  prf = no ¬any
-        where
-          ¬any : ¬ (false ≡ true × Step p q' ⊎ any (λ q → q ∈ᵈ qs × Step q q') ps)
-          ¬any (inj₁ (() , _))
-          ¬any (inj₂ prf₁) = prf prf₁
-          
-  Dec-⋃-δqa : ∀ qs q' → Dec (Σ[ q ∈ Q ] ( q ∈ᵈ qs × Step q q' ))
-  Dec-⋃-δqa qs q' with Dec-any-⋃-δqa qs q'
-  Dec-⋃-δqa qs q' | yes prf = yes (Vec-any-lem₂ (λ q → q ∈ᵈ qs × Step q q') prf)
-  Dec-⋃-δqa qs q' | no  prf = no  (Vec-any-lem₄ (λ q → q ∈ᵈ qs × Step q q') prf)
-
-  ⋃-δqa : DecSubset Q → DecSubset Q
-  ⋃-δqa qs q' with Dec-⋃-δqa qs q'
-  ... | yes _ = true
-  ... | no  _ = false
+  ⊢ᵏ-lem : ∀ {s q q'} → q ≋ q'
+           → ∀ w n
+           → (s , w) ⊢ᵏ n ─ (q , [])
+           → (s , w) ⊢ᵏ n ─ (q' , [])
+  ⊢ᵏ-lem q≋q' .[] zero    (s≋q , refl)
+    = ≋-trans s≋q q≋q' , refl
+  ⊢ᵏ-lem q≋q' ._  (suc n) (p , a , u , refl , (refl , prf₁) , prf₂)
+    = p , a , u , refl , (refl , prf₁) , ⊢ᵏ-lem q≋q' u n prf₂
   
-  n-path : Q → ℕ → DecSubset Q
-  n-path q zero    = ⟦ q ⟧ᵈ {{Q?}}
-  n-path q (suc n) = n-path q n ⋃ᵈ ⋃-δqa (n-path q n)
 
-  Qᵣ : Q → Subset Q
-  Qᵣ q = λ q' → Σ[ n ∈ ℕ ] ( q' ∈ᵈ n-path q n )
+  -- easy
+  reach-lem₁ : ∀ {q a} → Reachable q → Reachable (δ q a)
+  reach-lem₁ {q} {a} (w , n , prf) = w ++ a ∷ [] , suc n , reach-lem {q₀} {w} {a} {n} {q} prf
 
-  Q₀ᵣ : Subset Q
-  Q₀ᵣ = Qᵣ q₀
+  reach-lem₂ : ∀ {q q'} → q ≋ q' → Reachable q → Reachable q'
+  reach-lem₂ q≋q' (w , n , prf) = w , n , ⊢ᵏ-lem q≋q' w n prf
 
-  -- needs to prove
+  reach-lem₃ : ∀ {q a p} → p ≋ δ q a → Reachable q → Reachable p
+  reach-lem₃ p≋δqa prf = reach-lem₂ (≋-sym p≋δqa) (reach-lem₁ prf)
 
-  Dec-Qᵣ : ∀ p q → Dec (p ∈ Qᵣ q)
-  Dec-Qᵣ = undefined
-
-  -- needs to prove
-  Qᵣ-lem : ∀ q → Reachable q ⇔ q ∈ Q₀ᵣ
-  Qᵣ-lem = undefined
-
-  
   -- Equivalence states
   infix 0 _∼_
   _∼_ : Q → Q → Set
   q ∼ q' = ∀ w → δ* q w ∈ᵈ F ⇔ δ* q' w ∈ᵈ F
 
-  ∼-Equiv : IsEquivalence _∼_
-  ∼-Equiv = undefined
+  ∼-lem : ∀ {q q'} → q ≋ q' → q ∼ q'
+  ∼-lem {q} {q'} q≋q'
+    = λ w → ((λ δ*qw∈F → F-lem {δ* q w} {δ* q' w} (δ*-lem q≋q' w) δ*qw∈F) , (λ δ*q'w∈F → F-lem {δ* q' w} {δ* q w} (δ*-lem (≋-sym {q} {q'} q≋q') w) δ*q'w∈F))
 
-  -- Equivalence classes
-  infix 0 ⟪_⟫
-  ⟪_⟫ : Q → (Q → Set)
-  ⟪ p ⟫ = λ q → q ∼ p
-  
+  Dec-∼ : ∀ q q' → Dec (q ∼ q')
+  Dec-∼ = undefined
 
-  ∼-lem₁ : ∀ p q → (p ∼ q) ⇔ (⟪ p ⟫ ≈ ⟪ q ⟫)
-  ∼-lem₁ = undefined
+  ∼-refl : Reflexive _∼_
+  ∼-refl = λ _ → (λ x → x) , (λ x → x)
+
+  ∼-sym : Symmetric _∼_
+  ∼-sym q∼q' = λ w → let (a , b) = q∼q' w in b , a
+
+  ∼-trans : Transitive _∼_
+  ∼-trans q∼q' q'∼q'' = λ w → let (a , b) = q∼q' w in 
+                              let (c , d) = q'∼q'' w in 
+                              (λ x → c (a x)) , (λ x → b (d x))
+
+  ∼-isEquiv : IsEquivalence _∼_
+  ∼-isEquiv = record { refl = ∼-refl ; sym = ∼-sym ; trans = ∼-trans }
+
+  quot : QuotientSet
+  quot = record {Q = Q ; _∼_ = _∼_ ; Dec-∼ = Dec-∼ ; ∼-isEquiv = ∼-isEquiv }
+
+
 
 All-Reachable-States : DFA → Set
 All-Reachable-States D = ∀ q → Reachable q
   where
     open DFA D
     open DFA-Properties D
-
-
-
-{-
-record All-Reachable-States (D : DFA) : Set₁ where
-  field
-    Qᴹ   : DecSubset (DFA.Q D)
-    all-reachable : ∀ q → q ∈ᵈ Qᴹ ⇔ DFA-Properties.Reachable D q
-    δ    : (q : DFA.Q D) → q ∈ᵈ Qᴹ → Σ → Σ[ q' ∈ DFA.Q D ] q' ∈ᵈ Qᴹ
-    q₀   : DFA.Q D
-    F    : DecSubset (DFA.Q D)
-    F⊆Qᴹ : F ⊆ᵈ Qᴹ
--}

@@ -3,11 +3,11 @@
     ∀nfa∈NFA. L(nfa) ⊆ L(powerset-construction dfa)
     ∀nfa∈NFA. L(nfa) ⊇ L(powerset-construction dfa)
 
-  Steven Cheung 2015.
-  Version 10-12-2015
+  Steven Cheung
+  Version 11-02-2016
 -}
 open import Util
-module Correctness.NFAToDFA (Σ : Set)(dec : DecEq Σ) where
+module Correctness.NFAtoDFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List hiding (any)
 open import Data.Bool
@@ -26,11 +26,10 @@ open import Subset renaming (Ø to ø)
 open import Subset.DecidableSubset renaming (Ø to øᵈ ; _∈_ to _∈ᵈ_ ; _∈?_ to _∈ᵈ?_ ; ⟦_⟧ to ⟦_⟧ᵈ ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_)
 open import Subset.VectorRep
 open import Language Σ dec
-open import RegularExpression Σ dec 
 open import NFA Σ dec
 open import DFA Σ dec
 open import Translation Σ dec
-open import State
+--open import State
 
 module base (nfa : NFA) where
   dfa : DFA
@@ -39,7 +38,7 @@ module base (nfa : NFA) where
   open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣-1 to ∣Q₁∣-1 ; It to It₁ ; unique to unique₁) 
   open NFA-Operations nfa renaming (_⊢_ to _⊢₁_ ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
   open NFA-Properties nfa
-  open DFA dfa hiding (∀q∈It)
+  open DFA dfa
   open DFA-Operations dfa
   open DFA-Properties dfa
   

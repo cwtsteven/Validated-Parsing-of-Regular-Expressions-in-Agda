@@ -3,7 +3,7 @@
     ∀e∈RegExp. L(e) ⊆ L(regexToε-NFA e)
     ∀e∈RegExp. L(e) ⊇ L(regexToε-NFA e)
 
-  Steven Cheung 2015.
+  Steven Cheung
   Version 10-01-2016
 -}
 open import Util

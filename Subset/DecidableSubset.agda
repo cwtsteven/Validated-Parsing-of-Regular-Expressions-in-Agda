@@ -1,12 +1,12 @@
 {-
-  This module contains the definition of Decidable Subset and its operations.
+  Definition of Decidable Subset and its operations.
 
-  Steven Cheung 2015.
-  Version 11-02-2016
+  Steven Cheung
+  Version 15-03-2016
 -}
-open import Util
 module Subset.DecidableSubset where
 
+open import Util
 open import Data.Bool
 open import Relation.Binary
 open import Relation.Binary.PropositionalEquality

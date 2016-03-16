@@ -2,24 +2,21 @@
   This module contains the set of states and its decidable equality
   of each case.
 
-  Steven Cheung 2015.
-  Version 07-01-2016
+  Steven Cheung
+  Version 15-03-2016
 -}
 
 module State where
 
---open import Level
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Product hiding (map)
 open import Data.Sum hiding (map)
 open import Data.Unit
-open import Data.Empty
 open import Data.Nat
 open import Data.Vec hiding (init) renaming (_∈_ to _∈ⱽ_)
 
 open import Util
-open import Subset renaming (Ø to ø)
 open import Subset.DecidableSubset
 open import Subset.VectorRep
 

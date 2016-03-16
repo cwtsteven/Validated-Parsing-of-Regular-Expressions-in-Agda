@@ -4,20 +4,16 @@
     Section 0.2: Set of Strings
       by Alfred V. Aho and Jeffery D. Ullman
 
-  Steven Cheung 2015.
-  Version 10-01-2016
+  Steven Cheung
+  Version 15-03-2016
 -}
 open import Util
 module Language (Σ : Set)(dec : DecEq Σ) where
 
---open import Level renaming (zero to lzero ; suc to lsuc ; _⊔_ to _⊔ˡ_)
-open import Data.Bool
 open import Data.List
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Product hiding (Σ)
-open import Data.Empty
-open import Data.Unit
 open import Data.Nat
 
 open import Subset renaming (Ø to Øˢ ; ⟦_⟧ to ⟦_⟧ˢ ; _⋃_ to _⋃ˢ_)
