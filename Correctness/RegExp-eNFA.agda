@@ -7,7 +7,7 @@
   Version 10-01-2016
 -}
 open import Util
-module Correctness.RegExpToe-NFA (Σ : Set)(dec : DecEq Σ) where
+module Correctness.RegExp-eNFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
 open import Data.Bool
@@ -15,7 +15,6 @@ open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Sum
 open import Data.Product hiding (Σ)
-open import Data.Unit
 open import Data.Empty
 open import Data.Nat
 open import Induction.Nat
@@ -25,7 +24,7 @@ open import Subset.DecidableSubset renaming (Ø to ø ; _∈?_ to _∈ᵈ?_ ; _�
 open import Language Σ dec
 open import RegularExpression Σ dec
 open import eNFA Σ dec
-open import Translation Σ dec
+open import Translation.RegExp-eNFA Σ dec
 open import State
 
 
@@ -35,26 +34,26 @@ Lᴿ⊆Lᵉᴺ : ∀ e → Lᴿ e ⊆ Lᵉᴺ (regexToε-NFA e)
 Lᴿ⊆Lᵉᴺ Ø _ ()
 -- ε
 Lᴿ⊆Lᵉᴺ ε = Lᴿ⊆Lᴺ.lem₁
-  where open import Correctness.RegExpToe-NFA.Epsilon-lemmas Σ dec
+  where open import Correctness.RegExp-eNFA.Epsilon-lemmas Σ dec
 -- singleton
 Lᴿ⊆Lᵉᴺ (σ a) = Lᴿ⊆Lᴺ.lem₁
-  where open import Correctness.RegExpToe-NFA.Singleton-lemmas Σ dec a
+  where open import Correctness.RegExp-eNFA.Singleton-lemmas Σ dec a
 -- union
 Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₁ w∈Lᴿ) = Lᴿ⊆Lᴺ.lem₁ (Lᴿ⊆Lᵉᴺ e₁ w w∈Lᴿ)
-  where open import Correctness.RegExpToe-NFA.Union-lemmas Σ dec e₁ e₂
+  where open import Correctness.RegExp-eNFA.Union-lemmas Σ dec e₁ e₂
 Lᴿ⊆Lᵉᴺ (e₁ ∣ e₂) w (inj₂ w∈Lᴿ) = Lᴿ⊆Lᴺ.lem₄ (Lᴿ⊆Lᵉᴺ e₂ w w∈Lᴿ)
-  where open import Correctness.RegExpToe-NFA.Union-lemmas Σ dec e₁ e₂
+  where open import Correctness.RegExp-eNFA.Union-lemmas Σ dec e₁ e₂
 -- concatenation
 Lᴿ⊆Lᵉᴺ (e₁ ∙ e₂) w (u , v , u∈Lᴿe₁ , v∈Lᴿe₂ , w≡uv)
   = Lᴿ⊆Lᴺ.lem₁ w≡uv (Lᴿ⊆Lᵉᴺ e₁ u u∈Lᴿe₁) (Lᴿ⊆Lᵉᴺ e₂ v v∈Lᴿe₂)
-  where open import Correctness.RegExpToe-NFA.Concatenation-lemmas Σ dec e₁ e₂
+  where open import Correctness.RegExp-eNFA.Concatenation-lemmas Σ dec e₁ e₂
 -- kleen star
 Lᴿ⊆Lᵉᴺ (e * ) .[] (zero , refl)
   = [] , refl , init , refl , 0 , refl , refl
 Lᴿ⊆Lᵉᴺ (e * )  w  (suc n , u , v , u∈Lᴿe , v∈Lᴿeⁿ⁺¹ , w≡uv)
   = lem₁ w u v n w≡uv (Lᴿ⊆Lᵉᴺ e u u∈Lᴿe) v∈Lᴿeⁿ⁺¹
   where
-    open import Correctness.RegExpToe-NFA.KleenStar-lemmas Σ dec e
+    open import Correctness.RegExp-eNFA.KleenStar-lemmas Σ dec e
     open Lᴿ⊆Lᴺ
     open ε-NFA nfa
     open ε-NFA nfa₁ renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)
@@ -94,23 +93,23 @@ Lᴿ⊇Lᵉᴺ : ∀ e → Lᴿ e ⊇ Lᵉᴺ (regexToε-NFA e)
 Lᴿ⊇Lᵉᴺ Ø w  (_ , _ , _ , () , _)
 -- ε
 Lᴿ⊇Lᵉᴺ ε = Lᴿ⊇Lᴺ.lem₁
-  where open import Correctness.RegExpToe-NFA.Epsilon-lemmas Σ dec
+  where open import Correctness.RegExp-eNFA.Epsilon-lemmas Σ dec
 -- singleton
 Lᴿ⊇Lᵉᴺ (σ a) = Lᴿ⊇Lᴺ.lem₁
-  where open import Correctness.RegExpToe-NFA.Singleton-lemmas Σ dec a
+  where open import Correctness.RegExp-eNFA.Singleton-lemmas Σ dec a
 -- union
 Lᴿ⊇Lᵉᴺ (e₁ ∣ e₂) w w∈Lᴺ with Lᴿ⊇Lᴺ.lem₁ w w∈Lᴺ
-  where open import Correctness.RegExpToe-NFA.Union-lemmas Σ dec e₁ e₂
+  where open import Correctness.RegExp-eNFA.Union-lemmas Σ dec e₁ e₂
 ... | inj₁ w∈Lᵉᴺe₁ = inj₁ (Lᴿ⊇Lᵉᴺ e₁ w w∈Lᵉᴺe₁)
 ... | inj₂ w∈Lᵉᴺe₂ = inj₂ (Lᴿ⊇Lᵉᴺ e₂ w w∈Lᵉᴺe₂)
 -- concatenation
 Lᴿ⊇Lᵉᴺ (e₁ ∙ e₂) w w∈Lᴺ with Lᴿ⊇Lᴺ.lem₁ w w∈Lᴺ
-  where open import Correctness.RegExpToe-NFA.Concatenation-lemmas Σ dec e₁ e₂
+  where open import Correctness.RegExp-eNFA.Concatenation-lemmas Σ dec e₁ e₂
 ... | u , v , u∈Lᵉᴺₑ₁ , v∈Lᵉᴺₑ₂ , w≡uv = u , v , Lᴿ⊇Lᵉᴺ e₁ u u∈Lᵉᴺₑ₁ , Lᴿ⊇Lᵉᴺ e₂ v v∈Lᵉᴺₑ₂ , w≡uv
 -- kleen star
 Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
   where
-    open import Correctness.RegExpToe-NFA.KleenStar-lemmas Σ dec e
+    open import Correctness.RegExp-eNFA.KleenStar-lemmas Σ dec e
     open Lᴿ⊇Lᴺ
     open ε-NFA nfa
     open ε-NFA nfa₁ renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁)

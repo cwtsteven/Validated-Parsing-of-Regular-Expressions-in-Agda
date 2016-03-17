@@ -27,28 +27,28 @@ open import Translation Σ dec
 Lᴿ≈Lᵉᴺ : ∀ e → Lᴿ e ≈ Lᵉᴺ (regexToε-NFA e)
 Lᴿ≈Lᵉᴺ e = Lᴿ⊆Lᵉᴺ e , Lᴿ⊇Lᵉᴺ e
   where
-    open import Correctness.RegExpToe-NFA Σ dec
+    open import Correctness.RegExp-eNFA Σ dec
 
 
 {- ∀nfa∈ε-NFA. L(nfa) = L(remove-ε-step nfa) -}
 Lᵉᴺ≈Lᴺ : ∀ nfa → Lᵉᴺ nfa ≈ Lᴺ (remove-ε-step nfa)
 Lᵉᴺ≈Lᴺ nfa = Lᵉᴺ⊆Lᴺ nfa , Lᵉᴺ⊇Lᴺ nfa
   where
-    open import Correctness.e-NFAtoNFA Σ dec
+    open import Correctness.eNFA-NFA Σ dec
 
 
 {- ∀nfa∈NFA. L(nfa) = L(powerset-construction dfa) -}
 Lᴺ≈Lᴰ : ∀ nfa → Lᴺ nfa ≈ Lᴰ (powerset-construction nfa)
 Lᴺ≈Lᴰ nfa = Lᴺ⊆Lᴰ nfa , Lᴺ⊇Lᴰ nfa
   where
-    open import Correctness.NFAtoDFA Σ dec
+    open import Correctness.NFA-DFA Σ dec
 
 
 {- ∀dfa∈DFA.   L(dfa) = L(minimise dfa) -}
-Lᴰ≈Lᴹ : ∀ dfa → Lᴰ dfa ≈ Lᴰ ((proj₁ ∘ minimise) dfa)
+Lᴰ≈Lᴹ : ∀ dfa → Lᴰ dfa ≈ Lᴰ (minimise dfa)
 Lᴰ≈Lᴹ = Minimise.Lᴰ≈Lᴹ
   where
-    open import Correctness.DFAtoMDFA Σ dec
+    open import Correctness.DFA-MDFA Σ dec
 
 
 {- ∀e∈RegExp.  L(e)   = L(regexToMDFA e) -}
@@ -62,4 +62,4 @@ Lᴿ≈Lᴹ e = ≈-trans (Lᴿ≈Lᵉᴺ e) (≈-trans (Lᵉᴺ≈Lᴺ ε-nfa) 
     dfa : DFA
     dfa = powerset-construction nfa
     mdfa : DFA
-    mdfa = (proj₁ ∘ minimise) dfa
+    mdfa = minimise dfa

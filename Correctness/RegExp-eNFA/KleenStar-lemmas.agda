@@ -6,7 +6,7 @@
 -}
 open import Util
 open import RegularExpression
-module Correctness.RegExpToe-NFA.KleenStar-lemmas (Σ : Set)(dec : DecEq Σ)(e : RegularExpression.RegExp Σ dec) where
+module Correctness.RegExp-eNFA.KleenStar-lemmas (Σ : Set)(dec : DecEq Σ)(e : RegularExpression.RegExp Σ dec) where
 
 open import Data.List
 open import Data.Bool
@@ -22,7 +22,7 @@ open import Subset
 open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_)
 open import Language Σ dec
 open import eNFA Σ dec
-open import Translation Σ dec
+open import Translation.RegExp-eNFA Σ dec
 open import State
 
 nfa : ε-NFA

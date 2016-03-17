@@ -7,7 +7,7 @@
   Version 31-01-2015
 -}
 open import Util
-module Correctness.e-NFAtoNFA (Σ : Set)(dec : DecEq Σ) where
+module Correctness.eNFA-NFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
 open import Data.Bool
@@ -26,7 +26,7 @@ open import Language Σ dec
 open import RegularExpression Σ dec
 open import eNFA Σ dec
 open import NFA Σ dec
-open import Translation Σ dec
+open import Translation.eNFA-NFA Σ dec
 open import State
 
 

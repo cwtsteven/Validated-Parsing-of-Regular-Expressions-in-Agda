@@ -6,7 +6,7 @@
   Version 15-03-2016
 -}
 open import Util
-module Correctness.DFAtoMDFA (Σ : Set)(dec : DecEq Σ) where
+module Correctness.DFA-MDFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Function
 open import Data.List hiding (any)
@@ -27,7 +27,7 @@ open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; _∈?_ to _∈�
 open import Subset.VectorRep
 open import Language Σ dec
 open import DFA Σ dec
-open import Translation Σ dec
+open import Translation.DFA-MDFA Σ dec
 open import Quotient
 
 module Remove-Inaccessible-States (dfa : DFA) where

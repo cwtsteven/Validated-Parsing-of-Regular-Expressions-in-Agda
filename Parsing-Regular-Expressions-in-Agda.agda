@@ -15,10 +15,10 @@ open import Subset
 -- Decidable Subset
 open import Subset.DecidableSubset
 
--- Formal Language
+-- Formal Languages
 open import Language
 
--- Regular Expression
+-- Regular Expressions
 open import RegularExpression
 
 -- ε-NFA
@@ -30,20 +30,14 @@ open import NFA
 -- DFA
 open import DFA
 
--- State contruction for ε-NFA
-open import State
-
--- Quotient Set
-open import Quotient
-
--- Translation
+-- Translation from regular expression to DFA
 open import Translation
 
--- Correctness Proof
+-- Correctness Proof of Translation
 open import Correctness
 
--- Proof of the 
+-- Decidability of regular expressions
 open import RegExp-Decidability
 
--- Well
+-- Myhill-Nerode Theorem
 open import Myhill-Nerode-Theorem

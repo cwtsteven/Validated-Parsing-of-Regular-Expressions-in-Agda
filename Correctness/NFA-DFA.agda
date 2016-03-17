@@ -7,7 +7,7 @@
   Version 11-02-2016
 -}
 open import Util
-module Correctness.NFAtoDFA (Σ : Set)(dec : DecEq Σ) where
+module Correctness.NFA-DFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List hiding (any)
 open import Data.Bool
@@ -28,7 +28,7 @@ open import Subset.VectorRep
 open import Language Σ dec
 open import NFA Σ dec
 open import DFA Σ dec
-open import Translation Σ dec
+open import Translation.NFA-DFA Σ dec
 --open import State
 
 module base (nfa : NFA) where
