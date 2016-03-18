@@ -39,7 +39,6 @@ record DFA : Set₁ where
     q₀ : Q
     F  : DecSubset Q
     _≋_ : (q q' : Q) → Set
-    Dec-≋ : ∀ q q' → Dec (q ≋ q')
     ≋-isEquiv : IsEquivalence _≋_
     δ-lem   : ∀ {q} {p} a → q ≋ p → δ q a ≋ δ p a
     F-lem   : ∀ {q} {p}   → q ≋ p → q ∈ᵈ F → p ∈ᵈ F
@@ -207,7 +206,9 @@ module DFA-Properties (D : DFA) where
   ∼-lem₂ : ∀ {q q' a} → q ∼ q' → δ q a ∼ δ q' a
   ∼-lem₂ {q} {q'} {a} q∼q' = λ w → q∼q' (a ∷ w)
 
-  -- is it?
+  -- there are several algorithms
+  -- 1) Table-filling algorithm
+  -- 2) ?
   postulate Dec-∼ : ∀ q q' → Dec (q ∼ q')
 
   ∼-refl : Reflexive _∼_

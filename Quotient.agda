@@ -41,24 +41,17 @@ module Quot-Properties (quot : QuotientSet) where
   ... | yes _ = true
   ... | no  _ = false
 
+  ⟪⟫-lem : ∀ p → p ∈ᵈ ⟪ p ⟫
+  ⟪⟫-lem p with Dec-∼ p p
+  ... | yes _   = refl
+  ... | no  prf = ⊥-elim (prf (IsEquivalence.refl ∼-isEquiv))
+
 
   data Quot-Set : Set where
     class : ∀ qs → Σ[ q ∈ Q ] (qs ≈ᵈ ⟪ q ⟫) → Quot-Set
 
   _≋_ : Quot-Set → Quot-Set → Set
   (class qs (q , prf)) ≋ (class qs' (q' , prf')) = qs ≈ᵈ qs'
-
-  -- these postulate says that we can put every subset of Q into a vector
-  postulate ∣Q∣-1 : ℕ
-  postulate It : Vec Q (suc ∣Q∣-1)
-  postulate Q? : DecEq Q
-  postulate ∀q∈It : ∀ q → q ∈ⱽ It
-  postulate unique : Unique It
-
-  open Decidable-≈ {Q} {∣Q∣-1} (Q?) (It) (∀q∈It) (unique)
-
-  Dec-≋ : ∀ q q' → Dec (q ≋ q')
-  Dec-≋ (class qs (q , prf)) (class qs' (q' , prf')) = Dec-≈ qs qs'
 
   ≋-refl : Reflexive _≋_
   ≋-refl {class qs (q , prf)} = IsEquivalence.refl ≈ᵈ-isEquiv

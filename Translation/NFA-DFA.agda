@@ -25,7 +25,7 @@ open import DFA Σ dec
 
 powerset-construction : NFA → DFA
 powerset-construction nfa =
-  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≈ᵈ_ ; Dec-≋ = Decidable-≈.Dec-≈ {Q} {∣Q∣-1} Q? It ∀q∈It unique ; ≋-isEquiv = ≈ᵈ-isEquiv ; F-lem = F-lem ; δ-lem = δ-lem }
+  record { Q = Q' ; δ = δ' ; q₀ = q₀' ; F = F' ; _≋_ = _≈ᵈ_ ; ≋-isEquiv = ≈ᵈ-isEquiv ; F-lem = F-lem ; δ-lem = δ-lem }
     where
       open NFA nfa
       open NFA-Operations nfa
