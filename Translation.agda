@@ -38,7 +38,8 @@ powerset-construction : NFA → DFA
 powerset-construction = powerset-construction'
   where
     open import Translation.NFA-DFA Σ dec renaming (powerset-construction to powerset-construction')
-    
+
+
 -- minimise the DFA by removing inaccessible states and quotient construction
 minimise : DFA → DFA
 minimise = minimise'

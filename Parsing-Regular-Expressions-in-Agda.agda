@@ -6,14 +6,10 @@
 -}
 module Parsing-Regular-Expressions-in-Agda where
 
--- Utilities
-open import Util
-
--- General Subset
+-- Subsets
 open import Subset
-
--- Decidable Subset
 open import Subset.DecidableSubset
+open import Subset.VectorRep
 
 -- Formal Languages
 open import Language
@@ -30,14 +26,33 @@ open import NFA
 -- DFA
 open import DFA
 
+-- State construction for ε-NFA
+open import State
+
+-- State construction for quotient set
+open import Quotient
+
 -- Translation from regular expression to DFA
 open import Translation
+open import Translation.RegExp-eNFA
+open import Translation.eNFA-NFA
+open import Translation.NFA-DFA
+open import Translation.DFA-MDFA
 
 -- Correctness Proof of Translation
 open import Correctness
+open import Correctness.RegExp-eNFA
+open import Correctness.RegExp-eNFA.Epsilon-lemmas
+open import Correctness.RegExp-eNFA.Singleton-lemmas
+open import Correctness.RegExp-eNFA.Union-lemmas
+open import Correctness.RegExp-eNFA.Concatenation-lemmas
+open import Correctness.RegExp-eNFA.KleenStar-lemmas
+open import Correctness.eNFA-NFA
+open import Correctness.NFA-DFA
+open import Correctness.DFA-MDFA
 
 -- Decidability of regular expressions
 open import RegExp-Decidability
 
--- Myhill-Nerode Theorem
-open import Myhill-Nerode-Theorem
+-- Utilities
+open import Util

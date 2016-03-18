@@ -9,13 +9,19 @@ module Quotient where
 open import Data.Bool
 open import Relation.Nullary
 open import Relation.Binary
+open import Relation.Binary.PropositionalEquality
 open import Data.Product
+open import Data.Empty
+open import Data.Nat
+open import Data.Vec renaming (_∈_ to _∈ⱽ_)
 
 open import Util
 open import Subset
 open import Subset.DecidableSubset
   renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_ ; Ø to Øᵈ ; _⋃_ to _⋃ᵈ_ ; _⋂_ to _⋂ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ
-                 ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ≈-refl to ≈ᵈ-refl ; ≈-trans to ≈ᵈ-trans ; ≈-sym to ≈ᵈ-sym)
+                 ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ≈-refl to ≈ᵈ-refl ; ≈-trans to ≈ᵈ-trans ; ≈-sym to ≈ᵈ-sym ; ≈-isEquiv to ≈ᵈ-isEquiv)
+open import Subset.VectorRep
+
 
 record QuotientSet : Set₁ where
   field
@@ -35,8 +41,33 @@ module Quot-Properties (quot : QuotientSet) where
   ... | yes _ = true
   ... | no  _ = false
 
-  ∼iff≈ : ∀ {p q} → (p ∼ q) ⇔ (⟪ p ⟫ ≈ᵈ ⟪ q ⟫)
-  ∼iff≈ = undefined
 
   data Quot-Set : Set where
     class : ∀ qs → Σ[ q ∈ Q ] (qs ≈ᵈ ⟪ q ⟫) → Quot-Set
+
+  _≋_ : Quot-Set → Quot-Set → Set
+  (class qs (q , prf)) ≋ (class qs' (q' , prf')) = qs ≈ᵈ qs'
+
+  -- these postulate says that we can put every subset of Q into a vector
+  postulate ∣Q∣-1 : ℕ
+  postulate It : Vec Q (suc ∣Q∣-1)
+  postulate Q? : DecEq Q
+  postulate ∀q∈It : ∀ q → q ∈ⱽ It
+  postulate unique : Unique It
+
+  open Decidable-≈ {Q} {∣Q∣-1} (Q?) (It) (∀q∈It) (unique)
+
+  Dec-≋ : ∀ q q' → Dec (q ≋ q')
+  Dec-≋ (class qs (q , prf)) (class qs' (q' , prf')) = Dec-≈ qs qs'
+
+  ≋-refl : Reflexive _≋_
+  ≋-refl {class qs (q , prf)} = IsEquivalence.refl ≈ᵈ-isEquiv
+    
+  ≋-sym : Symmetric _≋_
+  ≋-sym {class qs (q , prf)} {class qs' (q' , prf')} q≋q' = IsEquivalence.sym ≈ᵈ-isEquiv q≋q'
+    
+  ≋-trans : Transitive _≋_
+  ≋-trans {class qs (q , prf)} {class qs' (q' , prf')} {class qs'' (q'' , prf'')} q≋q' q'≋q'' = IsEquivalence.trans ≈ᵈ-isEquiv q≋q' q'≋q''
+    
+  ≋-isEquiv : IsEquivalence {A = Quot-Set} _≋_
+  ≋-isEquiv = record { refl = λ {q} → ≋-refl {q} ; sym = λ {q} {q'} → ≋-sym {q} {q'} ; trans = λ {q} {q'} {q''} → ≋-trans {q} {q'} {q''} }

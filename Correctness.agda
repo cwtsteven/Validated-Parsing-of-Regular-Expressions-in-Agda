@@ -58,8 +58,8 @@ Lᴿ≈Lᴹ e = ≈-trans (Lᴿ≈Lᵉᴺ e) (≈-trans (Lᵉᴺ≈Lᴺ ε-nfa) 
     ε-nfa : ε-NFA
     ε-nfa = regexToε-NFA e
     nfa : NFA
-    nfa = remove-ε-step ε-nfa
+    nfa = regexToNFA e
     dfa : DFA
-    dfa = powerset-construction nfa
+    dfa = regexToDFA e
     mdfa : DFA
-    mdfa = minimise dfa
+    mdfa = regexToMDFA e

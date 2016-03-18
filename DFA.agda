@@ -23,7 +23,7 @@ open import Data.Nat
 open import Subset
 open import Subset.DecidableSubset
   renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_ ; Ø to Øᵈ ; _⋃_ to _⋃ᵈ_ ; _⋂_ to _⋂ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ
-                 ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ≈-refl to ≈ᵈ-refl ; ≈-trans to ≈ᵈ-trans ; ≈-sym to ≈ᵈ-sym)
+                 ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ≈-isEquiv to ≈ᵈ-isEquiv ; ≈-refl to ≈ᵈ-refl ; ≈-trans to ≈ᵈ-trans ; ≈-sym to ≈ᵈ-sym)
 open import Quotient
 open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_ ; tail to tailⱽ)
 open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
@@ -200,12 +200,15 @@ module DFA-Properties (D : DFA) where
   _∼_ : Q → Q → Set
   q ∼ q' = ∀ w → δ* q w ∈ᵈ F ⇔ δ* q' w ∈ᵈ F
 
-  ∼-lem : ∀ {q q'} → q ≋ q' → q ∼ q'
-  ∼-lem {q} {q'} q≋q'
+  ∼-lem₁ : ∀ {q q'} → q ≋ q' → q ∼ q'
+  ∼-lem₁ {q} {q'} q≋q'
     = λ w → ((λ δ*qw∈F → F-lem {δ* q w} {δ* q' w} (δ*-lem q≋q' w) δ*qw∈F) , (λ δ*q'w∈F → F-lem {δ* q' w} {δ* q w} (δ*-lem (≋-sym {q} {q'} q≋q') w) δ*q'w∈F))
 
-  Dec-∼ : ∀ q q' → Dec (q ∼ q')
-  Dec-∼ = undefined
+  ∼-lem₂ : ∀ {q q' a} → q ∼ q' → δ q a ∼ δ q' a
+  ∼-lem₂ {q} {q'} {a} q∼q' = λ w → q∼q' (a ∷ w)
+
+  -- is it?
+  postulate Dec-∼ : ∀ q q' → Dec (q ∼ q')
 
   ∼-refl : Reflexive _∼_
   ∼-refl = λ _ → (λ x → x) , (λ x → x)
@@ -223,7 +226,6 @@ module DFA-Properties (D : DFA) where
 
   quot : QuotientSet
   quot = record {Q = Q ; _∼_ = _∼_ ; Dec-∼ = Dec-∼ ; ∼-isEquiv = ∼-isEquiv }
-
 
 
 All-Reachable-States : DFA → Set

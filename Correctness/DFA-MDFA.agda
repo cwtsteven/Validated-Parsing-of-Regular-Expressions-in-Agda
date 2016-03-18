@@ -86,7 +86,7 @@ module Quotient-Construction (dfa : DFA) where
   open DFA rdfa
   open DFA-Operations rdfa
   open DFA-Properties rdfa
-  open Quot-Properties quot
+  open Quot-Properties quot using (class ; ⟪_⟫)
   open IsEquivalence ≋-isEquiv renaming (refl to ≋-refl ; sym to ≋-sym ; trans to ≋-trans)
 
   open DFA qdfa renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; _≋_ to _≋₁_ ; ≋-isEquiv to ≋₁-isEquiv ; δ-lem to δ₁-lem ; F-lem to F₁-lem)
@@ -96,10 +96,10 @@ module Quotient-Construction (dfa : DFA) where
          → (q , w) ⊢ᵏ n ─ (q' , [])
          → (class (⟪ q ⟫) (q , IsEquivalence.refl ≈ᵈ-isEquiv) , w) ⊢ᵏ₁ n ─ (class (⟪ q' ⟫) (q' , IsEquivalence.refl ≈ᵈ-isEquiv) , [])
   lem₁ q .[] zero  q' (q≋q' , refl)
-    = (proj₁ ∼iff≈)(∼-lem q≋q') , refl
+    = (proj₁ (Quotient-Construct.p∼q⇔⟪p⟫≈⟪q⟫ rdfa)) (∼-lem₁ q≋q') , refl
   lem₁ q ._ (suc n) q' (p , a , u , refl , (refl , prf₁) , prf₂)
     = class (⟪ p ⟫) (p , IsEquivalence.refl ≈ᵈ-isEquiv) , a , u , refl
-      , (refl , (proj₁ ∼iff≈) (∼-lem prf₁))
+      , (refl , (proj₁ (Quotient-Construct.p∼q⇔⟪p⟫≈⟪q⟫ rdfa)) (∼-lem₁ prf₁))
       , lem₁ p u n q' prf₂
 
   Lᴿ⊆Lᴹ : Lᴰ rdfa ⊆ Lᴰ qdfa
@@ -126,6 +126,7 @@ module Minimise where
   Lᴰ≈Lᴹ dfa = IsEquivalence.trans ≈-isEquiv (Remove-Inaccessible-States.Lᴰ≈Lᴿ dfa) (Quotient-Construction.Lᴿ≈Lᴹ dfa)
     
 
+
 module Reachable-Proof (dfa : DFA) where
   rdfa : DFA
   rdfa = remove-inaccessible-states dfa
@@ -143,36 +144,63 @@ module Reachable-Proof (dfa : DFA) where
 
 
 -- Now, we have to prove that Minimal D cannot be collapsed further
-module Minimal-Definition (dfa : DFA) where
-  mdfa : DFA
-  mdfa = minimise dfa
-  open DFA mdfa renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; _≋_ to _≋₁_ ; ≋-isEquiv to ≋₁-isEquiv ; δ-lem to δ₁-lem ; F-lem to F₁-lem)
-  open DFA-Operations mdfa renaming (δ* to δ₁* ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_ ; δ₀-lem₁ to δ₀₁-lem₁)
-  open DFA-Properties mdfa
-  open Quot-Properties (DFA-Properties.quot mdfa)
+Minimal : ∀ dfa → Set
+Minimal dfa = (p q : Q₁) → p ∼ q → p ≋₁ q
+  where
+    mdfa : DFA
+    mdfa = quotient-construction dfa
+    open DFA mdfa renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; _≋_ to _≋₁_ ; ≋-isEquiv to ≋₁-isEquiv ; δ-lem to δ₁-lem ; F-lem to F₁-lem)
+    open DFA-Operations mdfa renaming (δ* to δ₁* ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_ ; δ₀-lem₁ to δ₀₁-lem₁)
+    open DFA-Properties mdfa
+    open Quot-Properties (DFA-Properties.quot mdfa)
 
-  Minimal : Set
-  Minimal = (p q : Q₁) → p ∼ q → p ≋₁ q
 
 
 module Minimal-Proof (dfa : DFA) where
+  open DFA dfa
+  open DFA-Operations dfa
+  open DFA-Properties dfa
+  open Quot-Properties quot
+
   mdfa₁ : DFA
   mdfa₁ = minimise dfa
-  open DFA mdfa₁ renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; _≋_ to _≋₁_ ; ≋-isEquiv to ≋₁-isEquiv)
+  open DFA mdfa₁ renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; _≋_ to _≋₁_ ; ≋-isEquiv to ≋₁-isEquiv ; F-lem to F₁-lem)
   open DFA-Operations mdfa₁ renaming (δ* to δ₁*)
-  open DFA-Properties mdfa₁ renaming (quot to quot₁ ; reach to reach₁)
+  open DFA-Properties mdfa₁ renaming (Reachable to Reachable₁ ; quot to quot₁ ; reach to reach₁ ; Qᴿ to Qᴿ₁ ; _∼_ to _∼₁_)
   open Quot-Properties quot₁ renaming (class to class₁ ; ⟪_⟫ to ⟪_⟫₁)
-  
-  open Minimal-Definition mdfa₁ renaming (mdfa to mdfa₂)
 
-  open DFA mdfa₂ renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; _≋_ to _≋₂_ ; ≋-isEquiv to ≋₂-isEquiv)
+  mdfa₂ : DFA
+  mdfa₂ = quotient-construction mdfa₁
+  open DFA mdfa₂ renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; _≋_ to _≋₂_ ; ≋-isEquiv to ≋₂-isEquiv ; F-lem to F₂-lem)
   open DFA-Operations mdfa₂ renaming (δ* to δ₂*)
-  open DFA-Properties mdfa₂ renaming (quot to quot₂ ; reach to reach₂)
+  open DFA-Properties mdfa₂ renaming (Reachable to Reachable₂ ; quot to quot₂ ; reach to reach₂ ; Qᴿ to Qᴿ₂ ; _∼_ to _∼₂_)
   open Quot-Properties quot₂ renaming (class to class₂ ; ⟪_⟫ to ⟪_⟫₂)
 
-  IsMinimal : Minimal
-  IsMinimal (class₂ ps (p , ps≈⟪p⟫)) (class₂ qs (q , qs≈⟪q⟫)) p∼q = undefined
-    where
-      prf₁ : ∀ w → δ₂* (Quot-Properties.class ps (p , ps≈⟪p⟫)) w ≋₂ Quot-Properties.class undefined (undefined , undefined)
-      prf₁ = λ w → undefined
-      
+  lem : ∀ qs q w
+        → (qs≈⟪q⟫ : qs ≈ᵈ ⟪ q ⟫₁)
+        → δ₂* (class₁ qs (q , qs≈⟪q⟫)) w ≋₂ class₁ ⟪ δ₁* q w ⟫₁ (δ₁* q w , IsEquivalence.refl ≈ᵈ-isEquiv)
+  lem qs q []      ⟪q⟫≈qs = ⟪q⟫≈qs
+  lem qs q (a ∷ w) ⟪q⟫≈qs = lem (⟪ δ₁ q a ⟫₁) (δ₁ q a) w (IsEquivalence.refl ≈ᵈ-isEquiv)
+
+  lem' : ∀ {q}
+         → q ∈ᵈ F₁ ⇔ class₁ (⟪ q ⟫₁) (q , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂
+  lem' = (λ prf → prf) , (λ prf → prf)
+
+  IsMinimal : Minimal mdfa₁
+  IsMinimal (class₁ ps (p , ps≈⟪p⟫)) (class₁ qs (q , qs≈⟪q⟫)) ⟪p⟫∼⟪q⟫
+    = let lem₁ : ∀ w → (δ₂* (class₁ ps (p , ps≈⟪p⟫)) w) ∈ᵈ F₂ ⇔ (δ₂* (class₁ qs (q , qs≈⟪q⟫)) w) ∈ᵈ F₂
+          lem₁ = ⟪p⟫∼⟪q⟫ in
+      let lem₂ : ∀ w → (δ₂* (class₁ ps (p , ps≈⟪p⟫)) w) ∈ᵈ F₂ ⇔ class₁ ⟪ δ₁* p w ⟫₁ (δ₁* p w , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂
+          lem₂ w = (λ prf → F₂-lem (lem ps p w ps≈⟪p⟫) prf) , (λ prf → F₂-lem (IsEquivalence.sym ≋₂-isEquiv (lem ps p w ps≈⟪p⟫)) prf) in
+      let lem₃ : ∀ w → (δ₂* (class₁ qs (q , qs≈⟪q⟫)) w) ∈ᵈ F₂ ⇔ class₁ ⟪ δ₁* q w ⟫₁ (δ₁* q w , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂
+          lem₃ w = (λ prf → F₂-lem (lem qs q w qs≈⟪q⟫) prf) , (λ prf → F₂-lem (IsEquivalence.sym ≋₂-isEquiv (lem qs q w qs≈⟪q⟫)) prf) in
+      let lem₄ : ∀ w → class₁ ⟪ δ₁* p w ⟫₁ (δ₁* p w , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂ ⇔ class₁ ⟪ δ₁* q w ⟫₁ (δ₁* q w , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂
+          lem₄ w = (λ prf → proj₁ (lem₃ w) (proj₁ (lem₁ w) (proj₂ (lem₂ w) prf))) , (λ prf → proj₁ (lem₂ w) (proj₂ (lem₁ w) (proj₂ (lem₃ w) prf))) in
+      let lem₅ : ∀ w → δ₁* p w ∈ᵈ F₁ ⇔ δ₁* q w ∈ᵈ F₁
+          lem₅ w = (λ prf → proj₂ (lem' {δ₁* q w}) (proj₁ (lem₄ w) (proj₁ (lem' {δ₁* p w}) prf)))
+                 , (λ prf → proj₂ (lem' {δ₁* p w}) (proj₂ (lem₄ w) (proj₁ (lem' {δ₁* q w}) prf))) in
+      let lem₆ : p ∼₁ q
+          lem₆ = lem₅ in
+      let lem₇ : ⟪ p ⟫₁ ≈ᵈ ⟪ q ⟫₁
+          lem₇ = proj₁ (Quotient-Construct.p∼q⇔⟪p⟫≈⟪q⟫ mdfa₁) lem₆ in
+      IsEquivalence.trans ≈ᵈ-isEquiv (IsEquivalence.trans ≈ᵈ-isEquiv ps≈⟪p⟫ lem₇) (IsEquivalence.sym ≈ᵈ-isEquiv qs≈⟪q⟫)
