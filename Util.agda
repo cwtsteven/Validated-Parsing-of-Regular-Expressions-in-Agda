@@ -27,6 +27,8 @@ infix 0 _⇔_
 _⇔_ : ∀ {α ℓ} → Set α → Set ℓ → Set (ℓ Level.⊔ α)
 P ⇔ Q = (P → Q) × (Q → P)
 
+¬∃-∀¬ : {A : Set}(P : A → Set) → ¬ ( Σ[ a ∈ A ] P a) → (∀ a → ¬ (P a))
+¬∃-∀¬ P ¬∃aPa a Pa = ⊥-elim (¬∃aPa (a , Pa))
 
 
 -- Decidable Equality

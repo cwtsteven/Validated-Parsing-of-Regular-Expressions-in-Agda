@@ -63,3 +63,17 @@ Lᴿ≈Lᴹ e = ≈-trans (Lᴿ≈Lᵉᴺ e) (≈-trans (Lᵉᴺ≈Lᴺ ε-nfa) 
     dfa = regexToDFA e
     mdfa : DFA
     mdfa = regexToMDFA e
+
+
+{- Definition of Minimal DFA -}
+Minimal : DFA → Set
+Minimal dfa = All-Reachable-States dfa × Irreducible dfa
+  where
+    open import Correctness.DFA-MDFA Σ dec
+
+
+{- ∀dfa∈DFA. minimise(dfa) is Minimal -}
+IsMinimal : ∀ dfa → Minimal (minimise dfa)
+IsMinimal = IsMinimal'
+  where
+    open import Correctness.DFA-MDFA Σ dec renaming (IsMinimal to IsMinimal')

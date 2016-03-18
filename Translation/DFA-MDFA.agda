@@ -96,54 +96,15 @@ module Quotient-Construct (dfa : DFA) where
   F' : DecSubset Quot-Set
   F' (class qs (q , _)) = q ∈ᵈ? F
   
-  p∼q⇔⟪p⟫≈⟪q⟫ : ∀ {p q} → (p ∼ q) ⇔ class (⟪ p ⟫) (p , IsEquivalence.refl ≈ᵈ-isEquiv) ≋' class ⟪ q ⟫ (q , IsEquivalence.refl ≈ᵈ-isEquiv)
-  p∼q⇔⟪p⟫≈⟪q⟫ = lem₁ , lem₂
-    where
-      lem₁ : ∀ {p q} → p ∼ q → ⟪ p ⟫ ≈ᵈ ⟪ q ⟫
-      lem₁ p∼q = lem₁-⊆ p∼q , lem₁-⊇ p∼q
-        where
-          lem₁-⊆ : ∀ {p} {q} → p ∼ q → ⟪ p ⟫ ⊆ᵈ ⟪ q ⟫
-          lem₁-⊆ {p} {q} p∼q x x∈⟪p⟫ with Dec-∼ x q
-          lem₁-⊆ {p} {q} p∼q x x∈⟪p⟫ | yes _    = refl
-          lem₁-⊆ {p} {q} p∼q x x∈⟪p⟫ | no  ¬x∼q with Dec-∼ x p
-          lem₁-⊆ {p} {q} p∼q x x∈⟪p⟫ | no  ¬x∼q | yes x∼p
-            = ⊥-elim (¬x∼q (IsEquivalence.trans ∼-isEquiv x∼p p∼q))
-          lem₁-⊆ {p} {q} p∼q x ()    | no  ¬x∼q | no  ¬x∼p
-
-          lem₁-⊇ : ∀ {p} {q} → p ∼ q → ⟪ p ⟫ ⊇ᵈ ⟪ q ⟫
-          lem₁-⊇ {p} {q} p∼q x x∈⟪q⟫ with Dec-∼ x p
-          lem₁-⊇ {p} {q} p∼q x x∈⟪q⟫ | yes _    = refl
-          lem₁-⊇ {p} {q} p∼q x x∈⟪q⟫ | no  ¬x∼o with Dec-∼ x q
-          lem₁-⊇ {p} {q} p∼q x x∈⟪q⟫ | no  ¬x∼p | yes x∼q
-            = ⊥-elim (¬x∼p (IsEquivalence.trans ∼-isEquiv x∼q (IsEquivalence.sym ∼-isEquiv p∼q)))
-          lem₁-⊇ {p} {q} p∼q x ()    | no  ¬x∼p | no  ¬x∼q
-
-      lem₂ : ∀ {p q} → ⟪ p ⟫ ≈ᵈ ⟪ q ⟫ → p ∼ q
-      lem₂ {p} {q} ⟪p⟫≈⟪q⟫ with p ∈ᵈ? ⟪ q ⟫ | inspect (λ p → p ∈ᵈ? ⟪ q ⟫) p
-      lem₂ {p} {q} ⟪p⟫≈⟪q⟫ | true  | [ p∈⟪q⟫ ] with Dec-∼ p q
-      lem₂ {p} {q} ⟪p⟫≈⟪q⟫ | true  | [ p∈⟪q⟫ ] | yes p∼q = p∼q
-      lem₂ {p} {q} ⟪p⟫≈⟪q⟫ | true  | [   ()  ] | no  _ 
-      lem₂ {p} {q} ⟪p⟫≈⟪q⟫ | false | [ p∉⟪q⟫ ] = ⊥-elim ((Subset.DecidableSubset.∈-lem₂ {Q} {p} {⟪ q ⟫} p∉⟪q⟫) ((proj₁ ⟪p⟫≈⟪q⟫) p (⟪⟫-lem p)))
-
-
-  
   δ'-lem : ∀ {q q'} a → q ≋' q' → δ' q a ≋' δ' q' a
   δ'-lem {class qs (q , qs≈⟪q⟫)} {class qs' (q' , qs'≈⟪q'⟫)} a q≋'q'
-    = let ⟪q⟫≈⟪q'⟫ = IsEquivalence.trans ≈ᵈ-isEquiv (IsEquivalence.trans ≈ᵈ-isEquiv (IsEquivalence.sym ≈ᵈ-isEquiv qs≈⟪q⟫) q≋'q') qs'≈⟪q'⟫ in
-      let q∼q' = (proj₂ p∼q⇔⟪p⟫≈⟪q⟫) ⟪q⟫≈⟪q'⟫ in
-      let δqa∼δq'a = ∼-lem₂ {q} {q'} {a} q∼q' in
-      proj₁ p∼q⇔⟪p⟫≈⟪q⟫ δqa∼δq'a
-
+    = ∼-lem₂ {q} {q'} {a} q≋'q'
+  
 
   F'-lem : ∀ {q q'} → q ≋' q' → q ∈ᵈ F' → q' ∈ᵈ F'
   F'-lem {class qs (q , qs≈⟪q⟫)} {class qs' (q' , qs'≈⟪q'⟫)} q≋'q' q∈F
-    = let q∼q' = (proj₂ p∼q⇔⟪p⟫≈⟪q⟫) (IsEquivalence.trans ≈ᵈ-isEquiv
-                                          (IsEquivalence.trans ≈ᵈ-isEquiv
-                                           (IsEquivalence.sym ≈ᵈ-isEquiv qs≈⟪q⟫) q≋'q')
-                                          qs'≈⟪q'⟫)
-      in (proj₁ (q∼q' [])) q∈F
+    = (proj₁ (q≋'q' [])) q∈F
       
-
 
 quotient-construction : DFA → DFA
 quotient-construction D
@@ -153,8 +114,8 @@ quotient-construction D
            ; F = F'
            ; _≋_ = Quot-Properties._≋_ quot
            ; ≋-isEquiv = Quot-Properties.≋-isEquiv quot
-           ; δ-lem = δ'-lem
-           ; F-lem = F'-lem
+           ; δ-lem = λ {q q'} → δ'-lem {q} {q'}
+           ; F-lem = λ {q q'} → F'-lem {q} {q'}
            }
   where
     open DFA D

@@ -194,10 +194,71 @@ module DFA-Properties (D : DFA) where
   reach-lem₃ : ∀ {q a p} → p ≋ δ q a → Reachable q → Reachable p
   reach-lem₃ p≋δqa prf = reach-lem₂ (≋-sym p≋δqa) (reach-lem₁ prf)
 
-  -- Equivalence states
+  -- States Equivalence
   infix 0 _∼_
   _∼_ : Q → Q → Set
-  q ∼ q' = ∀ w → δ* q w ∈ᵈ F ⇔ δ* q' w ∈ᵈ F
+  p ∼ q = ∀ w → δ* p w ∈ᵈ F ⇔ δ* q w ∈ᵈ F
+
+  -- Distinquishable
+  infix 0 _≠_
+  _≠_ : Q → Q → Set
+  p ≠ q = Σ[ w ∈ Σ* ] (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)
+
+
+  ≠-lem : ∀ {p q} → (¬ (p ∼ q)) ⇔ (p ≠ q)
+
+  ≠-lem₁ : ∀ {p q} → ¬ (p ≠ q) → p ∼ q
+
+  ≠-lem₂ : ∀ {p q w} → (δ* p w ∈ᵈ F ⇔ δ* q w ∈ᵈ F) ⇔ ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)
+
+
+  -- there are several algorithms
+  -- 1) Table-filling algorithm
+  -- 2) Myhill-Nerode Theorem (Partition refinement)
+  postulate Dec-≠ : ∀ p q → Dec (p ≠ q)
+  --Dec-≠ p q = {!!}
+  
+
+  Dec-∼ : ∀ p q → Dec (p ∼ q)
+  Dec-∼ p q with Dec-≠ p q
+  ... | yes p≠q = no (proj₂ ≠-lem p≠q)
+  ... | no ¬p≠q = yes (≠-lem₁ ¬p≠q)
+
+  ≠-lem₁ {p} {q} ¬p≠q w = let lem₁ = ¬∃-∀¬ (λ w → (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)) ¬p≠q in
+                              proj₂ (≠-lem₂ {p} {q} {w}) (lem₁ w)
+
+  ≠-lem₂ {p} {q} {w} = lem₁ {p} {q} {w} , lem₂ {p} {q} {w}
+    where
+      lem₁ : ∀ {p q w} → (δ* p w ∈ᵈ F ⇔ δ* q w ∈ᵈ F) → ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)
+      lem₁ prf₁ (inj₁ (prf₂ , prf₃)) = ⊥-elim (prf₃ (proj₁ prf₁ prf₂))
+      lem₁ prf₁ (inj₂ (prf₂ , prf₃)) = ⊥-elim (prf₂ (proj₂ prf₁ prf₃))
+
+      lem₂ : ∀ {p q w} → ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F) → (δ* p w ∈ᵈ F ⇔ δ* q w ∈ᵈ F)
+      lem₂ {p} {q} {w} prf = left {p} {q} {w} prf , right {p} {q} {w} prf
+        where
+          left : ∀ {p q w} → ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F) → (δ* p w ∈ᵈ F → δ* q w ∈ᵈ F)
+          left {p} {q} {w} prf₁ prf₂ with δ* q w ∈ᵈ? F
+          left {p} {q} {w} prf₁ prf₂ | true  = refl
+          left {p} {q} {w} prf₁ prf₂ | false = ⊥-elim (prf₁ (inj₁ (prf₂ , (λ x → Bool-lem₁₂ x))))
+
+          right : ∀ {p q w} → ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F) → (δ* q w ∈ᵈ F → δ* p w ∈ᵈ F)
+          right {p} {q} {w} prf₁ prf₂ with δ* p w ∈ᵈ? F
+          right {p} {q} {w} prf₁ prf₂ | true  = refl
+          right {p} {q} {w} prf₁ prf₂ | false = ⊥-elim (prf₁ (inj₂ ((λ x → Bool-lem₁₂ x), prf₂)))
+  
+  ≠-lem = lem₁ , lem₂
+    where
+      lem₁ : ∀ {p q} → ¬ (p ∼ q) → p ≠ q
+      lem₁ {p} {q} ¬p∼q with Dec-≠ p q
+      ... | yes p≠q  = p≠q
+      ... | no  ¬p≠q = let lem₁ = ¬∃-∀¬ (λ w → (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)) ¬p≠q in
+                       let lem₂ = λ w → (proj₂ (≠-lem₂ {p} {q} {w})) (lem₁ w) in
+                       ⊥-elim (¬p∼q lem₂)
+
+      lem₂ : ∀ {p q} → p ≠ q → ¬ (p ∼ q)
+      lem₂ {p} {q} (w , inj₁ (prf₁ , prf₂)) prf₃ = ⊥-elim (prf₂ ((proj₁ (prf₃ w)) prf₁))
+      lem₂ {p} {q} (w , inj₂ (prf₁ , prf₂)) prf₃ = ⊥-elim (prf₁ ((proj₂ (prf₃ w)) prf₂))
+      
 
   ∼-lem₁ : ∀ {q q'} → q ≋ q' → q ∼ q'
   ∼-lem₁ {q} {q'} q≋q'
@@ -205,11 +266,7 @@ module DFA-Properties (D : DFA) where
 
   ∼-lem₂ : ∀ {q q' a} → q ∼ q' → δ q a ∼ δ q' a
   ∼-lem₂ {q} {q'} {a} q∼q' = λ w → q∼q' (a ∷ w)
-
-  -- there are several algorithms
-  -- 1) Table-filling algorithm
-  -- 2) ?
-  postulate Dec-∼ : ∀ q q' → Dec (q ∼ q')
+  
 
   ∼-refl : Reflexive _∼_
   ∼-refl = λ _ → (λ x → x) , (λ x → x)
@@ -228,9 +285,17 @@ module DFA-Properties (D : DFA) where
   quot : QuotientSet
   quot = record {Q = Q ; _∼_ = _∼_ ; Dec-∼ = Dec-∼ ; ∼-isEquiv = ∼-isEquiv }
 
+{-
 
-All-Reachable-States : DFA → Set
-All-Reachable-States D = ∀ q → Reachable q
-  where
-    open DFA D
-    open DFA-Properties D
+  postulate ∣Q∣-1 : ℕ
+  postulate Q? : DecEq Q
+  postulate It : Vec Q (suc ∣Q∣-1)
+  postulate ∀q∈It : ∀ q → q ∈ⱽ It
+  postulate unique : Unique It
+
+
+  module TableFillingAlgorithm where
+
+  module Table  where
+
+-}
