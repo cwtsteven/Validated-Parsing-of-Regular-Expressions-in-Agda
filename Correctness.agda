@@ -51,7 +51,19 @@ Lᴰ≈Lᴹ = Minimise.Lᴰ≈Lᴹ
     open import Correctness.DFA-MDFA Σ dec
 
 
-{- ∀e∈RegExp.  L(e)   = L(regexToMDFA e) -}
+{- ∀e∈RegExp. L(e) = L(regexToDFA e) -}
+Lᴿ≈Lᴰ : ∀ e → Lᴿ e ≈ Lᴰ (regexToDFA e)
+Lᴿ≈Lᴰ e = ≈-trans (Lᴿ≈Lᵉᴺ e) (≈-trans (Lᵉᴺ≈Lᴺ ε-nfa) (Lᴺ≈Lᴰ nfa))
+  where
+    ε-nfa : ε-NFA
+    ε-nfa = regexToε-NFA e
+    nfa : NFA
+    nfa = regexToNFA e
+    dfa : DFA
+    dfa = regexToDFA e
+
+
+{- ∀e∈RegExp. L(e) = L(regexToMDFA e) -}
 Lᴿ≈Lᴹ : ∀ e → Lᴿ e ≈ Lᴰ (regexToMDFA e)
 Lᴿ≈Lᴹ e = ≈-trans (Lᴿ≈Lᵉᴺ e) (≈-trans (Lᵉᴺ≈Lᴺ ε-nfa) (≈-trans (Lᴺ≈Lᴰ nfa) (Lᴰ≈Lᴹ dfa)))
   where

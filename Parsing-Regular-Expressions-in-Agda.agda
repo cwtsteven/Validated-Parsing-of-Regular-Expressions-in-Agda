@@ -56,3 +56,6 @@ open import RegExp-Decidability
 
 -- Utilities
 open import Util
+
+-- Examples
+open import Example
