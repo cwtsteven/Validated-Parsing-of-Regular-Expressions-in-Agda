@@ -2,6 +2,7 @@
   This module contains the following proofs:
     ∀nfa∈ε-NFA. L(nfa) ⊆ L(remove-ε-step nfa)
     ∀nfa∈ε-NFA. L(nfa) ⊇ L(remove-ε-step nfa)
+    ∀nfa∈ε-NFA. L(nfa) = L(remove-ε-step nfa)
 
   Steven Cheung
   Version 31-01-2015
@@ -21,7 +22,7 @@ open import Data.Nat
 open import Induction.Nat
 
 open import Subset renaming (Ø to ø)
-open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ) hiding (_⊆_ ; _⊇_)
+open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ ; _≈_ to _≈ᵈ_) hiding (_⊆_ ; _⊇_)
 open import Language Σ dec
 open import RegularExpression Σ dec
 open import eNFA Σ dec
@@ -200,3 +201,7 @@ module Lᵉᴺ⊇Lᴺ (ε-nfa : ε-NFA) where
 
 Lᵉᴺ⊇Lᴺ : ∀ ε-nfa → Lᵉᴺ ε-nfa ⊇ Lᴺ (remove-ε-step ε-nfa)
 Lᵉᴺ⊇Lᴺ = Lᵉᴺ⊇Lᴺ.lem₁
+
+
+Lᵉᴺ≈Lᴺ : ∀ nfa → Lᵉᴺ nfa ≈ Lᴺ (remove-ε-step nfa)
+Lᵉᴺ≈Lᴺ nfa = Lᵉᴺ⊆Lᴺ nfa , Lᵉᴺ⊇Lᴺ nfa

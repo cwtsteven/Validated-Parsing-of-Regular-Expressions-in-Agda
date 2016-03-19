@@ -2,6 +2,7 @@
   This module contains the following proofs:
     ∀e∈RegExp. L(e) ⊆ L(regexToε-NFA e)
     ∀e∈RegExp. L(e) ⊇ L(regexToε-NFA e)
+    ∀e∈RegExp. L(e) = L(regexToε-NFA e)
 
   Steven Cheung
   Version 10-01-2016
@@ -20,7 +21,7 @@ open import Data.Nat
 open import Induction.Nat
 
 open import Subset renaming (Ø to ø)
-open import Subset.DecidableSubset renaming (Ø to ø ; _∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_) hiding (_⊆_ ; _⊇_)
+open import Subset.DecidableSubset renaming (Ø to ø ; _∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _≈_ to _≈ᵈ_) hiding (_⊆_ ; _⊇_)
 open import Language Σ dec
 open import RegularExpression Σ dec
 open import eNFA Σ dec
@@ -228,3 +229,6 @@ Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
     lem₁ ._  ( wᵉ , refl ,  init  , q∈F , suc n , prf) | w≡[] = zero , sym w≡[]
     lem₁  w  ( wᵉ , w≡wᵉ ,  inj q , q∈F , suc n , prf) = lem₂ w wᵉ q n w≡wᵉ q∈F prf
   
+{- ∀e∈RegExp. L(e) = L(regexToε-NFA e) -}
+Lᴿ≈Lᵉᴺ : ∀ e → Lᴿ e ≈ Lᵉᴺ (regexToε-NFA e)
+Lᴿ≈Lᵉᴺ e = Lᴿ⊆Lᵉᴺ e , Lᴿ⊇Lᵉᴺ e

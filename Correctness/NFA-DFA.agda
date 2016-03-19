@@ -2,6 +2,7 @@
   This module contains the following proofs:
     ∀nfa∈NFA. L(nfa) ⊆ L(powerset-construction dfa)
     ∀nfa∈NFA. L(nfa) ⊇ L(powerset-construction dfa)
+    ∀nfa∈NFA. L(nfa) = L(powerset-construction dfa)
 
   Steven Cheung
   Version 11-02-2016
@@ -267,3 +268,7 @@ module Lᴺ⊇Lᴰ (nfa : NFA) where
   
 Lᴺ⊇Lᴰ : ∀ nfa → Lᴺ nfa ⊇ Lᴰ (powerset-construction nfa)
 Lᴺ⊇Lᴰ = Lᴺ⊇Lᴰ.lem₁
+
+
+Lᴺ≈Lᴰ : ∀ nfa → Lᴺ nfa ≈ Lᴰ (powerset-construction nfa)
+Lᴺ≈Lᴰ nfa = Lᴺ⊆Lᴰ nfa , Lᴺ⊇Lᴰ nfa

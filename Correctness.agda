@@ -25,23 +25,23 @@ open import Translation Σ dec
 
 {- ∀e∈RegExp. L(e) = L(regexToε-NFA e) -}
 Lᴿ≈Lᵉᴺ : ∀ e → Lᴿ e ≈ Lᵉᴺ (regexToε-NFA e)
-Lᴿ≈Lᵉᴺ e = Lᴿ⊆Lᵉᴺ e , Lᴿ⊇Lᵉᴺ e
+Lᴿ≈Lᵉᴺ = Lᴿ≈Lᵉᴺ'
   where
-    open import Correctness.RegExp-eNFA Σ dec
+    open import Correctness.RegExp-eNFA Σ dec renaming (Lᴿ≈Lᵉᴺ to Lᴿ≈Lᵉᴺ')
 
 
 {- ∀nfa∈ε-NFA. L(nfa) = L(remove-ε-step nfa) -}
 Lᵉᴺ≈Lᴺ : ∀ nfa → Lᵉᴺ nfa ≈ Lᴺ (remove-ε-step nfa)
-Lᵉᴺ≈Lᴺ nfa = Lᵉᴺ⊆Lᴺ nfa , Lᵉᴺ⊇Lᴺ nfa
+Lᵉᴺ≈Lᴺ = Lᵉᴺ≈Lᴺ'
   where
-    open import Correctness.eNFA-NFA Σ dec
+    open import Correctness.eNFA-NFA Σ dec renaming (Lᵉᴺ≈Lᴺ to Lᵉᴺ≈Lᴺ')
 
 
 {- ∀nfa∈NFA. L(nfa) = L(powerset-construction dfa) -}
 Lᴺ≈Lᴰ : ∀ nfa → Lᴺ nfa ≈ Lᴰ (powerset-construction nfa)
-Lᴺ≈Lᴰ nfa = Lᴺ⊆Lᴰ nfa , Lᴺ⊇Lᴰ nfa
+Lᴺ≈Lᴰ = Lᴺ≈Lᴰ'
   where
-    open import Correctness.NFA-DFA Σ dec
+    open import Correctness.NFA-DFA Σ dec renaming (Lᴺ≈Lᴰ to Lᴺ≈Lᴰ')
 
 
 {- ∀dfa∈DFA.   L(dfa) = L(minimise dfa) -}

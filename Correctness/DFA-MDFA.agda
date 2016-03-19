@@ -1,6 +1,7 @@
 {-
   This module contains the following proofs:
     ∀dfa∈DFA. L(dfa) ≈ L(minimise dfa)
+    ∀dfa∈DFA. minimise(dfa) is minimal
 
   Steven Cheung
   Version 15-03-2016
