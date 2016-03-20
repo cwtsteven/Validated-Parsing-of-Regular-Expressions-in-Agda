@@ -6,7 +6,7 @@ postulate list
 
 All these postulates regards the 
 
--- these can be proved using similar method in computing ε-closure
+-- these can be proved using similar method in computing ε-closure \\
 Translation/DFA-MDFA.agda:282:    postulate q1-lem₁ : ∀ k → Steps k ≈ᵈ Steps (suc k) → D-States ≈ D-Statesᵏ k
 Translation/DFA-MDFA.agda:286:    postulate q2-lem₁ : ∀ p q → (p , q) ∈ D-States ⇔ (p , q) ∈ᵈ Steps Size
 
