@@ -39,6 +39,7 @@ module base (nfa : NFA) where
   open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣-1 to ∣Q₁∣-1 ; It to It₁ ; unique to unique₁) 
   open NFA-Operations nfa renaming (_⊢_ to _⊢₁_ ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
   open NFA-Properties nfa
+  open Powerset-Construction nfa
   open DFA dfa
   open DFA-Operations dfa
   open DFA-Properties dfa
@@ -168,6 +169,7 @@ module Lᴺ⊆Lᴰ (nfa : NFA) where
   open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣-1 to ∣Q₁∣-1 ; It to It₁ ; unique to unique₁) 
   open NFA-Operations nfa renaming (_⊢_ to _⊢₁_ ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
   open NFA-Properties nfa
+  open Powerset-Construction nfa
   open DFA dfa 
   open DFA-Operations dfa
   open DFA-Properties dfa
@@ -208,6 +210,7 @@ module Lᴺ⊇Lᴰ (nfa : NFA) where
   open NFA nfa renaming (Q to Q₁ ; Q? to Q₁? ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ∣Q∣-1 to ∣Q₁∣-1 ; It to It₁) 
   open NFA-Operations nfa renaming (_⊢_ to _⊢₁_ ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
   open NFA-Properties nfa
+  open Powerset-Construction nfa
   open DFA dfa
   open DFA-Operations dfa
   

@@ -32,6 +32,9 @@ open import State
 -- State construction for quotient set
 open import Quotient
 
+-- Table representaion of relations
+open import RelationTable
+
 -- Translation from regular expression to DFA
 open import Translation
 open import Translation.RegExp-eNFA

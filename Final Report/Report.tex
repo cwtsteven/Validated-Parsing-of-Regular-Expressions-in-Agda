@@ -90,13 +90,12 @@ blah blah.
 \section{Introduction}
 \paragraph{} This project aims to study the feasibility of formalising
 Automata Theory \cite{aho1972} in Type Theory with the aid of a dependently-typed
-functional programming language, Agda \cite{agdawiki2016}. Automata Theory is a very
-extensive piece of work, it will be unrealistic to include all
+functional programming language, Agda \cite{agdawiki2016}. Automata
+Theory is an extensive work; therefore, it will be unrealistic to include all
 materials under the time constraint. Accordingly, this project will only focus on the theorems and
 proofs that are related to the translation between regular expressions
 and finite automata. Futhermore, this project also gives a brief introduction
-on how complex and non-trival proofs are formalised in Type
-Theory. 
+on how complex and non-trival proofs are formalised in Type Theory. 
 
 \paragraph{} The Agda formalisation can be separated into two major
 components: 1) the translation from regular expressions to DFA and 2)
@@ -104,7 +103,9 @@ the correctness proofs of the translation. In this stage, we are only
 interested in the correctness of the translation but not the efficiency. 
 
 \subsection{Motivation}
-\paragraph{} ... 
+\paragraph{} My motivation on this project is to learn and apply
+dependent types in programming and in writing proofs. ...
+
 
 \subsection{Overview}
 \paragraph{} In section two, we will first give a brief introduction on
@@ -343,13 +344,12 @@ A) \to B\ x\).
 \paragraph{} ...
 
 \subsection{Related Work}
-\paragraph{} Certified Parsing of Regular Languages. The matrix
-representation. 
+\paragraph{} Certified Parsing of Regular Languages. 
 
 
 \newpage
 \section{Formalisation in Type Theory}
-\paragraph{} Let us recall the two objectives of the project: 1) translating any
+\paragraph{} Let us recall the two components of the formalisation: 1) translating any
 regular expressions to a DFA and 2) proving the correctness of the
 translation. 
 
@@ -937,24 +937,29 @@ theorem. Therefore, the correctness of a Agda proof will always depend on the
 correctness of the smaller proofs that it contains. We can conclude
 that a computer proof is a very convincing argument. 
 
-\paragraph{Readability} The readability of a proof means how good it
-is at explaining why the statement is correct. 
+\paragraph{Readability} The other purpose of a proof is to explain why
+a certain statement is correct. 
+
 
 \subsection{Different Choices of Representaion}
-\paragraph{} Apart from the two criteria, the other major aspect on the evaluation
-of a computer proof is the way that the proof is formalised. When
-writing proofs in papers, we are usually not required to provide
+\paragraph{} Apart from the two criteria, the other important aspect
+is the way that a proof is formalised. When
+writing proofs in papers, we are not usually required to provide
 concreate representations for abstract mathematical objects like
 subsets. However, when writing proofs in Type Theory, we usually have to provide a
 representation for them. The consequence is that different forms of represenation
 will lead to different formalisations and thus contributes to the
 easiness/difficulty in writing the proofs. In the following part, we
-will discuss the different representations we have choosen and their
-consequences. 
+will discuss different representations we have choosen and their
+effect. 
 
-\paragraph{The set of states (\(Q\)) in an automata} ...
+\paragraph{The set of states (\(Q\)) in an automata} In our approach,
+we used \(Q : Set\) to represent the set of states while in
+\cite{firsov2013}, they used vector as the representation. The 
+
 
 \paragraph{Subset and DecidableSubset} ...
+
 
 \newpage
 \section{Discussion}

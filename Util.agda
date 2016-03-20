@@ -248,6 +248,64 @@ List-lem₄ ._ ._ vs xs ys refl refl = List-lem₃ xs ys vs
 ℕ-lem₁₈ {suc n} {zero} (s≤s n≤sk) (s≤s n≥ssk) = ℕ-lem₁₉ n n≥ssk n≤sk
 ℕ-lem₁₈ {suc n} {suc k} (s≤s n≤sk) (s≤s n≥ssk) = ℕ-lem₁₈ n≤sk n≥ssk
 
+ℕ-lem₃₀ : ∀ n m r
+          → n < m
+          → r ≡ m
+          → n < r
+ℕ-lem₃₀ n .r r n<r refl = n<r
+
+ℕ-lem₂₂ : ∀ M n
+          → M ≥ suc n
+          → M > zero
+ℕ-lem₂₂ M zero M≥sn = M≥sn
+ℕ-lem₂₂ M (suc n) M≥sn = ℕ-lem₂₂ M n (ℕ-lem₁₄ M (suc n) M≥sn)
+
+ℕ-lem₂₁ : ∀ M n
+          → M > zero
+          → suc n ≤ M
+          → M > M ∸ suc n
+ℕ-lem₂₁ zero zero () n≤M
+ℕ-lem₂₁ zero (suc n) () n≤M
+ℕ-lem₂₁ (suc M) zero (s≤s z≤n) sn≤M = s≤s (ℕ-lem₁₀ M)
+ℕ-lem₂₁ (suc M) (suc n) (s≤s M>0) (s≤s n≤M) = ℕ-lem₁₅ IH
+  where
+    IH : M > M ∸ suc n
+    IH = ℕ-lem₂₁ M n (ℕ-lem₂₂ M n n≤M) n≤M
+
+ℕ-lem₂₀ : ∀ M new old
+          → old < M
+          → new ≤ M
+          → old < new
+          → M ∸ new < M ∸ old
+ℕ-lem₂₀ M zero zero old<M new≤M ()
+ℕ-lem₂₀ M zero (suc old) old<M new≤M ()
+ℕ-lem₂₀ M (suc new) zero old<M new≤M old<new = ℕ-lem₂₁ M new old<M new≤M
+ℕ-lem₂₀ zero (suc new) (suc old) () new≤M old<new
+ℕ-lem₂₀ (suc M) (suc new) (suc old) (s≤s old<M) (s≤s new≤M) (s≤s old<new) = ℕ-lem₂₀ M new old old<M new≤M old<new
+          
+
+ℕ-lem₂₅ : ∀ n
+          → zero <′ suc n
+ℕ-lem₂₅ zero    = ≤′-refl
+ℕ-lem₂₅ (suc n) = ≤′-step (ℕ-lem₂₅ n)
+
+
+ℕ-lem₂₆ : ∀ n m
+          → m <′ n
+          → suc m <′ suc n
+ℕ-lem₂₆ zero m ()
+ℕ-lem₂₆ (suc .0) zero ≤′-refl = ≤′-refl
+ℕ-lem₂₆ (suc n) zero (≤′-step m<n) = ≤′-step (ℕ-lem₂₆ n zero m<n)
+ℕ-lem₂₆ (suc .(suc m)) (suc m) ≤′-refl = ≤′-refl
+ℕ-lem₂₆ (suc n) (suc m) (≤′-step m<n) = ≤′-step (ℕ-lem₂₆ n (suc m) m<n)
+
+ℕ-lem₂₄ : ∀ {n m}
+          → m < n
+          → m <′ n
+ℕ-lem₂₄ {zero}  {m} ()
+ℕ-lem₂₄ {suc n} {zero}  (s≤s 0≤n) = ℕ-lem₂₅ n
+ℕ-lem₂₄ {suc n} {suc m} (s≤s m<n) = ℕ-lem₂₆ n m (ℕ-lem₂₄ m<n)
+
 
 
 -- Bool-lemmas

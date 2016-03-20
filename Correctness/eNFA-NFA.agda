@@ -44,6 +44,7 @@ module Lᵉᴺ⊆Lᴺ (ε-nfa : ε-NFA) where
     renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ;  _⊢ᵏ_─_ to _⊢ᵏₑ_─_)
   open ε-NFA-Properties ε-nfa
     renaming (_⊢*₂_ to _⊢*₂ₑ_ ; ⊢ᵏ₂-lem₉ to ⊢ᵏ₂-lem₉ₑ)
+  open Compute-ε-closure ε-nfa
 
 
   lem₂ : ∀ q wᵉ n q' wᵉ'
@@ -151,6 +152,7 @@ module Lᵉᴺ⊇Lᴺ (ε-nfa : ε-NFA) where
     renaming (_⊢_ to _⊢ₑ_ ; _⊢*_ to _⊢*ₑ_ ;  _⊢ᵏ_─_ to _⊢ᵏₑ_─_)
   open ε-NFA-Properties ε-nfa
     renaming (_⊢*₂_ to _⊢*₂ₑ_ ; ⊢ᵏ₂-lem₉ to ⊢ᵏ₂-lem₉ₑ)
+  open Compute-ε-closure ε-nfa
 
   lem₃ : ∀ q n q' uᵉ
          → q →εᵏ n ─ q'
