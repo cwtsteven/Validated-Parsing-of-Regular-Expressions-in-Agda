@@ -21,7 +21,7 @@ open import Relation.Nullary
 open import Data.Product hiding (Σ ; map)
 open import Data.Sum
 open import Data.Empty
-open import Data.Vec renaming (_∈_ to _∈ⱽ_) hiding ( _++_ )
+open import Data.Vec renaming (_∈_ to _∈ⱽ_) hiding ( _++_ ; _∷ʳ_)
 open import Induction.Nat
 
 open import Subset
@@ -208,34 +208,10 @@ module Quotient-Construct (dfa : DFA) where
         helper p q ((.p , q₁) ∷ t) prf | false | [ p₁∉F ] | true  | [ q₁∈F ] | yes refl | no  _    = helper p q t prf
         helper p q ((p₁ , q₁) ∷ t) prf | false | [ p₁∈F ] | false | [ q₁∉F ] = helper p q t prf
 
-    postulate ⟦pq⟧-lem : ∀ p q qs → (p , q) ∈ᵈ ⟦ p , q ⟧ᵈ {{Dec-Pair}} ⋃ᵈ qs
-    --⟦pq⟧-lem p q = {!!}
-
+    -- seems true
     postulate Basis-lem₂ : ∀ p q → (δ* p [] ∈ᵈ F × δ* q [] ∉ᵈ F ⊎ δ* p [] ∉ᵈ F × δ* q [] ∈ᵈ F) → (p , q) ∈ᵈ Basis
-    {-
-    Basis-lem₂ p q (inj₁ (p∈F , q∉F)) = helper table unique-table (∀ab∈table p q)
-      where
-        helper : ∀ {n} → (it : Vec (Q × Q) n) → Unique it → (p , q) ∈ⱽ it → (p , q) ∈ᵈ basis it
-        helper [] unique ()
-        helper ((p₁ , q₁) ∷ []) unique s∈it with It-lem ((p₁ , q₁) ∷ []) (p , q) s∈it
-        helper ((.p , .q) ∷ []) unique s∈it | inj₁ refl with p ∈ᵈ? F | inspect F p | q ∈ᵈ? F | inspect F q
-        helper ((.p , .q) ∷ []) unique s∈it | inj₁ refl | true  | [ p∈F ] | true  | [ q∈F ] = ⊥-elim (q∉F q∈F)
-        helper ((.p , .q) ∷ []) unique s∈it | inj₁ refl | true  | [ p∈F ] | false | [ q∉F ] = ⟦pq⟧-lem p q Øᵈ
-        helper ((.p , .q) ∷ []) unique s∈it | inj₁ refl | false | [ p∉F ] | _     | [ _   ] = ⊥-elim (Subset.DecidableSubset.∈-lem₂ {Q} {p} {F} p∉F p∈F)
-        helper ((p₁ , q₁) ∷ []) unique s∈it | inj₂ ()
-        helper ((p₁ , q₁) ∷ (p₂ , q₂) ∷ it) unique s∈it with It-lem ((p₁ , q₁) ∷ (p₂ , q₂) ∷ it) (p , q) s∈it
-        helper ((.p , .q) ∷ (p₂ , q₂) ∷ it) unique s∈it | inj₁ refl with p ∈ᵈ? F | inspect F p | q ∈ᵈ? F | inspect F q
-        helper ((.p , .q) ∷ (p₂ , q₂) ∷ it) unique s∈it | inj₁ refl | true  | [ p∈F ] | true  | [ q∈F ] = ⊥-elim (q∉F q∈F)
-        helper ((.p , .q) ∷ (p₂ , q₂) ∷ it) unique s∈it | inj₁ refl | true  | [ p∈F ] | false | [ q∉F ] = ⟦pq⟧-lem p q (basis ((p₂ , q₂) ∷ it))
-        helper ((.p , .q) ∷ (p₂ , q₂) ∷ it) unique s∈it | inj₁ refl | false | [ p∉F ] | _     | [ _   ] = ⊥-elim (Subset.DecidableSubset.∈-lem₂ {Q} {p} {F} p∉F p∈F)
-        helper ((p₁ , q₁) ∷ (p₂ , q₂) ∷ it) unique s∈it | inj₂ s∈qs with p₁ ∈ᵈ? F | inspect F p₁ | q₁ ∈ᵈ? F | inspect F q₁
-        helper ((p₁ , q₁) ∷ (p₂ , q₂) ∷ it) unique s∈it | inj₂ s∈qs | true  | [ p∈F ] | true  | [ q∈F ] = helper ((p₂ , q₂) ∷ it) (proj₂ unique) s∈qs
-        helper ((p₁ , q₁) ∷ (p₂ , q₂) ∷ it) unique s∈it | inj₂ s∈qs | true  | [ p∈F ] | false | [ q∉F ] = {!!}
-        helper ((p₁ , q₁) ∷ (p₂ , q₂) ∷ it) unique s∈it | inj₂ s∈qs | false | [ p∉F ] | true  | [ _   ] = {!!}
-        helper ((p₁ , q₁) ∷ (p₂ , q₂) ∷ it) unique s∈it | inj₂ s∈qs | false | [ p∉F ] | false | [ _   ] = helper ((p₂ , q₂) ∷ it) (proj₂ unique) s∈qs
-    Basis-lem₂ p q (inj₂ (p∉F , q∈F)) = {!!}-}
-
     
+    -- can be decided by iterating the set of alphabets
     postulate Dec-mark : ∀ p q qs → Dec (Σ[ a ∈ Σ ] ( (δ p a , δ q a) ∈ᵈ qs × (δ p a ∈ᵈ F × δ q a ∉ᵈ F ⊎ δ p a ∉ᵈ F × δ q a ∈ᵈ F) ))
 
 
@@ -247,8 +223,8 @@ module Quotient-Construct (dfa : DFA) where
     ...   | no  _ = false
 
     steps : DecSubset (Q × Q) → ℕ → DecSubset (Q × Q)
-    steps qs zero    = Øᵈ
-    steps qs (suc n) = steps (one-step qs) n
+    steps qs zero    = qs
+    steps qs (suc n) = one-step qs ⋃ᵈ steps (one-step qs) n
 
     Steps : ℕ → DecSubset (Q × Q)
     Steps n = steps Basis n
@@ -260,16 +236,27 @@ module Quotient-Construct (dfa : DFA) where
     steps-lem p q qs prf | false | [ () ] | true
     steps-lem p q qs  () | false | [ eq ] | false
 
-    -- reasonable
-    postulate steps-lem₂ : ∀ p q → (p , q) ∈ᵈ Basis → (p , q) ∈ᵈ Steps Size
-    --steps-lem₂ p q prf = {!!}
+
+    steps-lem₂ : ∀ p q → (p , q) ∈ᵈ Basis → (p , q) ∈ᵈ Steps Size
+    steps-lem₂ p q prf with (p , q) ∈ᵈ? Basis
+    steps-lem₂ p q prf | true  = refl
+    steps-lem₂ p q ()  | false
+
+    steps-lem₄ : ∀ qs p₂ q₂ → (∀ p q → (p , q) ∈ᵈ qs → p ≠ q) → (p₂ , q₂) ∈ᵈ one-step qs → p₂ ≠ q₂
+    steps-lem₄ qs p₂ q₂ f prf with (p₂ , q₂) ∈ᵈ? qs | inspect (λ s → s ∈ᵈ? qs) (p₂ , q₂)
+    steps-lem₄ qs p₂ q₂ f prf | true  | [ s∈qs ] = f p₂ q₂ s∈qs
+    steps-lem₄ qs p₂ q₂ f prf | false | [ s∈qs ] with Dec-mark p₂ q₂ qs
+    steps-lem₄ qs p₂ q₂ f prf | false | [ s∈qs ] | yes (a , prf₂ , prf₃) = a ∷ [] , prf₃
+    steps-lem₄ qs p₂ q₂ f  () | false | [ s∈qs ] | no  _
 
     Steps-lem : ∀ n p q → (p , q) ∈ᵈ Steps n → p ≠ q
-    Steps-lem = helper Basis
+    Steps-lem n p q prf = helper Basis n p q (Basis-lem) prf
       where
-        helper : ∀ qs n p q → (p , q) ∈ᵈ steps qs n → p ≠ q
-        helper qs zero    p q ()
-        helper qs (suc n) p q prf = helper (one-step qs) n p q prf
+        helper : ∀ qs n p q → (∀ p q → (p , q) ∈ᵈ qs → p ≠ q) → (p , q) ∈ᵈ steps qs n → p ≠ q
+        helper qs zero    p q f prf₁ = f p q prf₁
+        helper qs (suc n) p q f prf₁ with (p , q) ∈ᵈ? one-step qs | inspect (λ s → s ∈ᵈ? one-step qs) (p , q)
+        helper qs (suc n) p q f prf₁ | true  | [ eq ] = steps-lem₄ qs p q f eq
+        helper qs (suc n) p q f prf₁ | false | [ eq ] = helper (one-step qs) n p q (λ p₂ q₂ x → steps-lem₄ qs p₂ q₂ f x) prf₁
         
 
     D-States : Subset (Q × Q)
@@ -278,16 +265,18 @@ module Quotient-Construct (dfa : DFA) where
     D-Statesᵏ : ℕ → Subset (Q × Q)
     D-Statesᵏ k (p , q) = Σ[ n ∈ ℕ ] ( n ≤ k × (p , q) ∈ᵈ Steps n )
 
+
     -- similar to ε-closure
     postulate q1-lem₁ : ∀ k → Steps k ≈ᵈ Steps (suc k) → D-States ≈ D-Statesᵏ k
-    --q1-lem₁ = {!!}
+
 
     -- similar to ε-closure
     postulate q2-lem₁ : ∀ p q → (p , q) ∈ D-States ⇔ (p , q) ∈ᵈ Steps Size
-    --q2-lem₁ = {!!}
+
 
     q2-lem₂ : ∀ p q → (p , q) ∉ᵈ Steps Size → (p , q) ∉ D-States
     q2-lem₂ p q prf s∈D = ⊥-elim (prf (proj₁ (q2-lem₁ p q) s∈D))
+
 
     Dec-D-States : ∀ p q → Dec ((p , q) ∈ D-States)
     Dec-D-States p q with (p , q) ∈ᵈ? Steps Size | inspect (λ s → s ∈ᵈ? Steps Size) (p , q)
@@ -296,23 +285,33 @@ module Quotient-Construct (dfa : DFA) where
                              (q2-lem₂ p q
                               (Subset.DecidableSubset.∈-lem₂ {Q × Q} {p , q} {Steps Size} eq))
 
+
     D-States-lem : ∀ p q → (p ≠ q) ⇔ (p , q) ∈ D-States
-    D-States-lem p q = lem₁ , lem₂
+    D-States-lem p q = lem₁ p q , lem₂ p q
       where
-        postulate lem₄ : (p , q) ∉ᵈ Steps Size → ¬ (p ≠ q)
-        --lem₄ prf ([]    , p≠q) = prf (steps-lem₂ p q (Basis-lem₂ p q p≠q))
-        --lem₄ prf (a ∷ w , p≠q) = {!!}
-
-        lem₃ : p ≠ q → (p , q) ∈ᵈ Steps Size
-        lem₃ prf with (p , q) ∈ᵈ? Steps Size | inspect (λ s → s ∈ᵈ? Steps Size) (p , q)
-        lem₃ prf | true  | _      = refl
-        lem₃ prf | false | [ eq ] = ⊥-elim (lem₄ (Subset.DecidableSubset.∈-lem₂ {Q × Q} {p , q} {Steps Size} eq) prf)
+        mutual
+          lem₃ : ∀ p q w → (p , q) ∉ D-States → (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F) → ⊥
+          lem₃ p q []      prf prf₁ = prf (Size , steps-lem₂ p q (Basis-lem₂ p q prf₁))
+          lem₃ p q (a ∷ w) prf prf₁ = prf (Size , lem' p q Size (rs∈Steps Size))
+            where
+              r : Q
+              r = δ p a
+              s : Q
+              s = δ q a 
+              r≠s : δ p a ≠ δ q a
+              r≠s = w , prf₁
+              postulate rs∈Steps : ∀ n → (r , s) ∈ᵈ steps Basis (suc n)
+              --rs∈Steps = lem₁ r s r≠s
+              postulate lem' : ∀ p q n → (δ p a , δ q a) ∈ᵈ steps Basis (suc n) → (p , q) ∈ᵈ steps Basis n
   
-        lem₁ : p ≠ q → (p , q) ∈ D-States
-        lem₁ prf = proj₂ (q2-lem₁ p q) (lem₃ prf)
+          lem₁ : ∀ p q → p ≠ q → (p , q) ∈ D-States
+          lem₁ p q prf with Dec-D-States p q
+          lem₁ p q prf | yes x = x
+          lem₁ p q (w , prf) | no ¬x = ⊥-elim (lem₃ p q w ¬x prf)
 
-        lem₂ : (p , q) ∈ D-States → p ≠ q
-        lem₂ (n , prf) = Steps-lem n p q prf
+
+          lem₂ : ∀ p q → (p , q) ∈ D-States → p ≠ q
+          lem₂ p q (n , prf) = Steps-lem n p q prf
 
 
     D-States-lem₂ : ∀ p q → (p , q) ∉ D-States → ¬ (p ≠ q)
