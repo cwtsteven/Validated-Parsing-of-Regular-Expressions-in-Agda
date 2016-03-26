@@ -27,16 +27,23 @@ Denis Firsov and Tarmo Uustalu.
 \newblock Certified parsing of regular languages, 2013.
 
 \bibitem{geuvers2009}
-H.~Geuvers.
+Herman Geuvers.
 \newblock Proof assistants: history, ideas and future, 2009.
 
 \bibitem{howard1969}
-William~A. Howard.
-\newblock The formulae-as-types notion of construction, 1969.
+W.~A. Howard.
+\newblock The formul\ae-as-types notion of construction.
+\newblock In Philippe~De Groote, editor, {\em The Curry-Howard Isomorphism}.
+  Academia, 1995.
 
 \bibitem{martin1984}
-Per Martin-Lof.
+Per Martin-L{\"o}f.
 \newblock Intuitionistic type theory, 1984.
+
+\bibitem{nordstrom1990}
+Bengt Nordstr{\"o}m, Kent Peterson, and Jan~M. Smith.
+\newblock {\em Programming in Martin-L{\"o}f’s Type Theory}.
+\newblock Oxford Clarendon Press, 1990.
 
 \bibitem{norell2007}
 Ulf Norell.
@@ -46,12 +53,23 @@ Ulf Norell.
 \bibitem{norell2009}
 Ulf Norell and James Chapman.
 \newblock Dependently typed programming in agda.
-\newblock In {\em In Lecture Notes from the Summer School in Advanced
-  Functional Programming}, 2008.
+\newblock In {\em Lecture Notes from the Summer School in Advanced Functional
+  Programming}, 2008.
 
 \bibitem{agdawiki2016}
 The agda wiki.
 \newblock \url{http://wiki.portal.chalmers.se/agda/pmwiki.php?n=Main.HomePage}.
 \newblock Accessed: 12th March 2016.
+
+\bibitem{thompson1991}
+Simon Thompson.
+\newblock {\em Type Theory and Functional Programming}.
+\newblock Addison Wesley Longman Publishing Co., Inc., Redwood City, CA, USA,
+  1991.
+
+\bibitem{wadler2015}
+Philip Wadler.
+\newblock Propositions as types.
+\newblock {\em Commun. ACM}, 58(12):75--84, November 2015.
 
 \end{thebibliography}

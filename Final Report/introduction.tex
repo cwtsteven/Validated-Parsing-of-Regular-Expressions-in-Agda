@@ -1,0 +1,41 @@
+\section{Introduction}
+\paragraph{} This project aims to study the feasibility of formalising
+Automata Theory \cite{aho1972} in Type Theory with the aid of a dependently-typed
+functional programming language, Agda \cite{agdawiki2016}. Automata
+Theory is an extensive work; therefore, it will be unrealistic to
+include all the materials under the time constraint. Accordingly, this project will only focus on the theorems and
+proofs that are related to the translation between regular expressions
+and finite automata. In addition, this project also gives a brief introduction
+on how complex and non-trival proofs are formalised. 
+
+\paragraph{} Our Agda formalisation is consist of two major
+components: 1) the translation of regular expressions to DFA and 2)
+the correctness proofs of the translation. At this stage, we are only
+interested in the correctness of the translation but not the
+efficiency of the algorithms. 
+
+
+\subsection{Motivation}
+\paragraph{} My motivation on this project is to learn and apply
+dependent types in programming as well as in formalising programming logic in
+Agda. ... 
+
+
+\subsection{Overview}
+\paragraph{} In the beginning of section two, we will give a brief
+introduction on Agda and dependent types. In addition, we will also look into some small Agda proofs so that readers can
+have a taste of how proofs are formalised in Type Theory. In the end
+of section two, we will describe a similar reseach
+conducted by Firsov and Uustalu \cite{firsov2013}. 
+
+\paragraph{} Following the
+background, the third section will be a detail description of our
+work. In this section, we will walk through the Agda
+formalisation of the two major components. All the definitions,
+theorems and proofs written in this report are extracted from our Agda
+code to adapt the environment in Type Theory. 
+
+\paragraph{} In the fourth section, we will discuss two possible extensions
+to the project: 1) Myhill-Nerode Theorem and 2) the Pumping
+Lemma. After that, we will evaluate the project as a
+whole. Finally, the conclusions will be drawn. 

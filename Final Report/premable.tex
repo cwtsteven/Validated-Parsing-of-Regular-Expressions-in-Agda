@@ -1,0 +1,37 @@
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{listings}
+\makeatletter
+\DeclareTextCommandDefault{\textunderscore}{%
+  \leavevmode\kern0.03em\vbox{\hrule\@width.6em \@height-.25ex \@depth0.37ex}\kern0.03em}
+\makeatother
+\newcommand{\hyphen}{\operatorname{-}}
+\usepackage{geometry}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{enumerate,letltxmacro}
+\usepackage{enumitem}
+\LetLtxMacro\itemold\item
+\renewcommand{\item}{\itemindent0.5cm\itemold}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\usepackage{etoolbox}
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+\pagestyle{plain}
+
+\newcommand*{\approxident}{%
+  \mathrel{\vcenter{\offinterlineskip
+  \hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}}}}
+
+\usepackage{cite}
+
+\setlength{\oddsidemargin}{1cm} % 2cm margin on the left for odd pages
+\setlength{\evensidemargin}{0cm} % 2cm margin on the right for even pages

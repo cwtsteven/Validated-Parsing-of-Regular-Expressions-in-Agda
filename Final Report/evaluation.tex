@@ -1,0 +1,54 @@
+\section{Evaluation}
+
+\subsection{Correctness and Readability}
+\paragraph{} According to Geuvers \cite{geuvers2009}, a proof has two major roles: 1)
+to convince the readers that a statement is correct and 2) to expain
+why a statement is correct. A proof is a verification of a statement
+which is consist of smaller reasoning steps. These steps will eventually
+contributes to the correctness of the proof. We can say that the a
+proof is correct if and only if every reasoning step within the proof
+is correct. The second part requires the proof to be able to give an
+intuition of why the statement is correct. In the paragraphs below, we
+will discuss these two criteria. 
+
+\paragraph{Correctness} Traditionally, when a mathematician submits
+the proof of his/her concepts, a group of mathematicians will
+evaluate and check its correctness. Alternatively, if we
+formalise the proof in a proof assistant, the proof will be checked
+automatically by the compiler. The only difference is that we are now
+relying on the compiler and the machine that runs the compile rather
+than the group of mathematicians. Therefore, if the compiler and the
+machine works properly, then any formalised proof that
+can be compiled without errors are said to be correct. In our case, we
+have the type checker and the termination checker in Agda to serve the
+purpose. Furthermore, the correctness of a proof should be
+obtained by verifiying the individual smaller reasoning steps within the
+proof. When writing proofs in paper, we usually omit the proofs of
+some obvious lemmas. However, in Agda, we have provide explicit proofs
+to every lemma we have used. Therefore, the correctness of an Agda proof will always depend on the
+correctness of the smaller proofs that it contains. 
+
+\paragraph{Readability} The other purpose of a proof is to explain why
+a certain statement is correct. However, in general, a computer proof
+is incompetent on this purpose. 
+
+
+\subsection{Different choices of representation}
+\paragraph{} In this project, we have made several decisions over the
+representation of mathematical objects. When writing proofs in papers,
+we are not usually required to provide
+concreate representations for abstract mathematical objects such as
+subsets. However, when writing proofs in Type Theory, we usually have
+to do that. The consequence is that different forms of represenation
+will lead to different formalisations and thus contributes to the
+easiness/difficulty in writing the proofs. In the following part, we
+will discuss different representations we have choosen and their
+effect. 
+
+\paragraph{} In our approach,
+we used \(Q : Set\) to represent the set of states while in
+\cite{firsov2013}, they used vector as the representation. The 
+
+
+\subsection{Problem arises}
+\paragraph{} reachable states problem 
