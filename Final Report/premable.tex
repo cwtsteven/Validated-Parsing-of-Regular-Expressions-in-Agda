@@ -1,20 +1,28 @@
 \usepackage[utf8]{inputenc}
+
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{bm}
+\newcommand{\mb}[1]{\(\bm{#1}\)}
+
 \usepackage{listings}
-\makeatletter
+\makeatletter % making underscore larger in listings
 \DeclareTextCommandDefault{\textunderscore}{%
   \leavevmode\kern0.03em\vbox{\hrule\@width.6em \@height-.25ex \@depth0.37ex}\kern0.03em}
 \makeatother
-\newcommand{\hyphen}{\operatorname{-}}
+\newcommand{\hyphen}{\operatorname{-}} % making hypen smaller in math-mode
+
 \usepackage{geometry}
-\usepackage{indentfirst}
+
 \usepackage{graphicx}
 \graphicspath{ {images/} }
+
+%\usepackage{indentfirst}
+
 \usepackage{enumerate,letltxmacro}
 \usepackage{enumitem}
 \LetLtxMacro\itemold\item
-\renewcommand{\item}{\itemindent0.5cm\itemold}
+\renewcommand{\item}{\itemindent0.5cm\itemold} % set indentation for items
 \usepackage{hyperref}
 \hypersetup{
     colorlinks,
@@ -23,15 +31,21 @@
     linkcolor=black,
     urlcolor=black
 }
-\usepackage{etoolbox}
+
+\usepackage{etoolbox} % set reference header to null
 \patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+
+\usepackage{cite}
+
+
+% ---- Set page style ---- %
 \pagestyle{plain}
 
+% I don't know what it does really
 \newcommand*{\approxident}{%
   \mathrel{\vcenter{\offinterlineskip
   \hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}}}}
 
-\usepackage{cite}
-
+% setting odd/even pages margin
 \setlength{\oddsidemargin}{1cm} % 2cm margin on the left for odd pages
-\setlength{\evensidemargin}{0cm} % 2cm margin on the right for even pages
+\setlength{\evensidemargin}{0cm} % 2cm margin on the right for even % pages

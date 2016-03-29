@@ -1,137 +1,139 @@
-\section{Background}
-
-\subsection{Agda} 
-\paragraph{} Agda is a dependently-typed functional programming language and a
+\section{Agda}
+\par Agda is a dependently-typed functional programming language and a
 proof assistant based on Intuitionistic Type Theory
 \cite{martin1984}. The current version (Agda 2) is rewritten by Norell
-\cite{norell2007} during his study at the Chalmers University of
+\cite{norell2007} during his doctorate study at the Chalmers University of
 Technology. In this section, we will describe the basic features of
 Agda and how dependent types are employed to construct programs and
 proofs. Most of the materials presented below can also be
 found in the two tutorial papers \cite{bove2009} and
-\cite{norell2009}. Interested readers can take a look in order to get
-a more precise idea on how to work with Agda. Now, let us begin by
+\cite{norell2009}. Interested readers can read the two papers in order to get
+a more precise idea on how to work with Agda. Now, we will begin by
 showing how to do ordinary functional programming in Agda. 
 
 
-\subsubsection{Simply Typed Functional Programming}
-\paragraph{} Haskell is the implementaion language
-of Agda, as we will see below, Agda has borrowed many features from
+\subsection{Simply Typed Functional Programming}
+\par Haskell is the implementation language
+of Agda, as shown below, Agda has borrowed many features from
 Haskell. In the following paragraphs, we will demonstrate how to
 define basic data types and functions. 
 
-\paragraph{Boolean} We first define the type of boolean values in Agda.  
+\paragraph{Boolean} We first declare the type of Boolean values in Agda.  
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data Bool : Set where
   true  : Bool
   false : Bool
 \end{lstlisting}
 
-\paragraph{} \(Bool\) is a data type which has two
-constructors: \(true\) and \(false\). Note that these two constructors
-are also elements of \(Bool\) as they take no arguments. On
-the other hand, \(Bool\) is a member of the type
-\(Set\). The type of \(Set\) is \(Set_1\) and the type of \(Set_1\) is
-\(Set_2\). The type hierarchy goes on and becomes infinite. Now, let
-us define the negation function over boolean values. 
+\par \mb{Bool} has two
+constructors: \mb{true} and \mb{false}. These two constructors
+are also elements of \mb{Bool} as they take no arguments. On
+the other hand, \mb{Bool} itself is a member of the type
+\mb{Set}. The type of \mb{Set} is \mb{Set_1} and the type of \mb{Set_1} is
+\mb{Set_2}. The type hierarchy goes on and becomes infinite. Now, let
+us define the negation of Boolean values. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 not : Bool $\to$ Bool
 not true  = false
 not false = true
 \end{lstlisting}
 
-\paragraph{} In Agda, we must explicitly provide a type declaration for every
-variable. Note that we can declare partial
-functions in Haskell but not in Agda. For instance, the function below
-will be rejected by the Agda compiler.
+\par Unlike in Haskell, we must provide a type signature explicitly for every
+function and pattern match on all possible cases of a function in
+Agda. For instance, the function below will be rejected
+by the Agda compiler as the case \mb{(not\ false)} is missing. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 not : Bool $\to$ Bool
 not true  = false
 \end{lstlisting}
 
-\paragraph{Natural Number} Now, let us define the type of natural numbers
-inductively as follow: 
+\paragraph{Natural Number} Now, let us declare the type of natural
+numbers in Peano style. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data $\mathbb N$ : Set where
   zero : $\mathbb N$
   suc  : $\mathbb N$ $\to$ $\mathbb N$
 \end{lstlisting} 
 
-\paragraph{} The constructor \(suc\) represents the successor of a given
-natural number. For instance, \(1\) is represented by \(suc\
-zero\). Now, let us define the addition function of natural numbers recursively as follow:
+\par The constructor \mb{suc} represents the successor of a given
+natural number. For instance, the number \mb{1} is equivalent to
+(\mb{suc\ zero}). Now, let us define the addition of natural numbers recursively as follow:
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 _+_ : $\mathbb N$ $\to$ $\mathbb N$ $\to$ $\mathbb N$: Set where
 zero + m = m
 (suc n) + m = suc (n + m)
 \end{lstlisting} 
 
-\paragraph{Parameterised Types} In Haskell, the type of list \([a]\) is parameterised by the type
-parameter \(a\). The analogus data type in Agda is defined as follow:
+\paragraph{Parameterised Types} In Haskell, the type of list \mb{[a]} is parameterised by the type
+parameter \mb{a}. The analogous data type in Agda is defined as follow:
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data List (A : Set) : Set where
   []   : List A
   _::_ : A $\to$ List A $\to$ List A
 \end{lstlisting} 
 
-\paragraph{} Let us try to define the function \(head\) which will
-return the first element of a given list. 
+\par Let us try to define a function which takes a
+list as the argument and returns the first element of the list. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 head : {A : Set} $\to$ List A $\to$ A
-head [] = ?
+head [] = {!!}
 head (x :: xs) = x
 \end{lstlisting} 
 
-\paragraph{} In Haskell, we can simply skip the case
-\([\ ]\) and it will produce an error for us. However, as we
-mentioned before, we have to pattern match every case in Agda. One
-possible workaround is to use the \(Maybe\) type. However, we can do a
-better job with dependent types. 
+\par What should we return in case \mb{[\ ]}? In Haskell, we can
+simply skip the \mb{[\ ]} case and the compiler will generate an error
+for us. However, as mentioned
+before, we have to pattern match on all possible cases in Agda. One
+possible workaround here is to return \mb{nothing} of the \mb{Maybe} type
+for case \mb{[\ ]}. Another solution is
+to constrain the arguments using dependent types such that the input list will always have at least one element. 
 
 
-\subsubsection{Dependent Types}
-\paragraph{} Dependent types are types that depend on values of other
-types. For example, \(A^n\) is a vector that contains \(n\) elements
-of \(A\). This type is not possible
-to be declared in simply-typed systems like Haskell or Ocaml. Now, let
-us look at how it is defined in Agda using dependent type. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\subsection{Dependent Types}
+\par A dependent type is a type that depends on values of other
+types. For example, \mb{A^n} is a vector that contains \mb{n} elements
+of \mb{A}. These kind of types is not possible
+to be declared in simply-typed systems like Haskell\footnotemark and Ocaml. Now, let
+us look at how it is declared using dependent type. 
+\footnotetext{Haskell itself does not support dependent types by
+  its own. However, there are several APIs in Haskell that simulates
+  dependent types, for example, Ivor \cite{ivor2016} and
+  GADT.}
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data Vec (A : Set) : $\mathbb N$ $\to$ Set where
   []   : Vec A zero
   _::_ : $\forall$ {n} $\to$ A $\to$ Vec A n $\to$ Vec A (suc n)
 \end{lstlisting} 
 
-\paragraph{} In the type declaration \textbf{\(data\ Vec\ (A : Set) :\ \mathbb N \to
-Set\)}, \(A : Set\) is the type parameter defining the type of
-elements that will be in the vector. While the part \(\mathbb N \to Set\) means
-that \(Vec\) takes a number \(n\) from the set \(\mathbb N\) and produces a
-type that depends on \(n\). With different natural number
-\(n\), we get different type from the inductive family \(Vec\). For example, \(Vec\ A\ zero\) is
-the type of empty vectors and \(Vec\ A\ 10\) is another vector type with length ten. 
+\par In the type signature, (\mb{A : Set}) is the type
+parameter while \mb{\mathbb N \to Set} means
+that \mb{Vec} takes a number \mb{n} from \mb{\mathbb N} and produces a
+type that depends on \mb{n}. With different natural numbers, we get
+different types from the inductive family \mb{Vec}. For example, \mb{Vec\ A\ zero} is
+the type of empty vectors and \mb{Vec\ A\ 10} is another vector type with length ten. 
 
-
-\paragraph{} Dependent types allow us to be more
+\par Dependent types allow us to be more
 expressive and precise over type declaration. Let us declare the
-\(head\) function for \(Vec\). 
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\mb{head} function for \mb{Vec}. 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 head : {A : Set}{n : $\mathbb N$} $\to$ Vec A (suc n) $\to$ A
 head (x :: xs) = x 
 \end{lstlisting} 
 
-\paragraph{} We only need to pattern match on the case (\(x
-:: xs\)) because the type \(Vec\ A\ (suc\ n)\) ensures that the argument will never
-be \([\ ]\). Apart from vectors, we can also define the type of binary
-search tree in which every tree is guranteed to be
+\par We only need to pattern match on the case (\mb{x
+:: xs}) because the type \mb{Vec\ A\ (suc\ n)} ensures that the argument will never
+be \mb{[\ ]}. Apart from vectors, we can also define the type of binary
+search tree in which every tree of this type is guaranteed to be
 sorted. However, we will not be looking into that in here as it
-is not our major concern. Interersted readers can take a look at 
+is not our major concern. Interested readers can take a look at 
 Section 6 in \cite{bove2009}. Furthermore, dependent types also allow
 us to encode predicate logic and program specifications as
-types. Before we go into these two applications, we will first
-introduce the idea of propositions as types. 
+types. However, before we go into these two applications, we will have
+to discuss the idea of propositions as types. 
 
 
-\subsubsection{Propositions as Types}
-\paragraph{} In the 1930s, Curry identified the
+\subsection{Propositions as Types}
+\par In the 1930s, Curry identified the
 correspondence between propositions in propositional logic and types
 \cite{curry1934}. After that, in the 1960s, de Bruijn and Howard extended
 Curry's correspondence to predicate logic by introducing dependent
@@ -139,42 +141,42 @@ types \cite{bruijn1968, howard1969}. Later on, Martin-L\"of published
 his work, Intuitionistic Type Theory \cite{martin1984}, which turned the correspondence into a new
 foundational system for constructive mathematics. 
 
-\paragraph{} In the paragraphs below, we will show how the correspondence is
-formalised in Agda. Note that the Intuitionistic Type
-Theory is based on constructive logic but not classical logic. There
-is fundamental difference between them. Interested readers can take a look at
-\cite{avigad2000}. Now, we will first begin with the formalisation of
-propositional logic. 
+\par In the paragraphs below, we will show how the correspondence is
+formalised in Agda. Note that Intuitionistic Type
+Theory is based on constructive logic but not classical logic and there
+is a fundamental difference between them. Interested readers can take a look at
+\cite{avigad2000}. Now, we will begin with propositional logic. 
 
-\paragraph{Propositional Logic} In general, Curry's correspondence
+\subsubsection{Propositional Logic} 
+\par In general, Curry's correspondence
 states that a proposition can be interpreted as a set of its proofs. A
 proposition is true if and only if its set of proofs is inhabited,
 i.e. there is at least one element in the set; it is false if and only
 if its set of proofs is empty. 
 
-\subparagraph{Truth} For a proposition always to be true, the corresponding
-type must have at least one element. 
+\paragraph{Truth} For a proposition to be always true, its
+corresponding type must have at least one element. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data $\top$ : Set where
   tt : $\top$
 \end{lstlisting} 
 
-\subparagraph{Falsehood} For a proposition always to be false, the corresponding
-type must have no elements at all. 
+\paragraph{Falsehood} The proposition that is always
+false corresponds to a type having no elements at all. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data $\bot$ : Set where
 \end{lstlisting} 
 
-\subparagraph{Conjunction} Suppose \(A\) and \(B\) are propositions, then the
-proofs of \(A \wedge B\) should be consist of
-a proof of \(A\) and a proof of \(B\). In Type Theory, it corresponds
+\paragraph{Conjunction} Suppose \mb{A} and \mb{B} are propositions, then the
+proofs of their conjunction \mb{A \wedge B} should contain both a proof of \mb{A} and a proof
+of \mb{B}. In Type Theory, it corresponds
 to the product type. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data _$\times$_ (A B : Set) : Set where
   _,_ : A $\to$ B $\to$ A $\times$ B
 \end{lstlisting} 
 
-\paragraph{} The above construction resembles the introduction rule of
+\par The above construction resembles the introduction rule of
 conjunction while the elimination rules are formalised as follow:
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 fst : {A B : Set} $\to$ A $\times$ B $\to$ A
@@ -185,161 +187,166 @@ snd (a , b) = b
 \end{lstlisting} 
 
 
-\subparagraph{Disjunction} Suppose \(A\) and \(B\) are propositions, then the
-proofs of \(A \vee B\) should contains either a proof of \(A\) or a
-proof of \(B\). In Type Theory, it is represented by the sum type. 
+\paragraph{Disjunction} Suppose \mb{A} and \mb{B} are propositions, then the
+proofs of their disjunction \mb{A \vee B} should contains either a proof of \mb{A} or a
+proof of \mb{B}. In Type Theory, it is represented by the sum type. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data _$\uplus$_ (A B : Set) : Set where
   inj$_1$ : A $\to$ A $\uplus$ B
   inj$_2$ : B $\to$ A $\uplus$ B
 \end{lstlisting} 
 
-\paragraph{} Now, we can define the elimination rule of disjunction as
-follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.2\textwidth]
-$\uplus \hyphen$elim : {A B C : Set} $\to$ A $\uplus$ B $\to$ (A $\to$ C) $\to$ (B $\to$ C) $\to$ C
+\par The elimination rule of disjunction is defined as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+$\uplus \hyphen$elim : {A B C : Set} 
+         $\to$ A $\uplus$ B 
+         $\to$ (A $\to$ C) 
+         $\to$ (B $\to$ C) 
+         $\to$ C
 $\uplus \hyphen$elim (inj$_1$ a) f g = f a
 $\uplus \hyphen$elim (inj$_2$ b) f g = g b
 \end{lstlisting} 
 
-
-\subparagraph{Negation} Suppose \(A\) is a proposition, then its negation is
-defined as a function that transform every arbitary proof in \(A\) to
-the falsehood (\(\bot\)). 
+\paragraph{Negation} Suppose \mb{A} is a proposition, then its negation is
+defined as a function that transforms any arbitrary proof of \mb{A} to
+the falsehood (\mb{\bot}). 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 $\neg$ : Set $\to$ Set
 $\neg$ A = A $\to$ $\bot$
 \end{lstlisting} 
 
 
-\subparagraph{Implication} We say that \(A\) implies \(B\) if and only if we can
-transform every proof of \(A\) into a proof of \(B\). In Type
-Theory, it corresponds to a function from \(A\) to \(B\), i.e. \(A \to
-B\). 
+\paragraph{Implication} We say that \mb{A} implies \mb{B} if and only if we can
+transform every proof of \mb{A} into a proof of \mb{B}. In Type
+Theory, it corresponds to a function from \mb{A} to \mb{B}, i.e. \mb{A \to
+B}. 
 
-\subparagraph{Equivalence} Equivalence of two propositions \(A\) and
-\(B\) can be seperated into \(A\) implies \(B\) and \(B\) implies
-\(A\). Therefore, we can consider it as a conjunction of the two
-implications.
+\paragraph{Equivalence} Two propositions \mb{A} and
+\mb{B} are equivalent if and only if \mb{A} implies \mb{B} and \mb{B} implies
+\mb{A}. We can consider it as a conjunction of the two implications.
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 _$\iff$_ : Set $\to$ Set $\to$ Set
 A $\iff$ B = (A $\to$ B) $\times$ (B $\to$ A)
 \end{lstlisting} 
 
-
-\paragraph{} Now, we can prove some theorems in propositional logic
-using the formalision above, for example, if \(P\) implies \(Q\) and
-\(Q\) implies \(R\), then \(P\) implies \(R\). 
+\paragraph{} Now, by using the above constructions, we can formalise
+ theorems of propositional logic in Agda. For example, we can prove that if \mb{P} implies \mb{Q} and
+\mb{Q} implies \mb{R}, then \mb{P} implies \mb{R}. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
-prop-lem : {P Q : Set} $\to$ (P $\to$ Q) $\to$ (Q $\to$ R) $\to$ (P $\to$ R)
+prop-lem : {P Q : Set} 
+           $\to$ (P $\to$ Q) 
+           $\to$ (Q $\to$ R) 
+           $\to$ (P $\to$ R)
 prop-lem f g = $\lambda$ p $\to$ g (f p)
 \end{lstlisting} 
 
-\paragraph{} By completing the function, we have provided an element
-to the type \((P \to Q) \to (Q \to R) \to (P \to R)\). Therefore, we have
-also proved that the proposition is true. 
+\par By completing the function, we have provided an element
+to the type \mb{(P \to Q) \to (Q \to R) \to (P \to R)} and thus, we have
+also proved the theorem to be true. 
 
 
-\paragraph{Predicate Logic} We will now move on to predicate logic and
-to introduce the universal (\(\forall\)) and existenial (\(\exists\))
+\subsubsection{Predicate Logic} 
+\par We will now move on to predicate logic and
+introduce the universal (\mb{\forall}) and existential (\mb{\exists})
 quantifiers. A predicate is represented by a dependent type in the
-form of \(A \to Set\). For example, we can
+form of \mb{A \to Set}. For example, we can
 define the predicate of even numbers and odd numbers inductively as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
-data _isEven : $\mathbb N$ $\to$ Set where
-  base : zero isEven
-  step : $\forall$ n $\to$ n isEven $\to$ (suc (suc n)) isEven
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+mutual
+  data _isEven : $\mathbb N$ $\to$ Set where
+    base : zero isEven
+    step : $\forall$ n $\to$ n isOdd $\to$ (suc n) isEven
 
-data _isOdd : $\mathbb N$ $\to$ Set where
-  base : (suc zero) isOdd
-  step : $\forall$ n $\to$ n isOdd $\to$ (suc (suc n)) isOdd
+  data _isOdd : $\mathbb N$ $\to$ Set where
+    step : $\forall$ n $\to$ n isEven $\to$ (suc n) isOdd
 \end{lstlisting} 
 
-
-\subparagraph{Universal Quantifier} The interpretaion of the universal quantifier is similar to
-implication. In order for \(\forall x\in A. B(x)\) to be true, we will have
-to transform every proof \(a\) of \(A\) into a proof of the predicate
-\(B[x:=a]\). In Type Theory, it is represented by the function \((x :
-A) \to B\ x\). For example, we can prove by induction that for every natural
+\paragraph{Universal Quantifier} The interpretation of the universal quantifier is similar to
+implication. In order for \mb{\forall x\in A.\ B(x)} to be true, we will have
+to transform every proof \mb{(a)} of \mb{A} into a proof of the predicate
+\mb{B[x:=a]}. In Type Theory, it is represented by the function \mb{(x :
+A) \to B\ x}. For example, we can prove by induction that for every natural
 number, it is either even or odd.
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 lem$_1$ : $\forall$ n $\to$ n isEven $\uplus$ n isOdd
 lem$_1$ zero = inj$_1$ base
-lem$_1$ (suc zero) = inj$_2$ base
-lem$_1$ (suc (suc n)) with lem$_1$ n
-... | inj$_1$ nIsEven = inj$_1$ (step n nIsEven)
-... | inj$_2$ nIsOdd = inj$_2$ (step n nIsOdd)
+lem$_1$ (suc n) with lem$_1$ n
+... | inj$_1$ nIsEven = inj$_2$ (step n nIsEven)
+... | inj$_2$ nIsOdd = inj$_1$ (step n nIsOdd)
 \end{lstlisting} 
 
-\subparagraph{Existential Quantifier} The interpretation of the
-existensial quantifier is simliar to conjunction. In order for
-\(\exists x\in A. B(x)\) to be true, we need to provide a proof
-\(a\) of the \(A\) and a proof \(p\) of the predicate
-\(B[x:=a]\). In Type Theory, it is represented by the generalised
-product type \(\Sigma\). 
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\paragraph{Existential Quantifier} The interpretation of the
+existential quantifier is similar to conjunction. In order for
+\mb{\exists x\in A.\ B(x)} to be true, we need to provide a proof
+\mb{(a)} of \mb{A} and a proof \mb{(p)} of the predicate
+\mb{B[x:=a]}. In Type Theory, it is represented by the generalised
+product type \mb{\Sigma}. 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data $\Sigma$ (A : Set) (B : A $\to$ Set) : where
   _,_ : (a : A) $\to$ B a $\to$ $\Sigma$ A B
 \end{lstlisting}
-For simplicity, we will change the syntax of \(\Sigma\) to \(\exists [ x \in A ] B\). Now, we can prove that
+\par For simplicity, we will change the syntax of \mb{\Sigma} to
+\mb{\exists [ x \in A ]\ B}. As an example, we can prove that
 there exists a natural number which is even. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
-lem$_2$ : $\exists$[ n $\to$ $\mathbb N$ ] n isEven
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+lem$_2$ : $\exists$[ n $\in$ $\mathbb N$ ] (n isEven)
 lem$_2$ = zero , base
 \end{lstlisting}
 
 
-\paragraph{Decidability} A proposition \(P\) is decidable if and only if there
+\subsubsection{Decidability} 
+\par A proposition \mb{P} is decidable if and only if there
 exists an algorithm that can decide whether it is true or false. We
 will define the decidability of a proposition as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data Dec (A : Set) : Set where
   yes : A $\to$ Dec A
   no  : $\neg$ A $\to$ Dec A
 \end{lstlisting}
 
 
-\paragraph{Propositional Equality} Another important feature of Type Theory is
-that we can define the notion of equality in it. The
+\subsubsection{Propositional Equality} 
+\par One important feature of Type Theory is
+that we can define the equality of propositions as types. The
 equality relation is interpreted as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 data _$\equiv$_ {A : Set} (x : A) : A $\to$ Set where
   refl : x $\equiv$ x
 \end{lstlisting}
-\paragraph{} This states that for any \(x\) in \(A\), \(refl\) is an
-element of the type \(x \equiv x\). More generally, \(refl\) is a
-proof of \(x \equiv x'\) provided that \(x\) and \(x'\) is the same
-after normalisation. For example, we can prove that \(\exists n\in
-\mathbb N . n = 1 + 1\) as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+
+\par This states that for any \mb{x} in \mb{A}, \mb{refl} is an
+element of the type \mb{x \equiv x}. More generally, \mb{refl} is a
+proof of \mb{x \equiv x'} provided that \mb{x} and \mb{x'} is the same
+after normalisation. For example, we can prove that \mb{\exists n\in
+\mathbb N .\ n = 1 + 1} as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 lem$_3$ : $\exists$[ n $\in$ $\mathbb N$ ] n $\equiv$ (1 + 1)
 lem$_3$ = suc (suc zero) , refl
 \end{lstlisting}
 
-\paragraph{} Note that we can put \(refl\) in the proof only because both
-\(suc (suc zero)\) and \(1 + 1\) are the same after
+\par We can put \mb{refl} in the proof only because both
+\mb{suc\ (suc\ zero)} and \mb{1 + 1} have the same form after
 normalisation. Now, let us define the elimination rule of
 equality. The rule should allow us to substitute equivalence objects
 into any proposition. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 subst : {A : Set}{x y : A} $\to$ (P : A $\to$ Set) $\to$ x $\equiv$ y $\to$ P x $\to$ P y
 subst P refl p = p 
 \end{lstlisting}
-\paragraph{} We can also prove the congruency of equality: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\par We can also prove the congruency of equality: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 cong : {A B : Set}{x y : A} $\to$ (f : A $\to$ B) $\to$ x $\equiv$ y $\to$ f x $\equiv$ f y
 cong f refl = refl
 \end{lstlisting}
 
 
-\subsubsection{Program Specifications as Types}
-\paragraph{} Furthermore, dependent types also allow us to encode program
-specification within the same platform. Now, let us define a predicate
-of sorted list (sorted by ascending order). For simplicity, we will only consider the list of
-natural numbers in here. Before we can define the predicate, we need
-to have another predicate saying that a given natural number is
-smaller than every number in a given list. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\subsection{Program Specifications as Types}
+\par As we mentioned before, dependent types also allow us to encode program
+specifications within the same platform. In order to demonstrate the
+idea, we will give an example that uses sorted lists of natural
+numbers. Let us begin by defining a predicate
+of sorted list (in ascending order). 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 All$\hyphen$lt : $\mathbb N$ $\to$ List $\mathbb N$ $\to$ Set
 All$\hyphen$lt n [] = $\top$
 All$\hyphen$lt n (x :: xs) = n $\leq$ x $\times$ All$\hyphen$lt n xs
@@ -349,13 +356,12 @@ Sorted$\hyphen$ASC [] = $\top$
 Sorted$\hyphen$ASC (x :: xs) = All$\hyphen$lt x xs $\times$ Sorted$\hyphen$ASC xs
 \end{lstlisting}
 
-\paragraph{} \(\_\leq\_\ :\ \mathbb N \to \mathbb N \to Set\) is a binary relation between two natural
-numbers. Now, we can define an insertion function that takes a
-natural number and a list as the arguments and returns a list of
-natural numners. The insertion function is designed so that if the
-input list is already sorted, then the output list should also be sorted. 
-
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\par \(All\hyphen lt\) defines the condition where a given
+number is smaller than all the numbers inside a given list. Now, let
+us define an insertion function that takes a natural number and a list as the arguments and returns a list of
+natural numbers. The insertion function is designed in a way that if the
+input list is already sorted, then the output list will also be sorted. 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 insert : $\mathbb N$ $\to$ List $\mathbb N$ $\to$ List $\mathbb N$
 insert n [] = n :: []
 insert n (x :: xs) with n $\leq$? x
@@ -363,28 +369,62 @@ insert n (x :: xs) with n $\leq$? x
 ... | no  _ = x :: insert n xs
 \end{lstlisting}
 
-\paragraph{} \(\_\leq ?\_\ :\ \forall n\ m \to Dec (n \leq m)\) is the
-decidability of \(\_\leq\_\), it can also be used to determine whether
-a given number \(n\) is less than or equal to another number
-\(m\). Now, let us encode the specification of the insertion function
+\par Note that \mb{\_\leq ?\_} has the type \mb{\forall\ n\ m \to Dec\ (n \leq
+  m)}. It is a proof of the decidability of \mb{\_\leq\_} and it can also be used to determine whether
+a given number \mb{n} is less than or equal to another number
+\mb{m}. Now, let us encode the specification of the insertion function
 as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 insert$\hyphen$sorted : $\forall$ {n} {as} 
                 $\to$ Sorted$\hyphen$ASC as 
                 $\to$ Sorted$\hyphen$ASC (insert n as)
 \end{lstlisting}
 
-\paragraph{} The part \(Sorted\hyphen ASC\ as\) corresponds to the pre-condition and
-\(Sorted\hyphen ASC\ (insert\ n\ as\) corresponds to the
+\par In the type signature, \((Sorted\hyphen ASC\ as)\) corresponds to the pre-condition and
+\((Sorted\hyphen ASC\ (insert\ n\ as))\) corresponds to the
 post-condition. Once we have completed the
-function, we will also have proven the specification to be
-true. Interested readers can try to finish the proof. 
+function, we will also have proved the specification to be
+true. Interested readers are recommended to finished the proof. 
 
 
-\subsection{Related Work}
-\paragraph{} Firsov and Uustalu \cite{firsov2013} have conducted a
-similar research on the formalisation of Automata Theory. In their
-work, they have formalised the translation of regular expressions to NFA together with
-its correctness proofs in Agda. In their definition
-of NFA, the set of states and its subsets were represented as
-vectors. ... 
+
+\newpage
+\section{Related Work}
+\par Agular and Mannaa published a
+similar work \cite{agular2009} in 2009. They constructed a decider for
+regular expressions which can determine whether
+a given string is accepted by a given regular expression. The decider was based on the calculation of the derivation of a regular
+expression which only needs to convert the regular expression into
+part of an automaton. Their decider was implemented using the \mb{Maybe} type as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+accept : (re : RegExp) $\to$ (as : List carrier) $\to$ Maybe (as $\in\smile [\![ re ]\!]$)
+\end{lstlisting}
+\par When a string is accepted by the regular expression, i.e. \mb{w
+  \in L(e)}, the decider will return its proof. However it fails to generate a
+proof for the opposite case, i.e. \mb{w \notin L(e)}. As they
+explained in the paper, it is not possible without converting the regular expression into
+the entire finite automaton. 
+
+\paragraph{} While in 2013, Firsov and Uustalu also published another related
+research paper \cite{firsov2013}. They translated regular expressions
+into NFA and proved that their accepting languages are
+equal. Unlike Agular and Mannaa's decider, Firsov and Uustalu's
+algorithm could generate proofs for both cases when a string is or is not
+accepted by the regular expression. In their definition of NFA, the set of states
+\mb{Q} and its subsets are represented as vectors while the transition function
+\mb{\delta} takes an alphabet as the argument and returns a matrix
+representation of the transition table. 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+record NFA : Set where
+  field
+    |Q| : $\mathbb N$
+    $\delta$    : $\Sigma$ $\to$ |Q| $\ast$ |Q|
+    I   : 1 $\ast$ |Q|
+    F   : |Q| $\ast$ 1
+\end{lstlisting}
+
+\par Note that \mb{\_\ast\_} is an inductive family that takes two
+natural numbers \mb{n} and \mb{m} and
+produces a matrix type \mb{n \times m}. This representation allows us to
+iterate the set easily but it looks unnatural compare to the actual 
+mathematical definition of NFA. 
