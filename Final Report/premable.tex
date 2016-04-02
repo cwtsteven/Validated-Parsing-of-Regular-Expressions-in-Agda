@@ -3,7 +3,10 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{bm}
-\newcommand{\mb}[1]{\(\bm{#1}\)}
+\newcommand{\mb}[1]{\({#1}\)}
+
+\usepackage{amsthm}
+\usepackage[english]{babel}
 
 \usepackage{listings}
 \makeatletter % making underscore larger in listings
@@ -11,6 +14,8 @@
   \leavevmode\kern0.03em\vbox{\hrule\@width.6em \@height-.25ex \@depth0.37ex}\kern0.03em}
 \makeatother
 \newcommand{\hyphen}{\operatorname{-}} % making hypen smaller in math-mode
+\def\Plus{\texttt{+}}
+
 
 \usepackage{geometry}
 
@@ -42,9 +47,9 @@
 \pagestyle{plain}
 
 % I don't know what it does really
-\newcommand*{\approxident}{%
-  \mathrel{\vcenter{\offinterlineskip
-  \hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}}}}
+%\newcommand*{\approxident}{%
+%  \mathrel{\vcenter{\offinterlineskip
+%  \hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}}}}
 
 % setting odd/even pages margin
 \setlength{\oddsidemargin}{1cm} % 2cm margin on the left for odd pages

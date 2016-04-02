@@ -1,14 +1,17 @@
 \section{Introduction}
 \par This project aims to study the feasibility of formalising
-Automata Theory \cite{aho1972} in Type Theory \cite{martin1984} with the aid of a dependently-typed
-functional programming language, Agda \cite{agdawiki2016}. Automata
-Theory is an extensive work; therefore, it will be unrealistic to
-include all the materials under the time constraints. Accordingly, this project will only focus on the theorems and
+Automata Theory \cite{aho1972} in Type Theory \cite{martin1984}. 
+... [ small intro to type theory? type theory and proof assistant and
+dependent types -> Agda will be used ] 
+
+\par Automata Theory is an extensive work; therefore, it will be unrealistic to
+include all the materials under the time constraints. Accordingly,
+this project will only focus on the theorems and
 proofs that are related to the translation of regular expressions
 to finite automata. In addition, this project also serves as an
-example of how complex and non-trivial proofs are formalised. 
+example on how complex and non-trivial proofs are formalised. 
 
-\par Our Agda formalisation is consist of two components: 1) the
+\par Our Agda formalisation consists of two components: 1) the
 translation of regular expressions to DFA and 2)
 the correctness proofs of the translation. At this stage, we are only
 interested in the correctness of the translation but not the
@@ -18,29 +21,28 @@ efficiency of the algorithms.
 \subsection{Motivation}
 \par My motivation on this project is to learn and apply
 dependent types in formalising programming logic. At the beginning, I
-knew nothing about dependent types and proof assistants. Therefore, we
+was new to dependent types and proof assistants. Therefore, we
 had to choose carefully what theorems to formalise. On one hand, the theorems
 should be non-trivial enough such that a substantial amount of work is required
 to be done. On the other hand, the theorems should not be too
 difficult because I am only a beginner in this area. Finally, we
-decided to go with the Automata Theory as it contains many components
-and I am familiar with the theory because its basic concepts were
+decided to go with the Automata Theory as its basic concepts were
 explained in the course \textit{Model of Computation}. 
 
 
-\subsection{Overview}
+\subsection{Outline}
 \par Section 2 will be a brief introduction on Agda and
 dependent types. We will describe how Agda can be used as a proof
-assistant by formalising several small proofs. Experienced Agda
+assistant by giving examples of formalised proofs. Experienced Agda
 users can skip this section and start from section 3 directly. In
 section 3, we will describe several researches
 that are also related to the formalisation of Automata
 Theory. Following the background, section 4 will be a detail description of our
-work. We will walk through the two components in our Agda
+work. We will walk through the two components of our Agda
 formalisation. Note that the definitions,
 theorems and proofs written in this section are extracted from our
 Agda code. They may be different from
-their usual mathematical forms in order to adapt the environment in
+their usual mathematical forms in order to adapt to the environment of
 Type Theory. In section 5, we will discuss two possible extensions
 to our project: 1) Myhill-Nerode Theorem and 2) the Pumping
 Lemma. After that, in section 6, we will evaluate the project as a
