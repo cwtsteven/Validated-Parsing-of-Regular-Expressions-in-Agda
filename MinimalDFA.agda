@@ -5,7 +5,7 @@
   Version 06-04-2016
 -}
 open import Util
-module MDFA (Σ : Set)(dec : DecEq Σ) where
+module MinimalDFA (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List hiding (any ; all) 
 open import Data.Bool

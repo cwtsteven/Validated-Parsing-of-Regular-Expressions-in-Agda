@@ -28,7 +28,7 @@ open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; _∉_ to _∉�
 open import Subset.VectorRep
 open import Language Σ dec
 open import DFA Σ dec
-open import MDFA Σ dec
+open import MinimalDFA Σ dec
 open import Translation.DFA-MDFA Σ dec
 open import Quotient
 

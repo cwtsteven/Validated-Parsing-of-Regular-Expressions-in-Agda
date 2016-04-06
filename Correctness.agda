@@ -21,7 +21,7 @@ open import RegularExpression Σ dec
 open import eNFA Σ dec
 open import NFA Σ dec
 open import DFA Σ dec
-open import MDFA Σ dec
+open import MinimalDFA Σ dec
 open import Translation Σ dec
 
 {- ∀e∈RegExp. L(e) = L(regexToε-NFA e) -}

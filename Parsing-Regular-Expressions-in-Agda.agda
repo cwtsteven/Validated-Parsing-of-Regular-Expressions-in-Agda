@@ -26,8 +26,8 @@ open import NFA
 -- DFA
 open import DFA
 
--- MDFA
-open import MDFA
+-- MinimalDFA
+open import MinimalDFA
 
 -- State construction for ε-NFA
 open import State
