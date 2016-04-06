@@ -1,13 +1,13 @@
-\subsection{Minimising DFA}
+\section{Minimising DFA}
 \par There are two procedures in minimising a DFA: 1) removing all the
 unreachable states to construct a RDFA and 2) perform quotient
 construction on the RDFA to build a MDFA. 
 
-\subsubsection{Removing unreachable states}
-\par The translation of DFA to RDFA is defined under the module
-\textbf{Remove-Inaccessible-States} in
-\textbf{Translation/DFA-MDFA.agda}. Let us begin by defining the
-reachability of a state.
+\subsection{Removing unreachable states}
+\par Let us begin by defining the
+reachability of a state. The following definitions and proofs are
+defined under the module \textbf{Remove-Unreachable-States} in
+\textbf{Translation/DFA-MDFA.agda}. 
 
 \begin{defn}
 \noindent For a given DFA, \((Q,\ \delta,\ q_0,\ F)\), we say that a state \(q\) is reachable if and
@@ -33,7 +33,8 @@ data Q$^R$ : Set where
 
 \par There are some problems regarding this formalisation of \(Q^R\),
 they will be discussed in Section 6 in details. Now, we can define the
-translation of DFA to RDFA.
+translation of DFA to RDFA. The translation of DFA to RDFA is defined
+as the function \textbf{remove-unreachable-states} in the same file. 
 
 \begin{defn}
 \label{defn:unreachable}
@@ -42,8 +43,9 @@ translated RDFA will be \((Q^R,\ \delta,\ q_0,\ Q^R \cap F)\).
 \end{defn}
 
 \par Now, let us prove the correctness of the translation by proving
-that their accepting languages are equal. The correctness proof can be
-found in the module \textbf{Remove-Inaccessible-States-Proof} in \textbf{Correctness/DFA-MDFA.agda}. 
+that their accepting languages are equal. The correctness proof is
+defined as the function \mmb{L^D\!\approx\! L^R} under the module
+\textbf{Remove-Unreachable-States-Proof} in \textbf{Correctness/DFA-MDFA.agda}. 
 
 \begin{thm}
 \noindent For any DFA, its accepting language is equal to
@@ -69,10 +71,11 @@ to the accepting state \(q\) must be also valid in \(D\); therefore,
 \end{proof}
 
 
-\subsubsection{Quotient construction}
+\subsection{Quotient construction}
 \par Now, we need to perform quotient construction on the newly
-constructed RDFA. The construction of quotient set can be found in
-\textbf{Quotient.agda}. Now, let us being by defining a
+constructed RDFA. The following definitions and proofs are defined
+under the module \textbf{Quotient-Construct} in
+\textbf{Translation/DFA-MDFA.agda}. Now, let us begin by defining a
 binary relation on states that will be used to construct the quotient set. 
 
 \begin{defn}
@@ -88,7 +91,8 @@ possible method is to use the Table-filling algorithm. However, the
 formalisation of this algorithm and its correctness proofs has not
 been completed. Therefore, in the following parts, we will assume that
 \(p \sim q\) is decidable. Now, let us construct the quotient set by using the above
-relation of states. 
+relation of states. The quotient set is defined in the
+\textbf{Quotient.agda}. 
 
 \begin{defn}
 \noindent For a state \(p\) of a given DFA, its equivalence
@@ -115,12 +119,12 @@ $\llangle$ p $\rrangle$ q with Dec$\hyphen\!\sim$
 
 \par It is defined in Agda as follow: 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
-data Quot-Set : Set where
+data Q/~ : Set where
   class : $\forall$ qs $\to$ $\exists$[ q $\in$ Q ] (qs $=^d$ $\llangle q \rrangle$) $\to$ Quot-Set
 \end{lstlisting}
 
 \par Now, we can define the translation of RDFA to MDFA which is
-defined under the module \textbf{Quotient-Construct } in \textbf{Translation/DFA-MDFA.agda}. 
+defined as the function \textbf{quotient-construction} at the bottom of \textbf{Translation/DFA-MDFA.agda}. 
 \begin{defn}
 \label{defn:quotient}
 \noindent For any given RDFA, \((Q,\ \delta,\ q_0,\ F)\), its
@@ -143,6 +147,8 @@ F')\) according to \autoref{defn:quotient}. For any state \(q\) in \(Q\), if a s
 in \(R\), then \(w\) can take \(\llangle q \rrangle\) to \(\llangle q'
 \rrangle\) with \(n\) transitions in \(M\). 
 \end{lem}
+
+\par The proof is defined as the function \textbf{lem\(_1\)}. 
 
 \begin{proof}
 \noindent We can prove the lemma by induction on \(n\).
@@ -175,6 +181,8 @@ F')\) according to \autoref{defn:quotient}. For any string \(w\) and
 any state \(q\) in \(Q\), \(\delta'^*(\llangle q \rrangle,w) = \llangle \delta^*(q,w) \rrangle\). 
 \end{lem}
 
+\par The proof is defined as the function \textbf{lem\(_2\)}. 
+
 \begin{proof}
 \noindent We can prove the lemma by induction on \(w\). 
 
@@ -198,7 +206,9 @@ any state \(q\) in \(Q\), \(\delta'^*(\llangle q \rrangle,w') = \llangle \delta^
 \end{proof}
 
 \par Now, we can prove the correctness of the translation by proving
-that their accepting languages are equal. 
+that their accepting languages are equal. The correctness proof is
+defined as the function \mmb{L^R\!\approx\! L^M} in
+\textbf{Correctness.agda} while the detail proofs are defined in \textbf{Correctness/DFA-MDFA.agda}
 
 \begin{thm}
 \noindent For any RDFA, its accepting language is equal to
@@ -234,13 +244,14 @@ thus \(delta(q_0,w) \in F\). By \autoref{lem:dec_iff2}, \(w\) can take
 first, we have to define what is a minimal DFA. 
 
 
-\subsection{Minimal DFA}
+\section{Minimal DFA}
 \par The definition of minimal DFA can be found in
-\textbf{Correctness/DFA-MDFA.agda}. In order for a DFA to be minimal,
+\textbf{MDFA.agda}. In order for a DFA to be minimal,
 it must satisfy two criteria: 1) every state must be reachable and 2) the
 states cannot be further reduced. 
 
-\par Here is the definition of criteria (1) in Agda: 
+\par Criteria (1) is defined as the function
+\textbf{All-Reachable-States}. It is defined as follow: 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 All-Reachable-States : DFA $\to$ Set
 All-Reachable-States dfa = $\forall$ q $\to$ Reachable q
@@ -293,7 +304,9 @@ Minimal dfa = All-Reachable-States dfa $\times$ Irreducible dfa
 \end{lstlisting}
 
 \par Now, let us prove that any MDFA is minimal by proving that all the states in MDFA are reachable and the MDFA
-is irreducible. 
+is irreducible. The proofs are defined under the module
+\textbf{Reachable-Proof} and \textbf{Minimal-Proof} in
+\textbf{Correctness/DFA-MDFA.agda}. 
 
 \begin{thm}
 \label{thm:all_reach}

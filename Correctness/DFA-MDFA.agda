@@ -28,17 +28,18 @@ open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; _∉_ to _∉�
 open import Subset.VectorRep
 open import Language Σ dec
 open import DFA Σ dec
+open import MDFA Σ dec
 open import Translation.DFA-MDFA Σ dec
 open import Quotient
 
-module Remove-Inaccessible-States-Proof (dfa : DFA) where
+module Remove-Unreachable-States-Proof (dfa : DFA) where
   rdfa : DFA
-  rdfa = remove-inaccessible-states dfa
+  rdfa = remove-unreachable-states dfa
 
   open DFA dfa
   open DFA-Operations dfa
   open DFA-Properties dfa
-  open Remove-Inaccessible-States dfa
+  open Remove-Unreachable-States dfa
   open IsEquivalence ≋-isEquiv renaming (refl to ≋-refl ; sym to ≋-sym ; trans to ≋-trans)
 
   open DFA rdfa renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; ≋-isEquiv to ≋₁-isEquiv)
@@ -73,14 +74,14 @@ module Remove-Inaccessible-States-Proof (dfa : DFA) where
   Lᴰ⊇Lᴿ w (reach q reachable-q , q∈F , (n , prf)) = q , q∈F , (n , lem₂ q₀ w n q q₀-reach reachable-q prf)
 
 
-  Lᴰ≈Lᴿ : Lᴰ dfa ≈ Lᴰ (remove-inaccessible-states dfa)
+  Lᴰ≈Lᴿ : Lᴰ dfa ≈ Lᴰ (remove-unreachable-states dfa)
   Lᴰ≈Lᴿ = Lᴰ⊆Lᴿ , Lᴰ⊇Lᴿ
 
 
 
 module Quotient-Construction-Proof (dfa : DFA) where
   rdfa : DFA
-  rdfa = remove-inaccessible-states dfa
+  rdfa = remove-unreachable-states dfa
 
   qdfa : DFA
   qdfa = quotient-construction rdfa
@@ -126,55 +127,23 @@ module Quotient-Construction-Proof (dfa : DFA) where
 {- ∀dfa∈DFA. L(dfa) ≈ L(minimise dfa) -}
 module Minimise where
   Lᴰ≈Lᴹ : ∀ dfa → Lᴰ dfa ≈ Lᴰ (minimise dfa)
-  Lᴰ≈Lᴹ dfa = IsEquivalence.trans ≈-isEquiv (Remove-Inaccessible-States-Proof.Lᴰ≈Lᴿ dfa) (Quotient-Construction-Proof.Lᴿ≈Lᴹ dfa)
+  Lᴰ≈Lᴹ dfa = IsEquivalence.trans ≈-isEquiv (Remove-Unreachable-States-Proof.Lᴰ≈Lᴿ dfa) (Quotient-Construction-Proof.Lᴿ≈Lᴹ dfa)
 
 
 
-All-Reachable-States : DFA → Set
-All-Reachable-States dfa = ∀ q → Reachable q
-  where
-    open DFA dfa
-    open DFA-Properties dfa
-    open Remove-Inaccessible-States dfa
-
-
-Irreducible : DFA → Set
-Irreducible dfa = ∀ p q → ¬ p ≋ q → p ≠ q
-  where
-    open DFA dfa
-    open DFA-Properties dfa
-    open Quotient-Construct dfa
-
-
-Minimal : DFA → Set
-Minimal dfa = All-Reachable-States dfa × Irreducible dfa
-
-
-{-
--- Now, we have to prove that Minimal D cannot be collapsed further
-Minimal : ∀ dfa → Set
-Minimal dfa = (p q : Q₁) → p ∼ q → p ≋₁ q
-  where
-    mdfa : DFA
-    mdfa = quotient-construction dfa
-    open DFA mdfa renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; _≋_ to _≋₁_ ; ≋-isEquiv to ≋₁-isEquiv ; δ-lem to δ₁-lem ; F-lem to F₁-lem)
-    open DFA-Operations mdfa renaming (δ* to δ₁* ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_ ; δ₀-lem₁ to δ₀₁-lem₁)
-    open DFA-Properties mdfa
-    open Quot-Properties (DFA-Properties.quot mdfa)
--}
 
 
 module Reachable-Proof (dfa : DFA) where
   rdfa : DFA
-  rdfa = remove-inaccessible-states dfa
+  rdfa = remove-unreachable-states dfa
 
   open DFA dfa
   open DFA-Properties dfa
   open DFA-Operations dfa
-  open Remove-Inaccessible-States dfa
+  open Remove-Unreachable-States dfa
   
   IsAllReachable : All-Reachable-States rdfa
-  IsAllReachable (reach q (w , n , prf)) = w , (n , Remove-Inaccessible-States-Proof.lem₁ dfa q₀ w n q q₀-reach (w , n , prf) prf)
+  IsAllReachable (reach q (w , n , prf)) = w , (n , Remove-Unreachable-States-Proof.lem₁ dfa q₀ w n q q₀-reach (w , n , prf) prf)
 
 
 module Minimal-Proof (dfa : DFA) where
@@ -184,13 +153,14 @@ module Minimal-Proof (dfa : DFA) where
   --open Quot-Properties quot 
 
   rdfa : DFA
-  rdfa = remove-inaccessible-states dfa
+  rdfa = remove-unreachable-states dfa
 
   open DFA rdfa
   open DFA-Operations rdfa
   open DFA-Properties rdfa
   open Quotient-Construct rdfa
   open Quot-Properties quot
+  open Irreducibility rdfa
 
   IsAllReachable-rdfa : All-Reachable-States rdfa
   IsAllReachable-rdfa = Reachable-Proof.IsAllReachable dfa
@@ -201,9 +171,11 @@ module Minimal-Proof (dfa : DFA) where
   open DFA mdfa renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; _≋_ to _≋₁_ ; ≋-isEquiv to ≋₁-isEquiv ; F-lem to F₁-lem)
   open DFA-Operations mdfa renaming (δ* to δ₁* ; _⊢ᵏ_─_ to _⊢ᵏ₁_─_)
   open DFA-Properties mdfa
-  open Remove-Inaccessible-States dfa renaming (Reachable to Reachable₁ ; reach to reach₁ ; Qᴿ to Qᴿ₁)
+  open Remove-Unreachable-States dfa renaming (Reachable to Reachable₁ ; reach to reach₁ ; Qᴿ to Qᴿ₁)
   open Quotient-Construct mdfa
-    renaming (_≠_ to _≠₁_ ; quot to quot₁ ; _∼_ to _∼₁_ ; ∼-lem₁ to ∼-lem₁₁ ; ≠-lem to ≠-lem₁' ; ≠-lem₁ to ≠-lem₁₁' ; Dec-≠ to Dec-≠₁)
+    renaming (quot to quot₁ ; _∼_ to _∼₁_ ; ∼-lem₁ to ∼-lem₁₁ ; ≠-lem to ≠-lem₁' ; ≠-lem₁ to ≠-lem₁₁')
+  open Irreducibility mdfa
+    renaming (_≠_ to _≠₁_)
   
   reachable-lem₁ : ∀ p ps w n q qs
                    → (ps≈⟪p⟫ : ps ≈ᵈ ⟪ p ⟫)
@@ -266,56 +238,3 @@ module Minimal-Proof (dfa : DFA) where
 
 IsMinimal : ∀ dfa → Minimal (minimise dfa)
 IsMinimal dfa = Minimal-Proof.IsMinimal dfa
-
-
-{-
-
-module Minimal-Proof (dfa : DFA) where
-  open DFA dfa
-  open DFA-Operations dfa
-  open DFA-Properties dfa
-  open Quot-Properties quot
-
-  mdfa₁ : DFA
-  mdfa₁ = minimise dfa
-  open DFA mdfa₁ renaming (Q to Q₁ ; δ to δ₁ ; q₀ to q₀₁ ; F to F₁ ; _≋_ to _≋₁_ ; ≋-isEquiv to ≋₁-isEquiv ; F-lem to F₁-lem)
-  open DFA-Operations mdfa₁ renaming (δ* to δ₁*)
-  open DFA-Properties mdfa₁ renaming (Reachable to Reachable₁ ; quot to quot₁ ; reach to reach₁ ; Qᴿ to Qᴿ₁ ; _∼_ to _∼₁_)
-  open Quot-Properties quot₁ renaming (class to class₁ ; ⟪_⟫ to ⟪_⟫₁)
-
-  mdfa₂ : DFA
-  mdfa₂ = quotient-construction mdfa₁
-  open DFA mdfa₂ renaming (Q to Q₂ ; δ to δ₂ ; q₀ to q₀₂ ; F to F₂ ; _≋_ to _≋₂_ ; ≋-isEquiv to ≋₂-isEquiv ; F-lem to F₂-lem)
-  open DFA-Operations mdfa₂ renaming (δ* to δ₂*)
-  open DFA-Properties mdfa₂ renaming (Reachable to Reachable₂ ; quot to quot₂ ; reach to reach₂ ; Qᴿ to Qᴿ₂ ; _∼_ to _∼₂_)
-  open Quot-Properties quot₂ renaming (class to class₂ ; ⟪_⟫ to ⟪_⟫₂)
-
-  lem : ∀ qs q w
-        → (qs≈⟪q⟫ : qs ≈ᵈ ⟪ q ⟫₁)
-        → δ₂* (class₁ qs (q , qs≈⟪q⟫)) w ≋₂ class₁ ⟪ δ₁* q w ⟫₁ (δ₁* q w , IsEquivalence.refl ≈ᵈ-isEquiv)
-  lem qs q []      ⟪q⟫≈qs = ⟪q⟫≈qs
-  lem qs q (a ∷ w) ⟪q⟫≈qs = lem (⟪ δ₁ q a ⟫₁) (δ₁ q a) w (IsEquivalence.refl ≈ᵈ-isEquiv)
-
-  lem' : ∀ {q}
-         → q ∈ᵈ F₁ ⇔ class₁ (⟪ q ⟫₁) (q , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂
-  lem' = (λ prf → prf) , (λ prf → prf)
-
-  IsMinimal : Minimal mdfa₁
-  IsMinimal (class₁ ps (p , ps≈⟪p⟫)) (class₁ qs (q , qs≈⟪q⟫)) ⟪p⟫∼⟪q⟫
-    = let lem₁ : ∀ w → (δ₂* (class₁ ps (p , ps≈⟪p⟫)) w) ∈ᵈ F₂ ⇔ (δ₂* (class₁ qs (q , qs≈⟪q⟫)) w) ∈ᵈ F₂
-          lem₁ = ⟪p⟫∼⟪q⟫ in
-      let lem₂ : ∀ w → (δ₂* (class₁ ps (p , ps≈⟪p⟫)) w) ∈ᵈ F₂ ⇔ class₁ ⟪ δ₁* p w ⟫₁ (δ₁* p w , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂
-          lem₂ w = (λ prf → F₂-lem (lem ps p w ps≈⟪p⟫) prf) , (λ prf → F₂-lem (IsEquivalence.sym ≋₂-isEquiv (lem ps p w ps≈⟪p⟫)) prf) in
-      let lem₃ : ∀ w → (δ₂* (class₁ qs (q , qs≈⟪q⟫)) w) ∈ᵈ F₂ ⇔ class₁ ⟪ δ₁* q w ⟫₁ (δ₁* q w , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂
-          lem₃ w = (λ prf → F₂-lem (lem qs q w qs≈⟪q⟫) prf) , (λ prf → F₂-lem (IsEquivalence.sym ≋₂-isEquiv (lem qs q w qs≈⟪q⟫)) prf) in
-      let lem₄ : ∀ w → class₁ ⟪ δ₁* p w ⟫₁ (δ₁* p w , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂ ⇔ class₁ ⟪ δ₁* q w ⟫₁ (δ₁* q w , IsEquivalence.refl ≈ᵈ-isEquiv) ∈ᵈ F₂
-          lem₄ w = (λ prf → proj₁ (lem₃ w) (proj₁ (lem₁ w) (proj₂ (lem₂ w) prf))) , (λ prf → proj₁ (lem₂ w) (proj₂ (lem₁ w) (proj₂ (lem₃ w) prf))) in
-      let lem₅ : ∀ w → δ₁* p w ∈ᵈ F₁ ⇔ δ₁* q w ∈ᵈ F₁
-          lem₅ w = (λ prf → proj₂ (lem' {δ₁* q w}) (proj₁ (lem₄ w) (proj₁ (lem' {δ₁* p w}) prf)))
-                 , (λ prf → proj₂ (lem' {δ₁* p w}) (proj₂ (lem₄ w) (proj₁ (lem' {δ₁* q w}) prf))) in
-      let lem₆ : p ∼₁ q
-          lem₆ = lem₅ in
-      let lem₇ : ⟪ p ⟫₁ ≈ᵈ ⟪ q ⟫₁
-          lem₇ = proj₁ (Quotient-Construct.p∼q⇔⟪p⟫≈⟪q⟫ mdfa₁) lem₆ in
-      IsEquivalence.trans ≈ᵈ-isEquiv (IsEquivalence.trans ≈ᵈ-isEquiv ps≈⟪p⟫ lem₇) (IsEquivalence.sym ≈ᵈ-isEquiv qs≈⟪q⟫)
--}

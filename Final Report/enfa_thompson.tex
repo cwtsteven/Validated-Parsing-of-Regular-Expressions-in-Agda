@@ -1,8 +1,11 @@
-\subsection{\(\epsilon\)-Non-deterministic Finite Automata}
+\section{\(\epsilon\)-Non-deterministic Finite Automata}
 \par Recall that the set of all strings over \(\Sigma\) is defined as
 the type \(List\ \Sigma^*\). However, this definition gives us no way to
 extract an \(\epsilon\) alphabet from the input string. Therefore,
-we need to introduce another representation specific to this purpose. 
+we need to introduce another representation specific to this
+purpose. The representation in defined under the module
+\textbf{\(\Sigma\)-with-\(\epsilon\)} in \textbf{Language.agda} along
+with itis related operations and lemmas. 
 
 \begin{defn}
 \noindent We define \(\Sigma^e\) as the union of
@@ -30,8 +33,20 @@ List\ \Sigma^e\).
 represented by (\(\alpha\ A :: \alpha\ g :: E :: \alpha\ d :: E :: \alpha\
 a :: [\ ]\)) or (\(E :: \alpha\ A :: E :: E :: \alpha\ g :: \alpha\ d ::
 E :: \alpha\ a :: [\ ]\)). We call these two lists as the \(\epsilon\)-strings of the
-string 'Agda'. All the definitions, operations and lemmas regarding
-\(\epsilon\)-strings can be found in \textbf{Language.agda}. 
+string 'Agda'. 
+
+\begin{defn}
+\noindent Now we define \(to\Sigma^*(w^e)\) as a function that takes an
+\(\epsilon\)-string of \(w\), \(w^e\) and returns \(w\). 
+\end{defn}
+
+\par It is define in Agda as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+to$\Sigma^*$ : $\Sigma^{e*}$ $\to$ $\Sigma^*$
+to$\Sigma^*$ [] = []
+to$\Sigma^*$ ($\alpha$ a :: w) = a :: to$\Sigma^*$ w
+to$\Sigma^*$ (E :: w) = to$\Sigma^*$ w
+\end{lstlisting}
 
 \par Now, let us define \(\epsilon\)-NFA using \(\Sigma^{e*}\). The
 type of \(\epsilon\)-NFA is defined in \textbf{eNFA.agda} along with its operations and
@@ -145,9 +160,11 @@ accepting language of an \(\epsilon\)-NFA is given by the set \(\{w\ |\ \exists 
             $\exists$[ w$^e$ $\in$ $\Sigma^{e*}$ ] (w $\equiv$ $to\Sigma^*$ w$^e$ $\times$ ($\exists$[ q $\in$ Q ] (q $\in^d$ F $\times$ (q$_0$ , w$^e$) $\vdash^*$ (q , []))))
 \end{lstlisting}
 
-\subsection{Thompson's Construction}
+\section{Thompson's Construction}
 \par Now, let us look at the translation of regular expressions to
-\(\epsilon\)-NFA which is defined in \textbf{Translation/RegExp-eNFA.agda}. 
+\(\epsilon\)-NFA. The translation is defined as the function
+\textbf{regexToeNFA} in \textbf{Translation/RegExp-eNFA.agda} while
+the constructions of states are defined in \textbf{State.agda}. 
 
 \begin{defn}
 \label{defn:thompson}
@@ -155,30 +172,33 @@ accepting language of an \(\epsilon\)-NFA is given by the set \(\{w\ |\ \exists 
 to \(\epsilon\)-NFA is defined inductively as follow:
 \begin{enumerate}[nolistsep]
   \item for \(\O\), we have \(M = (\{init\},\ \Sigma^e,\ \delta,\
-    init,\ \O)\) and graphically \begin{center}\includegraphics{null}\end{center}
+    init,\ \O)\) and graphically, \begin{center}\includegraphics{null}\end{center}
   \item for \(\epsilon\), we have \(M = (\{init\},\ \Sigma^e,\
-    \delta,\ init,\ \{init\})\) and graphically \begin{center}\includegraphics{epsilon}\end{center}
+    \delta,\ init,\ \{init\})\) and graphically, \begin{center}\includegraphics{epsilon}\end{center}
   \item for \(a\), we have \(M = (\{init, accept\},\ \Sigma^e,\
-    \delta,\ init,\ \{accept\})\) and graphically \begin{center}\includegraphics{singleton}\end{center}
+    \delta,\ init,\ \{accept\})\) and graphically, \begin{center}\includegraphics{singleton}\end{center}
   \item suppose \(N_1 = (Q_1,\ \delta_1,\ q_{01},\ F_1)\) and \(N_2 =
     (Q_2,\ \delta_2,\ q_{02},\ F_2)\) are \(\epsilon\)-NFAs translated from the
     regular expressions \(e_1\) and \(e_2\) respectively, then
     \begin{enumerate}[nolistsep]
       \item for \((e_1\ |\ e_2)\), we have \(M = (\{init\} \cup Q_1
         \cup Q_2,\ \Sigma^e,\ \delta,\ init,\ F_1 \cup F_2)\) and
-        graphically \begin{center}\includegraphics{union}\end{center}
+        graphically, \begin{center}\includegraphics{union}\end{center}
       \item for \(e_1\cdot e_2\), we have \(M = (Q_1 \cup \{mid\}
-        \cup Q_2,\ \Sigma^e,\ \delta,\ init,\ F_2)\) and graphically \begin{center}\includegraphics{concat}\end{center}
+        \cup Q_2,\ \Sigma^e,\ \delta,\ init,\ F_2)\) and graphically, \begin{center}\includegraphics{concat}\end{center}
       \item for \(e_1^{\ *}\), we have \(M = (\{init\} \cup Q_1,\
         \Sigma^e,\ \delta,\ init,\ \{init\} \cup F_1)\) and
-        graphically \begin{center}\includegraphics{star}\end{center}
+        graphically, \begin{center}\includegraphics{star}\end{center}
      \end{enumerate}
 \end{enumerate}
 \end{defn}
 
-\par Now, let us prove the correctness of the above translation by
-proving that their accepting languages are equal. The correctness proofs
-can be found in \textbf{Correctness/RegExp-eNFA.agda}. 
+\par Apart from the five fields, the other fields in the record
+\textit{\(\epsilon\)-NFA} are also constructed by the function. Now, let us prove the correctness of the above translation by
+proving that their accepting languages are equal. The correctness
+proof is defined as the function \mmb{L^R \!\approx\! L^{eN}} in
+\textbf{Correctness.agda} while the detail proofs are
+defined in \textbf{Correctness/RegExp-eNFA.agda}. 
 
 \begin{thm} 
 \noindent For any given regular expression, \(e\), its accepting
@@ -218,8 +238,8 @@ to an accepting state \(q\) in \(N_1\). Now, consider another
 take \(init\) to \(q\) in \(M\) because \(\epsilon\) can take \(init\)
 to \(q_{01}\). Recall that \(q\) is an accepting
 state in \(N_1\); therefore, \(q\) is also an accepting state in
-\(M\). Therefore, by \autoref{defn:enfa}, \(M\) accepts \(w\). The same argument also applies
-to the case when \(e_2\) accepts \(w\) and thus \(L(e_1\ |\ e_2) \subseteq L(M)\) is true; 
+\(M\) and thus, by \autoref{defn:enfa}, \(M\) accepts \(w\). The same argument also applies
+to the case when \(e_2\) accepts \(w\); therefore, \(L(e_1\ |\ e_2) \subseteq L(M)\) is true; 
 
 \par 1.2) if \(M\) accepts \(w\), then by \autoref{defn:enfa}, there must exist an
 \(\epsilon\)-string of \(w\), \(w^e\), that can take \(init\) to an
@@ -254,15 +274,14 @@ v^e\), it can take \(q_{01}\) to \(q_2\) in \(M\) because \(u^e\) takes
 \(\epsilon\) takes \(mid\) to \(q_{02}\) and \(v^e\) takes \(q_{02}\)
 to \(q_2\). Furthermore, \(q_2\)
 is also an accepting state in \(M\) because \(q_2\) is an accepting
-state in \(N_2\). Therefore, we have proved that \(M\) accepts \(w\)
+state in \(N_2\). Therefore, \(M\) accepts \(w\)
 and thus \(L(e_1 \cdot e_2) \subseteq L(M)\) is true; 
 
 \par 2.2) if \(M\) accepts \(w\), then by \autoref{defn:enfa}, there must
 exist an \(\epsilon\)-string of \(w\), \(w^e\), which can take
 \(q_{01}\) to an accepting state \(q\) in \(M\). Since \(q\) is an
 accepting state in \(M\); therefore, \(q\) must be in \(Q_2\). The only possible way for
-\(q_{01}\) to reach \(q\) is by going through the state \(mid\). This
-implies that there must exist i) an \(\epsilon\)-string, \(u^e\), that can take
+\(q_{01}\) to reach \(q\) is by going through the state \(mid\). Therefore, there must exist i) an \(\epsilon\)-string, \(u^e\), that can take
 \(q_{01}\) to an accepting state \(q_1\) in \(N_1\) and ii) an
 \(\epsilon\)-string \(v^e\) that can take \(q_{02}\) to \(q_2\) in
 \(N_1\) and \(w^e = u^e\epsilon\epsilon v^e\). Let \(u\) and \(v\) be the normal strings of \(u^e\) and
@@ -306,7 +325,7 @@ accepts \(w\). Therefore \(L(e_1^{\ *}) \subseteq L(M)\) is true;
 
 \par 3.2) if \(M\) accepts \(w\), then by \autoref{defn:enfa}, there must exist an
 \(\epsilon\)-string \(w\), \(w^e\), that can take \(init\) to an accepting
-state \(q\) using \(n\) transitions in \(M\).  If \(init = q\), then \(w\) must be an empty
+state \(q\) with \(n\) transitions in \(M\).  If \(init = q\), then \(w\) must be an empty
 string. By \autoref{defn:thompson}, it is obvious that
 the empty string is accepted by \(e_1^{\ *}\). If \(init \neq q\),
 then there are only two possible ways for \(init\)
@@ -330,11 +349,23 @@ the path from \(q_{01}\) to \(q\). The path must have less than \(n\)
 transitions; therefore, we can prove by induction the there must exist a number \(k\) such that
 \(L(e_1)^k\) accepts \(v\). Combining the above proofs, we have \(w \in
 L(e_1^{\ *})\). 
-\par \quad Since we have proved that \(w \in L(M)\) implies \(w \in L(e_1^{\
-  *})\) for any string \(w\); therefore \(w \in L(e_1^{\ *}) \supseteq L(M)\) is true; 
+\par \quad Combining \textit{Case 1} and \textit{Case 2}, we have \(w \in L(e_1^{\ *}) \supseteq L(M)\); 
 
 \par 3.3) combining 3.1 and 3.2, we have \(L(e_1^{\ *}) = L(M)\). 
 
 \par \noindent Therefore, by induction, \(L(e) = L(\)translated
 \(\epsilon\)-NFA\()\) is true for all any regular expression \(e\). 
 \end{proof}
+
+\newpage 
+\par Below is a code snippet of our formalisation of \(L^R \subseteq
+L^{eN}\). 
+
+\begin{center} \includegraphics[width=\textwidth]{thm11} \end{center}
+
+\par Pattern matching the regular expression corresponds to the case
+analysis in the proof. As shown above, there are six cases:
+\(\emptyset\), \(epsilon\), \(\sigma\ a\), union, concatenation and
+kleen star. The first three correpsonds to the three base
+cases. Notice that the recursive calls in last three cases is equivalent to the induction hypothesis of the
+proof. These cases are equivalent to the induction steps. 

@@ -1,5 +1,5 @@
 {-
-  Vector representation of subsets.
+  Vector representation of sets.
 
   Steven Cheung
   Version 15-03-2016
@@ -34,7 +34,6 @@ _∈?_ : {A : Set}(a : A){n : ℕ} → (as : Vec A n) → {{dec : DecEq A}} → 
 (a ∈? ( x ∷ as)) {{dec}} | no  a≢x  | no  a∉as = no (λ a∈xas →  a≢x (∈-lem₁ a x as a∈xas a∉as))
 
 -- Lemmas of _∈_
-
 ∈-lem₂ : {A B : Set}{n : ℕ}(decA : DecEq A)(decB : DecEq B)(f : A → B) → (a : A)(as : Vec A n)
          → (a ∈ as) → (f a ∈ map f as)
 ∈-lem₂ decA decB f a ._ here               = here

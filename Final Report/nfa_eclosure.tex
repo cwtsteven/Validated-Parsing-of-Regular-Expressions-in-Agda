@@ -1,4 +1,4 @@
-\subsection{Non-deterministic Finite Automata}
+\section{Non-deterministic Finite Automata}
 \par Although the definition of NFA is very similar to that of
 \(\epsilon\)-NFA, we will still define NFA
 separately. The type of NFA is defined in \textbf{NFA.agda} along with
@@ -105,11 +105,13 @@ accepting language of an NFA is given by the set \(\{w\ |\ \exists q\in F.\ (q_0
 \end{lstlisting} 
 
 
-\subsection{Removing \(\epsilon\)-transitions}
-\par The translation of \(\epsilon\)-NFA to NFA is defined in
-\textbf{Translation/eNFA-NFA.agda}. In order to remove all the \(\epsilon\)-transitions, we need to
+\section{Removing \(\epsilon\)-transitions}
+\par In order to remove all the \(\epsilon\)-transitions, we need to
 know whether a state \(q\) can reach another state \(q'\) with only
-\(\epsilon\)-transitions. Let us begin by defining such a relation on states. 
+\(\epsilon\)-transitions. Let us begin by defining such relation. Note that the algorithm and proofs regarding the
+computation of \(\epsilon\)-closures can be found in the module
+\textbf{Compute-\(\epsilon\)-closure} in
+\textbf{Translation/eNFA-NFA.agda}. 
 
 \begin{defn}
 \noindent We say that
@@ -161,6 +163,9 @@ will have proved the decidability of \(q \to_\epsilon^* q'\).
 \end{enumerate}
 \end{defn}
 
+\par Now, we can prove that the two representaions are equivalent. The
+theorem is defined as the function \mmb{\to_\epsilon^*\!}\textbf{-lem\(_1\)}. 
+
 \begin{lem}
 \noindent For any two states \(q\) and \(q'\), \(q \to_\epsilon^* q'\)
 if and only if \(q' \in \epsilon\hyphen closure(q)\). 
@@ -184,7 +189,10 @@ that \(q \to_\epsilon^{|Q|-1} q'\) must be true and thus \(q
 
 \par Since we have proved that they are equivalent; therefore the
 decidability of \(q \to_\epsilon^* q'\) follows. Now, let us define
-the translation of \(\epsilon\)-NFA to NFA using \(q \to_\epsilon^* q'\). 
+the translation of \(\epsilon\)-NFA to NFA using \(q \to_\epsilon^*
+q'\). The translation is defined as the function
+\textbf{remove-\(\epsilon\)-step} in the bottom of
+\textbf{Translation/eNFA-NFA.agda}. 
  
 \begin{defn}
 \label{defn:remove_epsilon}
@@ -200,7 +208,9 @@ F')\) where
 \end{defn}
 
 \par Now, let us prove the correctness of the above translation by proving their accepting languages
-are equal. The correctness proofs can be found in \textbf{Correctness/eNFA-NFA.agda}.
+are equal. The correctness proofs is defined as the function
+\mmb{L^{eN} \!\approx\! L^N} in \textbf{Correctness.agda} while the
+detail proofs can be found in \textbf{Correctness/eNFA-NFA.agda}.
 
 \begin{thm}
 \noindent For any \(\epsilon\)-NFA, its accepting language is equal to

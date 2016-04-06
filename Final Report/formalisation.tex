@@ -15,11 +15,11 @@
   Lemma~(#1)\null
 }
 
-\section{Formalisation in Type Theory}
+\chapter{Formalisation in Type Theory}
 \par Let us recall the two components of our formalisation: the
 translation of regular expressions to a minimal DFA and the correctness proofs
 of the translation. The translation is
-divided into several steps. Firstly, any regular expression is
+divided into several steps. Firstly, a regular expression is
 converted into an \(\epsilon\)-NFA using Thompson's construction
 \cite{thompson1968}. Secondly, all the \(\epsilon\)-transitions are
 removed by computing the \(\epsilon\)-closures. Thirdly, a DFA is built by using powerset
@@ -27,10 +27,10 @@ construction. After that, all the unreachable
 states are removed. Finally, a MDFA is obtained by using
 quotient construction. The translation is correct if and only if 1) the
 accepting languages of the regular expression and its translated
-output are equal, i.e. \(L(regex) = L(\)translated \(\epsilon\)-NFA\() = L(\)translated DFA\() =
-L(\)translated MDFA\()\) and 2) the translated MDFA is minimal. 
+output are equal, i.e. \(L(regex) = L(translated\) \(\epsilon\)-NFA\() = L(translated\) DFA\() =
+L(translated\) MDFA\()\) and 2) the translated MDFA is minimal. 
 
-\par In this section, we will walk through the formalisation of
+\par In this chapter, we will walk through the formalisation of
 each of the above steps together with their correctness proofs. Note
 that all the definitions, theorems, lemmas and proofs written in this section
 are adapted to the environment of Agda. Now, let us begin with the 

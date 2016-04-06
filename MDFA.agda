@@ -1,3 +1,9 @@
+{-
+  This module contains the definition of minimal DFA. 
+
+  Steven Cheung
+  Version 06-04-2016
+-}
 open import Util
 module MDFA (Σ : Set)(dec : DecEq Σ) where
 
@@ -21,43 +27,84 @@ open import Language Σ dec
 open import DFA Σ dec
 
 
-record ReachableStateDFA (D : DFA) : Set₁ where
+module Remove-Unreachable-States (dfa : DFA) where
+  open DFA dfa
+  open DFA-Operations dfa
+  open IsEquivalence ≋-isEquiv renaming (refl to ≋-refl ; sym to ≋-sym ; trans to ≋-trans)
+  
+  -- Reachable from q₀
+  Reachable : Q → Set
+  Reachable q = Σ[ w ∈ Σ* ] (q₀ , w) ⊢* (q , [])
+
+  data Qᴿ : Set where
+    reach : ∀ q → Reachable q → Qᴿ
+  
+  q₀-reach : Reachable q₀
+  q₀-reach = [] , (zero , ≋-refl , refl)
+
+  reach-lem : ∀ {q w a n q'}
+              → (q , w) ⊢ᵏ n ─ (q' , [])
+              → (q , w ++ a ∷ []) ⊢ᵏ suc n ─ (δ q' a , [])
+  reach-lem {q} {.[]} {a} {n = zero}  {q'} (q≋q' , refl)
+    = δ q a , a , [] , refl , (refl , ≋-refl) , (δ-lem a q≋q' , refl)
+  reach-lem {q} {._}  {a} {n = suc n} {q'} (p , b , u , refl , (refl , prf₁) , prf₂)
+    = p , b , u ++ a ∷ [] , refl , (refl , prf₁) , reach-lem {p} {u} {a} {n} {q'} prf₂
+
+  ⊢ᵏ-lem : ∀ {s q q'} → q ≋ q'
+           → ∀ w n
+           → (s , w) ⊢ᵏ n ─ (q , [])
+           → (s , w) ⊢ᵏ n ─ (q' , [])
+  ⊢ᵏ-lem q≋q' .[] zero    (s≋q , refl)
+    = ≋-trans s≋q q≋q' , refl
+  ⊢ᵏ-lem q≋q' ._  (suc n) (p , a , u , refl , (refl , prf₁) , prf₂)
+    = p , a , u , refl , (refl , prf₁) , ⊢ᵏ-lem q≋q' u n prf₂
+  
+
+  -- easy
+  reach-lem₁ : ∀ {q a} → Reachable q → Reachable (δ q a)
+  reach-lem₁ {q} {a} (w , n , prf) = w ++ a ∷ [] , suc n , reach-lem {q₀} {w} {a} {n} {q} prf
+
+  reach-lem₂ : ∀ {q q'} → q ≋ q' → Reachable q → Reachable q'
+  reach-lem₂ q≋q' (w , n , prf) = w , n , ⊢ᵏ-lem q≋q' w n prf
+
+  reach-lem₃ : ∀ {q a p} → p ≋ δ q a → Reachable q → Reachable p
+  reach-lem₃ p≋δqa prf = reach-lem₂ (≋-sym p≋δqa) (reach-lem₁ prf)
+
+All-Reachable-States : DFA → Set
+All-Reachable-States dfa = ∀ q → Reachable q
+  where
+    open DFA dfa
+    open DFA-Properties dfa
+    open Remove-Unreachable-States dfa
+
+
+module Irreducibility (D : DFA) where
   open DFA D
   open DFA-Operations D
-  open DFA-Properties D
-  field
-    Qᴿ    : DecSubset Q
-    ∀qAccess : ∀ q → q ∈ᵈ Qᴿ ⇔ Reachable q
-    --δᴿ    : ∀ (q : Q) → q ∈ᵈ Qᴿ → Σ → Σ[ q' ∈ Q ] q' ∈ᵈ Qᴿ
-    q₀∈Qᴿ : q₀ ∈ᵈ Qᴿ
-    Fᴿ    : DecSubset Q
-    Fᴿ⊆Qᴿ : Fᴿ ⊆ᵈ Qᴿ
 
-
-record Minimal (D : DFA)(R : ReachableStateDFA D) : Set₁ where
-  field
-    Qᴹ  : Set
-    δᴹ  : Qᴹ → Σ → Qᴹ
-    q₀ᴹ : Qᴹ
-    Fᴹ  : DecSubset Qᴹ
-
-
-{-
-module MDFA-Operations (D : DFA)(M : Minimal D) where
-  open DFA D
-  open Minimal M
-               
-  δ* : (q : Q) → q ∈ᵈ Qᴹ → Σ* → Q
-  δ* q q∈Qᴹ []      = q
-  δ* q q∈Qᴹ (a ∷ w) = δ* (proj₁ (δᴹ q q∈Qᴹ a)) (proj₂ (δᴹ q q∈Qᴹ a)) w
+  -- Distinquishable states
+  infix 0 _≠_
+  _≠_ : Q → Q → Set
+  p ≠ q = Σ[ w ∈ Σ* ] (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)
   
-  δ₀ : Σ* → Q
-  δ₀ w = δ* q₀ q₀∈Qᴹ w
 
+  -- there are several algorithms
+  -- 1) Table-filling algorithm
+  -- 2) Myhill-Nerode Theorem (Partition refinement)
+  postulate Dec-≠ : ∀ p q → Dec (p ≠ q)
+  --Dec-≠ p q with Dec-D-States p q
+  --... | yes prf = yes (proj₂ (D-States-lem p q) prf)
+  --... | no  prf = no  (D-States-lem₂ p q prf)
+  
 
-Lᴹ : ∀ {D : DFA} → Minimal D → Language
-Lᴹ {D} M = λ w → δ₀ w ∈ᵈ Fᴹ
+Irreducible : DFA → Set
+Irreducible dfa = ∀ p q → ¬ p ≋ q → p ≠ q
   where
-    open Minimal M
-    open MDFA-Operations D M
--}
+    open DFA dfa
+    open DFA-Properties dfa
+    open Irreducibility dfa
+
+
+Minimal : DFA → Set
+Minimal dfa = All-Reachable-States dfa × Irreducible dfa
+

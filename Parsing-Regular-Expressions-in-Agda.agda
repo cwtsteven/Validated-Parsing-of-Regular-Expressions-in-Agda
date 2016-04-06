@@ -26,6 +26,9 @@ open import NFA
 -- DFA
 open import DFA
 
+-- MDFA
+open import MDFA
+
 -- State construction for ε-NFA
 open import State
 

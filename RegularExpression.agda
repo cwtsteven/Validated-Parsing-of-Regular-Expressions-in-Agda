@@ -18,17 +18,6 @@ open import Data.Nat
 open import Language Σ dec renaming (Ø to ø)
 open import Subset hiding (Ø ; ⟦_⟧ ; _⋃_)
 
--- Regular Language
--- section 2.2.1: Regular Sets and Regular Expressions
-data Regular : Language → Set₁ where
-  nullL : ∀ {L} → L ≈ ø  → Regular L
-  empty : ∀ {L} → L ≈ ⟦ε⟧ → Regular L
-  singl : ∀ {L} → (a : Σ) → L ≈ ⟦ a ⟧ → Regular L
-  union : ∀ {L} L₁ L₂ → Regular L₁ → Regular L₂ → L ≈ L₁ ⋃ L₂ → Regular L
-  conca : ∀ {L} L₁ L₂ → Regular L₁ → Regular L₂ → L ≈ L₁ • L₂ → Regular L
-  kleen : ∀ {L} L₁    → Regular L₁ → L ≈ L₁ ⋆ → Regular L
-
-
 -- Regular expressions
 -- section 2.2.1: Regular Sets and Regular Expressions
 infix 11 _∣_
@@ -52,6 +41,17 @@ Lᴿ (σ a)     = ⟦ a ⟧
 Lᴿ (e₁ ∣ e₂) = Lᴿ e₁ ⋃ Lᴿ e₂
 Lᴿ (e₁ ∙ e₂) = Lᴿ e₁ • Lᴿ e₂
 Lᴿ (e *)     = (Lᴿ e) ⋆
+
+
+-- Regular Language
+-- section 2.2.1: Regular Sets and Regular Expressions
+data Regular : Language → Set₁ where
+  nullL : ∀ {L} → L ≈ ø  → Regular L
+  empty : ∀ {L} → L ≈ ⟦ε⟧ → Regular L
+  singl : ∀ {L} → (a : Σ) → L ≈ ⟦ a ⟧ → Regular L
+  union : ∀ {L} L₁ L₂ → Regular L₁ → Regular L₂ → L ≈ L₁ ⋃ L₂ → Regular L
+  conca : ∀ {L} L₁ L₂ → Regular L₁ → Regular L₂ → L ≈ L₁ • L₂ → Regular L
+  kleen : ∀ {L} L₁    → Regular L₁ → L ≈ L₁ ⋆ → Regular L
 
 
 -- A language is Regular if and only if there is a Regular Expression denoting it

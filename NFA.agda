@@ -58,6 +58,17 @@ module NFA-Operations (N : NFA) where
   _⊢*_ : (Q × Σ*) → (Q × Σ*) → Set
   (q , w) ⊢* (q' , w') = Σ[ n ∈ ℕ ] (q , w) ⊢ᵏ n ─ (q' , w')
 
+  
+-- Language denoted by a NFA
+-- section 2.2.3: Finite Automata
+Lᴺ : NFA → Language
+Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵈ F × (q₀ , w) ⊢* (q , []))
+  where
+    open NFA nfa
+    open NFA-Operations nfa
+
+
+
 module NFA-Properties (N : NFA) where
   open NFA N
   open NFA-Operations N
@@ -71,12 +82,3 @@ module NFA-Properties (N : NFA) where
     = q' , a , wᵉ' , refl , prf , (refl , refl)
   ⊢ᵏ₂-lem₉ {q}  {._} {suc n} {p} {a} {q'} {wᵉ'} (p₁ , a₁ , u₁ , refl , prf₁ , prf₂) prf₃
     = p₁ , a₁ , u₁ , refl , prf₁ , ⊢ᵏ₂-lem₉ {p₁} {u₁} {n} {p} {a} {q'} {wᵉ'} prf₂ prf₃
-  
-  
--- Language denoted by a NFA
--- section 2.2.3: Finite Automata
-Lᴺ : NFA → Language
-Lᴺ nfa = λ w → Σ[ q ∈ Q ] (q ∈ᵈ F × (q₀ , w) ⊢* (q , []))
-  where
-    open NFA nfa
-    open NFA-Operations nfa

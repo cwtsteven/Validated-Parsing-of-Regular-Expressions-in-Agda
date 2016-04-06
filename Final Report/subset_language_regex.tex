@@ -1,12 +1,12 @@
-\subsection{Subsets, Decidable Subsets and Vector Representation}
+\section{Subsets, Decidable Subsets and Vector Representation}
 \par The types of subsets and decidable subsets are defined in
 \textbf{Subset.agda} and \textbf{Subset/DecidableSubset.agda}
 respectively along with their operations such as membership (\(\in\)), subset
-(\(\subseteq\)), superset (\(\supseteq\)) and equality (\(=\)). Let us
-begin with the definition of general subsets. To separate the
+(\(\subseteq\)), superset (\(\supseteq\)) and equality (\(=\)). To separate the
 operations of subsets and decidable subsets, all the operations of
 decidable subset are denoted by the superscript (\(^d\)), e.g. \(\in^d\)
-is the membership decider for decidable subsets. 
+is the membership decider for decidable subsets. Let us
+begin with the definition of general subsets. 
 
 \begin{defn} 
 \noindent Suppose \(A\) is a set, then its
@@ -29,37 +29,37 @@ Bool\). Unlike \(Subset\), its decidability is ensured by its
 definition. 
 \end{defn}
 
-\par The two representations have different roles in the project. For
-example, \(Language\) is defined using \(Subset\) as not every
+\par The two representations have different roles in other parts of the
+formalisaton. \(Language\) is defined using \(Subset\) as not every
 language is decidable. For other parts in the project 
 such as the subsets of states in an automaton, \(DecSubset\) is used
 because the decidability is assumed. 
 
 
-\subsubsection{Vector Representation}
-\par At the beginning, we intended to avoid the vector representation of a
-subset. However, it is impossible as we have to iterate the subset
-when computing \(\epsilon\)-closures. The problem will be discussed in
-Section 6 in details. The vector representation is defined in
+\subsection{Vector Representation}
+\par Recall that Firsov and Uustalu \cite{firsov2013} represent the
+set of states and its subsets as vectors. However, this makes the definition of
+NFA becomes unnatural. Therefore, at the beginning, we intended to
+avoid the vector representation. However, it is impossible because we have to iterate the subset
+when computing \(\epsilon\)-closures. The problems will be discussed in
+Chapter 6 in detail. The vector representation is defined in
 \textbf{Subset/VectorRep.agda} along with its operations and proofs. 
 
-\par The most important part is in the module \textbf{Vec-Rep} where
-several objects must be established before in order to use the vector
-representation. They are \((A : Set)\) -- a set with finite elements;
-\((dec : DecEq A)\) -- the decidable equality of \(A\); \((n : \mathbb
-N)\) -- number of elements minus 1; \((It : Vec\ A\ (suc\ n))\) -- a
-vector containing elements of \(A\) with length \(suc\ n\); \((\forall
+\par In order to use the vector representation, several objects must
+be passed to the module \textbf{Vec-Rep}. They are \((A : Set)\) -- a finite set;
+\((dec : DecEq\ A)\) -- the decidable equality of \(A\); \((n : \mathbb
+N)\) -- number of elements in \(A\) minus 1; \((It : Vec\ A\ (suc\ n))\) -- a
+vector containing elements of \(A\) with length \(n + 1\); \((\forall
 a\in It)\) -- a proof that any state in \(A\) is also in the vector
 \(It\); and \((unique : Unique)\) -- a proof that there is no repeating
-element in \(It\). 
-
-\par Apart from iterating a subset, the vector representation allows
-us to prove the following lemmas. 
+elements in \(It\). The vector representation allows us to iterate a
+certain set and its subsets, and to extract informaion regarding the
+set and a proposition. 
 
 \begin{defn}
 \noindent We define \(any\) as a predicate of vector such that it is
 true if and only if there exists an element in the vector that satisfies a given
-predicate \(P\). 
+proposition \(P\). 
 \end{defn}
 
 \par It is defined in Agda as follow:
@@ -76,7 +76,7 @@ element in \(A\) that satisfies \(P\).
 \end{lem}
 
 \begin{proof}
-\noindent The proof looks quite obvious. Since \(It\) contains all the
+\noindent The proof is quite obvious. Since \(It\) contains all the
 elements of \(A\), the statement must be true. However, in Type
 Theory, we have to prove it by induction on the vector.
 \end{proof}
@@ -84,7 +84,7 @@ Theory, we have to prove it by induction on the vector.
 \begin{defn}
 \noindent We define \(all\) as a predicate of vector such that it is
 true if and only if all the elements in the vector satisfy a given
-predicate \(P\). 
+proposition \(P\). 
 \end{defn}
 
 \par It is defined in Agda as follow:
@@ -101,17 +101,13 @@ elements in \(A\) satisfy \(P\).
 \end{lem}
 
 \begin{proof}
-\noindent Again, the proof looks quite obvious. Since \(It\) contains all the
+\noindent Again, the proof is quite obvious. Since \(It\) contains all the
 elements of \(A\), the statement must be true. However, in Type
 Theory, we have to prove it by induction on the vector.
 \end{proof}
 
-\par Apart from the above lemmas, the vector representation also allows
-us to get some useful proofs when we are arguing the size of a
-vector. 
 
-
-\subsection{Languages}
+\section{Languages}
 \par The type of languages is defined in \textbf{Language.agda} along with its 
 operations and lemmas such as union (\(\cup\)), concatenation
 (\(\bullet\)) and closure (\(\star\)). 
@@ -141,7 +137,8 @@ Note that \(Subset\) instead of \(DecSubset\) is used because not
 every language is decidable. 
 \end{defn}
 
-\subsubsection{Operations on Languages}
+
+\subsection{Operations on Languages}
 
 \begin{defn} 
 \label{defn:lang_union}
@@ -164,10 +161,18 @@ L_2 \times w \equiv u\ \Plus\Plus\  v )\).
 \begin{defn}
 \label{defn:lang_power}
 \noindent Suppose \(L\) is a language, then we define \(L^n\) as
-the concatenation of \(L\) with itself over \(n\) times, i.e. \(L^n =
-L\bullet L\bullet L ... L\). In Type Theory, it is defined as a recursive function where \(L \wedge zero = [\![\epsilon ]\!]\) and
-\(L \wedge (suc\ n) = L \bullet (L \wedge n)\). 
+the concatenation of \(L\) with itself over \(n\) times. In Type
+Theory, it is defined as a recursive function where \(L^0 = \epsilon\) and
+\(L^{k+1}) = L \bullet (L^n)\). 
 \end{defn}
+
+\par In Agda, it is defined as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+_$\wedge$_ : Language $\to$ $\mathbb N$ $\to$ Language
+L $\wedge$ zero = [ [] ]
+L $\wedge$ (suc n) = L $\bullet$ L $\wedge$ n
+\end{lstlisting} 
+
 
 \begin{defn}
 \label{defn:lang_star}
@@ -178,7 +183,7 @@ Theory, we have \(L\ \star = \lambda\ w \to \exists [\ n \in \mathbb{N}\
 \end{defn}
 
 
-\subsection{Regular Expressions and Regular Languages}
+\section{Regular Expressions and Regular Languages}
 \par The types of regular expressions and regular languages are defined in
 \textbf{RegularExpression.agda}. 
 
@@ -192,7 +197,7 @@ Theory, we have \(L\ \star = \lambda\ w \to \exists [\ n \in \mathbb{N}\
   \item if \(e_{1}\) and \(e_{2}\) are regular expressions denoting the regular
     languages \(L_1\) and \(L_2\) respectively, then
     \begin{enumerate}[nolistsep]
-      \item \(e_{1}\ |\ e_{2}\) is a regular expressions denoting the
+      \item \(e_{1}\ |\ e_{2}\) is a regular expression denoting the
         regular language \(L_1 \cup L_2\);
       \item \(e_{1}\cdot e_{2}\) is a regular expression denoting the
         regular language \(L_1\bullet L_2\);
@@ -211,7 +216,7 @@ data RegExp : Set where
   $\sigma$    : $\Sigma$ $\to$ RegExp
   _|_ : RegExp $\to$ RegExp $\to$ RegExp
   _$\cdot$_  : RegExp $\to$ RegExp $\to$ RegExp
-  _$^*$  : RegExp $\to$ RegExp
+  _$^*$   : RegExp $\to$ RegExp
 \end{lstlisting} 
 
 \par The accepting language of regular expressions is defined as

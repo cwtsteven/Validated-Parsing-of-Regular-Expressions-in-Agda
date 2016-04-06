@@ -21,6 +21,7 @@ open import RegularExpression Σ dec
 open import eNFA Σ dec
 open import NFA Σ dec
 open import DFA Σ dec
+open import MDFA Σ dec
 open import Translation Σ dec
 
 {- ∀e∈RegExp. L(e) = L(regexToε-NFA e) -}
@@ -75,13 +76,6 @@ Lᴿ≈Lᴹ e = ≈-trans (Lᴿ≈Lᵉᴺ e) (≈-trans (Lᵉᴺ≈Lᴺ ε-nfa) 
     dfa = regexToDFA e
     mdfa : DFA
     mdfa = regexToMDFA e
-
-
-{- Definition of Minimal DFA -}
-Minimal : DFA → Set
-Minimal dfa = All-Reachable-States dfa × Irreducible dfa
-  where
-    open import Correctness.DFA-MDFA Σ dec
 
 
 {- ∀dfa∈DFA. minimise(dfa) is Minimal -}

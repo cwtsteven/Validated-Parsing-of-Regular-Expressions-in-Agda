@@ -1,9 +1,9 @@
-\section{Agda}
+\chapter{Agda}
 \par Agda is a dependently-typed functional programming language and a
 proof assistant based on Intuitionistic Type Theory
 \cite{martin1984}. The current version (Agda 2) is rewritten by Norell
 \cite{norell2007} during his doctorate study at the Chalmers University of
-Technology. In this section, we will describe the basic features of
+Technology. In this chapter, we will describe the basic features of
 Agda and how dependent types are employed to construct programs and
 proofs. Most of the materials presented below can also be
 found in the two tutorial papers \cite{bove2009} and
@@ -12,7 +12,7 @@ a more precise idea on how to work with Agda. We will begin by
 showing how to do ordinary functional programming in Agda. 
 
 
-\subsection{Simply Typed Functional Programming}
+\section{Simply Typed Functional Programming}
 \par Haskell is the implementation language
 of Agda and as shown below, Agda has borrowed many features from
 Haskell. In the following paragraphs, we will demonstrate how to
@@ -90,14 +90,14 @@ to constrain the argument using dependent types such that the input
 list will always have at least one element. 
 
 
-\subsection{Dependent Types}
+\section{Dependent Types}
 \par A dependent type is a type that depends on values of other
 types. For example, \mb{A^n} is a vector that contains \mb{n} elements
-of \mb{A}. It is not possible to declare these kinds of types in
+of \mb{A}. It is impossible to declare these kinds of types in
 simply-typed systems like Haskell\footnotemark and Ocaml. Now, let
 us look at how it is declared in Agda.
-\footnotetext{Haskell itself does not support dependent types by
-  its own. However, there are several APIs in Haskell that simulates
+\footnotetext{Haskell does not support dependent types by
+  its own. However, there are several APIs that simulate
   dependent types, for example, Ivor \cite{ivor2016} and
   GADT.}
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
@@ -109,7 +109,7 @@ data Vec (A : Set) : $\mathbb N$ $\to$ Set where
 \par In the type signature, (\mb{\mathbb N \to Set}) means
 that \mb{Vec} takes a number \mb{n} from \mb{\mathbb N} and produces a
 type that depends on \mb{n}. The inductive family \mb{Vec} will
-produce different types with different natural numbers. For example, (\mb{Vec\ A\ zero}) is
+produce different types with different numbers. For example, (\mb{Vec\ A\ zero}) is
 the type of empty vectors and (\mb{Vec\ A\ 10}) is another vector type with length ten. 
 
 \par Dependent types allow us to be more
@@ -125,13 +125,13 @@ an element of the type (\mb{Vec\ A\ (suc\ n)}) must be in the form of
 (\mb{x :: xs}). Apart from vectors, a type of binary
 search tree can also be declared in which any tree of this type is guaranteed to be
 sorted. Interested readers can take a look at 
-Section 6 in \cite{bove2009}. Furthermore, dependent types also allow
+Chapter 6 in \cite{bove2009}. Furthermore, dependent types also allow
 us to encode predicate logic and program specifications as
 types. These two applications will be described in later part after we
 have discussed the idea of propositions as types. 
 
 
-\subsection{Propositions as Types}
+\section{Propositions as Types}
 \par In the 1930s, Curry identified the
 correspondence between propositions in propositional logic and types
 \cite{curry1934}. After that, in the 1960s, de Bruijn and Howard extended
@@ -147,7 +147,7 @@ is a fundamental difference between them. Interested readers can take a look at
 \cite{avigad2000}. Now, we will begin by showing how propositional
 logic is formalised in Agda. 
 
-\subsubsection{Propositional Logic} 
+\subsection{Propositional Logic} 
 \par In general, Curry's correspondence
 states that a proposition can be interpreted as a set of its proofs. A
 proposition is true if and only if its set of proofs is inhabited,
@@ -241,11 +241,11 @@ prop-lem f g = $\lambda$ p $\to$ g (f p)
 \end{lstlisting} 
 
 \par By completing the function, we have provided an element
-to the type \mb{(P \to Q) \to (Q \to R) \to (P \to R)} and thus, we have
+to the type \mb{(P \to Q) \to (Q \to R) \to (P \to R)} and thus we have
 also proved the theorem to be true. 
 
 
-\subsubsection{Predicate Logic} 
+\subsection{Predicate Logic} 
 \par We will now move on to predicate logic and
 introduce the universal (\mb{\forall}) and existential (\mb{\exists})
 quantifiers. Suppose \(A\) is a set, then a predicate on \(A\) corresponds to a dependent type in the
@@ -277,7 +277,7 @@ lem$_1$ (suc n) with lem$_1$ n
 
 \paragraph{Existential Quantifier} The interpretation of the
 existential quantifier is similar to that of conjunction. In order for
-\mb{\exists x\in A.\ B(x)} to be true, a proof \mb{x} of \mb{A}, and a proof of the predicate
+\mb{\exists x\in A.\ B(x)} to be true, a proof \mb{x} of \mb{A} and a proof of the predicate
 \mb{B[a:=x]} must be provided. In Type Theory, it is represented by the generalised
 product type \mb{\Sigma}. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
@@ -287,14 +287,14 @@ data $\Sigma$ (A : Set) (B : A $\to$ Set) : where
 
 \par For simplicity, we will change the syntax of \mb{\Sigma} type to
 \mb{\exists [ x \in A ]\ B\ x}. As an example, let us prove that
-there exists an even natural number. 
+there exists an even number. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 lem$_2$ : $\exists$[ n $\in$ $\mathbb N$ ] (n isEven)
 lem$_2$ = zero , base
 \end{lstlisting}
 
 
-\subsubsection{Decidability} 
+\subsection{Decidability} 
 \par A proposition is decidable if and only if there
 exists an algorithm that can decide whether the proposition is true or false. It is
 defined in Agda as follow: 
@@ -307,14 +307,11 @@ data Dec (A : Set) : Set where
 \par For example, we can prove that the predicate of even numbers is
 decidable. Interested readers can try and complete the following proofs. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
-lem$_3$ : $\forall$ n $\to$ $\neg$ (n isEven $\times$ n isOdd)
-lem$_3$ = ?
+postulate lem$_3$ : $\forall$ n $\to$ $\neg$ (n isEven $\times$ n isOdd)
 
-lem$_4$ : $\forall$ n $\to$ n isEven $\to$ $\neg$ ((suc n) isEven)
-lem$_4$ = ?
+postulate lem$_4$ : $\forall$ n $\to$ n isEven $\to$ $\neg$ ((suc n) isEven)
 
-lem$_5$ : $\forall$ n $\to$ $\neg$ (n isEven) $\to$ (suc n) isEven
-lem$_5$ = ?
+postulate lem$_5$ : $\forall$ n $\to$ $\neg$ (n isEven) $\to$ (suc n) isEven
 
 even-dec : $\forall$ n $\to$ Dec (n isEven)
 even-dec zero = yes base
@@ -324,7 +321,7 @@ even-dec (suc n) with even-dec n
 \end{lstlisting} 
 
 
-\subsubsection{Propositional Equality} 
+\subsection{Propositional Equality} 
 \par One of the important features of Type Theory is
 to encode the equality relation of propositions as types. The
 equality relation is interpreted as follow:
@@ -335,8 +332,8 @@ data _$\equiv$_ {A : Set} (x : A) : A $\to$ Set where
 
 \par This states that for any \mb{x} in \mb{A}, \mb{refl} is an
 element of the type \mb{x \equiv x}. More generally, \mb{refl} is a
-proof of \mb{x \equiv x'} provided that \mb{x} and \mb{x'} is the same
-after normalisation. For example, we can prove that \mb{suc\ (suc\ zero) = 1 + 1} as follow:
+proof of \mb{x \equiv x'} provided that \mb{x} and \mb{x'} are the same
+after normalisation. For example, we can prove that \mb{suc\ (suc\ zero) \equiv 1 + 1} as follow:
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 lem$_3$ : suc (suc zero) $\equiv$ (1 + 1)
 lem$_3$ = refl
@@ -359,12 +356,12 @@ cong f refl = refl
 \end{lstlisting}
 
 
-\subsection{Program Specifications as Types}
+\section{Program Specifications as Types}
 \par As we have mentioned before, dependent types also allow us to encode program
 specifications within the same platform. In order to demonstrate the
 idea, we will give an example on the insertion function of sorted
 lists. Let us begin by defining a predicate
-of sorted list (in ascending order). For simplicity, we only consider the list of natural
+of sorted list (in ascending order). For simplicity, we will only consider the list of natural
 numbers. 
 \begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
 All$\hyphen$lt : $\mathbb N$ $\to$ List $\mathbb N$ $\to$ Set
@@ -405,59 +402,3 @@ insert$\hyphen$sorted : $\forall$ {n} {as}
 post-condition. Once we have completed the
 function, we will have also proved the specification to be
 true. Readers are recommended to finish the proof. 
-
-
-
-\newpage
-\section{Related Work}
-\par In this section, we will describe some researches that also aim
-to formalise Automata Theory in Agda. Apart from using Agda, there are
-many other researches that do the formalisation in other proof
-assistant, For example, Doczkal et al. \cite{doczkal2013}
-translated regular expressions into minimal DFA and proved the
-correctness of the translation in Coq. However, we will only 
-focus on the researches that used the same formalisation platform. 
-
-
-\subsection{Regular Expressions in Agda}
-\par Agular and Mannaa published a
-similar work \cite{agular2009} in 2009. They constructed a decider for
-regular expressions which can determine whether
-a given string is accepted by a given regular expression. The decider
-was implemented by converting a regular expression into a
-partial automaton. Here is the type signature of the decider: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
-accept : (re : RegExp) $\to$ (as : List carrier) $\to$ Maybe (as $\in\smile [\![ re ]\!]$)
-\end{lstlisting}
-\par \(accept\) takes a regular expression \(re\) and a list of
-alphabets \(as\) as the arguments. If the string \(as\) is accepted
-by the regular expression \(re\), i.e. \mb{as
-  \in L(re)}, the decider will return its proof. However it fails to generate a
-proof for the opposite case, i.e. \mb{as \notin L(re)}. As they
-explained in the paper, it is not possible without converting the regular expression into
-the entire automaton. 
-
-
-\subsection{Certified Parsing of Regular Languages in Agda}
-\par While in 2013, Firsov and Uustalu published another related
-research paper \cite{firsov2013}. They translated regular expressions
-into NFA and proved that their accepting languages are
-equal. Unlike Agular and Mannaa's decider, Firsov and Uustalu's
-algorithm can generate proofs for both cases. In their definition of NFA, the set of states
-(\mb{Q}) and its subsets are represented as vectors; and the transition function
-(\mb{\delta}) takes an alphabet as the argument and returns a matrix
-representation of the transition table. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
-record NFA : Set where
-  field
-    |Q| : $\mathbb N$
-    $\delta$    : $\Sigma$ $\to$ |Q| $\ast$ |Q|
-    I   : 1 $\ast$ |Q|
-    F   : |Q| $\ast$ 1
-\end{lstlisting}
-
-\par Note that \mb{\_\ast\_} here is an inductive family that takes two
-natural numbers \mb{n} and \mb{m} and produces a matrix type of \mb{n
-  \times m}. This representation of sets allows us to
-iterate the sets easily but it looks unnatural compare to the actual 
-mathematical definition of NFA. 

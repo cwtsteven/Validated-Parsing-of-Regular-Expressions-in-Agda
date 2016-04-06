@@ -1,4 +1,4 @@
-\subsection{Deterministic Finite Automata}
+\section{Deterministic Finite Automata}
 \par The type of DFA is defined in \textbf{DFA.agda} along with its
 operations and properties. 
 
@@ -23,9 +23,9 @@ record DFA : Set$_1$ where
     $\delta$       : Q $\to$ $\Sigma$ $\to$ DecSubset Q
     q$_0$      : Q
     F      : DecSubset Q
-    _$\approx$_ : Q $\to$ Q $\to$ Set
+    _$\approx$_     : Q $\to$ Q $\to$ Set
     $\approx\hyphen$isEquiv : IsEquivalence _$\approx$_
-    $\delta\hyphen$lem   : $\forall$ {q} {p} a $\to$ q $\approx$ p $\to$ $\delta$ q a $\approx$ $\delta$ p a
+    $\delta\hyphen$lem    : $\forall$ {q} {p} a $\to$ q $\approx$ p $\to$ $\delta$ q a $\approx$ $\delta$ p a
     F$\hyphen$lem   : $\forall$ {q} {p}   $\to$ q $\approx$ p $\to$ q $\in^d$ F $\to$ p $\in^d$ F
 \end{lstlisting}
 
@@ -102,13 +102,10 @@ accepting language of an DFA is given by the set \(\{w\ |\ \exists q\in F.\ (q_0
             $\exists$[ q $\in$ Q ] (q $\in^d$ F $\times$ (q$_0$ , w) $\vdash^*$ (q , [])))
 \end{lstlisting} 
 
-\par Now we can formulate the translation of NFA to DFA
-by powerset construction. 
 
-
-\subsection{Powerset Construction}
-\par The translation of NFA to DFA is defined in
-\textbf{Translation/NFA-DFA.agda}. 
+\section{Powerset Construction}
+\par The translation of NFA to DFA is defined as the function
+\textbf{powerset-construction} in \textbf{Translation/NFA-DFA.agda}. 
 
 \begin{defn}
 \label{defn:powerset}
@@ -120,8 +117,15 @@ translated DFA will be \((\mathcal P \left({Q}\right),\ \delta',\ \{q_0\},\ F')\
 \end{itemize}
 \end{defn}
 
-\par Now, before proving their accepting languages are equal, we 
-need to prove the following lemmas first. The theorems and proofs below can be found in
+\par In Agda, the set \(\mathcal P \left({Q}\right)\) is defined as
+the set of decidable subsets, i.e. \(Q' = DecSubset Q\). Therefore,
+the decidability of the set \(\delta'(qs,a)\) and \(F'\) must be
+proved using the vector represenation of \(Q\). The corresponding
+proofs are defined in the module \textbf{Powerset-Construction} in the
+same file. 
+
+\par Now, before proving that their accepting languages are equal, we 
+need to prove the following lemmas which can be found in
 \textbf{Correctness/NFA-DFA.agda}. 
 
 \begin{lem}
@@ -134,6 +138,9 @@ F')\) according to \autoref{defn:powerset}. For any string \(w\), if \(w\) can t
 i.e. \(\forall w.\exists q.\exists n.\ (q_0,w) \vdash^n (q,w) \Rightarrow
 \exists qs.\ q \in qs \wedge ({q_0},w) \vdash^* (qs,\epsilon)\). 
 \end{lem}
+
+\par The proof is defined as the function \mmb{lem_1} under the module
+\mmb{L^N\!\subseteq L^D}. 
 
 \begin{proof}
 \noindent We can prove the lemma by induction on \(n\).
@@ -163,6 +170,9 @@ number \(n\) and any two states \(qs\) and \(ps\) in \(\mathcal P \left({Q}\righ
 \((qs,w) \vdash^n (ps,\epsilon)\) then \(ps =
 \{p\ |\ \exists q\in qs.\ (q,w) \vdash^n (p,\epsilon)\}\). 
 \end{lem}
+
+\par The proof is defined as the function \mmb{lem_2} under the module
+\mmb{L^N\!\supseteq L^D}. 
 
 \begin{proof}
 \noindent We can prove the lemma by induction on \(n\). 
@@ -206,7 +216,10 @@ exists a state \(q \in qs\) such that \(r \in \delta (q,a)\). Therefore,
 \end{proof}
 
 \par Now, by using the above lemmas, we can prove the correctness of
-the translation by proving that their accepting languages are equal. 
+the translation by proving that their accepting languages are
+equal. The correctness proof is defined as the function \mmb{L^N
+  \!\approx\! L^D} in \textbf{Correctness.agda} while the detail
+proofs are defined in \textbf{Correctness/NFA-DFA.agda}. 
 
 \begin{thm}
 \noindent For any NFA, its accepting language is equal to
@@ -240,14 +253,15 @@ qs\). Therefore, \(w\) must be able to take \(q_0\) to \(q\) in \(N\) and thus \
 \end{proof}
 
 
-\subsection{Decidability of DFA and Regular Expressions}
+\section{Decidability of DFA and Regular Expressions}
 \par Recall that the accepting language of a DFA is given by the set
 \(\{w\ |\ \exists q\in F.\ (q_0,w) \vdash^* (q,\epsilon)\}\), which is
 equivalent to the set \(\{w\ |\ \exists q\in F.\ \exists n.\ (q_0,w) \vdash^n (q,\epsilon)\}\). 
 Its decidability cannot be proved directly because the set of natural
 numbers is infinite. Therefore, we have to
 introduce another representation and prove
-that they are equivalent. The representation and the proofs can be found in \textbf{DFA.agda}. 
+that they are equivalent. The representation and the related lemmas are
+defined under the module \textbf{DFA-Operations} in \textbf{DFA.agda}. 
 
 \begin{defn}
 \noindent We define a function \(\delta^*(q,w)\) that takes a state \(q\) and
@@ -314,6 +328,8 @@ exists a state \(q' \in F\) and a number \(k\) such that \((q,aw) \vdash^{k+1}
 \(w\), \(\delta_0 (w) \in F\) if and only if \(\exists q\in F.\ (q_0,w) \vdash^* (q,\epsilon)\).
 \end{lem}
 
+\par The proof is defined as the function \mb{\delta_0\!-lem_1}. 
+
 \begin{proof}
 \noindent Since \(\delta_0(w) = \delta^*(q_0,w)\); therefore, by
 \autoref{lem:dec_iff}, \(\delta_0(w) \in F\) if and only if \(\exists
@@ -321,7 +337,8 @@ q\in F.\ (q_0,w) \vdash^* (q,\epsilon)\).
 \end{proof}
 
 \par Now, we can prove that the accepting language of a given DFA is
-decidable by using the above theorems. 
+decidable by using the above theorems. The proof is
+defined as the function \textbf{Dec-L\(^D\)} in \textbf{DFA.agda}. 
 
 \begin{thm}
 \noindent For any DFA, its accepting language is decidable,
@@ -338,8 +355,8 @@ decidable.
 
 \par Since we have also proved that the accepting language of regular
 expressions and DFA are equal; therefore, the accepting language of
-regular expression must also be decidable. The proof is defined in
-\textbf{RegExp-Decidability.agda}. 
+regular expression must also be decidable. The proof is defined as the
+function \textbf{Dec-L\(^R\)} in \textbf{RegExp-Decidability.agda}. 
 
 \begin{thm}
 \noindent For any given regular expression, \(e\), its accepting language is

@@ -12,18 +12,19 @@
 \begin{document}
 \maketitle
 
+
 \abstract
 \par In this project, we intend to study the feasibility of
-formalising a certified translation of regular expressions to finite automata in Type
+constructing a certified translation algorithm of regular expressions to finite automata in Type
 Theory. The translation consists of several steps: regular expressions
 to \(\epsilon\)-NFA using Thompson's
 construction; \(\epsilon\)-NFA to NFA by removing
 \(\epsilon\)-transitions; DFA to DFA by powerset construction; and DFA
 to MDFA by removing unreachable states and quotient construction. The
 correctness of the translation is obtained by
-showing that their accepting languages of are equal. The above
+showing that their accepting languages are equal. The above
 translation and its correctness proofs are formalised in Agda -- a
-dependently-typed functional programming language. 
+dependently-typed functional programming language based on Type Theory. 
 \\ \\
 Keywords: regular expression, finite automata, type theory, agda
 
@@ -39,52 +40,45 @@ encouragement and valuable advises on this project.
   https://codex.cs.bham.ac.uk/svn/projects/2015/wtc488/
 \end{center}
 
-\newpage
-\section*{List of Abbreviations}
-\addcontentsline{toc}{section}{List of Abbreviations}
+\chapter*{List of Abbreviations}
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+\let\cleardoublepage\clearpage
 \begin{tabular}{ll}
   \textbf{\(\epsilon\)-NFA} & Non-deterministic Finite Automaton with
                               \(\epsilon\)-transition \\
   \textbf{NFA} & Non-deterministic Finite Automaton \\
   \textbf{DFA} & Deterministic Finite Automaton \\
-  \textbf{RDFA} & Deterministic Finite Automaton that all states are
+  \textbf{RDFA} & Deterministic Finite Automaton in which all its states are
                   Reachable \\
   \textbf{MDFA} & Minimised Deterministic Finite Automaton
 \end{tabular}
-\newpage
 
-\newpage
-\setcounter{tocdepth}{3}
+%\setcounter{tocdepth}{3}
 \tableofcontents
 
-\newpage
 \input{introduction}
 
-\newpage
 \input{background}
 
-\newpage
 \input{formalisation}
 
-\newpage
+\input{structure}
+
 \input{extensions}
 
-\newpage
 \input{evaluation}
 
-\newpage
 \input{conclusion}
 
-\newpage
-\section*{Bibliography}
 \nocite{*}
-\addcontentsline{toc}{section}{Bibliography}
+\addcontentsline{toc}{chapter}{Bibliography}
 \bibliographystyle{plain}
 \bibliography{references}
 
-\newpage
-\section*{Appendix I -- File Description}
-\addcontentsline{toc}{section}{Appendix I -- File Description}
+
+\begin{appendices}
+\chapter{File description}
+
 \par There are two directories in the .zip file: 1) \textbf{Code} and 2)
 \textbf{web}. The \textbf{Code} directory contains all the
 \textbf{.agda} files. In order to compile these files, first install
@@ -101,5 +95,6 @@ from the agda files. Readers are recommended to read the html files
 instead of the agda files especially for those who do not have Agda
 installed. The \textbf{Parsing-Regular-Expressions-in-Agda.html} is
 the index file that contains the links to all other html files. 
+\end{appendices}
 
 \end{document}

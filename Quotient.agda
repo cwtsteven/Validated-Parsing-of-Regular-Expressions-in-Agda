@@ -47,10 +47,10 @@ module Quot-Properties (quot : QuotientSet) where
   ... | no  prf = ⊥-elim (prf (IsEquivalence.refl ∼-isEquiv))
 
 
-  data Quot-Set : Set where
-    class : ∀ qs → Σ[ q ∈ Q ] (qs ≈ᵈ ⟪ q ⟫) → Quot-Set
+  data Q/~ : Set where
+    class : ∀ qs → Σ[ q ∈ Q ] (qs ≈ᵈ ⟪ q ⟫) → Q/~
 
-  _≋_ : Quot-Set → Quot-Set → Set
+  _≋_ : Q/~ → Q/~ → Set
   (class qs (q , prf)) ≋ (class qs' (q' , prf')) = q ∼ q'
 
   ≋-refl : Reflexive _≋_
@@ -62,7 +62,7 @@ module Quot-Properties (quot : QuotientSet) where
   ≋-trans : Transitive _≋_
   ≋-trans {class qs (q , prf)} {class qs' (q' , prf')} {class qs'' (q'' , prf'')} q≋q' q'≋q'' = IsEquivalence.trans ∼-isEquiv q≋q' q'≋q''
     
-  ≋-isEquiv : IsEquivalence {A = Quot-Set} _≋_
+  ≋-isEquiv : IsEquivalence {A = Q/~} _≋_
   ≋-isEquiv = record { refl = λ {q} → ≋-refl {q} ; sym = λ {q} {q'} → ≋-sym {q} {q'} ; trans = λ {q} {q'} {q''} → ≋-trans {q} {q'} {q''} }
   
 
