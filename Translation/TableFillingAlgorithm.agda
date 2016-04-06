@@ -25,7 +25,7 @@ open import Subset.DecidableSubset
 open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_ ; tail to tailⱽ)
 open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 open import Language Σ dec
-open import MDFA Σ dec
+open import MinimalDFA Σ dec
 
 open DFA.DFA Σ dec dfa
 open DFA.DFA-Operations Σ dec dfa

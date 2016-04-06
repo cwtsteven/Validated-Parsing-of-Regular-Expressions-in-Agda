@@ -44,6 +44,7 @@ open import Translation.RegExp-eNFA
 open import Translation.eNFA-NFA
 open import Translation.NFA-DFA
 open import Translation.DFA-MDFA
+open import Translation.TableFillingAlgorithm
 
 -- Correctness Proof of Translation
 open import Correctness
