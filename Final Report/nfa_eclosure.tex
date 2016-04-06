@@ -1,0 +1,265 @@
+\subsection{Non-deterministic Finite Automata}
+\par Although the definition of NFA is very similar to that of
+\(\epsilon\)-NFA, we will still define NFA
+separately. The type of NFA is defined in \textbf{NFA.agda} along with
+its operations and properties. 
+
+\begin{defn}
+\noindent A NFA is a 5-tuple \(M = (Q
+,\ \Sigma,\ \delta,\ q_0,\ F)\), where
+\begin{enumerate}[nolistsep]
+  \item \(Q\) is a finite set of states;
+  \item \(\Sigma\) is the set of alphabets;
+  \item \(\delta\) is a mapping from \(Q \times \Sigma\) to
+    \(\mathcal P \left({Q}\right)\) that defines the behaviour of the automata;
+  \item \(q_0\) in \(Q\) is the initial state;
+  \item \(F \subseteq Q\) is the set of accepting states. 
+\end{enumerate}
+\end{defn}
+
+\par It is formalised as a record in Agda as shown below: 
+
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+record NFA : Set$_1$ where
+  field
+    Q      : Set
+    $\delta$       : Q $\to$ $\Sigma$ $\to$ DecSubset Q
+    q$_0$      : Q
+    F      : DecSubset Q
+    Q?     : DecEq Q
+    |Q|-1  : $\mathbb{N}$
+    It     : Vec Q (suc |Q|-1)
+    $\forall$q$\in$It    : (q : Q) $\to$ (q $\in^V$ It)
+    unique : Unique It
+\end{lstlisting}
+
+\par The set of alphabets \(\Sigma\) is passed into the module as a
+parameter. Together with \(Q\), \(\delta\),
+\(q_0\) and \(F\), these five fields correspond to the 5-tuple
+NFA. The other extra fields are used in powerset construction. They
+are \(Q?\) -- the decidable equality of \(Q\);
+\(|Q|-1\) -- the number of states minus 1; \(It\) -- a vector containing every state in \(Q\); \(\forall q\in It\)
+-- a proof that every state in \(Q\) is also in the vector
+\(It\); and \(unique\) -- a proof that there is no repeating elements in
+\(It\). 
+
+\par Now, before we can define the accepting language of a given
+NFA, we need to define several operations of NFA. 
+
+\begin{defn}
+\noindent A configuration is composed of a state and an alphabet from
+\(\Sigma\), i.e. \(C = Q \times \Sigma\). 
+\end{defn}
+
+\begin{defn}
+\noindent A move in an NFA is
+represented by a binary function (\(\vdash\)) on two configurations. We say
+that for all \(w \in \Sigma^*\) and \(a \in \Sigma\), \((q, aw)
+\vdash (q' , w)\) if and only if \(q' \in \delta (q , a)\). 
+\end{defn}
+
+\par The binary function is defined in Agda as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+  _$\vdash$_ : (Q $\times$ $\Sigma$ $\times$ $\Sigma^*$) $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
+  (q , a , w) $\vdash$ (q' , w') = w $\equiv$ w' $\times$ q' $\in^d$ $\delta$ q a
+\end{lstlisting}
+
+\begin{defn}
+\noindent Suppose \(C\) and \(C'\) are configurations. We say that \(C \vdash^0 C'\) if and only
+if \(C = C'\); and \(C_0 \vdash^k C_k\) for any \(k \geq 1\) if and only if there exists a chain of
+configurations \(C_1, C_2, ..., C_{k-1}\) such that \(C_i \vdash C_{i+1}\) for all \(0 \leq i < k\). 
+\end{defn}
+
+\par It is defined as a recursive function in Agda as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+  _$\vdash^k$_-_ : (Q $\times$ $\Sigma^*$) $\to$ $\mathbb{N}$ $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
+  (q , w) $\vdash^k$ zero  - (q' , w')
+    = q $\equiv$ q' $\times$ w $\equiv$ w'
+  (q , w) $\vdash^k$ suc n - (q' , w') 
+    = $\exists$[ p $\in$ Q ] $\exists$[ a $\in$ $\Sigma$ ] $\exists$[ u $\in$ $\Sigma^*$ ]
+      (w $\equiv$ a :: u $\times$ (q , a , u) $\vdash$ (p , u) $\times$ (p , u) $\vdash^k$ n - (q' , w'))
+\end{lstlisting}
+
+\begin{defn}
+\noindent We say that \(C \vdash^* C'\) if and only
+if there exists a number of chains \(n\) such that \(C \vdash^n C'\). 
+\end{defn}
+
+\par Its corresponding type is defined as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+  _$\vdash^*$_ : (Q $\times$ $\Sigma^*$) $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
+  (q , w) $\vdash^*$ (q' , w') = $\exists$[ n $\in$ $\mathbb{N}$ ] (q,w) $\vdash^k$ n - (q',w')
+\end{lstlisting}
+
+\begin{defn}
+\noindent For any string \(w\), it is accepted by an NFA
+if and only \(w\) can take \(q_0\) to an accepting state \(q\). Therefore, the
+accepting language of an NFA is given by the set \(\{w\ |\ \exists q\in F.\ (q_0,w) \vdash^* (q,\epsilon)\}\). 
+\end{defn}
+
+\par The corresponding formalisation in Agda is as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+  L$^N$ : NFA $\to$ Language
+  L$^N$ nfa = $\lambda$ w $\to$ 
+            $\exists$[ q $\in$ Q ] (q $\in^d$ F $\times$ (q$_0$ , w) $\vdash^*$ (q , [])))
+\end{lstlisting} 
+
+
+\subsection{Removing \(\epsilon\)-transitions}
+\par The translation of \(\epsilon\)-NFA to NFA is defined in
+\textbf{Translation/eNFA-NFA.agda}. In order to remove all the \(\epsilon\)-transitions, we need to
+know whether a state \(q\) can reach another state \(q'\) with only
+\(\epsilon\)-transitions. Let us begin by defining such a relation on states. 
+
+\begin{defn}
+\noindent We say that
+\(q \to_\epsilon^0 q'\) if and only if
+\(q\) is equal to \(q'\); and \(q \to_\epsilon^k q'\) for \(k \geq
+1\) if and only if \(q\) can be transited to \(q'\) with \(k\)
+\(\epsilon\)-transitions. We call this an \(\epsilon\)-path from \(q\) to \(q'\).
+\end{defn}
+
+\par It is defined as a recursive function in Agda as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+_$\to_\epsilon^k$_-_ : Q $\to$ $\mathbb{N}$ $\to$ Q $\to$ Set
+q $\to_\epsilon^k$ zero - q' = q $\equiv$ q'
+q $\to_\epsilon^k$ suc n - q' = $\exists$[ p $\in$ Q ] ( p $\in^d$ $\delta$ q E $\times$ p $\to_\epsilon^k$ n - q' )
+\end{lstlisting}
+
+\begin{defn}
+\noindent We say that \(q \to_\epsilon^* q'\) if and only if there
+exists an \(\epsilon\)-path from \(q\) to \(q'\) with \(n\) transitions, i.e. \(\exists n.\ q \to_\epsilon^n q'\). 
+\end{defn}
+
+\par The corresponding type is as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+_$\to_\epsilon^*$_ : Q $\to$ Q $\to$ Set
+q $\to_\epsilon^*$ q' = $\exists$[ n $\in$ $\mathbb{N}$ ] q $\to_\epsilon^k$ n - q'
+\end{lstlisting}
+
+\par Now we have to prove that for any two states \(q\) and \(q'\), 
+\(q \to_\epsilon^* q'\) is decidable. However, it is not possible to
+prove it directly because the set of natural numbers is
+infinite. Therefore, we will introduce an algorithm that computes the
+\(\epsilon\)-closure of a state. The \(\epsilon\)-closure of a state
+\(q\), \(\epsilon\hyphen closure(q)\) should contain all the states
+that are reachable from \(q\) with only \(\epsilon\)-transitions. We will prove that for any two states
+\(q\) and \(q'\), \(q \to_\epsilon^* q'\) if and only if \(q' \in \epsilon\hyphen closure(q)\). By proving that they are equivalent, we
+will have proved the decidability of \(q \to_\epsilon^* q'\). 
+
+\begin{defn}
+\noindent For any given state \(q\), \(\epsilon\hyphen closure(q)\) is obtained by: 
+\begin{enumerate}[nolistsep]
+  \item put \(q\) into a subset \(S\), i.e. \(S = \{q\}\)
+  \item loop for \(|Q| - 1\) times: 
+  \begin{enumerate}
+    \item for every state \(p\) in \(S\), if \(\epsilon\) can take
+      \(p\) to another state \(r\), i.e. \(r \in
+        \delta (p,\epsilon)\), then put \(r\) into \(S\). 
+  \end{enumerate}
+  \item the result subset \(S\) is the \(\epsilon\)-closure of \(q\)
+\end{enumerate}
+\end{defn}
+
+\begin{lem}
+\noindent For any two states \(q\) and \(q'\), \(q \to_\epsilon^* q'\)
+if and only if \(q' \in \epsilon\hyphen closure(q)\). 
+\end{lem}
+
+\begin{proof}
+\noindent We have to prove for both directions. 
+\par \noindent 1) If \(q \to_\epsilon^* q'\), then there must exist a
+number \(n\) such that \(\epsilon^n\) can take \(q\) to \(q'\). If
+\(n < |Q|\), then it is obvious that \(q' \in
+\epsilon\hyphen closure(q)\) is true. If \(n \geq |Q|\), the
+\(\epsilon\)-path from \(q\) to \(q'\) must have loop(s) inside. By
+removing the loop(s), the equivalent \(\epsilon\)-path must have at
+most \(|Q|-1\) \(\epsilon\)-transitions. Therefore, \(q' \in
+\epsilon\hyphen closure(q)\) is true. 
+
+\par \noindent 2) If \(q' \in \epsilon\hyphen closure(q)\), it is obvious
+that \(q \to_\epsilon^{|Q|-1} q'\) must be true and thus \(q
+\to_\epsilon^* q'\) is true. 
+\end{proof}
+
+\par Since we have proved that they are equivalent; therefore the
+decidability of \(q \to_\epsilon^* q'\) follows. Now, let us define
+the translation of \(\epsilon\)-NFA to NFA using \(q \to_\epsilon^* q'\). 
+ 
+\begin{defn}
+\label{defn:remove_epsilon}
+\noindent For a given \(\epsilon\)-NFA, \((Q,\ \delta,\
+q_0,\ F)\), its translated NFA will be \((Q,\ \delta',\ q_0,
+F')\) where
+\begin{itemize}[nolistsep]
+  \item \(\delta'(q,a) = \delta (q,a) \cup \{q'\ |\ \exists p.\
+      q \to_\epsilon^* p \wedge q' \in \delta (p,a)\}\);
+  \item \(F' = F \cup \{q\ |\ \exists p\in F.\ q \to_\epsilon^* p\}
+    \). 
+\end{itemize}
+\end{defn}
+
+\par Now, let us prove the correctness of the above translation by proving their accepting languages
+are equal. The correctness proofs can be found in \textbf{Correctness/eNFA-NFA.agda}.
+
+\begin{thm}
+\noindent For any \(\epsilon\)-NFA, its accepting language is equal to
+the language accepted by its translated NFA, i.e. \(L(\epsilon\)-NFA\()
+= L(\)translated NFA\()\). 
+\end{thm}
+
+\begin{proof}
+\noindent Let the \(\epsilon\)-NFA be \(\epsilon N = (Q,\ \delta,\ q_0,\
+F)\), and its translated NFA be \(N = (Q,\ \delta',\ q_0,\ F')\)
+according to \autoref{defn:remove_epsilon}. To
+prove the theorem, we have to prove that \(L(\epsilon N) \subseteq
+L(N)\) and \(L(\epsilon N) \supseteq L(N)\). Then for any string \(w\), 
+
+\par \noindent 1) if \(\epsilon N\) accepts \(w\), then there must exist an
+\(\epsilon\)-string of \(w\), \(w^e\), that can take \(q_0\) to an
+accepting state \(q\) with \(n\) transitions. There are three
+possibilities: a) the last transition in the path is not an
+\(\epsilon\)-transition, b) the path is divided into three parts, the
+first part from \(q_0\) to a state \(p\) with less than \(n\)
+transitions; the second part from \(p\) to a state \(p_1\) with an
+alphabet \(a\) and the third part from \(p_1\) to \(q\) with only
+\(\epsilon\)-transitions and c) the path from \(q_0\)
+to \(q\) consists of only \(\epsilon\)-transitions.
+
+\par \textit{Case a}:\quad There must exist a state \(p\), an
+\(\epsilon\)-string \(u^e\), and an alphabet \(a\) such that \(u^e\)
+can take \(q_0\) to \(p\) in less than \(n\) transitions, \(q \in
+\delta(p,a)\) and \(w^e = u^ea\). Since that path from \(q_0\) to
+\(p\) is less than \(n\) transitions; therefore, we can prove by
+induction that the normal string of \(u^e\), \(u\), can take
+\(q_0\) to \(p\) in \(N\). Furthermore, \(w = ua\); therefore, \(w\) can
+take \(q_0\) to \(q\) in \(N\) and thus \(N\) accepts \(w\). 
+
+\par \textit{Case b}:\quad There must exist two states \(p\) and \(p_1\), an
+\(\epsilon\)-string of \(w\), \(u^e\), and an alphabet \(a\) such
+that \(u^e\) can take \(q_0\) to \(p\) in less than \(n\) transitions,
+\(p_1 \in \delta(p,a)\), \(p_1 \to_\epsilon^* q\) and \(w = ua\). Since that path from \(q_0\) to
+\(p\) is less than \(n\) transitions; therefore, we can prove by
+induction that the normal string of \(u^e\), \(u\), can take
+\(q_0\) to \(p\) in \(N\). Furthermore, \(p_1\) must be an accepting state in \(N\)
+because it can be transited to an accepting state \(q\) with only
+\(\epsilon\)-transitions. Therefore, \(w\) can take \(q_0\) to an
+accepting state \(p_1\) in \(N\) and thus \(N\) accepts \(w\). 
+
+\par \textit{Case c}:\quad If the path from \(q_0\)
+to \(q\) consists of only \(\epsilon\)-transitions, then \(q_0
+\to_\epsilon^* q\) is true; therefore, \(q_0\) is also an accepting
+state in \(N\). Furthermore, the accepted string consists of \(\epsilon\) only;
+therefore, \(w = \epsilon\). It is obvious that \(N\) accepts \(\epsilon\). 
+
+\par \noindent 2) if \(N\) accepts \(w\), then \(w\) must be able to take \(q_0\) to an
+accepting state \(q\). Since \(q\) is an accepting state, then \(q\)
+is also an accepting state in \(\epsilon N\) or there exists a state 
+\(p\) such that \(q \to_\epsilon^* p\) and \(p \in F\). For the former
+case, since \(w\) is also an \(\epsilon\)-string of itself; therefore,
+it is obvious that \(\epsilon N\) accepts \(w\). For the latter
+case, suppose the path from \(q\) to \(p\) has \(n\)
+\(\epsilon\)-transitions, the consider another \(\epsilon\)-string of
+\(w\), \(w\epsilon^n\), it can take \(q_0\) to \(p\) in
+\(\epsilon N\). Therefore \(\epsilon N\) accepts \(w\). 
+\end{proof}

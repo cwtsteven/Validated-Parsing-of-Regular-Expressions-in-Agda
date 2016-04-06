@@ -1,10 +1,9 @@
 \section{Introduction}
 \par This project aims to study the feasibility of formalising
-Automata Theory \cite{aho1972} in Type Theory \cite{martin1984}. 
-... [ small intro to type theory \(\to\) type theory and proof assistant and
-dependent types \(\to\) Agda will be used ] 
-
-\par Automata Theory is an extensive work; therefore, it will be unrealistic to
+Automata Theory \cite{aho1972} in Type Theory
+\cite{martin1984} with the aid of a dependently-typed functional
+programming language, Agda. Automata Theory is an extensive work;
+therefore, it will be unrealistic to
 include all the materials under the time constraints. Accordingly,
 this project will only focus on the theorems and
 proofs that are related to the translation of regular expressions
@@ -12,10 +11,30 @@ to finite automata. In addition, this project also serves as an
 example of how complex and non-trivial proofs are formalised. 
 
 \par Our Agda formalisation consists of two components: 1) the
-translation of regular expressions to DFA and 2)
+translation of regular expressions to a minimal DFA and 2)
 the correctness proofs of the translation. At this stage, we are only
 interested in the correctness of the translation but not the
 efficiency of the algorithms. 
+
+
+\subsection{Background}
+\par Type theory was introduced by Per Martin-L{\"o}f in
+1971 to provide an alternative foundation of mathematics based on the
+principles of mathematical constructivism where logic can be
+implemented using the theory. From another perspective, Type Theory is also a
+dependently-typed functional programming language. In order to bridge the gap between
+the theoretical representation of type theory and the requirements on
+a practical programming language, Norell \cite{norell2007} rewrote a
+dependently-typed language, Agda, based on Type Theory. Agda allows us
+to formalise mathematics and programming logic in Type Theory and to 
+check the formalisation automatically by using its type checker and termination
+checker. We will discuss the use of Agda in Section
+2 in details. 
+\par Automata Thoery is the study of abstract machines and
+automata. Automata are abstract models of machines that perform
+computations on an input by moving between its states. There
+are several major families of automaton but we will
+only focus on finite state machine or finite state automata. 
 
 
 \subsection{Motivation}

@@ -1,0 +1,352 @@
+\subsection{Deterministic Finite Automata}
+\par The type of DFA is defined in \textbf{DFA.agda} along with its
+operations and properties. 
+
+\begin{defn}
+\noindent A DFA is a 5-tuple \(M = (Q
+,\ \Sigma,\ \delta,\ q_0,\ F)\), where
+\begin{enumerate}[nolistsep]
+  \item \(Q\) is a finite set of states;
+  \item \(\Sigma\) is the set of alphabets;
+  \item \(\delta\) is a mapping from \(Q \times \Sigma\) to \(Q\) that defines the behaviour of the automata;
+  \item \(q_0\) in \(Q\) is the initial state;
+  \item \(F \subseteq Q\) is the set of accepting states. 
+\end{enumerate}
+\end{defn}
+
+\par It is formalised as a record in Agda as shown below: 
+
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+record DFA : Set$_1$ where
+  field
+    Q      : Set
+    $\delta$       : Q $\to$ $\Sigma$ $\to$ DecSubset Q
+    q$_0$      : Q
+    F      : DecSubset Q
+    _$\approx$_ : Q $\to$ Q $\to$ Set
+    $\approx\hyphen$isEquiv : IsEquivalence _$\approx$_
+    $\delta\hyphen$lem   : $\forall$ {q} {p} a $\to$ q $\approx$ p $\to$ $\delta$ q a $\approx$ $\delta$ p a
+    F$\hyphen$lem   : $\forall$ {q} {p}   $\to$ q $\approx$ p $\to$ q $\in^d$ F $\to$ p $\in^d$ F
+\end{lstlisting}
+
+\par The set of alphabets \(\Sigma\) is passed into the module as a
+parameter. Together with \(Q\), \(\delta\),
+\(q_0\) and \(F\), these five fields correspond to the 5-tuple
+DFA. The other extra fields are used in proving its decidability. They
+are \(\_\approx\_\) -- an equivalence relation on states;
+\(\approx\hyphen isEquiv\) -- a proof that the relation \(\approx\) is
+an equivalence relation; \(\delta\hyphen lem\) -- a proof that for any
+alphabet \(a\) and any two states \(q\) and \(p\), if \(q \approx p\)
+then \(\delta (q,a) \approx \delta (p,a)\); and \(F\hyphen lem\) -- a
+proof that for any two states \(q\) and \(p\), if \(q \approx p\) and
+\(q\) is an accepting state, then \(p\) is also an accepting state. 
+
+\par Now, before we can define the accepting language of a given
+DFA, we need to define several operations of DFA. 
+
+\begin{defn}
+\noindent A configuration is composed of a state and an alphabet from
+\(\Sigma\), i.e. \(C = Q \times \Sigma\). 
+\end{defn}
+
+\begin{defn}
+\noindent A move in an DFA is
+represented by a binary function (\(\vdash\)) on two configurations. We say
+that for all \(w \in \Sigma^*\) and \(a \in \Sigma\), \((q, aw)
+\vdash (q' , w)\) if and only if \(q' = \delta (q , a)\). 
+\end{defn}
+
+\par The binary function is defined in Agda as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+  _$\vdash$_ : (Q $\times$ $\Sigma$ $\times$ $\Sigma^*$) $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
+  (q , a , w) $\vdash$ (q' , w') = w $\equiv$ w' $\times$ q' $\approx$ $\delta$ q a
+\end{lstlisting}
+
+\begin{defn}
+\noindent Suppose \(C\) and \(C'\) are configurations. We say that \(C \vdash^0 C'\) if and only
+if \(C = C'\); and \(C_0 \vdash^k C_k\) for any \(k \geq 1\) if and only if there exists a chain of
+configurations \(C_1, C_2, ..., C_{k-1}\) such that \(C_i \vdash C_{i+1}\) for all \(0 \leq i < k\). 
+\end{defn}
+
+\par It is defined as a recursive function in Agda as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+  _$\vdash^k$_-_ : (Q $\times$ $\Sigma^*$) $\to$ $\mathbb{N}$ $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
+  (q , w) $\vdash^k$ zero  - (q' , w')
+    = q $\equiv$ q' $\times$ w $\equiv$ w'
+  (q , w) $\vdash^k$ suc n - (q' , w') 
+    = $\exists$[ p $\in$ Q ] $\exists$[ a $\in$ $\Sigma$ ] $\exists$[ u $\in$ $\Sigma^*$ ]
+      (w $\equiv$ a :: u $\times$ (q , a , u) $\vdash$ (p , u) $\times$ (p , u) $\vdash^k$ n - (q' , w'))
+\end{lstlisting}
+
+\begin{defn}
+\noindent We say that \(C \vdash^* C'\) if and only
+if there exists a number of chains \(n\) such that \(C \vdash^n C'\). 
+\end{defn}
+
+\par Its corresponding type is defined as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+  _$\vdash^*$_ : (Q $\times$ $\Sigma^*$) $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
+  (q , w) $\vdash^*$ (q' , w') = $\exists$[ n $\in$ $\mathbb{N}$ ] (q,w) $\vdash^k$ n - (q',w')
+\end{lstlisting}
+
+\begin{defn}
+\noindent For any string \(w\), it is accepted by an DFA
+if and only \(w\) can take \(q_0\) to an accepting state \(q\). Therefore, the
+accepting language of an DFA is given by the set \(\{w\ |\ \exists q\in F.\ (q_0,w) \vdash^* (q,\epsilon)\}\). 
+\end{defn}
+
+\par The corresponding formalisation in Agda is as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+  L$^D$ : DFA $\to$ Language
+  L$^D$ dfa = $\lambda$ w $\to$ 
+            $\exists$[ q $\in$ Q ] (q $\in^d$ F $\times$ (q$_0$ , w) $\vdash^*$ (q , [])))
+\end{lstlisting} 
+
+\par Now we can formulate the translation of NFA to DFA
+by powerset construction. 
+
+
+\subsection{Powerset Construction}
+\par The translation of NFA to DFA is defined in
+\textbf{Translation/NFA-DFA.agda}. 
+
+\begin{defn}
+\label{defn:powerset}
+\noindent For any given NFA, \((Q,\ \delta,\ q_0,\ F)\), its
+translated DFA will be \((\mathcal P \left({Q}\right),\ \delta',\ \{q_0\},\ F')\) where
+\begin{itemize}[nolistsep]
+  \item \(\delta'(qs,a) = \{q'\ |\ \exists q\in qs.\ q' \in \delta (q,a)\}\);
+  \item \(F' = \{qs\ |\ \exists q\in F.\ q \in qs\}\). 
+\end{itemize}
+\end{defn}
+
+\par Now, before proving their accepting languages are equal, we 
+need to prove the following lemmas first. The theorems and proofs below can be found in
+\textbf{Correctness/NFA-DFA.agda}. 
+
+\begin{lem}
+\label{lem:nfa<dfa}
+\noindent Let a NFA be \(N = (Q,\ \delta,\ q_0,\ F)\) and its
+translated DFA be \(D = (\mathcal P \left({Q}\right),\ \delta',\ {q_0},
+F')\) according to \autoref{defn:powerset}. For any string \(w\), if \(w\) can take \(q_0\) to a state
+\(q\) with \(n\) transitions in \(N\), then there must exist a subset \(qs\) such that \(q
+\in qs\) and \(w\) can take \(\{q_0\}\) to \(qs\) in \(D\),
+i.e. \(\forall w.\exists q.\exists n.\ (q_0,w) \vdash^n (q,w) \Rightarrow
+\exists qs.\ q \in qs \wedge ({q_0},w) \vdash^* (qs,\epsilon)\). 
+\end{lem}
+
+\begin{proof}
+\noindent We can prove the lemma by induction on \(n\).
+\par \noindent \textbf{Base case.}\quad If \(n = 0\), then \(q_0 = q\)
+and \(w = \epsilon\). It is obvious that the statement holds.
+
+\par \noindent \textbf{Induction hypothesis.}\quad For any string \(w\), if \(w\) can take \(q_0\) to a state
+\(q\) with \(k\) transitions in \(N\), then there exists a subset \(qs\) such that \(q
+\in qs\) and \(w\) can take \(\{q_0\}\) to \(qs\) in \(D\). 
+
+\par \noindent \textbf{Induction step.}\quad If \(n = k + 1\), then
+\(w\) can take \(q_0\) to a state \(q\) by \(k + 1\) transitions. Let
+\(w = w'a\) where \(a\) is an alphabet, then \(w'\) can take \(q_0\)
+to a state \(p\) by \(k\) transitions and \(q \in \delta(p,a)\). By induction hypothesis, there must exist a subset \(ps\) such that \(p
+\in ps\) and \(w'\) can take \(\{q_0\}\) to \(ps\) in \(D\). Furthermore, since \(q \in \delta(p,a)\), then \(a\) must be
+able to take \(ps\) to a subset \(qs\) where \(q \in qs\). Therefore,
+there exists a subset \(qs\) such that \(q \in qs\) and \(w\) can take
+\(\{q_0\}\) to \(qs\); and thus the statement is true. 
+\end{proof}
+
+\begin{lem}
+\label{lem:nfa>dfa}
+\noindent Let a NFA be \(N = (Q,\ \delta,\ q_0,\ F)\) and its
+translated DFA be \(D = (\mathcal P \left({Q}\right),\ \delta',\ {q_0},
+F')\) according to \autoref{defn:powerset}. For any string \(w\), any
+number \(n\) and any two states \(qs\) and \(ps\) in \(\mathcal P \left({Q}\right)\), if
+\((qs,w) \vdash^n (ps,\epsilon)\) then \(ps =
+\{p\ |\ \exists q\in qs.\ (q,w) \vdash^n (p,\epsilon)\}\). 
+\end{lem}
+
+\begin{proof}
+\noindent We can prove the lemma by induction on \(n\). 
+
+\par \noindent \textbf{Base case.}\quad If \(n = 0\), then \(qs = ps\)
+and \(w = \epsilon\). Then for any state \(p\) in \(Q\), 
+\par \noindent  1) if \(p \in ps\), then \(p\) is also in \(qs\). It is obvious that
+\((p,\epsilon) \vdash^0 (p, \epsilon)\) is true; therefore, \(p \in
+\{p\ |\ \exists q\in qs.\ (q,w) \vdash^0 (p,\epsilon)\}\); 
+\par \noindent  2) if \(p \in \{p\ |\ \exists q\in qs.\ (q,w) \vdash^0
+(p,\epsilon)\}\), then \(p\) must be in \(qs\) and thus \(p \in ps\). 
+
+\par \noindent \textbf{Induction hypothesis.}\quad For any string \(w\) and any
+two states \(qs\) and \(ps\) in \(\mathcal P \left({Q}\right)\), if
+\((qs,w) \vdash^k (ps,\epsilon)\) then \(ps =
+\{p\ |\ \exists q\in qs.\ (q,w) \vdash^k (p,\epsilon)\}\). 
+
+\par \noindent \textbf{Induction step.}\quad If \(n = k + 1\), then
+\(w\) must be able to take \(qs\) to \(ps\) with \(k + 1\)
+transitions in \(D\). Therefore there must exist an alphabet \(a\)
+that can take \(qs\) to a subset \(rs\),
+i.e. \(rs = \delta'(qs,a)\); and a string \(u\) that can take \(rs\) to
+\(ps\) with \(k\) transitions. By induction hypothesis, we have \(ps =
+\{p\ |\ \exists r\in rs.\ (r,u) \vdash^k (p,\epsilon)\}\). Then for any state \(p\) in \(Q\), 
+
+\par \noindent  1) if \(p \in ps\), then there must exist a state \(r \in rs\)
+such that \((r,u) \vdash^k (p,\epsilon)\). Since \(rs =
+\delta'(qs,a)\); therefore, \(r \in \delta'(qs,a)\) and thus there
+exists a state \(q \in qs\) such that \(r \in \delta (q,a)\). Therefore,
+\((q,w) \vdash^{k+1} (p,\epsilon)\) is true and thus \(p \in \{p\ |\ \exists q\in qs.\ (q,w) \vdash^{k+1}
+(p,\epsilon)\}\). 
+
+\par \noindent  2) if \(p \in \{p\ |\ \exists q\in qs.\ (q,w) \vdash^{k+1}
+(p,\epsilon)\}\), then there exists a state \(q \in qs\) such that \((q,w) \vdash^{k+1}
+(p,\epsilon)\). Also, there must exist a state \(r \in Q\) such that
+\(r \in \delta (q,a)\) and the string \(u\) can take \(r\) to \(p\) in
+\(N\). Since, \(q
+\in qs\) and \(r \in \delta (q,a)\); therefore, \(r \in \delta'(qs,a)
+= rs\) and thus \(p \in \{p\ |\ \exists r\in rs.\ (r,u) \vdash^k
+(p,\epsilon)\} = ps\). 
+\end{proof}
+
+\par Now, by using the above lemmas, we can prove the correctness of
+the translation by proving that their accepting languages are equal. 
+
+\begin{thm}
+\noindent For any NFA, its accepting language is equal to
+the language accepted by its translated DFA, i.e. \(L(\)NFA\()
+= L(\)translated DFA\()\). 
+\end{thm}
+
+\begin{proof}
+\noindent For a given NFA, \(N = (Q,\ \delta,\ q_0,\ F)\), let its
+translated DFA be \(D = (\mathcal P \left({Q}\right),\ \delta',\
+{q_0},\ F')\). To
+prove the theorem, we have to prove that \(L(N) \subseteq L(D)\) and
+\(L(N) \supseteq L(D)\). For any string \(w\), 
+
+\par \noindent 1) if \(N\) accepts \(w\), then \(w\) can take \(q_0\) to an
+accepting state \(q\) with \(n\) transitions in \(N\). By
+\autoref{lem:nfa<dfa}, there must exist a subset \(qs\) such that
+\(q \in qs\) and \(w\)
+can take \(\{q_0\}\) to \(qs\) in \(D\). Since \(q\) is
+an accepting state; therefore, \(qs\) is also an accepting state in
+\(D\) and thus \(D\) accepts \(w\). 
+
+\par \noindent 2) if \(D\) accepts \(w\), then \(w\) can take
+\(\{q_0\}\) to an accepting state \(qs\) in \(D\) with \(n\)
+transitions. Since \(qs\) is an accepting state, therefore, there must
+exist a state \(q\) in \(Q\) such that \(q \in qs\) and \(q\) is also
+an accepting state in \(N\). Assuming \(w\) cannot take \(q_0\) to
+\(q\) in \(N\) for any number of transitions, then by
+\autoref{lem:nfa>dfa}, \(qs = \emptyset\) and thus \(q \notin qs\) which contradicts the assumption that \(q \in
+qs\). Therefore, \(w\) must be able to take \(q_0\) to \(q\) in \(N\) and thus \(N\) accepts \(w\). 
+\end{proof}
+
+
+\subsection{Decidability of DFA and Regular Expressions}
+\par Recall that the accepting language of a DFA is given by the set
+\(\{w\ |\ \exists q\in F.\ (q_0,w) \vdash^* (q,\epsilon)\}\), which is
+equivalent to the set \(\{w\ |\ \exists q\in F.\ \exists n.\ (q_0,w) \vdash^n (q,\epsilon)\}\). 
+Its decidability cannot be proved directly because the set of natural
+numbers is infinite. Therefore, we have to
+introduce another representation and prove
+that they are equivalent. The representation and the proofs can be found in \textbf{DFA.agda}. 
+
+\begin{defn}
+\noindent We define a function \(\delta^*(q,w)\) that takes a state \(q\) and
+a string \(w\) as the arguments and returns a state \(p\) after
+running the DFA. It is defined recursively as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+$\delta^*$ : Q $\to$ $\Sigma^*$ $\to$ Q
+$\delta^*$ q [] = q
+$\delta^*$ (a :: w) = $\delta^*$ ($\delta$ q a) w
+\end{lstlisting}
+\end{defn}
+
+\begin{defn}
+\noindent We define \(\delta_0(w)\) as the function that runs the DFA
+from \(q_0\) with a string \(w\). 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+$\delta_0$ : $\Sigma^*$ $\to$ Q
+$\delta_0$ w = $\delta^*$ $q_0$ w
+\end{lstlisting}
+\end{defn}
+
+\par Now, before proving that the two representations are equivalent, we have to prove the following lemmas. 
+
+\begin{lem}
+\label{lem:dec_iff}
+\noindent For any state \(q\) and any string \(w\), \(\delta^*(q,w) \in F\) if and only
+if \(\exists q'\in F.\ \exists n.\ (q,w) \vdash^n (q',\epsilon)\).
+\end{lem}
+
+\begin{proof}
+\noindent We have to prove for both directions. 
+
+\par \noindent 1) If \(\delta^*(q,w) \in F\), we do induction on \(w\).
+\par \textbf{Base case.}\quad If \(w = [\ ]\), then \(\delta^*(q,[\ ]) =
+q \in F\). Therefore, the statement holds.
+\par \textbf{Induction hypothesis.}\quad For any \(q\) and \(w'\), if
+\(\delta^*(q,w') \in F\), then \(\exists q'\in F.\ \exists n.\ (q,w') \vdash^n (q',\epsilon)\).
+\par \textbf{Induction step.}\quad If \(w = aw'\), then
+\(\delta^*(q,aw') = \delta^*(\delta(q,a),w')\). By induction
+hypothesis, there exists a state \(q' \in F\) and a number \(n\) such
+that \((\delta(q,a),w') \vdash^n (q',\epsilon)\). It is equivalent to
+\((q,aw') \vdash^{n+1} (q',\epsilon)\) and thus, the statement holds.
+
+\par \noindent 2) If \(\exists q'\in F.\ \exists n.\ (q,w') \vdash^n
+(q',\epsilon)\), then we do induction on \(n\).
+\par \textbf{Base case.}\quad If \(n = 0\), then \(q' = q\) and \(w =
+[\ ]\). Therefore, \(\delta^*(q,[\ ]) = q = q' \in F\). 
+\par \textbf{Induction hypothesis.}\quad For any state \(q\) and
+string \(w\), if
+there exists another state \(q'\) and a number \(k\) such that \(q' \in F \wedge (q,w) \vdash^k
+(q',\epsilon)\), then \(\delta^*(q,w) \in F\). 
+\par \textbf{Induction step.}\quad If \(n = k + 1\), then there
+exists a state \(q' \in F\) and a number \(k\) such that \((q,aw) \vdash^{k+1}
+(q',\epsilon)\). It is equivalent to \((\delta(q,a),w) \vdash^k
+(q',\epsilon)\). By induction hypothesis, we have
+\(\delta^*(\delta(q,a),w) \in F\) and thus \(\delta^*(q,aw) \in F\). 
+\end{proof} 
+
+\par Now, we can prove that the two representations are equivalent. 
+
+\begin{lem}
+\label{lem:dec_iff2}
+\noindent For any string
+\(w\), \(\delta_0 (w) \in F\) if and only if \(\exists q\in F.\ (q_0,w) \vdash^* (q,\epsilon)\).
+\end{lem}
+
+\begin{proof}
+\noindent Since \(\delta_0(w) = \delta^*(q_0,w)\); therefore, by
+\autoref{lem:dec_iff}, \(\delta_0(w) \in F\) if and only if \(\exists
+q\in F.\ (q_0,w) \vdash^* (q,\epsilon)\). 
+\end{proof}
+
+\par Now, we can prove that the accepting language of a given DFA is
+decidable by using the above theorems. 
+
+\begin{thm}
+\noindent For any DFA, its accepting language is decidable,
+i.e. \(\forall w.\ w \in L(\)DFA\()\) is decidable. 
+\end{thm}
+
+\begin{proof}
+\noindent Since the language of DFA is given by the set \(\{w\ |\
+\exists q\in F.\ (q_0,w) \vdash^* (q,\epsilon)\}\), which, by
+\autoref{lem:dec_iff2}, is equal to the set \(\{w\ |\ \delta_0(w) \in
+F\}\). Since \(F\) is a decidable subset; therefore, the set is also
+decidable. 
+\end{proof}
+
+\par Since we have also proved that the accepting language of regular
+expressions and DFA are equal; therefore, the accepting language of
+regular expression must also be decidable. The proof is defined in
+\textbf{RegExp-Decidability.agda}. 
+
+\begin{thm}
+\noindent For any given regular expression, \(e\), its accepting language is
+decidable, i.e. \(\forall w.\ w \in L(\)e\()\) is decidable. 
+\end{thm}
+
+\begin{proof}
+\noindent Since \(L(e) = L(translated\) DFA\()\) and the language
+accepted by a DFA is decidable; therefore, \(L(e)\) is also decidable. 
+\end{proof}

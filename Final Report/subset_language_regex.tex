@@ -1,0 +1,228 @@
+\subsection{Subsets, Decidable Subsets and Vector Representation}
+\par The types of subsets and decidable subsets are defined in
+\textbf{Subset.agda} and \textbf{Subset/DecidableSubset.agda}
+respectively along with their operations such as membership (\(\in\)), subset
+(\(\subseteq\)), superset (\(\supseteq\)) and equality (\(=\)). Let us
+begin with the definition of general subsets. To separate the
+operations of subsets and decidable subsets, all the operations of
+decidable subset are denoted by the superscript (\(^d\)), e.g. \(\in^d\)
+is the membership decider for decidable subsets. 
+
+\begin{defn} 
+\noindent Suppose \(A\) is a set, then its
+subsets are represented as unary functions on
+\(A\) in Type Theory, i.e. \(Subset\ A = A \to Set\). 
+\end{defn}
+
+\par In our definition, a subset is a function from \(A\) to
+\(Set\). When declaring a subset, we can write \(sub =
+\lambda\ (x : A) \to P\ x\). \(P\ x\) defines the conditions for \(x\) to
+be included in \(sub\). This construction is
+very similar to set comprehension. For example, the above subset
+resembles the set \(\{x\ | \ x \in A,\ P(x)\}\). Furthermore, \(sub\) is
+also a predicate on \(A\) as its type is in the form of \(A \to
+Set\) and its decidability will remain unknown until it is either proved or disproved. 
+
+\begin{defn} 
+\noindent Another representation of subsets is \(DecSubset\ A = A \to
+Bool\). Unlike \(Subset\), its decidability is ensured by its
+definition. 
+\end{defn}
+
+\par The two representations have different roles in the project. For
+example, \(Language\) is defined using \(Subset\) as not every
+language is decidable. For other parts in the project 
+such as the subsets of states in an automaton, \(DecSubset\) is used
+because the decidability is assumed. 
+
+
+\subsubsection{Vector Representation}
+\par At the beginning, we intended to avoid the vector representation of a
+subset. However, it is impossible as we have to iterate the subset
+when computing \(\epsilon\)-closures. The problem will be discussed in
+Section 6 in details. The vector representation is defined in
+\textbf{Subset/VectorRep.agda} along with its operations and proofs. 
+
+\par The most important part is in the module \textbf{Vec-Rep} where
+several objects must be established before in order to use the vector
+representation. They are \((A : Set)\) -- a set with finite elements;
+\((dec : DecEq A)\) -- the decidable equality of \(A\); \((n : \mathbb
+N)\) -- number of elements minus 1; \((It : Vec\ A\ (suc\ n))\) -- a
+vector containing elements of \(A\) with length \(suc\ n\); \((\forall
+a\in It)\) -- a proof that any state in \(A\) is also in the vector
+\(It\); and \((unique : Unique)\) -- a proof that there is no repeating
+element in \(It\). 
+
+\par Apart from iterating a subset, the vector representation allows
+us to prove the following lemmas. 
+
+\begin{defn}
+\noindent We define \(any\) as a predicate of vector such that it is
+true if and only if there exists an element in the vector that satisfies a given
+predicate \(P\). 
+\end{defn}
+
+\par It is defined in Agda as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+any : {A : Set}{n : $\mathbb N$}(P : A $\to$ Set) $\to$ Vec A n $\to$ Set
+any P []        = $\bot$
+any P (a :: as) = P a $\uplus$ any P as
+\end{lstlisting} 
+
+\begin{lem}
+\noindent For a set \(A\) and any proposition \(P\), there exists an
+element in \(It\) that satisfies \(P\) if and only if there exists an
+element in \(A\) that satisfies \(P\). 
+\end{lem}
+
+\begin{proof}
+\noindent The proof looks quite obvious. Since \(It\) contains all the
+elements of \(A\), the statement must be true. However, in Type
+Theory, we have to prove it by induction on the vector.
+\end{proof}
+
+\begin{defn}
+\noindent We define \(all\) as a predicate of vector such that it is
+true if and only if all the elements in the vector satisfy a given
+predicate \(P\). 
+\end{defn}
+
+\par It is defined in Agda as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+all : {A : Set}{n : $\mathbb N$}(P : A $\to$ Set) $\to$ Vec A n $\to$ Set
+all P []        = $\top$
+all P (a :: as) = P a $\times$ all P as
+\end{lstlisting} 
+
+\begin{lem}
+\noindent For a set \(A\) and any proposition \(P\), all
+the elements in \(It\) that satisfy \(P\) if and only if all the 
+elements in \(A\) satisfy \(P\). 
+\end{lem}
+
+\begin{proof}
+\noindent Again, the proof looks quite obvious. Since \(It\) contains all the
+elements of \(A\), the statement must be true. However, in Type
+Theory, we have to prove it by induction on the vector.
+\end{proof}
+
+\par Apart from the above lemmas, the vector representation also allows
+us to get some useful proofs when we are arguing the size of a
+vector. 
+
+
+\subsection{Languages}
+\par The type of languages is defined in \textbf{Language.agda} along with its 
+operations and lemmas such as union (\(\cup\)), concatenation
+(\(\bullet\)) and closure (\(\star\)). 
+
+\par We represent the set of alphabets \(\Sigma\) as a data type in
+Type Theory, i.e. \(\Sigma : Set\). Note that the equality relation of \(\Sigma\) needs to be
+decidable. In Agda, they are passed to every module as
+parameters, e.g. \(module\ Language (\Sigma : Set)\ (dec : DecEq\
+\Sigma)\ where\). 
+
+\begin{defn}
+\noindent We first define \(\Sigma^*\) as the set of all
+strings over \(\Sigma\). In our approach, it is expressed as a list of
+alphabets, i.e. \(\Sigma^* = List\ \Sigma\). 
+\end{defn}
+
+\par For example, (\(A :: g :: d :: a :: [\ ]\)) is equivalent to the
+string 'Agda' and the empty list \([\ ]\)
+represents the empty string (\(\epsilon\)). In this way, the first
+alphabet can be extracted from the input string by pattern matching in order to
+run a transition from a particular state to another state in an automaton. 
+
+\begin{defn}
+\noindent A language is defined as a subset of 
+\(\Sigma^*\), i.e. \(Language = Subset\ \Sigma^*\). 
+Note that \(Subset\) instead of \(DecSubset\) is used because not
+every language is decidable. 
+\end{defn}
+
+\subsubsection{Operations on Languages}
+
+\begin{defn} 
+\label{defn:lang_union}
+\noindent Suppose \(L_1\) and \(L_2\) are languages, then the union of
+the two languages, \(L_1\cup L_2\), is given by the set \(\{w\
+|\  w \in L_1\ \vee \ w \in L_2\}\). In Type Theory, we have \(L_1 \cup L_2 = \lambda\ w
+\to w \in L_1\ \uplus\ w \in L_2\).
+\end{defn}
+
+\begin{defn}
+\label{defn:lang_con}
+\noindent Suppose \(L_1\) and \(L_2\) are languages, then
+the concatenation of the two languages, \(L_1\bullet L_2\), is given
+by the set \(\{w\  |\  \exists u\in L_1.\ \exists v\in L_2.\ w = uv\}\). In
+Type Theory, we have \(L_1\bullet L_2 = \lambda\ w \to \exists[\
+u \in \Sigma^*\ ]\ \exists[\ v \in \Sigma^*\ ] (u \in L_1 \times v \in
+L_2 \times w \equiv u\ \Plus\Plus\  v )\).
+\end{defn}
+
+\begin{defn}
+\label{defn:lang_power}
+\noindent Suppose \(L\) is a language, then we define \(L^n\) as
+the concatenation of \(L\) with itself over \(n\) times, i.e. \(L^n =
+L\bullet L\bullet L ... L\). In Type Theory, it is defined as a recursive function where \(L \wedge zero = [\![\epsilon ]\!]\) and
+\(L \wedge (suc\ n) = L \bullet (L \wedge n)\). 
+\end{defn}
+
+\begin{defn}
+\label{defn:lang_star}
+\noindent Suppose \(L\) is a language, then the closure of
+L, \(L\ast\) is given by the set \(\bigcup_{n \in N} L^n\). In Type
+Theory, we have \(L\ \star = \lambda\ w \to \exists [\ n \in \mathbb{N}\
+]\ (w \in L \wedge n)\). 
+\end{defn}
+
+
+\subsection{Regular Expressions and Regular Languages}
+\par The types of regular expressions and regular languages are defined in
+\textbf{RegularExpression.agda}. 
+
+\begin{defn}
+\label{defn:regex}
+\noindent Regular expressions over \(\Sigma\) are defined inductively as follow: 
+\begin{enumerate}[nolistsep]
+  \item \(\O\) is a regular expression denoting the regular language \(\O\);
+  \item \(\epsilon\) is a regular expression denoting the regular language \(\{\epsilon\}\);
+  \item \(\forall a\in\Sigma.\ a\) is a regular expression denoting the regular language \(\{a\}\);
+  \item if \(e_{1}\) and \(e_{2}\) are regular expressions denoting the regular
+    languages \(L_1\) and \(L_2\) respectively, then
+    \begin{enumerate}[nolistsep]
+      \item \(e_{1}\ |\ e_{2}\) is a regular expressions denoting the
+        regular language \(L_1 \cup L_2\);
+      \item \(e_{1}\cdot e_{2}\) is a regular expression denoting the
+        regular language \(L_1\bullet L_2\);
+      \item \(e_{1}^{\ *}\) is a regular expression denoting the regular
+        language \(L_1\ \star\).
+     \end{enumerate}
+\end{enumerate}
+\end{defn}
+
+\par The interpretation of regular expression in Agda is as follow:
+
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+data RegExp : Set where
+  $\O$    : RegExp
+  $\epsilon$    : RegExp
+  $\sigma$    : $\Sigma$ $\to$ RegExp
+  _|_ : RegExp $\to$ RegExp $\to$ RegExp
+  _$\cdot$_  : RegExp $\to$ RegExp $\to$ RegExp
+  _$^*$  : RegExp $\to$ RegExp
+\end{lstlisting} 
+
+\par The accepting language of regular expressions is defined as
+a function from \(RegExp\) to \(Language\). 
+
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+L$^R$ : RegExp $\to$ Language
+L$^R$ $\O$   = $\o$
+L$^R$ $\epsilon$   = $[\![\epsilon ]\!]$
+L$^R$ ($\sigma$ a) = $[\![\ a\ ]\!]$
+L$^R$ (e$_1$ | e$_2$) = L$^R$ e$_1$ $\cup$ L$^R$ e$_2$
+L$^R$ (e$_1$ $\cdot$ e$_2$) = L$^R$ e$_1$ $\bullet$ L$^R$ e$_2$
+L$^R$ (e$^*$) = (L$^R$ e) $\star$
+\end{lstlisting} 

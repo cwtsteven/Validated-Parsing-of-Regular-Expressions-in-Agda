@@ -1,0 +1,402 @@
+\subsection{Minimising DFA}
+\par There are two procedures in minimising a DFA: 1) removing all the
+unreachable states to construct a RDFA and 2) perform quotient
+construction on the RDFA to build a MDFA. 
+
+\subsubsection{Removing unreachable states}
+\par The translation of DFA to RDFA is defined under the module
+\textbf{Remove-Inaccessible-States} in
+\textbf{Translation/DFA-MDFA.agda}. Let us begin by defining the
+reachability of a state.
+
+\begin{defn}
+\noindent For a given DFA, \((Q,\ \delta,\ q_0,\ F)\), we say that a state \(q\) is reachable if and
+only if there exists a string \(w\) that can take \(q_0\) to \(q\), 
+\end{defn} 
+
+\par It is defined in Agda as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+Reachable : Q $\to$ Set
+Reachable q = $\exists$[ w $\in$ $\Sigma^*$ ] (q$_0$ , w) $\vdash^*$ (q , [])
+\end{lstlisting}
+
+\begin{defn}
+\noindent For a given DFA, \((Q,\ \delta,\ q_0,\ F)\), we define \(Q^R\) as a
+subset of \(Q\) such that \(Q^R\) contains all and only the reachable states in \(Q\). 
+\end{defn}
+
+\par The set \(Q^R\) is defined in Agda as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+data Q$^R$ : Set where
+  reach : $\forall$ q $\to$ Reachable q $\to$ Q$^R$
+\end{lstlisting}
+
+\par There are some problems regarding this formalisation of \(Q^R\),
+they will be discussed in Section 6 in details. Now, we can define the
+translation of DFA to RDFA.
+
+\begin{defn}
+\label{defn:unreachable}
+\noindent For any given DFA, \((Q,\ \delta,\ q_0,\ F)\), its
+translated RDFA will be \((Q^R,\ \delta,\ q_0,\ Q^R \cap F)\). 
+\end{defn}
+
+\par Now, let us prove the correctness of the translation by proving
+that their accepting languages are equal. The correctness proof can be
+found in the module \textbf{Remove-Inaccessible-States-Proof} in \textbf{Correctness/DFA-MDFA.agda}. 
+
+\begin{thm}
+\noindent For any DFA, its accepting language is equal to
+the language accepted by its translated RDFA, i.e. \(L(\)DFA\()
+= L(\)translated RDFA\()\). 
+\end{thm}
+
+\begin{proof}
+\noindent Let the DFA be \(D = (Q,\ \delta,\ q_0,\ F)\) and is
+translated RDFA be \(R = (Q^R,\ \delta,\ q_0,\ Q^R \cap F)\) according
+to \autoref{defn:unreachable}. To prove the theorem, we have to prove
+that \(L(D) \subseteq L(R)\) and \(L(D) \supseteq L(R)\). For any
+string \(w\), 
+
+\par \noindent 1) if \(D\) accepts \(w\), then \(w\) must be able to
+take \(q_0\) to an accepting state \(q\). This implies that all the states in
+the path must be reachable; therefore, this path is also valid in
+\(R\) and thus \(R\) accepts \(w\); 
+
+\par \noindent 2) if \(R\) accepts \(w\), then the path from \(q_0\)
+to the accepting state \(q\) must be also valid in \(D\); therefore,
+\(D\) also accepts \(w\). 
+\end{proof}
+
+
+\subsubsection{Quotient construction}
+\par Now, we need to perform quotient construction on the newly
+constructed RDFA. The construction of quotient set can be found in
+\textbf{Quotient.agda}. Now, let us being by defining a
+binary relation on states that will be used to construct the quotient set. 
+
+\begin{defn}
+\noindent Suppose we have a DFA \((Q,\ \delta,\ q_0,\ F)\), then for any two states \(p\) and \(q\), we say
+the \(p \sim q\) if and only if for any string \(w\),
+\(w\) cannot distinguish \(p\) and \(q\), i.e. \(p \sim q = \forall w.\
+\delta^*(p,w) \in F \Leftrightarrow \delta^*(q,w) \in F\)
+\end{defn}
+
+\par It is easy to show that the relation is an equivalence
+relation. Now, we have to prove that \(p \sim q\) is decidable. One
+possible method is to use the Table-filling algorithm. However, the
+formalisation of this algorithm and its correctness proofs has not
+been completed. Therefore, in the following parts, we will assume that
+\(p \sim q\) is decidable. Now, let us construct the quotient set by using the above
+relation of states. 
+
+\begin{defn}
+\noindent For a state \(p\) of a given DFA, its equivalence
+class is a subset of all indistinguishable states of \(p\), i.e. \(\llangle p
+\rrangle = \{q\ |\ p \sim q\}\). 
+\end{defn}
+
+\par From the above definition, we observe that a equivalence class
+is a subset of the set of states of a given DFA. The corresponding formalisation in
+Agda is as follow, note that \(Dec\hyphen\!\sim\) is the decidability of
+\(\sim\):
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+$\llangle$_$\rrangle$ : Q $\to$ DecSubset Q
+$\llangle$ p $\rrangle$ q with Dec$\hyphen\!\sim$
+... | yes _ = true
+... | no  _ = false
+\end{lstlisting}
+
+\begin{defn}
+\noindent For a given DFA, \((Q,\ \delta,\ q_0,\ F)\), we define
+\(Q/\!\sim\) as the set of all equivalence classes of
+\(\sim\) on \(Q\). 
+\end{defn}
+
+\par It is defined in Agda as follow: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+data Quot-Set : Set where
+  class : $\forall$ qs $\to$ $\exists$[ q $\in$ Q ] (qs $=^d$ $\llangle q \rrangle$) $\to$ Quot-Set
+\end{lstlisting}
+
+\par Now, we can define the translation of RDFA to MDFA which is
+defined under the module \textbf{Quotient-Construct } in \textbf{Translation/DFA-MDFA.agda}. 
+\begin{defn}
+\label{defn:quotient}
+\noindent For any given RDFA, \((Q,\ \delta,\ q_0,\ F)\), its
+translated MDFA will be \((Q/\!\sim,\ \delta',\ \llangle q_0 \rrangle,\ F')\) where
+\begin{itemize}[nolistsep]
+\item \(\delta'(q,a) = \llangle \delta(q,a) \rrangle\); and
+\item \(F' = \{\llangle q \rrangle\ |\ q \in F\}\).
+\end{itemize}
+\end{defn}
+
+\par Now, before proving the translation is correct, we have to first prove
+the following lemmas. The theorems and proofs below can be found in
+the module \textbf{Quotient-Construction-Proof} in \textbf{Correctness/DFA-MDFA.agda}. 
+
+\begin{lem}
+\label{lem:rdfa<mdfa}
+\noindent Let a RDFA be \(R = (Q,\ \delta,\ q_0,\ F)\) and its
+translated MDFA be \(M = (Q/\!\sim,\ \delta',\ \llangle q_0 \rrangle,\
+F')\) according to \autoref{defn:quotient}. For any state \(q\) in \(Q\), if a string \(w\) can take \(q\) to another state \(q'\) with \(n\) transitions
+in \(R\), then \(w\) can take \(\llangle q \rrangle\) to \(\llangle q'
+\rrangle\) with \(n\) transitions in \(M\). 
+\end{lem}
+
+\begin{proof}
+\noindent We can prove the lemma by induction on \(n\).
+\par \noindent \textbf{Base case.}\quad If \(n = 0\), then \(q = q'\)
+and \(w = \epsilon\). It is obvious that the statement holds.
+
+\par \noindent \textbf{Induction hypothesis.}\quad For any state \(q\)
+in \(Q\), if a string \(w\) can take \(q\) to another state \(q'\)
+with \(k\)  transitions
+in \(R\), then \(w\) can take \(\llangle q \rrangle\) to \(\llangle q'
+\rrangle\) with \(k\) transitions in \(M\). 
+
+\par \noindent \textbf{Induction step.}\quad If \(n = k + 1\), then
+there must exist a string in the form of \(aw\) that can take \(q\)
+to \(q'\) with \(k + 1\) transitions. This implies that there exists a
+state \(p\) such that \(p = \delta(q,a)\) and \(w\) can take \(p\) to \(q'\) with \(k\) transitions. By
+induction hypothesis, \(w\) can also take \(\llangle p \rrangle\) to \(\llangle q'
+\rrangle\) with \(k\) transitions in \(M\). Furthermore, \(p =
+\delta(q,a)\) implies that \(\llangle p \rrangle = \llangle
+\delta(q,a) \rrangle = \delta'(\llangle q \rrangle,a)\); Therefore, \(aw\)
+can take \(\llangle q \rrangle\) to \(\llangle q' \rrangle\) with \(k
++ 1\) transitions in \(M\) and thus the statement is true. 
+\end{proof}
+
+\begin{lem}
+\label{lem:rdfa>mdfa}
+\noindent Let a RDFA be \(R = (Q,\ \delta,\ q_0,\ F)\) and its
+translated MDFA be \(M = (Q/\!\sim,\ \delta',\ \llangle q_0 \rrangle,\
+F')\) according to \autoref{defn:quotient}. For any string \(w\) and
+any state \(q\) in \(Q\), \(\delta'^*(\llangle q \rrangle,w) = \llangle \delta^*(q,w) \rrangle\). 
+\end{lem}
+
+\begin{proof}
+\noindent We can prove the lemma by induction on \(w\). 
+
+\par \noindent \textbf{Base case.}\quad If \(w = \epsilon\),
+\(\delta'^*(\llangle q \rrangle,\epsilon) = \llangle q \rrangle =
+\llangle \delta^*(q,\epsilon) \rrangle\) and thus the statement is
+true. 
+
+\par \noindent \textbf{Induction hypothesis.}\quad For a string \('w\) and
+any state \(q\) in \(Q\), \(\delta'^*(\llangle q \rrangle,w') = \llangle \delta^*(q,w') \rrangle\). 
+
+\par \noindent \textbf{Induction step.}\quad If \(w = aw'\), then
+\(\delta'^*(\llangle q \rrangle,aw') = \delta'^*(\delta'(\llangle q
+\rrangle,a),w')\). Since, \(\delta'(\llangle q \rrangle,a) = \llangle
+\delta(q,a) \rrangle\); therefore, \(\delta'^*(\delta'(\llangle q
+\rrangle,a),w') = \delta'^*(\llangle
+\delta(q,a) \rrangle,w')\). By induction hypothesis,
+\(\delta'^*(\llangle \delta(q,a) \rrangle\,w') = \llangle
+\delta^*(\delta(q,a),w) \rrangle = \llangle
+\delta^*(q,aw) \rrangle\) and thus the statement is true. 
+\end{proof}
+
+\par Now, we can prove the correctness of the translation by proving
+that their accepting languages are equal. 
+
+\begin{thm}
+\noindent For any RDFA, its accepting language is equal to
+the language accepted by its translated MDFA, i.e. \(L(\)RDFA\()
+= L(\)translated MDFA\()\). 
+\end{thm}
+
+\begin{proof}
+\noindent Let the RDFA be \(R = (Q,\ \delta,\ q_0,\ F)\) and its
+translated MDFA be \(M = (Q/\!\sim,\ \delta',\ \llangle q_0 \rrangle,\
+F')\) according to \autoref{defn:quotient}. To prove the theorem, we
+have to prove that \(L(R) \subseteq L(M)\) and \(L(R) \supseteq
+L(M)\). For any string \(w\),
+
+\par \noindent 1) if \(R\) accepts \(w\), then \(w\) must be able to
+take \(q_0\) to an accepting state \(q\) in \(R\). By \autoref{lem:rdfa<mdfa},
+\(w\) must be able to take \(\llangle q_0 \rrangle\) to \(\llangle q
+\rrangle\) in \(M\). Since \(q \in F\); therefore, \(\llangle q
+\rrangle \in F'\) and thus \(M\) accepts \(w\). 
+
+\par \noindent 2) if \(M\) accepts \(w\), then \(w\) must be able to
+take \(\llangle q_0 \rrangle\) to an accepting state \(\llangle q
+\rrangle\). Then by \autoref{lem:dec_iff}, \(\delta'*(\llangle q_0
+\rrangle,w) \in F'\). Furthermore, by \autoref{lem:rdfa>mdfa},
+\(\delta'*(\llangle q_0 \rrangle,w) = llangle \delta(q_0,w)
+\rrangle)\); therefore, \(llangle \delta(q_0,w) \rrangle \in F'\) and
+thus \(delta(q_0,w) \in F\). By \autoref{lem:dec_iff2}, \(w\) can take
+\(q_0\) to an accepting state \(q\) in \(R\); therefore, \(R\) accepts
+\(w\). 
+\end{proof}
+
+\par We also need to prove that the translated MDFA is minimal, but
+first, we have to define what is a minimal DFA. 
+
+
+\subsection{Minimal DFA}
+\par The definition of minimal DFA can be found in
+\textbf{Correctness/DFA-MDFA.agda}. In order for a DFA to be minimal,
+it must satisfy two criteria: 1) every state must be reachable and 2) the
+states cannot be further reduced. 
+
+\par Here is the definition of criteria (1) in Agda: 
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+All-Reachable-States : DFA $\to$ Set
+All-Reachable-States dfa = $\forall$ q $\to$ Reachable q
+\end{lstlisting}
+
+\par For criteria 2), we have to first introduce a binary relation of states. 
+\begin{defn}
+\noindent Suppose we have a DFA, \((Q,\ \delta,\ q_0,\ F)\), for any two states \(p\) and \(q\), we say that a string
+\(w\) can distinguish \(p\) and \(q\) if and only if exactly one of
+\(\delta^*(p,w)\) and \(\delta^*(q,w)\) is an accepting state,
+i.e. \(\delta^*(p,w) \in F \wedge \delta^*(q,w) \notin F \vee
+\delta^*(p,w) \notin F \wedge \delta^*(q,w) \in F\). 
+\end{defn}
+
+\begin{defn}
+\noindent For any two states \(p\) and \(q\) in a given DFA, we say that \(p \nsim
+q\) if and only if there exists a string \(w\) that can distinguish
+\(p\) and \(q\). 
+\end{defn}
+
+\par It is defined in Agda as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+_$\nsim$_ : Q $\to$ Q $\to$ Set
+p $\nsim$ q = $\exists$[ w $\in$ $\Sigma^*$ ] 
+     ($\delta^*$ p w $\in^d$ F $\times$ $\delta^*$ q w $\notin^d$ F $\uplus$ $\delta^*$ p w $\notin^d$ F $\times$ $\delta^*$ q w $\in^d$ F)
+\end{lstlisting}
+
+\begin{defn}
+\noindent For a given DFA, it is irreducible if and only if for any
+two states \(p\) and \(q\), if \(p\) is not equal to \(q\), then \(p \nsim q\). 
+\end{defn}
+
+\par It is defined in Agda as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+Irreducible : DFA $\to$ Set
+Irreducible dfa = $\forall$ p q $\to$ $\neg$ p $\approx$ q $\to$ p $\nsim$ q
+\end{lstlisting}
+
+\par Now, we can define what is a minimal DFA. 
+
+\begin{defn}
+\noindent For a given DFA, it is minimal if and only if all its states
+are reachable and it is irreducible. 
+\end{defn}
+
+\par It is defined in Agda as follow:
+\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+Minimal : DFA $\to$ Set
+Minimal dfa = All-Reachable-States dfa $\times$ Irreducible dfa
+\end{lstlisting}
+
+\par Now, let us prove that any MDFA is minimal by proving that all the states in MDFA are reachable and the MDFA
+is irreducible. 
+
+\begin{thm}
+\label{thm:all_reach}
+\noindent For any MDFA, all its states are reachable. 
+\end{thm}
+
+\begin{proof}
+\noindent Since for any state in a RDFA is reachable, then for any
+state \(q\) in RDFA, there must
+exist a string \(w\) that can take \(q_0\) to \(q\). By
+\autoref{lem:rdfa<mdfa}, \(w\) can also take \(\llangle q_0
+\rrangle\) to \(\llangle q \rrangle\) and thus the statement is true. 
+\end{proof}
+
+\par To prove that MDFA is irreducible, we have to first prove
+that for any two states \(p\) and \(q\), \(\neg (p \sim q\)) if and only if
+\(p \nsim q\). 
+
+\begin{lem}
+\label{lem:sim_nsim1}
+\noindent For any two states \(p\) and \(q\) in a DFA and a string
+\(w\), \(\delta^*(p,w) \in F \Leftrightarrow \delta^*(q,w)\) if and
+only if \(not exactly one of \delta^*(p,w) and \delta^*(q,w) is
+an accepting state\), i.e. \((\delta^*(p,w) \in F \Leftrightarrow
+\delta^*(q,w)) \Leftrightarrow \neg (\delta^*(p,w) \in F \wedge \delta^*(q,w) \notin F \vee
+\delta^*(p,w) \notin F \wedge \delta^*(q,w) \in F)\). 
+\end{lem}
+
+\begin{proof}
+\noindent We have to prove for both directions. 
+
+\par \noindent 1) Case \((\delta^*(p,w) \in F \Leftrightarrow
+\delta^*(q,w) \in F) \Rightarrow not
+exactly one of \delta^*(p,w) and \delta^*(q,w) is
+an accepting state\): suppose exactly one of \(\delta^*(p,w)\) and
+\(\delta^*(q,w)\) is an accepting state, for example, \(\delta^*(p,w)
+\in F \wedge \delta^*(q,w) \notin F\). This contradicts to the
+assumption that \(\delta^*(p,w) \in F \Leftrightarrow\). Therefore, not
+exactly one of \(\delta^*(p,w)\) and \(\delta^*(q,w)\) is
+an accepting state. The same argument also applies for the case when \(\delta^*(p,w)
+\notin F \wedge \delta^*(q,w) \in F\).
+
+\par \noindent 2) Case \(not
+exactly one of \delta^*(p,w) and \delta^*(q,w) is
+an accepting state \Rightarrow (\delta^*(p,w) \in F \Leftrightarrow
+\delta^*(q,w) \in F)\): 
+\par 2.1) if \(\delta^*(p,w) \in F\), suppose \(\delta^*(q,w) \notin
+F\), then this contradicts to the assumption that \(not
+exactly one of \delta^*(p,w) and \delta^*(q,w) is
+an accepting state\). Therefore, \(\delta^*(q,w) \in F\) is true;
+\par 2.2) the same argument applies for the case when \(\delta^*(q,w) \in F\).
+\end{proof}
+
+
+\begin{lem}
+\label{lem:sim_nsim}
+\noindent For any two states \(p\) and \(q\) in a given DFA, \(\neg (p
+\sim q)\) if and only if \(p \nsim q\). 
+\end{lem}
+
+\begin{proof}
+\noindent We have to prove for both directions.
+
+\par \noindent 1) Case \(\neg (p \sim q) \Rightarrow p \nsim
+q\): suppose \(p \nsim q\) is false, then there does not exist a
+string \(w\) that can distinguish \(p\) and \(q\). This implies that for any string \(w\), \(w\) cannot
+distinguish \(p\) and \(q\), i.e. \(\forall w.\ \neg (\delta^*(p,w) \in F \wedge \delta^*(q,w) \notin F \vee
+\delta^*(p,w) \notin F \wedge \delta^*(q,w) \in F)\). By
+\autoref{lem:sim_nsim1}, we have \(\forall w.\ \delta^*(p,w) \in F
+\Leftrightarrow \delta^*(q,w)\) which is equivalent to \(p \sim
+q\). This contradicts to the assumption that \(\neg (p \sim q)\);
+therefore, \(p \nsim q\) must be true. 
+
+\par \noindent 2) Case \(p \nsim q \Rightarrow \neg (p \sim q)\): suppose \(p \sim q\), then for any string \(w\),
+\(\delta^*(p,w) \in F \Leftrightarrow \delta^*(q,w)\). Since \(p \nsim
+q\), then there must exist a string \(w\)
+that can distinguish \(p\) and \(q\), i.e. exactly one of
+\(\delta^*(p,w)\) and \(\delta^*(q,w)\) is an accepting state. This
+contradicts to the assumption that \(\delta^*(p,w) \in F
+\Leftrightarrow \delta^*(q,w)\), therefore, \(p \sim q\) must be true. 
+\end{proof}
+
+\begin{thm}
+\label{thm:mdfa_irreducible}
+\noindent For any MDFA, it is irreducible, i.e. for any two states
+\(p\) and \(q\) in the MDFA, if \(p\) is not equal to \(q\) then \(p \nsim q\). 
+\end{thm}
+
+\begin{proof}
+\noindent For any two states \(\llangle p \rrangle\) and \(\llangle q
+\rrangle\) in MDFA, if \(\llangle p \rrangle\) is not equal to \(\llangle q
+\rrangle\), then \(p \sim q\) is false. By \autoref{lem:sim_nsim},
+\(p \nsim q\) is true. 
+\end{proof}
+
+\begin{thm}
+\noindent For any MDFA, it is minimal, i.e. all the states in the MDFA
+are reachable and the MDFA is irreducible. 
+\end{thm}
+
+\begin{proof}
+\noindent The statement follows from \autoref{thm:all_reach}
+and \autoref{thm:mdfa_irreducible}. 
+\end{proof}
+
+

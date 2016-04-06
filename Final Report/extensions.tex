@@ -1,13 +1,47 @@
 \section{Further Extensions}
-\par In this section, we will discuss two possible extentions to
+\par In this section, we will discuss two possible extensions to
 our project: 1) Myhill-Nerode Theorem and 2) Pumping Lemma. In these two
 theorems, they both use the translation of regular expressions to DFA
-in thier arguments. Therefore, they can be built on top of our
+in their arguments. Therefore, they can be built on top of our
 formalisation. 
 
 
-\paragraph{Myhill-Nerode Theorem} In general, Myhill-Nerode Theorem
-states that a language \(L\) is regular if and only if ... 
+\subsection{Myhill-Nerode Theorem}
+\par Given a language \(L\), and a pair of
+strings \(u\) and \(v\), we define a relation \(R_L\) on strings such
+that \(u R_L v\) if and only if for any string \(z\), \(uz \in L
+\Leftrightarrow vz \in L\). The relation \(R_L\) is an equivalence
+relation and thus it divides the set of strings into some equivalence
+classes.
+\par In general, the Myhill-Nerode Theorem states that a language
+\(L\) is regular if and only if \(R_L\) has a finite number of
+equivalence classes, and furthermore the number of states in the
+minimal DFA translated from \(L\) is equal to the number of
+equivalence classes in \(R_L\). The theorem is often used to prove a
+language to be regular. 
+
+\par In the proof, if \(L\) is a regular language, then a DFA is
+translated from \(L\) to prove that \(R_L\) has finite equivalence classes. For the opposite direction, suppose \(R_L\)
+has finite equivalence classes, then a DFA is also constructed from
+the relation. By proving the DFA recognises \(L\), \(L\) is proved to
+be regular. Therefore, the theorem can
+be proved under the environment of our formalisation as we have
+already formalised the translation from regular languages to DFA and its correctness proof. 
 
 
-\paragraph{Pumping Lemma (for regular languages)} In general, the Pumping Lemma states that ...
+\subsection{Pumping Lemma (for regular languages)}
+\par In general, the
+Pumping Lemma states that if \(L\) is a regular language, then there
+must exist an integer \(n \geq 1\) depending on \(L\) such that every
+string \(w \in L\) of length at least \(n\) can be divided into three
+sub-strings, i.e. \(w = xyz\) where
+\begin{enumerate}[nolistsep]
+  \item \(|y| \geq 1\);
+  \item \(|xy| \leq n\);
+  \item for all \(i \geq 0\), \(xy^iz \in L\).
+\end{enumerate}
+\par \(y\) is the sub-string that can be pumped (removed or repeated
+any number of times) and the result string is always in \(L\). The
+lemma is often used to prove a language to be non-regular. In the proof, a DFA is constructed from \(L\) to prove that there
+must exist some loops in the path of \(w\). Therefore, it can be
+proved by using our formalisation. 

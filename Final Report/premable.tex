@@ -15,7 +15,13 @@
 \makeatother
 \newcommand{\hyphen}{\operatorname{-}} % making hypen smaller in math-mode
 \def\Plus{\texttt{+}}
-
+\makeatletter
+\newsavebox{\@brx}
+\newcommand{\llangle}[1][]{\savebox{\@brx}{\(\m@th{#1\langle}\)}%
+  \mathopen{\copy\@brx\kern-0.5\wd\@brx\usebox{\@brx}}}
+\newcommand{\rrangle}[1][]{\savebox{\@brx}{\(\m@th{#1\rangle}\)}%
+  \mathclose{\copy\@brx\kern-0.5\wd\@brx\usebox{\@brx}}}
+\makeatother
 
 \usepackage{geometry}
 
@@ -52,5 +58,11 @@
 %  \hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}\vskip-.35ex\hbox{$\sim$}}}}
 
 % setting odd/even pages margin
+%\setlength{\textheight}{21cm} % Height of the main body of the text
+%\setlength{\topmargin}{0cm} % 1'' margin on top of page
+%\setlength{\headsep}{1.5cm}  % space between header and top of body
+%\addtolength{\headsep}{-\headheight} % See The LaTeX Companion, p 85
+%\setlength{\footskip}{1cm}  % space between footer and bottom of body
+%\setlength{\textwidth}{14cm} % width of the body of the text
 \setlength{\oddsidemargin}{1cm} % 2cm margin on the left for odd pages
-\setlength{\evensidemargin}{0cm} % 2cm margin on the right for even % pages
+\setlength{\evensidemargin}{0.5cm} % 2cm margin on the right for even % pages
