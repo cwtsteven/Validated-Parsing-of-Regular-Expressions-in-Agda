@@ -231,9 +231,9 @@ take \(q_0\) to an accepting state \(q\) in \(R\). By \autoref{lem:rdfa<mdfa},
 
 \par \noindent 2) if \(M\) accepts \(w\), then \(w\) must be able to
 take \(\llangle q_0 \rrangle\) to an accepting state \(\llangle q
-\rrangle\). Then by \autoref{lem:dec_iff}, \(\delta'*(\llangle q_0
+\rrangle\). Then by \autoref{lem:dec_iff}, \(\delta'^*(\llangle q_0
 \rrangle,w) \in F'\). Furthermore, by \autoref{lem:rdfa>mdfa},
-\(\delta'*(\llangle q_0 \rrangle,w) = \llangle \delta(q_0,w)
+\(\delta'^*(\llangle q_0 \rrangle,w) = \llangle \delta(q_0,w)
 \rrangle)\); therefore, \(\llangle \delta(q_0,w) \rrangle \in F'\) and
 thus \(delta(q_0,w) \in F\). By \autoref{lem:dec_iff2}, \(w\) can take
 \(q_0\) to an accepting state \(q\) in \(R\); therefore, \(R\) accepts
@@ -339,9 +339,9 @@ is\ an\ accepting\ state\), i.e. \((\delta^*(p,w) \in F \Leftrightarrow
 \noindent We have to prove for both directions. 
 
 \par \noindent 1) Case \((\delta^*(p,w) \in F \Leftrightarrow
-\delta^*(q,w) \in F) \Rightarrow not
-exactly one of \delta^*(p,w) and \delta^*(q,w) is
-an accepting state\): suppose exactly one of \(\delta^*(p,w)\) and
+\delta^*(q,w) \in F) \Rightarrow not\ 
+exactly\ one\ of\ \delta^*(p,w)\ and\ \delta^*(q,w)\ is\ 
+an\ accepting\ state\): suppose exactly one of \(\delta^*(p,w)\) and
 \(\delta^*(q,w)\) is an accepting state, for example, \(\delta^*(p,w)
 \in F \wedge \delta^*(q,w) \notin F\). This contradicts to the
 assumption that \(\delta^*(p,w) \in F \Leftrightarrow \delta^*(q,w) \in F\). Therefore, not
@@ -351,7 +351,7 @@ an accepting state. The same argument also applies for the case when \(\delta^*(
 
 \par \noindent 2) Case \(not\ 
 exactly\ one\ of\ \delta^*(p,w)\ and\ \delta^*(q,w)\ is\ 
-an\ accepting\ state\ \Rightarrow (\delta^*(p,w) \in F \Leftrightarrow
+an\ accepting\ state \Rightarrow (\delta^*(p,w) \in F \Leftrightarrow
 \delta^*(q,w) \in F)\): if \(\delta^*(p,w) \in F\) and\(\delta^*(q,w) \notin
 F\), then it contradicts to the assumption that \(not\ 
 exactly\ one\ of\ \delta^*(p,w)\ and\ \delta^*(q,w)\ is\ 
