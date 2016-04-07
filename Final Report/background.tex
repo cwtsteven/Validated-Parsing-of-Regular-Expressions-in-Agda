@@ -121,7 +121,7 @@ head (x :: xs) = x
 \end{lstlisting} 
 
 \par Only the (\mb{x :: xs}) case needs to be pattern matched because
-an element of the type (\(Vec\ A\ (suc\ n)\)) must be in the form of
+an element of the vector type (\(Vec\ A\ (suc\ n)\)) must be in the form of
 (\mb{x :: xs}). Apart from vectors, a type of binary
 search tree can also be declared in which any tree of this type is guaranteed to be
 sorted. Interested readers can take a look at 
@@ -397,7 +397,8 @@ insert$\hyphen$sorted : $\forall$ {n} {as}
                 $\to$ Sorted$\hyphen$ASC (insert n as)
 \end{lstlisting}
 
-\par In the type signature, \((Sorted\hyphen ASC\ as)\) corresponds to the pre-condition and
+\par In the type signature, the argument \((Sorted\hyphen ASC\ as)\) corresponds to
+the pre-condition while the argument 
 \((Sorted\hyphen ASC\ (insert\ n\ as))\) corresponds to the
 post-condition. Once we have completed the
 function, we will have also proved the specification to be
