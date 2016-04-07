@@ -11,7 +11,7 @@ to finite automata. In addition, this project also serves as an
 example of how complex and non-trivial proofs are formalised. 
 
 \par Our Agda formalisation consists of two components: 1) the
-translation of regular expressions to a minimal DFA and 2)
+translation of regular expressions to minimal DFA and 2)
 the correctness proofs of the translation. At this stage, we are only
 interested in the correctness of the translation but not the
 efficiency of the algorithms. 
@@ -21,7 +21,7 @@ efficiency of the algorithms.
 \par Type theory was introduced by Per Martin-L{\"o}f in
 1971 to provide an alternative foundation of mathematics based on the
 principles of mathematical constructivism where logic can be
-implemented using the theory. From another perspective, Type Theory is also a
+implemented within the theory. From another perspective, Type Theory is also a
 dependently-typed functional programming language. In order to bridge the gap between
 the theoretical representation of Type Theory and the requirements on
 a practical programming language, Norell \cite{norell2007} rewrote a
@@ -30,11 +30,11 @@ to formalise mathematics and programming logic in Type Theory and to
 check the formalisation automatically by its type checker and termination
 checker. We will discuss the use of Agda in Chapter 2 in detail. 
 
-\par Automata Thoery is the study of abstract machines and
+\par Automata Theory is the study of abstract machines and
 automata. Automata are abstract models of machines that perform
 computations on an input by moving between its states. There
 are several major families of automaton but we will
-only focus on finite state machine or finite state automata. 
+only focus on finite state automata. 
 
 
 \section{Related Work}
@@ -44,7 +44,7 @@ regular expressions which can determine whether
 a given string is accepted by a given regular expression. The decider
 was implemented by converting a regular expression into a
 partial automaton. Here is the type signature of the decider: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.05\textwidth]
 accept : (re : RegExp) $\to$ (as : List carrier) $\to$ Maybe (as $\in\smile [\![ re ]\!]$)
 \end{lstlisting}
 \par \(accept\) takes a regular expression \((re)\) and a list of
@@ -52,15 +52,14 @@ alphabets \((as)\) as the arguments. If the string \((as)\) is accepted
 by the regular expression \((re)\), i.e. \mb{as
   \in L(re)}, the decider will return its proof. However it fails to generate a
 proof for the opposite case, i.e. \mb{as \notin L(re)}. As they
-explained in the paper, it is not possible without converting the regular expression into
+explained in the paper, it is impossible without converting the regular expression into
 the entire automaton. Therefore, in our approach, we will translate a regular
 expression to a DFA in order to construct a full decider. 
 
 
 \paragraph{Certified Parsing of Regular Languages in Agda} While in 2013, Firsov and Uustalu published another related
 research \cite{firsov2013}. They translated regular expressions
-into NFA and proved that their accepting languages are
-equal. Unlike Agular and Mannaa's decider, Firsov and Uustalu's
+into NFA and proved that they are equivalent. Unlike Agular and Mannaa's decider, Firsov and Uustalu's
 algorithm can generate proofs for both cases. In their definition of NFA, the set of states
 (\mb{Q}) and its subsets are represented as vectors; and the transition function
 (\mb{\delta}) takes an alphabet as the argument and returns a matrix
@@ -78,12 +77,12 @@ record NFA : Set where
 iterate the sets easily but it looks unnatural compare to the actual 
 mathematical definition of NFA. Therefore, we intend
 to avoid the vector representation in our approach. The comparison between these two
-approaches will be discussed in Chapter 6. 
+approaches will be discussed in Chapter 6 in detail. 
 
 
 \section{Motivation}
 \par My motivation on this project is to learn and apply
-dependent types in formalising programming logic. At the beginning, I
+dependent types in formalising mathematics and programming logic. At the beginning, I
 was new to dependent types and proof assistants; therefore, we
 had to choose carefully what theorems to formalise. On one hand, the theorems
 should be non-trivial enough such that a substantial amount of work is required
@@ -96,15 +95,15 @@ explained in the course \textit{Model of Computation}.
 \section{Outline}
 \par Chapter 2 will be a brief introduction on Agda and
 dependent types. We will show how Agda can be used as a proof
-assistant by giving examples of formalised proofs. Experienced Agda
-users can skip this chapter. Following the background, chapter 3 will be a detail description of our
+assistant by formalising logic and small programs. Experienced Agda
+users can skip this chapter. Following the background, Chapter 3 will be a detail description of our
 work. We will walk through the two components of our Agda
 formalisation. Note that the definitions,
 theorems and proofs written in this chapter are extracted from our
 Agda code. They may be different from
 their usual mathematical forms in order to adapt to the environment of
-Type Theory. In chapter 4, we will describe the structure of our Agda
-files. Then, in chapter 5, we will discuss two possible extensions
+Type Theory. In Chapter 4, we will describe the structure of our Agda
+files. Then, in Chapter 5, we will discuss two possible extensions
 to our project: 1) Myhill-Nerode Theorem and 2) the Pumping
-Lemma. After that, in chapter 6, we will evaluate the project as a
+Lemma. After that, in Chapter 6, we will evaluate the project as a
 whole. Finally, the conclusions will be drawn. 

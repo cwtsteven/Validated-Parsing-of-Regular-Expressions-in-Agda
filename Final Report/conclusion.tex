@@ -1,10 +1,17 @@
 \chapter{Conclusion}
-\par In our project, the translation from regular expressions to DFA
-and its correctness proof were formalised in Agda. However, the parts
-related to the translation from DFA to MDFA were not completed. The
-parts include the Table-filling algorithm that is used when
-constructing the quotient set and the correctness of the
-algorithm. However, the framework of the those parts was already formalised
-in Agda; therefore, it is possible to complete the parts by filling in
-the details. Therefore, it is still feasible to formalise the translation in
+\par We have formalised the he translation from regular expressions to DFA
+and its correctness proofs in Agda. We have fully also formalized the
+conversion from DFA to MDFA. Further work includes several lemmas regarding the Table-filling
+algorithm, which could be completed without major difficulties given
+three or four more weeks, based on the development discussed in the report.
+
+\par Throughout the project, we have made several decisions on the
+representation of mathematical objects, for example, the set of states
+\((Q)\) as a data type, accepting language of regular expressions as
+general subset. These decisions have influenced the easiness or
+difficulties in completing the proofs. Furthermore, there are many
+similarites between writing proofs and writing codes. Therefore, in
+conclusion, as a computer
+science student without a strong mathematical background, I find it
+quite feasible to formalise mathematics and programming logic in
 Type Theory. 

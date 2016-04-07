@@ -5,7 +5,7 @@ extract an \(\epsilon\) alphabet from the input string. Therefore,
 we need to introduce another representation specific to this
 purpose. The representation in defined under the module
 \textbf{\(\Sigma\)-with-\(\epsilon\)} in \textbf{Language.agda} along
-with itis related operations and lemmas. 
+with its related operations and lemmas. 
 
 \begin{defn}
 \noindent We define \(\Sigma^e\) as the union of
@@ -67,7 +67,7 @@ properties.
 
 \par It is formalised as a record in Agda as shown below: 
 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 record $\epsilon \hyphen$NFA : Set$_1$ where
   field
     Q      : Set
@@ -112,7 +112,7 @@ that for all \(w \in \Sigma^{e*}\) and \(a \in \Sigma^e\), \((q, aw)
 \end{defn}
 
 \par The binary function is defined in Agda as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   _$\vdash$_ : (Q $\times$ $\Sigma^e$ $\times$ $\Sigma^{e*}$) $\to$ (Q $\times$ $\Sigma^{e*}$) $\to$ Set
   (q , a , w) $\vdash$ (q' , w') = w $\equiv$ w' $\times$ q' $\in^d$ $\delta$ q a
 \end{lstlisting}
@@ -124,13 +124,14 @@ configurations \(C_1, C_2, ..., C_{k-1}\) such that \(C_i \vdash C_{i+1}\) for a
 \end{defn}
 
 \par It is defined as a recursive function in Agda as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   _$\vdash^k$_-_ : (Q $\times$ $\Sigma^{e*}$) $\to$ $\mathbb{N}$ $\to$ (Q $\times$ $\Sigma^{e*}$) $\to$ Set
   (q , w$^e$) $\vdash^k$ zero  - (q' , w$^e$')
     = q $\equiv$ q' $\times$ w$^e$ $\equiv$ w$^e$'
   (q , w$^e$) $\vdash^k$ suc n - (q' , w$^e$') 
     = $\exists$[ p $\in$ Q ] $\exists$[ a$^e$ $\in$ $\Sigma^e$ ] $\exists$[ u$^e$ $\in$ $\Sigma^{e*}$ ]
-      (w$^e$ $\equiv$ a$^e$ :: u$^e$ $\times$ (q , a$^e$ , u$^e$) $\vdash$ (p , u$^e$) $\times$ (p , u$^e$) $\vdash^k$ n - (q' , w$^e$'))
+      (w$^e$ $\equiv$ a$^e$ :: u$^e$ $\times$ (q , a$^e$ , u$^e$) $\vdash$ (p , u$^e$) 
+       $\times$ (p , u$^e$) $\vdash^k$ n - (q' , w$^e$'))
 \end{lstlisting}
 
 \begin{defn}
@@ -139,7 +140,7 @@ if there exists a number of chains \(n\) such that \(C \vdash^n C'\).
 \end{defn}
 
 \par Its corresponding type is defined as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   _$\vdash^*$_ : (Q $\times$ $\Sigma^{e*}$) $\to$ (Q $\times$ $\Sigma^{e*}$) $\to$ Set
   (q , w$^e$) $\vdash^*$ (q' , w$^e$') = $\exists$[ n $\in$ $\mathbb{N}$ ] (q , w$^e$) $\vdash^k$ n - (q' , w$^e$')
 \end{lstlisting}
@@ -154,10 +155,11 @@ accepting language of an \(\epsilon\)-NFA is given by the set \(\{w\ |\ \exists 
 \end{defn}
 
 \par The corresponding formalisation in Agda is as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   L$^{eN}$ : $\epsilon \hyphen$NFA $\to$ Language
   L$^{eN}$ nfa = $\lambda$ w $\to$ 
-            $\exists$[ w$^e$ $\in$ $\Sigma^{e*}$ ] (w $\equiv$ $to\Sigma^*$ w$^e$ $\times$ ($\exists$[ q $\in$ Q ] (q $\in^d$ F $\times$ (q$_0$ , w$^e$) $\vdash^*$ (q , []))))
+            $\exists$[ w$^e$ $\in$ $\Sigma^{e*}$ ] (w $\equiv$ $to\Sigma^*$ w$^e$ $\times$ 
+            ($\exists$[ q $\in$ Q ] (q $\in^d$ F $\times$ (q$_0$ , w$^e$) $\vdash^*$ (q , []))))
 \end{lstlisting}
 
 \section{Thompson's Construction}
@@ -357,7 +359,6 @@ L(e_1^{\ *})\).
 \(\epsilon\)-NFA\()\) is true for all any regular expression \(e\). 
 \end{proof}
 
-\newpage 
 \par Below is a code snippet of our formalisation of \(L^R \subseteq
 L^{eN}\). 
 
@@ -366,6 +367,6 @@ L^{eN}\).
 \par Pattern matching the regular expression corresponds to the case
 analysis in the proof. As shown above, there are six cases:
 \(\emptyset\), \(epsilon\), \(\sigma\ a\), union, concatenation and
-kleen star. The first three correpsonds to the three base
+kleen star. The first three corresponds to the three base
 cases. Notice that the recursive calls in last three cases is equivalent to the induction hypothesis of the
 proof. These cases are equivalent to the induction steps. 

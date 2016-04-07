@@ -1,23 +1,29 @@
 \chapter{Structure of our Agda files}
 \par We have written 32 agda files with a total of 5785 lines of
-code including comments and blank lines. In this chapter, we will discibe the structure and the contents
-of these agda files. \textbf{Parsing-Regular-Expressions-in-Agda.agda}
-is the index files of our formlisation. Readers are recommended to
-start with this file. Now, let us look into each of the agda files. 
+code including comments and blank lines. These files can be divided into three categories:
+1) definitions, 2) translation algorithms and 3) correctness
+proofs. All the translation algorithms are inside the
+\textbf{Translation} directory while the correctness proofs are inside
+the \textbf{Correctness} directory. The other files belong to the
+first category. Here is a simplified dependency graph of the files:
+
+\begin{center} \includegraphics[width=.5\textwidth]{dependency} \end{center}
+
+\par Readers are recommended to start with \textbf{Parsing-Regular-Expressions-in-Agda.agda}
+,which is the index file of our formalisation. Now, let us look into each of the agda files. 
 
 \begin{center}
 \begin{longtable}{| p{5.2cm} | p{8.3cm} |}
 \hline
 \textbf{Parsing-Regular-Expressions-in-Agda.agda} & is the index
 file of the Agda formalisation which imports all the other agda
-files. Readers are recommended to start with this file. Once this file
-has been compiled, all the other files will have been compiled as
+files. Once this file has been compiled, all the other files will have been compiled as
 well. \\ \hline 
 \textbf{Subset.agda} & contains the definition and operations of subset. \\
   \hline
-\textbf{../DecidableSubset.agda} & contains the definition and opreations
+\textbf{../DecidableSubset.agda} & contains the definition and operations
                               of decidable subset. \\ \hline
-\textbf{../VectorRep.agda} & contains the vector representaion of sets. \\
+\textbf{../VectorRep.agda} & contains the vector representation of sets. \\
   \hline
 \textbf{Language.agda} & contains the definition and operations of language. \\
   \hline 
@@ -59,7 +65,7 @@ well. \\ \hline
                                    \textbf{minimise}
                                 from DFA to MDFA. \\
                                 \hline
-\textbf{../TableFillingAlgorithm.agda} & contains the algorthm
+\textbf{../TableFillingAlgorithm.agda} & contains the algorithm
 that computes the relation of distinguishable states. This file is not
 completed and thus it is not used in any other files. \\
                                 \hline
@@ -74,7 +80,7 @@ e\in RegExp.\ L(e) = L(regexTo\epsilon\)-NFA \(e)\). \\ \hline
 \textbf{../../Union-lemmas.agda} & contains the
 union case of the above proof. \\ \hline
 \textbf{../../Concatenation-lemmas.agda} & contains the
-contenation case of the above proof. \\ \hline
+concatenation case of the above proof. \\ \hline
 \textbf{../../KleenStar-lemmas.agda} & contains the
 kleen star case of the above proof. \\ \hline
 \textbf{../eNFA-NFA.agda} & contains the proof that \(\forall
@@ -86,16 +92,15 @@ nfa\in\)NFA\(.\ L(nfa) = L(powerset\hyphen construction\ nfa)\). \\ \hline
 dfa\in\)DFA\(.\ L(dfa) = L(minimise\ dfa)\). \\ \hline
 \textbf{RegExp-Decidability.agda} & contains the proof of the
 decidability of regular expressions. \\ \hline
-\textbf{Example.agda} & contains an example on the recognisation of a
+\textbf{Example.agda} & contains an example on the recognition of a
 string by a regular expression. \\ \hline
 \textbf{Util.agda} & contains miscellaneous definitions and proofs
 such as decidable equality. \\ \hline
 \end{longtable}
 \end{center}
 
-\par Apart from the agda files, we have also generated the same amount
-of html files from the agda files. They are located in the \textbf{web} directory. Readers are
-recommeded to read the html files as it is much more
+\par We have also generated html files from the agda files. They are located in the \textbf{web} directory. Readers are
+recommended to read the html files as it is much more
 convenient. Similarly, readers can start with the
-\textbf{Parsing-Regular-Expressions-in-Agda.html} as it contains all
+\textbf{Parsing-Regular-Expressions-in-Agda.html} which contains all
 the links to other files. 

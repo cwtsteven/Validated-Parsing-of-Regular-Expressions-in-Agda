@@ -15,7 +15,7 @@ only if there exists a string \(w\) that can take \(q_0\) to \(q\),
 \end{defn} 
 
 \par It is defined in Agda as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 Reachable : Q $\to$ Set
 Reachable q = $\exists$[ w $\in$ $\Sigma^*$ ] (q$_0$ , w) $\vdash^*$ (q , [])
 \end{lstlisting}
@@ -26,14 +26,14 @@ subset of \(Q\) such that \(Q^R\) contains all and only the reachable states in 
 \end{defn}
 
 \par The set \(Q^R\) is defined in Agda as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 data Q$^R$ : Set where
   reach : $\forall$ q $\to$ Reachable q $\to$ Q$^R$
 \end{lstlisting}
 
 \par There are some problems regarding this formalisation of \(Q^R\),
-they will be discussed in Section 6 in details. Now, we can define the
-translation of DFA to RDFA. The translation of DFA to RDFA is defined
+they will be discussed in Chapter 6 in details. Now, we can construc the
+translation of DFA to RDFA which is defined 
 as the function \textbf{remove-unreachable-states} in the same file. 
 
 \begin{defn}
@@ -104,7 +104,7 @@ class is a subset of all indistinguishable states of \(p\), i.e. \(\llangle p
 is a subset of the set of states of a given DFA. The corresponding formalisation in
 Agda is as follow, note that \(Dec\hyphen\!\sim\) is the decidability of
 \(\sim\):
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.2\textwidth]
 $\llangle$_$\rrangle$ : Q $\to$ DecSubset Q
 $\llangle$ p $\rrangle$ q with Dec$\hyphen\!\sim$
 ... | yes _ = true
@@ -118,8 +118,8 @@ $\llangle$ p $\rrangle$ q with Dec$\hyphen\!\sim$
 \end{defn}
 
 \par It is defined in Agda as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
-data Q/~ : Set where
+\begin{lstlisting}[mathescape=true,xleftmargin=.2\textwidth]
+data Q/$\!\sim\!$ : Set where
   class : $\forall$ qs $\to$ $\exists$[ q $\in$ Q ] (qs $=^d$ $\llangle q \rrangle$) $\to$ Quot-Set
 \end{lstlisting}
 
@@ -191,7 +191,7 @@ any state \(q\) in \(Q\), \(\delta'^*(\llangle q \rrangle,w) = \llangle \delta^*
 \llangle \delta^*(q,\epsilon) \rrangle\) and thus the statement is
 true. 
 
-\par \noindent \textbf{Induction hypothesis.}\quad For a string \('w\) and
+\par \noindent \textbf{Induction hypothesis.}\quad For a string \(w'\) and
 any state \(q\) in \(Q\), \(\delta'^*(\llangle q \rrangle,w') = \llangle \delta^*(q,w') \rrangle\). 
 
 \par \noindent \textbf{Induction step.}\quad If \(w = aw'\), then
@@ -233,8 +233,8 @@ take \(q_0\) to an accepting state \(q\) in \(R\). By \autoref{lem:rdfa<mdfa},
 take \(\llangle q_0 \rrangle\) to an accepting state \(\llangle q
 \rrangle\). Then by \autoref{lem:dec_iff}, \(\delta'*(\llangle q_0
 \rrangle,w) \in F'\). Furthermore, by \autoref{lem:rdfa>mdfa},
-\(\delta'*(\llangle q_0 \rrangle,w) = llangle \delta(q_0,w)
-\rrangle)\); therefore, \(llangle \delta(q_0,w) \rrangle \in F'\) and
+\(\delta'*(\llangle q_0 \rrangle,w) = \llangle \delta(q_0,w)
+\rrangle)\); therefore, \(\llangle \delta(q_0,w) \rrangle \in F'\) and
 thus \(delta(q_0,w) \in F\). By \autoref{lem:dec_iff2}, \(w\) can take
 \(q_0\) to an accepting state \(q\) in \(R\); therefore, \(R\) accepts
 \(w\). 
@@ -246,13 +246,13 @@ first, we have to define what is a minimal DFA.
 
 \section{Minimal DFA}
 \par The definition of minimal DFA can be found in
-\textbf{MDFA.agda}. In order for a DFA to be minimal,
+\textbf{MinimalDFA.agda}. In order for a DFA to be minimal,
 it must satisfy two criteria: 1) every state must be reachable and 2) the
 states cannot be further reduced. 
 
 \par Criteria (1) is defined as the function
 \textbf{All-Reachable-States}. It is defined as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
 All-Reachable-States : DFA $\to$ Set
 All-Reachable-States dfa = $\forall$ q $\to$ Reachable q
 \end{lstlisting}
@@ -273,7 +273,7 @@ q\) if and only if there exists a string \(w\) that can distinguish
 \end{defn}
 
 \par It is defined in Agda as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
 _$\nsim$_ : Q $\to$ Q $\to$ Set
 p $\nsim$ q = $\exists$[ w $\in$ $\Sigma^*$ ] 
      ($\delta^*$ p w $\in^d$ F $\times$ $\delta^*$ q w $\notin^d$ F $\uplus$ $\delta^*$ p w $\notin^d$ F $\times$ $\delta^*$ q w $\in^d$ F)
@@ -285,7 +285,7 @@ two states \(p\) and \(q\), if \(p\) is not equal to \(q\), then \(p \nsim q\).
 \end{defn}
 
 \par It is defined in Agda as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
 Irreducible : DFA $\to$ Set
 Irreducible dfa = $\forall$ p q $\to$ $\neg$ p $\approx$ q $\to$ p $\nsim$ q
 \end{lstlisting}
@@ -298,7 +298,7 @@ are reachable and it is irreducible.
 \end{defn}
 
 \par It is defined in Agda as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
 Minimal : DFA $\to$ Set
 Minimal dfa = All-Reachable-States dfa $\times$ Irreducible dfa
 \end{lstlisting}
@@ -329,8 +329,8 @@ that for any two states \(p\) and \(q\), \(\neg (p \sim q\)) if and only if
 \label{lem:sim_nsim1}
 \noindent For any two states \(p\) and \(q\) in a DFA and a string
 \(w\), \(\delta^*(p,w) \in F \Leftrightarrow \delta^*(q,w)\) if and
-only if \(not exactly one of \delta^*(p,w) and \delta^*(q,w) is
-an accepting state\), i.e. \((\delta^*(p,w) \in F \Leftrightarrow
+only if \(not\ exactly\ one\ of\ \delta^*(p,w)\ and\ \delta^*(q,w)\
+is\ an\ accepting\ state\), i.e. \((\delta^*(p,w) \in F \Leftrightarrow
 \delta^*(q,w)) \Leftrightarrow \neg (\delta^*(p,w) \in F \wedge \delta^*(q,w) \notin F \vee
 \delta^*(p,w) \notin F \wedge \delta^*(q,w) \in F)\). 
 \end{lem}
@@ -344,20 +344,20 @@ exactly one of \delta^*(p,w) and \delta^*(q,w) is
 an accepting state\): suppose exactly one of \(\delta^*(p,w)\) and
 \(\delta^*(q,w)\) is an accepting state, for example, \(\delta^*(p,w)
 \in F \wedge \delta^*(q,w) \notin F\). This contradicts to the
-assumption that \(\delta^*(p,w) \in F \Leftrightarrow\). Therefore, not
+assumption that \(\delta^*(p,w) \in F \Leftrightarrow \delta^*(q,w) \in F\). Therefore, not
 exactly one of \(\delta^*(p,w)\) and \(\delta^*(q,w)\) is
 an accepting state. The same argument also applies for the case when \(\delta^*(p,w)
 \notin F \wedge \delta^*(q,w) \in F\).
 
-\par \noindent 2) Case \(not
-exactly one of \delta^*(p,w) and \delta^*(q,w) is
-an accepting state \Rightarrow (\delta^*(p,w) \in F \Leftrightarrow
-\delta^*(q,w) \in F)\): 
-\par 2.1) if \(\delta^*(p,w) \in F\), suppose \(\delta^*(q,w) \notin
-F\), then this contradicts to the assumption that \(not
-exactly one of \delta^*(p,w) and \delta^*(q,w) is
-an accepting state\). Therefore, \(\delta^*(q,w) \in F\) is true;
-\par 2.2) the same argument applies for the case when \(\delta^*(q,w) \in F\).
+\par \noindent 2) Case \(not\ 
+exactly\ one\ of\ \delta^*(p,w)\ and\ \delta^*(q,w)\ is\ 
+an\ accepting\ state\ \Rightarrow (\delta^*(p,w) \in F \Leftrightarrow
+\delta^*(q,w) \in F)\): if \(\delta^*(p,w) \in F\) and\(\delta^*(q,w) \notin
+F\), then it contradicts to the assumption that \(not\ 
+exactly\ one\ of\ \delta^*(p,w)\ and\ \delta^*(q,w)\ is\ 
+an\ accepting\ state\). Therefore, \(\delta^*(q,w) \in F\) is true;
+the same argument applies for the case when \(\delta^*(p,w) \notin F\)
+and \(\delta^*(q,w) \in F\).
 \end{proof}
 
 
@@ -386,13 +386,13 @@ q\), then there must exist a string \(w\)
 that can distinguish \(p\) and \(q\), i.e. exactly one of
 \(\delta^*(p,w)\) and \(\delta^*(q,w)\) is an accepting state. This
 contradicts to the assumption that \(\delta^*(p,w) \in F
-\Leftrightarrow \delta^*(q,w)\), therefore, \(p \sim q\) must be true. 
+\Leftrightarrow \delta^*(q,w)\); therefore, \(p \sim q\) must be true. 
 \end{proof}
 
 \begin{thm}
 \label{thm:mdfa_irreducible}
 \noindent For any MDFA, it is irreducible, i.e. for any two states
-\(p\) and \(q\) in the MDFA, if \(p\) is not equal to \(q\) then \(p \nsim q\). 
+\(p\) and \(q\) in the MDFA, if \(p\) is not equal to \(q\), then \(p \nsim q\). 
 \end{thm}
 
 \begin{proof}

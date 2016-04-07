@@ -30,7 +30,7 @@ definition.
 \end{defn}
 
 \par The two representations have different roles in other parts of the
-formalisaton. \(Language\) is defined using \(Subset\) as not every
+formalisation. \(Language\) is defined using \(Subset\) as not every
 language is decidable. For other parts in the project 
 such as the subsets of states in an automaton, \(DecSubset\) is used
 because the decidability is assumed. 
@@ -53,7 +53,7 @@ vector containing elements of \(A\) with length \(n + 1\); \((\forall
 a\in It)\) -- a proof that any state in \(A\) is also in the vector
 \(It\); and \((unique : Unique)\) -- a proof that there is no repeating
 elements in \(It\). The vector representation allows us to iterate a
-certain set and its subsets, and to extract informaion regarding the
+certain set and its subsets, and to extract information regarding the
 set and a proposition. 
 
 \begin{defn}
@@ -63,7 +63,7 @@ proposition \(P\).
 \end{defn}
 
 \par It is defined in Agda as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.15\textwidth]
 any : {A : Set}{n : $\mathbb N$}(P : A $\to$ Set) $\to$ Vec A n $\to$ Set
 any P []        = $\bot$
 any P (a :: as) = P a $\uplus$ any P as
@@ -88,7 +88,7 @@ proposition \(P\).
 \end{defn}
 
 \par It is defined in Agda as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.15\textwidth]
 all : {A : Set}{n : $\mathbb N$}(P : A $\to$ Set) $\to$ Vec A n $\to$ Set
 all P []        = $\top$
 all P (a :: as) = P a $\times$ all P as
@@ -105,6 +105,15 @@ elements in \(A\) satisfy \(P\).
 elements of \(A\), the statement must be true. However, in Type
 Theory, we have to prove it by induction on the vector.
 \end{proof}
+
+\par Apart from the above lemmas, the represenations has other
+usages. For example, with the \(unique\) proof, we can argue that the size
+of a decidable subset must be less than or equal to the size of the
+original set when proving the computation of
+\(\epsilon\)-closures. Furthermore, the representation is also used to
+prove the decidable equality of decidable subsets. The proofs are
+defined under the module \textbf{Decidable-\(\approx\)} in
+\textbf{Subset/DecidableSubset.agda}. 
 
 
 \section{Languages}

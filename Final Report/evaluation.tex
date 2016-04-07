@@ -2,7 +2,7 @@
 \par Throughout the project, we have made several
 decisions over the representations of mathematical objects such as
 subsets. We will discuss their consequences in this
-section. Furthermore, we will also review the whole development process. At the end of this section, we
+chapter. Furthermore, we will also review the whole development process. At the end of this section, we
 will also discuss the feasibility of formalising mathematics and
 programming logic in practice. 
 
@@ -16,7 +16,7 @@ following paragraphs, we will discuss the representations we have
 chosen and their consequences. 
 
 \paragraph{The set of states (Q) and its subsets} As we have mentioned
-in section 3, Firsov and Uustalu \cite{firsov2013} represent the set of states (\mb{Q}) and its subsets
+before, Firsov and Uustalu \cite{firsov2013} represent the set of states (\mb{Q}) and its subsets
 as column vectors. However, this representation looks unnatural compare
 to the actual mathematical definition. Therefore, at the beginning, we intended to avoid the vector representation and to
 represent the sets in abstract forms. In our approach, the set of states is represented as a data type in Agda, i.e. \mb{Q : Set}, and its
@@ -26,9 +26,9 @@ subsets are represented as unary functions on \mb{Q}, i.e. \mb{DecSubset\ Q = Q 
 \par Our definition allows us to finish the proofs in
 \textbf{Correctness/RegExp-eNFA.agda} without having to
 manipulate matrices. The proofs also look much more natural compare to that in
-\cite{firsov2013}. However, problems arise when the sets have to be iterated when computing the 
-\(\epsilon\)-closures because it is impossible to iterate the sets
-using this representation. In order to solve the problems, several
+\cite{firsov2013}. However, problems arise when the sets have to be
+iterated during the computation of \(\epsilon\)-closures because it is impossible to iterate the sets
+under this representation. In order to solve the problems, several
 extra fields are added into the definition of automata such as \mb{It}
 -- a vector containing all the states in \mb{Q}. With \mb{It}, a subset
 of \mb{Q} can be iterated by applying it own function, \mb{Q \to
@@ -44,11 +44,10 @@ expressions and this definition added a great amount of
 difficulties in writing the proofs because the proofs had to be built
 on top of the decider. For example, in the concatenation case, an extra recursive
 function was needed to iterate different combinations of input
-string and correctness proof of this function is difficult to
-complete. However, the decidability of the languages is actually not
-necessary in proving their equality. Therefore, in the current version
-of our Agda code, the language is defined using the general subset, i.e. \mb{L^R : RegExp \to Subset\
-  \Sigma^*}. This definition allows to prove the equality of the languages
+string and the correctness the algorithm was difficult to
+prove. More importantly, the decidability of the languages is actually not
+necessary in proving their equality. Therefore, in our current version, the language is defined using the general subset, i.e. \mb{L^R : RegExp \to Subset\
+  \Sigma^*}. This definition allows us to prove the equality of the languages
 in an abstract level. 
 
 \par The same situation also applies to the accepting language of finite automata. At first, the
@@ -59,7 +58,7 @@ definition mixes the decider and the proposition together. Therefore,
 the accepting language of NFA is now defined in an abstract form. 
 
 \par However, this does not mean that we can ignore all the algorithms. In
-fact, we still need to design algorithm in computing \(\epsilon\)-closures and
+fact, we still need to design algorithms for computing \(\epsilon\)-closures and
 powerset construction. Here is our approach: 1) separate the algorithm from the
 mathematical definition and 2) prove that they are equivalent. In this
 way, the decidability of the mathematical definition will follow from that
@@ -72,10 +71,10 @@ definition of reachable states from \mb{q_0}.
 
 \par We say that a state \mb{q} is reachable if and
 only if there exists a string \mb{w} that can take \mb{q_0} to
-\mb{q}. Therefore, the set \mb{Q^R} should contains all and only the
+\mb{q}. Therefore, the set \mb{Q^R} should contain all and only the
 reachable states in \mb{Q}. However, there may exist more than one
-reachability proof for the same state. Therefore, for a state in \mb{Q}, there may be
-more than one element in \mb{Q^R} and thus \mb{Q^R}
+reachability proofs for the same state. Therefore, for a state in \mb{Q}, there may be
+more than one elements in \mb{Q^R} and thus \mb{Q^R}
 may be larger than the original set \mb{Q} or even worse, it may be
 infinite. This leads to a problem when a DFA is constructed using
 \mb{Q^R} as the set of states. If \mb{Q^R} is
@@ -97,10 +96,11 @@ be selected by choosing the shortest string \mb{(w)} sorted in
 alphabetical order that can take \mb{q_0} to \mb{q}. Another possible solution is to use
 Homotopy Type to declare the set \mb{Q^R}. This type allows us to
 group different reachability proofs into a single element such that
-every state will only appear once in \mb{Q^R}. The most
-straight-forward solution is to re-define the type of \(Q^R\). Since the set is
-actually a subset of \(Q\); therefore, it should be defined as \(Q^R :
-DecSubset Q\). We can find all the reachable states by the following algorithm:
+every state will only appear once in \mb{Q^R}. However, the most
+straight-forward solution is to re-define the type of \(Q^R\) to
+decidable subset, i.e. \(Q^R :
+DecSubset Q\), because the set is a subset of \(Q\). We can compute
+the set by the following algorithm:
 \begin{enumerate}[nolistsep]
   \item put \(q_0\) into a subset \(S\), i.e. \(S = \{q_0\}\)
   \item loop for \(|Q| - 1\) times: 
@@ -109,7 +109,8 @@ DecSubset Q\). We can find all the reachable states by the following algorithm:
       \(\Sigma\), if \(a\) can take
       \(p\) to another state \(r\), i.e. \(r = \delta (p,a)\), then put \(r\) into \(S\). 
   \end{enumerate}
-  \item the result subset \(S\) is the \(\epsilon\)-closure of \(q\)
+  \item the result subset \(S\) should contain all and only the
+    reachable states. 
 \end{enumerate}
 
 \par This algorithm will require a vector representation of the set of
@@ -119,11 +120,9 @@ thus it is possible to iterate.
 
 
 \section{Development Process}
-\par As we have mentioned before, the parts related to quotient
-construction were not completed. The major reason is
-that there was only very limited time left when we started the quotient
-construction. In the following paragraphs, we will evaluate the whole
-development process and discuss what could have been done better. 
+\par As we have mentioned before, the parts related to table filling algorithm were not completed. The major reason is
+that there was only very limited time left when we started it. In the following paragraphs, we will evaluate the whole
+development process and discuss what could be improved. 
 
 \par In the first 6 weeks, I was struggling to find
 the most suitable representations for regular expressions, finite
@@ -137,23 +136,23 @@ book \cite{aho1972} and started to write a framework of the
 theory. After that, in just one week, the Agda
 codes that formed the basis of the final version were developed by
 using the framework. One could argue that the work
-done in the first 6 weeks also contribute to those Agda codes but
+done in the first 6 weeks also contributed to those Agda codes but
 there is no doubt the written framework highly influenced the
 development. Therefore, even though it is convenient to write proofs
 using the interactive features in Agda,
 it would still be better to start with a framework in early stages. 
 
-\par After that, the development went smooth until the first week of
+\par After that, the development went smooth until the first month of
 the second semester. During the time, I started to prove several
 properties of \(\epsilon\)-closures. The plan was to finish this part
 within 2 weeks. However, 4 weeks were spent on it and very little
-progress were made. These 4 weeks were crucial to the development and
+progress was made. These 4 weeks were crucial to the development and
 the time should have been spent more wisely on other parts of the
 project such as powerset construction or the report. 
 
 
 \section{Computer-aided verification in practice}
-\par In order to evaluate the feasibility computer-aided verification in
+\par In order to evaluate the feasibility of computer-aided verification in
 practice, we will discuss: 1) the difference between computer proofs and written proofs, 2) the easiness or
 difficulty in formalising mathematics and programming logic and 3) the
 difference between computer-aided verification and testing. 
@@ -163,7 +162,7 @@ difference between computer-aided verification and testing.
 \par According to Geuvers \cite{geuvers2009}, a proof has two major roles: 1)
 to convince the readers that a statement is correct and 2) to explain
 why a statement is correct. The first role requires the proof to be
-convincing. The second role requires the proof to be able to give an
+convincing. The second role requires the proof to give an
 intuition of why the statement is correct. 
 
 \paragraph{Correctness} Traditionally, when mathematicians submit
@@ -182,36 +181,29 @@ most proof assistants, the proofs of every lemma must be provided explicitly. Th
 a computer proof always depends on the correctness of the smaller reasoning steps within it. 
 
 \paragraph{Readability} The second purpose of a proof is to explain why
-a certain statement is correct. Let us consider the following code
-snippet extracted from \textbf{Correctness/RegExp-eNFA.agda}. 
+a certain statement is correct. Let us consider the following proof extracted from \textbf{Correctness/RegExp-eNFA.agda}. 
 \begin{center} \includegraphics[width=\textwidth]{code} \end{center}
 
-\par The above code is a proof that if \mb{w^e} can take \mb{q_0} to
-another state \mb{inj\ q_1} in an \(\epsilon\)-NFA translated from a
-regular expression \mb{e^*}, then there exists a number \mb{n_1} and
-an \(\epsilon\)-string \mb{u^e} that will take \mb{inj\ q_{01}} to \mb{inj\ q_1} where
-\mb{q_{01}} is the start state of \mb{e} and \mb{q_1} is a state in
-\mb{e}. There are several techniques used in the proof; for example,
+\par There are several techniques used in the above proof; for example,
 induction on natural numbers and case analysis on state comparison. However, by
 just looking at the function body, the proving process can hardly be
 understood. Therefore, in general, a computer proof is very inadequate on
 this purpose and thus an outline of the proof in natural language is
 still necessary. 
 
-\paragraph{} Although computer proof seems to be unreadable, the advantages
+\paragraph{} Although computer proofs seem to be unreadable, the advantages
 are still impressive. Some large proofs are nearly impossible
-to be validated by human beings, for example, the 4-colour
+to validate by human beings, for example, the 4-colour
 theorem. Gonthier \cite{gonthier2008} formalised the proof in Coq
-which consists of the reduction to the problem to 633
+which consists of a reduction to the problem that includes 633
 cases. Furthermore, the formalised theories can be re-used in other
 formalisations within the same platform. Therefore, we can build a
-repository of formalised theories and formalise other theories using the repository. 
+repository of theories and formalise other theories using the repository. 
 
 
 \subsection{Easiness or difficulty in the process of formalisation}
 \par As a computer science student without a strong mathematical
-background, I find it not very difficult to do the
-formalisation as there are many similarities between writing codes and writing
+background, I find it not very difficult to formalise proofs in computer as there are many similarities between writing codes and writing
 proofs; for example, pattern matching compare to case analysis and
 recursive function compare to mathematical induction. Furthermore, Agda is convenient
 to use for its interactive features. The features allow us to know
@@ -242,11 +234,11 @@ program still cannot be proved to be 100\% correct. On the other
 hand, total correctness can be achieved by proving the specifications
 of a program. Already in 1997, Necula \cite{necula1997} has raised the
 notion of \textit{Proof Carrying code}. The idea is to accompany
-program with several proofs that proves the program specifications
+a program with several proofs that proves the program specifications
 within the same platform. In fact, there is already an
 extraction mechanism \cite{letouzey2008} in Coq that allows us to
 extract proofs and functions in Coq into Ocaml, Haskell or Scheme
-programs. Furthermore, testing are sometimes inapplicable on certain
+programs. Furthermore, testing are sometimes inapplicable in certain
 situations. For example, it is very difficult to design test cases for
 concurrent programs. On the other hand, it is relatively easier to prove the
 specifications of such programs. This also applies to programs in
@@ -255,4 +247,4 @@ to formalise such programs in Type Theory.
 
 \par On the other hand, most proof assistants are not Turing-complete
 which means that there might exist some useful functions that are
-impossible to be expressed in them. 
+impossible to express. 

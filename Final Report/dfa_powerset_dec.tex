@@ -16,7 +16,7 @@ operations and properties.
 
 \par It is formalised as a record in Agda as shown below: 
 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.15\textwidth]
 record DFA : Set$_1$ where
   field
     Q      : Set
@@ -57,7 +57,7 @@ that for all \(w \in \Sigma^*\) and \(a \in \Sigma\), \((q, aw)
 \end{defn}
 
 \par The binary function is defined in Agda as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   _$\vdash$_ : (Q $\times$ $\Sigma$ $\times$ $\Sigma^*$) $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
   (q , a , w) $\vdash$ (q' , w') = w $\equiv$ w' $\times$ q' $\approx$ $\delta$ q a
 \end{lstlisting}
@@ -69,13 +69,14 @@ configurations \(C_1, C_2, ..., C_{k-1}\) such that \(C_i \vdash C_{i+1}\) for a
 \end{defn}
 
 \par It is defined as a recursive function in Agda as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   _$\vdash^k$_-_ : (Q $\times$ $\Sigma^*$) $\to$ $\mathbb{N}$ $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
   (q , w) $\vdash^k$ zero  - (q' , w')
     = q $\equiv$ q' $\times$ w $\equiv$ w'
   (q , w) $\vdash^k$ suc n - (q' , w') 
     = $\exists$[ p $\in$ Q ] $\exists$[ a $\in$ $\Sigma$ ] $\exists$[ u $\in$ $\Sigma^*$ ]
-      (w $\equiv$ a :: u $\times$ (q , a , u) $\vdash$ (p , u) $\times$ (p , u) $\vdash^k$ n - (q' , w'))
+      (w $\equiv$ a :: u $\times$ (q , a , u) $\vdash$ (p , u) 
+       $\times$ (p , u) $\vdash^k$ n - (q' , w'))
 \end{lstlisting}
 
 \begin{defn}
@@ -84,7 +85,7 @@ if there exists a number of chains \(n\) such that \(C \vdash^n C'\).
 \end{defn}
 
 \par Its corresponding type is defined as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   _$\vdash^*$_ : (Q $\times$ $\Sigma^*$) $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
   (q , w) $\vdash^*$ (q' , w') = $\exists$[ n $\in$ $\mathbb{N}$ ] (q,w) $\vdash^k$ n - (q',w')
 \end{lstlisting}
@@ -96,7 +97,7 @@ accepting language of an DFA is given by the set \(\{w\ |\ \exists q\in F.\ (q_0
 \end{defn}
 
 \par The corresponding formalisation in Agda is as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   L$^D$ : DFA $\to$ Language
   L$^D$ dfa = $\lambda$ w $\to$ 
             $\exists$[ q $\in$ Q ] (q $\in^d$ F $\times$ (q$_0$ , w) $\vdash^*$ (q , [])))
@@ -120,7 +121,7 @@ translated DFA will be \((\mathcal P \left({Q}\right),\ \delta',\ \{q_0\},\ F')\
 \par In Agda, the set \(\mathcal P \left({Q}\right)\) is defined as
 the set of decidable subsets, i.e. \(Q' = DecSubset Q\). Therefore,
 the decidability of the set \(\delta'(qs,a)\) and \(F'\) must be
-proved using the vector represenation of \(Q\). The corresponding
+proved using the vector representation of \(Q\). The corresponding
 proofs are defined in the module \textbf{Powerset-Construction} in the
 same file. 
 

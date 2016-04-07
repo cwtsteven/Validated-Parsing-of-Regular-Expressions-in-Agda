@@ -1,7 +1,7 @@
 \chapter{Further Extensions}
-\par In this section, we will discuss two possible extensions to
-our project: 1) Myhill-Nerode Theorem and 2) Pumping Lemma. In these two
-theorems, they both use the translation of regular expressions to DFA
+\par In this chapter, we will briefly describe two possible extensions to
+our project: 1) the Myhill-Nerode Theorem and 2) the Pumping Lemma. These two
+theorems both use the translation of regular expressions to DFA
 in their arguments. Therefore, they can be built on top of our
 formalisation. 
 
@@ -9,24 +9,27 @@ formalisation.
 \section{Myhill-Nerode Theorem}
 \par Given a language \(L\), and a pair of
 strings \(u\) and \(v\), we define a relation \(R_L\) on strings such
-that \(u R_L v\) if and only if for any string \(z\), \(uz \in L
-\Leftrightarrow vz \in L\). The relation \(R_L\) is an equivalence
-relation and thus it divides the set of strings into some equivalence
-classes.
+that \(u R_L v\) if and only if for any string \(z\), \(L\) accepts
+\(uz\) if and only if \(L\) accepts \(vz\), i.e. \(uz \in L
+\Leftrightarrow vz \in L\). It is easy to show that the relation \(R_L\) is an equivalence
+relation and thus \(R_L\) divides the set of strings into some equivalence
+classes. 
 \par In general, the Myhill-Nerode Theorem states that a language
 \(L\) is regular if and only if \(R_L\) has a finite number of
 equivalence classes, and furthermore the number of states in the
 minimal DFA translated from \(L\) is equal to the number of
-equivalence classes in \(R_L\). The theorem is often used to prove a
-language to be regular. 
+equivalence classes in \(R_L\). The theorem is often used to prove
+that a language is not regular, such as the language of well-bracketed
+expressions. 
 
-\par In the proof, if \(L\) is a regular language, then a DFA is
-translated from \(L\) to prove that \(R_L\) has finite equivalence classes. For the opposite direction, suppose \(R_L\)
-has finite equivalence classes, then a DFA is also constructed from
+\par In the proof, if \(L\) is a regular language, then \(L\) is
+translated to a DFA in order to prove that \(R_L\) has finite equivalence classes. For the opposite direction, suppose \(R_L\)
+has finite equivalence classes, then a DFA can be constructed from
 the relation. By proving the DFA recognises \(L\), \(L\) is proved to
 be regular. Therefore, the theorem can
 be proved under the environment of our formalisation as we have
-already formalised the translation from regular languages to DFA and its correctness proof. 
+already formalised the translation from regular languages to DFA
+together with the correctness proofs. 
 
 
 \section{Pumping Lemma (for regular languages)}
@@ -42,6 +45,6 @@ sub-strings, i.e. \(w = xyz\) where
 \end{enumerate}
 \par \(y\) is the sub-string that can be pumped (removed or repeated
 any number of times) and the result string is always in \(L\). The
-lemma is often used to prove a language to be non-regular. In the proof, a DFA is constructed from \(L\) to prove that there
+lemma is again often used to prove a language non-regular. In the proof, a DFA is constructed from \(L\) to prove that there
 must exist some loops in the path of \(w\). Therefore, it can be
 proved by using our formalisation. 

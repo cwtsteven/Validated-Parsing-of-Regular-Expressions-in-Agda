@@ -19,7 +19,7 @@ its operations and properties.
 
 \par It is formalised as a record in Agda as shown below: 
 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 record NFA : Set$_1$ where
   field
     Q      : Set
@@ -59,7 +59,7 @@ that for all \(w \in \Sigma^*\) and \(a \in \Sigma\), \((q, aw)
 \end{defn}
 
 \par The binary function is defined in Agda as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   _$\vdash$_ : (Q $\times$ $\Sigma$ $\times$ $\Sigma^*$) $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
   (q , a , w) $\vdash$ (q' , w') = w $\equiv$ w' $\times$ q' $\in^d$ $\delta$ q a
 \end{lstlisting}
@@ -71,13 +71,14 @@ configurations \(C_1, C_2, ..., C_{k-1}\) such that \(C_i \vdash C_{i+1}\) for a
 \end{defn}
 
 \par It is defined as a recursive function in Agda as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   _$\vdash^k$_-_ : (Q $\times$ $\Sigma^*$) $\to$ $\mathbb{N}$ $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
   (q , w) $\vdash^k$ zero  - (q' , w')
     = q $\equiv$ q' $\times$ w $\equiv$ w'
   (q , w) $\vdash^k$ suc n - (q' , w') 
     = $\exists$[ p $\in$ Q ] $\exists$[ a $\in$ $\Sigma$ ] $\exists$[ u $\in$ $\Sigma^*$ ]
-      (w $\equiv$ a :: u $\times$ (q , a , u) $\vdash$ (p , u) $\times$ (p , u) $\vdash^k$ n - (q' , w'))
+      (w $\equiv$ a :: u $\times$ (q , a , u) $\vdash$ (p , u) 
+       $\times$ (p , u) $\vdash^k$ n - (q' , w'))
 \end{lstlisting}
 
 \begin{defn}
@@ -86,7 +87,7 @@ if there exists a number of chains \(n\) such that \(C \vdash^n C'\).
 \end{defn}
 
 \par Its corresponding type is defined as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   _$\vdash^*$_ : (Q $\times$ $\Sigma^*$) $\to$ (Q $\times$ $\Sigma^*$) $\to$ Set
   (q , w) $\vdash^*$ (q' , w') = $\exists$[ n $\in$ $\mathbb{N}$ ] (q,w) $\vdash^k$ n - (q',w')
 \end{lstlisting}
@@ -98,7 +99,7 @@ accepting language of an NFA is given by the set \(\{w\ |\ \exists q\in F.\ (q_0
 \end{defn}
 
 \par The corresponding formalisation in Agda is as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
   L$^N$ : NFA $\to$ Language
   L$^N$ nfa = $\lambda$ w $\to$ 
             $\exists$[ q $\in$ Q ] (q $\in^d$ F $\times$ (q$_0$ , w) $\vdash^*$ (q , [])))
@@ -122,7 +123,7 @@ computation of \(\epsilon\)-closures can be found in the module
 \end{defn}
 
 \par It is defined as a recursive function in Agda as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.1\textwidth]
 _$\to_\epsilon^k$_-_ : Q $\to$ $\mathbb{N}$ $\to$ Q $\to$ Set
 q $\to_\epsilon^k$ zero - q' = q $\equiv$ q'
 q $\to_\epsilon^k$ suc n - q' = $\exists$[ p $\in$ Q ] ( p $\in^d$ $\delta$ q E $\times$ p $\to_\epsilon^k$ n - q' )
@@ -163,7 +164,7 @@ will have proved the decidability of \(q \to_\epsilon^* q'\).
 \end{enumerate}
 \end{defn}
 
-\par Now, we can prove that the two representaions are equivalent. The
+\par Now, we can prove that the two representations are equivalent. The
 theorem is defined as the function \mmb{\to_\epsilon^*\!}\textbf{-lem\(_1\)}. 
 
 \begin{lem}

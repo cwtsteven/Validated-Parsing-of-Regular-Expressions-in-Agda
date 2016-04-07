@@ -100,7 +100,7 @@ us look at how it is declared in Agda.
   its own. However, there are several APIs that simulate
   dependent types, for example, Ivor \cite{ivor2016} and
   GADT.}
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 data Vec (A : Set) : $\mathbb N$ $\to$ Set where
   []   : Vec A zero
   _::_ : $\forall$ {n} $\to$ A $\to$ Vec A n $\to$ Vec A (suc n)
@@ -115,13 +115,13 @@ the type of empty vectors and (\mb{Vec\ A\ 10}) is another vector type with leng
 \par Dependent types allow us to be more
 expressive and precise over type declaration. Let us define the
 \mb{head} function for \mb{Vec}. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 head : {A : Set}{n : $\mathbb N$} $\to$ Vec A (suc n) $\to$ A
 head (x :: xs) = x 
 \end{lstlisting} 
 
 \par Only the (\mb{x :: xs}) case needs to be pattern matched because
-an element of the type (\mb{Vec\ A\ (suc\ n)}) must be in the form of
+an element of the type (\(Vec\ A\ (suc\ n)\)) must be in the form of
 (\mb{x :: xs}). Apart from vectors, a type of binary
 search tree can also be declared in which any tree of this type is guaranteed to be
 sorted. Interested readers can take a look at 
@@ -241,7 +241,7 @@ prop-lem f g = $\lambda$ p $\to$ g (f p)
 \end{lstlisting} 
 
 \par By completing the function, we have provided an element
-to the type \mb{(P \to Q) \to (Q \to R) \to (P \to R)} and thus we have
+to the type \((P \to Q) \to (Q \to R) \to (P \to R)\) and thus we have
 also proved the theorem to be true. 
 
 
@@ -251,7 +251,7 @@ introduce the universal (\mb{\forall}) and existential (\mb{\exists})
 quantifiers. Suppose \(A\) is a set, then a predicate on \(A\) corresponds to a dependent type in the
 form of \mb{A \to Set}. For example, we can
 define the predicates of even numbers and odd numbers inductively as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 mutual
   data _isEven : $\mathbb N$ $\to$ Set where
     base : zero isEven
@@ -267,7 +267,7 @@ proof \mb{x} of \mb{A} must be transformed into a proof of the predicate
 \mb{B[a:=x]}. In Type Theory, it is represented by the function \mb{(x :
 A) \to B\ x}. For example, we can prove by induction that for every natural
 number, it is either even or odd.
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 lem$_1$ : $\forall$ n $\to$ n isEven $\uplus$ n isOdd
 lem$_1$ zero = inj$_1$ base
 lem$_1$ (suc n) with lem$_1$ n
@@ -280,7 +280,7 @@ existential quantifier is similar to that of conjunction. In order for
 \mb{\exists x\in A.\ B(x)} to be true, a proof \mb{x} of \mb{A} and a proof of the predicate
 \mb{B[a:=x]} must be provided. In Type Theory, it is represented by the generalised
 product type \mb{\Sigma}. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 data $\Sigma$ (A : Set) (B : A $\to$ Set) : where
   _,_ : (a : A) $\to$ B a $\to$ $\Sigma$ A B
 \end{lstlisting}
@@ -288,7 +288,7 @@ data $\Sigma$ (A : Set) (B : A $\to$ Set) : where
 \par For simplicity, we will change the syntax of \mb{\Sigma} type to
 \mb{\exists [ x \in A ]\ B\ x}. As an example, let us prove that
 there exists an even number. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 lem$_2$ : $\exists$[ n $\in$ $\mathbb N$ ] (n isEven)
 lem$_2$ = zero , base
 \end{lstlisting}
@@ -298,7 +298,7 @@ lem$_2$ = zero , base
 \par A proposition is decidable if and only if there
 exists an algorithm that can decide whether the proposition is true or false. It is
 defined in Agda as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 data Dec (A : Set) : Set where
   yes : A $\to$ Dec A
   no  : $\neg$ A $\to$ Dec A
@@ -306,7 +306,7 @@ data Dec (A : Set) : Set where
 
 \par For example, we can prove that the predicate of even numbers is
 decidable. Interested readers can try and complete the following proofs. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 postulate lem$_3$ : $\forall$ n $\to$ $\neg$ (n isEven $\times$ n isOdd)
 
 postulate lem$_4$ : $\forall$ n $\to$ n isEven $\to$ $\neg$ ((suc n) isEven)
@@ -325,7 +325,7 @@ even-dec (suc n) with even-dec n
 \par One of the important features of Type Theory is
 to encode the equality relation of propositions as types. The
 equality relation is interpreted as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 data _$\equiv$_ {A : Set} (x : A) : A $\to$ Set where
   refl : x $\equiv$ x
 \end{lstlisting}
@@ -334,7 +334,7 @@ data _$\equiv$_ {A : Set} (x : A) : A $\to$ Set where
 element of the type \mb{x \equiv x}. More generally, \mb{refl} is a
 proof of \mb{x \equiv x'} provided that \mb{x} and \mb{x'} are the same
 after normalisation. For example, we can prove that \mb{suc\ (suc\ zero) \equiv 1 + 1} as follow:
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 lem$_3$ : suc (suc zero) $\equiv$ (1 + 1)
 lem$_3$ = refl
 \end{lstlisting}
@@ -344,13 +344,13 @@ lem$_3$ = refl
 normalisation. Now, let us define the elimination rule of
 equality. The rule should allow us to substitute equivalence objects
 into any proposition. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.05\textwidth]
 subst : {A : Set}{x y : A} $\to$ (P : A $\to$ Set) $\to$ x $\equiv$ y $\to$ P x $\to$ P y
 subst P refl p = p 
 \end{lstlisting}
 
 \par We can also prove the congruency of equality.
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.05\textwidth]
 cong : {A B : Set}{x y : A} $\to$ (f : A $\to$ B) $\to$ x $\equiv$ y $\to$ f x $\equiv$ f y
 cong f refl = refl
 \end{lstlisting}
@@ -363,7 +363,7 @@ idea, we will give an example on the insertion function of sorted
 lists. Let us begin by defining a predicate
 of sorted list (in ascending order). For simplicity, we will only consider the list of natural
 numbers. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 All$\hyphen$lt : $\mathbb N$ $\to$ List $\mathbb N$ $\to$ Set
 All$\hyphen$lt n [] = $\top$
 All$\hyphen$lt n (x :: xs) = n $\leq$ x $\times$ All$\hyphen$lt n xs
@@ -378,7 +378,7 @@ number is smaller than all the numbers inside a given list. Now, let
 us define an insertion function that takes a natural number and a list as the arguments and returns a list of
 natural numbers. The insertion function is designed in a way that if the
 input list is already sorted, then the output list will also be sorted. 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 insert : $\mathbb N$ $\to$ List $\mathbb N$ $\to$ List $\mathbb N$
 insert n [] = n :: []
 insert n (x :: xs) with n $\leq$? x
@@ -391,7 +391,7 @@ insert n (x :: xs) with n $\leq$? x
 a given number \mb{n} is less than or equal to another number
 \mb{m}. Now, let us encode the specification of the insertion function
 as follow: 
-\begin{lstlisting}[mathescape=true,xleftmargin=.3\textwidth]
+\begin{lstlisting}[mathescape=true,xleftmargin=.25\textwidth]
 insert$\hyphen$sorted : $\forall$ {n} {as} 
                 $\to$ Sorted$\hyphen$ASC as 
                 $\to$ Sorted$\hyphen$ASC (insert n as)
