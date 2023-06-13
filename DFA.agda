@@ -25,7 +25,8 @@ open import Subset.DecidableSubset
   renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_ ; Ø to Øᵈ ; _⋃_ to _⋃ᵈ_ ; _⋂_ to _⋂ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ
                  ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ≈-isEquiv to ≈ᵈ-isEquiv ; ≈-refl to ≈ᵈ-refl ; ≈-trans to ≈ᵈ-trans ; ≈-sym to ≈ᵈ-sym)
 open import Quotient
-open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_ ; tail to tailⱽ)
+open import Data.Vec
+open import Data.Vec.Membership.Propositional renaming  (_∈_ to _∈ⱽ_                ) hiding (_∉_      )
 open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 open import Language Σ dec
 
@@ -111,7 +112,7 @@ module DFA-Operations (D : DFA) where
   δ₀-lem₂ w prf = δ₀-lem₆ q₀ w prf
 
   δ₀-lem₁ : ∀ w
-            → δ₀ w ∈ᵈ F ⇔ ( Σ[ q ∈ Q ] ( q ∈ᵈ F × (q₀ , w) ⊢* (q , []) ) )
+            → δ₀ w ∈ᵈ F Util.⇔ ( Σ[ q ∈ Q ] ( q ∈ᵈ F × (q₀ , w) ⊢* (q , []) ) )
   δ₀-lem₁ w = δ₀-lem₂ w , δ₀-lem₃ w
 
   -- 

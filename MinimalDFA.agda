@@ -21,7 +21,8 @@ open import Subset
 open import Subset.DecidableSubset
   renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_ ; Ø to Øᵈ ; _⋃_ to _⋃ᵈ_ ; _⋂_ to _⋂ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ
                  ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; ≈-refl to ≈ᵈ-refl ; ≈-trans to ≈ᵈ-trans ; ≈-sym to ≈ᵈ-sym)
-open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_ ; tail to tailⱽ)
+open import Data.Vec hiding (_++_)
+open import Data.Vec.Membership.Propositional renaming (_∈_ to _∈ⱽ_) hiding (_∉_)
 open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 open import Language Σ dec
 open import DFA Σ dec

@@ -14,14 +14,13 @@ open import Data.List hiding (any)
 open import Data.Bool
 open import Relation.Binary hiding (Decidable)
 open import Relation.Binary.PropositionalEquality
-open Deprecated-inspect-on-steroids renaming (inspect to inspect')
 open import Relation.Nullary
 open import Data.Sum
 open import Data.Product hiding (Σ)
 open import Data.Unit
 open import Data.Empty
 open import Data.Nat
-open import Data.Vec renaming (_∈_ to _∈ⱽ_)
+open import Data.Vec
 
 open import Subset renaming (Ø to ø)
 open import Subset.DecidableSubset renaming (Ø to øᵈ ; _∈_ to _∈ᵈ_ ; _∈?_ to _∈ᵈ?_ ; ⟦_⟧ to ⟦_⟧ᵈ ; _≈_ to _≈ᵈ_ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_)
@@ -189,7 +188,7 @@ module Lᴺ⊆Lᴰ (nfa : NFA) where
          → w ∈ Lᴺ nfa
          → w ∈ Lᴰ dfa
   lem₁ w (q , q∈F , n , prf) with lem₂ q₀ q₀₁ w n q (⟦a⟧-lem₁ Q₁? q₀₁) prf
-  lem₁ w (q , q∈F , n , prf) | qs , q∈qs , prf₁ with qs ∈ᵈ? F | inspect' F qs
+  lem₁ w (q , q∈F , n , prf) | qs , q∈qs , prf₁ with qs ∈ᵈ? F | inspect F qs
   lem₁ w (q , q∈F , n , prf) | qs , q∈qs , prf₁ | true  | [ qs∈F ] = qs , qs∈F , n , prf₁
   lem₁ w (q , q∈F , n , prf) | qs , q∈qs , prf₁ | false | [ qs∉F ] with Dec-qs∈F qs
   lem₁ w (q , q∈F , n , prf) | qs , q∈qs , prf₁ | false | [   () ] | yes _
@@ -220,7 +219,7 @@ module Lᴺ⊇Lᴰ (nfa : NFA) where
   lem₂'' qs .[] zero    qs' (qs≈qs' , refl) q' q'∈lem₄ with lem₃ qs [] zero q'
   lem₂'' qs .[] zero    qs' (qs≈qs' , refl) q' q'∈lem₄ | yes (.q' , q'∈qs , (refl , refl)) = proj₁ qs≈qs' q' q'∈qs
   lem₂'' qs .[] zero    qs' (qs≈qs' , refl) q'      () | no  _
-  lem₂'' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈lem₄ with lem₄ ps u n q' | inspect' (lem₄ ps u n) q'
+  lem₂'' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈lem₄ with lem₄ ps u n q' | inspect (lem₄ ps u n) q'
   lem₂'' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈lem₄ | true  | [ eq ] = lem₂'' ps u n qs' prf₁ q' eq
   lem₂'' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈lem₄ | false | [ eq ] with lem₃ ps u n q'
   lem₂'' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈lem₄ | false | [ () ] | yes _
@@ -238,7 +237,7 @@ module Lᴺ⊇Lᴰ (nfa : NFA) where
   lem₂' qs .[] zero    qs' (qs≈qs' , refl) q' q'∈qs' | false | [ eq ] with lem₃ qs [] zero q'
   lem₂' qs .[] zero    qs' (qs≈qs' , refl) q' q'∈qs' | false | [ () ] | yes _
   lem₂' qs .[] zero    qs' (qs≈qs' , refl) q' q'∈qs' | false | [ eq ] | no  ¬∃q = ⊥-elim (¬∃q (q' , proj₂ qs≈qs' q' q'∈qs' , (refl , refl)))
-  lem₂' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈qs' with lem₄ qs (a ∷ u) (suc n) q' | inspect' (lem₄ qs (a ∷ u) (suc n)) q'
+  lem₂' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈qs' with lem₄ qs (a ∷ u) (suc n) q' | inspect (lem₄ qs (a ∷ u) (suc n)) q'
   lem₂' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈qs' | true  | [ eq ] = refl
   lem₂' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈qs' | false | [ eq ] with lem₃ qs (a ∷ u) (suc n) q'
   lem₂' qs ._  (suc n) qs' (ps , a , u , refl , (refl , ps≈δqsa) , prf₁) q' q'∈qs' | false | [ () ] | yes _
@@ -258,15 +257,11 @@ module Lᴺ⊇Lᴰ (nfa : NFA) where
          → w ∈ Lᴰ dfa
          → w ∈ Lᴺ nfa
   lem₁ w (qs , qs∈F , n , prf) with Dec-qs∈F qs
-  lem₁ w (qs , qs∈F , n , prf) | yes (q , q∈qs , q∈F) with lem₄ q₀ w n q | inspect' (lem₄ q₀ w n) q
-  lem₁ w (qs , qs∈F , n , prf) | yes (q , q∈qs , q∈F) | true  | [ eq ] with lem₃ q₀ w n q
-  lem₁ w (qs , qs∈F , n , prf) | yes (q , q∈qs , q∈F) | true  | [ eq ] | yes (p    , p∈q₀ , prf₁) with Q₁? q₀₁ p
-  lem₁ w (qs , qs∈F , n , prf) | yes (q , q∈qs , q∈F) | true  | [ eq ] | yes (.q₀₁ , p∈q₀  , prf₁) | yes refl = q , q∈F , n , prf₁
-  lem₁ w (qs , qs∈F , n , prf) | yes (q , q∈qs , q∈F) | true  | [ eq ] | yes (p    ,   ()  , prf₁) | no  _
-  lem₁ w (qs , qs∈F , n , prf) | yes (q , q∈qs , q∈F) | true  | [ () ] | no  _
-  lem₁ w (qs , qs∈F , n , prf) | yes (q , q∈qs , q∈F) | false | [ eq ]
-    = let (qs⊆lem₄ , lem₄⊇qs) = lem₂ q₀ w n qs prf in ⊥-elim (Bool-lem₉ eq (qs⊆lem₄ q q∈qs))
-  lem₁ w (qs ,   () , n , prf) | no  _
+  lem₁ w (qs , qs∈F , n , prf) | .true because ofʸ (q ,  q∈qs , q∈F ) with lem₄ q₀ w n q | inspect (lem₄ q₀ w n) q
+  lem₁ w (qs , qs∈F , n , prf) | .true because ofʸ (q , q∈qs , q∈F) | true | Relation.Binary.PropositionalEquality.[ eq ] with lem₃ q₀ w n q
+  lem₁ w (qs , qs∈F , n , prf) | .true because ofʸ (q , q∈qs , q∈F) | true | Relation.Binary.PropositionalEquality.[ eq ] | .true because ofʸ (p , p∈q₀ , prf₁) with  Q₁? q₀₁ p
+  lem₁ w (qs , qs∈F , n , prf) | .true because ofʸ (q , q∈qs , q∈F) | true | Relation.Binary.PropositionalEquality.[ eq ] | .true because ofʸ (.(_) , p∈q₀ , prf₁) | .true because ofʸ refl =  q , q∈F , n , prf₁
+  lem₁ w (qs , qs∈F , n , prf) | .true because ofʸ (q , q∈qs , q∈F) | false | Relation.Binary.PropositionalEquality.[ eq ] = let (qs⊆lem₄ , lem₄⊇qs) = lem₂ q₀ w n qs prf in ⊥-elim (Bool-lem₉ eq (qs⊆lem₄ q q∈qs))
   
   
 Lᴺ⊇Lᴰ : ∀ nfa → Lᴺ nfa ⊇ Lᴰ (powerset-construction nfa)

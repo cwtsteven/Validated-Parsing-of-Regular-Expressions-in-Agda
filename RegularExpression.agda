@@ -13,7 +13,7 @@ module RegularExpression (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.Product hiding (Σ)
 open import Data.Sum
-open import Data.Nat
+open import Data.Nat hiding (_^_)
 
 open import Language Σ dec renaming (Ø to ø)
 open import Subset hiding (Ø ; ⟦_⟧ ; _⋃_)

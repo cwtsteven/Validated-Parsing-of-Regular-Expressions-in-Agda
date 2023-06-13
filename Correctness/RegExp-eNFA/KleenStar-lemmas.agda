@@ -70,16 +70,11 @@ module Lᴿ⊆Lᴺ where
   lem₄ : ∀ wᵉ n q₁
          → (q₀ , wᵉ)  ⊢ᵏ suc n ─ (inj q₁ , [])
          → Σ[ n₁ ∈ ℕ ] Σ[ uᵉ ∈ Σᵉ* ] (toΣ* wᵉ ≡ toΣ* uᵉ × (inj q₀₁ , uᵉ) ⊢ᵏ n₁ ─ (inj q₁ , []))
-  lem₄ ._ zero    q₁  (inj .q₁  , α _ , .[] , refl , (refl ,   ()) , (refl , refl))
-  lem₄ ._ zero    q₁  (inj .q₁  , E   , .[] , refl , (refl , prf₁) , (refl , refl)) with Q₁? q₁ q₀₁
-  lem₄ ._ zero   .q₀₁ (inj .q₀₁ , E   , .[] , refl , (refl , prf₁) , (refl , refl)) | yes refl  = zero , [] , (refl , (refl , refl))
-  lem₄ ._ zero    q₁  (inj .q₁  , E   , .[] , refl , (refl ,   ()) , (refl , refl)) | no  p≢q₀₁
-  lem₄ ._ (suc n) q₁  (init     , α _ ,  uᵉ , refl , (refl ,   ()) , prf₂)
-  lem₄ ._ (suc n) q₁  (init     , E   ,  uᵉ , refl , (refl , prf₁) , prf₂) = lem₄ uᵉ n q₁ prf₂
-  lem₄ ._ (suc n) q₁  (inj  p   , α _ ,  uᵉ , refl , (refl ,   ()) , prf₂)
-  lem₄ ._ (suc n) q₁  (inj  p   , E   ,  uᵉ , refl , (refl , prf₁) , prf₂) with Q₁? p q₀₁
-  lem₄ ._ (suc n) q₁  (inj .q₀₁ , E   ,  uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  = suc n , uᵉ , refl , prf₂
-  lem₄ ._ (suc n) q₁  (inj  p   , E   ,  uᵉ , refl , (refl ,   ()) , prf₂) | no  p≢q₀₁
+  lem₄ .(E ∷ []) zero q₁ (inj .q₁ , E , [] , refl , (refl , prf₁) , refl , refl)  with Q₁? q₁ q₀₁
+  lem₄ .(E ∷ []) zero .(_) (inj .(_) , E , [] , refl , (refl , refl) , refl , refl) | .true because ofʸ refl =  zero , [] , (refl , (refl , refl))
+  lem₄ .(E ∷ uᵉ) (suc n) q₁ (init , E , uᵉ , refl , (refl , prf₁) , prf₂) =  lem₄ uᵉ n q₁ prf₂
+  lem₄ .(E ∷ uᵉ) (suc n) q₁ (inj p , E , uᵉ , refl , (refl , prf₁) , prf₂) with Q₁? p q₀₁
+  lem₄ .(E ∷ uᵉ) (suc n) q₁ (inj .(_) , E , uᵉ , refl , (refl , prf₁) , prf₂) | .true because ofʸ refl = suc n , uᵉ , refl , prf₂
 
 
   lem₃ : ∀ q wᵉ uᵉ n q' vᵉ
@@ -178,32 +173,7 @@ module Lᴿ⊇Lᴺ where
     = p , E , find-uᵉ p uᵉ n q' vᵉ prf₂ , refl , (refl , eq₁) , lem₆ p uᵉ n q' vᵉ prf₂ prf₃
   lem₆ q ._  (suc n)  q' vᵉ (inj p , E   , uᵉ , refl , (refl ,   ()) , prf₂) (inj₂ q∉F   , prf₃) | _         | false | [ eq ] | false | [ eq₁ ]
     
-  
-  lem₅ : ∀ q wᵉ n q' wᵉ'
-         → (prf : (inj q , wᵉ) ⊢ᵏ n ─ (inj q' , wᵉ'))
-         → (NoLoop q wᵉ n q' wᵉ' prf) ⊎ (HasLoop q wᵉ n q' wᵉ' prf)
-  lem₅ q ._ zero    .q  wᵉ' (refl  , refl) = inj₁ tt
-  lem₅ q ._ (suc n)  q' wᵉ' (init  , α _ , uᵉ , refl , (refl ,   ()) , prf₂)
-  lem₅ q ._ (suc n)  q' wᵉ' (init  , E   , uᵉ , refl , (refl ,   ()) , prf₂)
-  lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , α a , uᵉ , refl , (refl , prf₁) , prf₂) with lem₅ p uᵉ n q' wᵉ' prf₂
-  lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , α a , uᵉ , refl , (refl , prf₁) , prf₂) | inj₁ prf₃ = inj₁ prf₃
-  lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , α a , uᵉ , refl , (refl , prf₁) , prf₂) | inj₂ (n₁ , m₁ , p₁ , u₁ , prf₃ , NoLoop-prf₃ , p₁∈F , prf₅ , w≡uv , m₁<n)
-    = inj₂ (suc n₁ , m₁ , p₁ , u₁ , (inj p , α a , uᵉ , refl , (refl , prf₁) , prf₃) , NoLoop-prf₃ , p₁∈F , prf₅ , cong (λ u → α a ∷ u) w≡uv , ≤′-step m₁<n)
-  lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) with Q₁? p q₀₁ | q ∈ᵈ? F₁ | inspect F₁ q | p ∈ᵈ? δ₁ q E | inspect (δ₁ q E) p
-  lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  | true  | [ eq ] | p∈?δqE | [ eq₁ ] with Q₁? q₀₁ q₀₁
-  lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  | true  | [ eq ] | p∈?δqE | [ eq₁ ] | yes refl
-    = inj₂ (zero , n , q , uᵉ , (refl , refl) , tt , eq , prf₂ , refl , ≤′-refl)
-  lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  | true  | [ eq ] | p∈?δqE | [ eq₁ ] | no  p≢p  = ⊥-elim (p≢p refl)
-  lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  | false | [ eq ] | true   | [ eq₁ ] with lem₅ q₀₁ uᵉ n q' wᵉ' prf₂
-  lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  | false | [ eq ] | true   | [ eq₁ ] | inj₁ prf₃ = inj₁ (inj₂ (λ ()) , prf₃)
-  lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  | false | [ eq ] | true   | [ eq₁ ] | inj₂ (n₁ , m₁ , p₁ , u₁ , prf₃ , NoLoop-prf₃ , q₀₁∈F , prf₅ , w≡uv , m₁<n)
-    = inj₂ (suc n₁ , m₁ , p₁ , u₁
-            , (inj q₀₁ , E , uᵉ , refl , (refl , Bool-lem₆ (q₀₁ ∈ᵈ? δ₁ q E) (q ∈ᵈ? F₁ ∧ decEqToBool Q₁? q₀₁ q₀₁) eq₁) , prf₃)
-            , (inj₂ (∈-lem₂ {Q₁} {q} {F₁} eq) , NoLoop-prf₃)
-            , q₀₁∈F , prf₅
-            , cong (λ u → E ∷ u) w≡uv
-            , ≤′-step m₁<n)
-  lem₅ q ._ (suc n)  q' wᵉ' (inj .q₀₁ , E   , uᵉ , refl , (refl ,   ()) , prf₂) | yes refl  | false | [ eq ] | false  | [ eq₁ ]
+ {-
   lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) | no  p≢q₀₁ | q∈?F₁ | [ eq ] | true   | [ eq₁ ] with lem₅ p uᵉ n q' wᵉ' prf₂
   lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) | no  p≢q₀₁ | q∈?F₁ | [ eq ] | true   | [ eq₁ ] | inj₁ prf₃ = inj₁ (inj₁ p≢q₀₁ , prf₃)
   lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) | no  p≢q₀₁ | q∈?F₁ | [ eq ] | true   | [ eq₁ ] | inj₂ (n₁ , m₁ , p₁ , u₁ , prf₃ , NoLoop-prf₃ , p₁∈F , prf₅ , w≡uv , m₁<n)
@@ -213,6 +183,35 @@ module Lᴿ⊇Lᴺ where
             , p₁∈F , prf₅
             , cong (λ u → E ∷ u) w≡uv
             , ≤′-step m₁<n)
-  lem₅ q ._ (suc n)  q' wᵉ' (inj  p   , E   , uᵉ , refl , (refl , prf₁) , prf₂) | no  p≢q₀₁ | q∈?F₁ | [ eq ] | false  | [ eq₁ ]
-    = ⊥-elim (Bool-lem₈ {q∈?F₁} prf₁)
-            
+-}
+
+  lem₅ : ∀ q wᵉ n q' wᵉ'
+         → (prf : (inj q , wᵉ) ⊢ᵏ n ─ (inj q' , wᵉ'))
+         → (NoLoop q wᵉ n q' wᵉ' prf) ⊎ (HasLoop q wᵉ n q' wᵉ' prf)
+  lem₅ q wᵉ zero .q .wᵉ (refl , refl) = inj₁ tt
+  lem₅ q wᵉ (suc n) q' wᵉ' (init , E , ())
+  lem₅ q wᵉ (suc n) q' wᵉ' (init , α x , ())
+  lem₅ q .(α a ∷ uᵉ) (suc n) q' wᵉ' (inj p , α a , uᵉ , refl , (refl , prf₁) , prf₂) with lem₅ p uᵉ n q' wᵉ' prf₂
+  lem₅ q .(α a ∷ uᵉ) (suc n) q' wᵉ' (inj p , α a , uᵉ , refl , (refl , prf₁) , prf₂) | inj₁ prf₃ = inj₁ prf₃
+  lem₅ q .(α a ∷ uᵉ) (suc n) q' wᵉ' (inj p , α a , uᵉ , refl , (refl , prf₁) , prf₂) | inj₂ (n₁ , m₁ , p₁ , u₁ , prf₃ , NoLoop-prf₃ , p₁∈F , prf₅ , w≡uv , m₁<n) = inj₂ (suc n₁ , m₁ , p₁ , u₁ , (inj p , α a , uᵉ , refl , (refl , prf₁) , prf₃) , NoLoop-prf₃ , p₁∈F , prf₅ , cong (λ u → α a ∷ u) w≡uv , ≤′-step m₁<n)
+  lem₅ q .(E ∷ uᵉ) (suc n) q' wᵉ' (inj p , E , uᵉ , refl , (refl , prf₁) , prf₂) with Q₁? p q₀₁ | q ∈ᵈ? F₁ | inspect F₁ q | p ∈ᵈ? δ₁ q E | inspect (δ₁ q E) p
+  lem₅ q .(E ∷ uᵉ) (suc n) q' wᵉ' (inj q₀₁ , E , uᵉ , refl , (refl , prf₁) , prf₂) | .true because ofʸ refl | true | Relation.Binary.PropositionalEquality.[ eq ] | p∈?δqE | Relation.Binary.PropositionalEquality.[ eq₁ ] = inj₂ (zero , n , q , uᵉ , (refl , refl) , tt , eq , prf₂ , refl , ≤′-refl)
+  lem₅ q .(E ∷ uᵉ) (suc n) q' wᵉ' (inj .(_) , E , uᵉ , refl , (refl , prf₁) , prf₂) | .true because ofʸ refl | false | Relation.Binary.PropositionalEquality.[ eq ] | true | Relation.Binary.PropositionalEquality.[ eq₁ ]  with lem₅ q₀₁ uᵉ n q' wᵉ' prf₂
+  lem₅ q .(E ∷ uᵉ) (suc n) q' wᵉ' (inj .(_) , E , uᵉ , refl , (refl , prf₁) , prf₂) | .true because ofʸ refl | false | Relation.Binary.PropositionalEquality.[ eq ] | true | Relation.Binary.PropositionalEquality.[ eq₁ ] | inj₁ prf₃ =  inj₁ (inj₂ (λ ()) , prf₃)
+  lem₅ q .(E ∷ uᵉ) (suc n) q' wᵉ' (inj .(_) , E , uᵉ , refl , (refl , prf₁) , prf₂) | .true because ofʸ refl | false | Relation.Binary.PropositionalEquality.[ eq ] | true | Relation.Binary.PropositionalEquality.[ eq₁ ] | inj₂ (n₁ , m₁ , p₁ , u₁ , prf₃ , NoLoop-prf₃ , q₀₁∈F , prf₅ , w≡uv , m₁<n)
+    = inj₂ (suc n₁ , m₁ , p₁ , u₁
+            , (inj q₀₁ , E , uᵉ , refl , (refl , Bool-lem₆ (q₀₁ ∈ᵈ? δ₁ q E) (q ∈ᵈ? F₁ ∧ decEqToBool Q₁? q₀₁ q₀₁) eq₁) , prf₃)
+            , (inj₂ (∈-lem₂ {Q₁} {q} {F₁} eq) , NoLoop-prf₃)
+            , q₀₁∈F , prf₅
+            , cong (λ u → E ∷ u) w≡uv
+            , ≤′-step m₁<n)
+  lem₅ q .(E ∷ uᵉ) (suc n) q' wᵉ' (inj p , E , uᵉ , refl , (refl , prf₁) , prf₂) | .false because ofⁿ p≢q₀₁ | q∈?F₁ | Relation.Binary.PropositionalEquality.[ eq ] | true | Relation.Binary.PropositionalEquality.[ eq₁ ]  with lem₅ p uᵉ n q' wᵉ' prf₂
+  lem₅ q .(E ∷ uᵉ) (suc n) q' wᵉ' (inj p , E , uᵉ , refl , (refl , prf₁) , prf₂) | .false because ofⁿ p≢q₀₁ | q∈?F₁ | Relation.Binary.PropositionalEquality.[ eq ] | true | Relation.Binary.PropositionalEquality.[ eq₁ ] | inj₁  prf₃ = inj₁ (inj₁ p≢q₀₁ , prf₃)
+  lem₅ q .(E ∷ uᵉ) (suc n) q' wᵉ' (inj p , E , uᵉ , refl , (refl , prf₁) , prf₂) | .false because ofⁿ p≢q₀₁ | q∈?F₁ | Relation.Binary.PropositionalEquality.[ eq ] | true | Relation.Binary.PropositionalEquality.[ eq₁ ] | inj₂ (n₁ , m₁ , p₁ , u₁ , prf₃ , NoLoop-prf₃ , p₁∈F , prf₅ , w≡uv , m₁<n)
+    = inj₂ (suc n₁ , m₁ , p₁ , u₁
+            , (inj p , E , uᵉ , refl , (refl , Bool-lem₆ (p ∈ᵈ? δ₁ q E) (q ∈ᵈ? F₁ ∧ decEqToBool Q₁? p q₀₁) eq₁) , prf₃)
+            , (inj₁ p≢q₀₁ , NoLoop-prf₃)
+            , p₁∈F , prf₅
+            , cong (λ u → E ∷ u) w≡uv
+            , ≤′-step m₁<n)
+  lem₅ q .(E ∷ uᵉ) (suc n) q' wᵉ' (inj p , E , uᵉ , refl , (refl , prf₁) , prf₂) | .false because ofⁿ p≢q₀₁ | q∈?F₁ | Relation.Binary.PropositionalEquality.[ eq ] | false | Relation.Binary.PropositionalEquality.[ eq₁ ] = ⊥-elim (Bool-lem₈ {q∈?F₁} prf₁)   

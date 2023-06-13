@@ -52,5 +52,5 @@ module Table-Construction (A : Set)(A? : DecEq A)(n : ℕ)(It : Vec A (suc n))(�
   --unique-table = {!!}
 
   postulate It-lem : {n : ℕ}(as : Vec (A × A) (suc n))
-                     → ∀ a → a ∈ⱽ as → a ≡ head as ⊎ a ∈ⱽ tail as
+                     → ∀ a → a ∈ⱽ as → a ≡ head as ⊎ a ∈ⱽ mytail as
   

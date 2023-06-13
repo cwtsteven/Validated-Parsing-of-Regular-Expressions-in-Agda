@@ -15,11 +15,12 @@ open import Data.Bool
 open import Data.Nat
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
-open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_ ; tail to tailⱽ)
+open import Data.Vec
+open import Data.Vec.Membership.Propositional renaming (_∈_ to _∈ⱽ_) hiding (_∉_)
 open import Data.Product hiding (Σ)
 open import Data.Sum
 open import Data.Empty
-
+open import Data.Vec.Relation.Unary.Any as AnyV using (here; there)  
 open import Subset
 open import Subset.DecidableSubset
   renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_ ; Ø to Øᵈ ; _⋃_ to _⋃ᵈ_ ; _⋂_ to _⋂ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ
@@ -55,7 +56,7 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
   q →εᵏ₂ suc n ─ q' = Σ[ p ∈ Q ] ( q →εᵏ n ─ p × q' ∈ᵈ δ p E )
   
   
-  -- adding an ε-transition in the tail
+  -- adding an ε-transition in the mytail
   →εᵏ-lem₁ : ∀ q n p q'
              → q →εᵏ n ─ p
              → q' ∈ᵈ δ p E
@@ -141,7 +142,7 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
 
   -- set of states reachable from q in n ε-transitions
   ε-path : Q → ℕ → DecSubset Q
-  ε-path q zero    = ⟦ q ⟧ᵈ {{Q?}}
+  ε-path q zero    = ⟦ q ⟧ᵈ {Q?}
   ε-path q (suc n) = ε-path q n ⋃ᵈ ⋃-δqE (ε-path q n)
 
   -- ε-closure of q
@@ -150,7 +151,7 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
 
   -- set of states reachable from q with less than or equal to k steps
   ε-closureᵏ : ℕ → Q → Subset Q
-  ε-closureᵏ k q = λ q' → Σ[ n ∈ ℕ ] ( n ≤ k × q' ∈ᵈ ε-path q n )
+  ε-closureᵏ k q = λ q' → Σ[ n ∈ ℕ ] ( n Data.Nat.≤ k × q' ∈ᵈ ε-path q n )
 
 
   ε-lem₂ : ∀ q s j → s ∈ᵈ ε-path q j → q →εᵏ j ─ s
@@ -176,7 +177,7 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
   ε-lem₁ q  s (suc j) prf | p , q→p , s∈δpE | false | no  ¬∃q | p∈qj = ⊥-elim (¬∃q (p , p∈qj , s∈δpE))
 
 
-  ε-path-lem₁ : ∀ q k → k ≡ zero → ε-path q k ≈ᵈ (⟦ q ⟧ᵈ {{Q?}})
+  ε-path-lem₁ : ∀ q k → k ≡ zero → ε-path q k ≈ᵈ (⟦ q ⟧ᵈ {Q?})
   ε-path-lem₁ q .zero refl = ≈-refl
 
 
@@ -231,7 +232,7 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
     ε3-lem₈ zero    (suc n) k prf j≥k k≈sk = ε-path-lem₁ q k (ℕ-lem₃ k j≥k)
     ε3-lem₈ (suc j) (suc .j) zero    refl z≤n k≈sk = ≈-trans IH (≈-sym lem7)
       where
-        IH : (⟦ q ⟧ᵈ {{Q?}}) ≈ᵈ ε-path q j
+        IH : (⟦ q ⟧ᵈ {Q?}) ≈ᵈ ε-path q j
         IH = ε3-lem₈ j j zero refl z≤n k≈sk
         lem7 : ε-path q j ⋃ᵈ ⋃-δqE (ε-path q j) ≈ᵈ ε-path q j
         lem7 = ε3-lem₇ (suc j) j zero k≈sk refl z≤n (s≤s z≤n)
@@ -250,7 +251,7 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
     ε3-lem₉ : ∀ j → ε-path q j ⊆ᵈ ε-path q (suc j)
     ε3-lem₉ j s s∈qj = Bool-lem₆ _ _ s∈qj
   
-    ε3-lem₁₀ : ∀ j k → j ≤ k → ε-path q j ⊆ᵈ ε-path q k
+    ε3-lem₁₀ : ∀ j k → j Data.Nat.≤ k → ε-path q j ⊆ᵈ ε-path q k
     ε3-lem₁₀ j zero     j≤k s s∈qj with ℕ-lem₃ j j≤k
     ε3-lem₁₀ .zero zero j≤k s s∈qj | refl = s∈qj
     ε3-lem₁₀ zero (suc k) j≤k s s∈qj = Bool-lem₆ _ _ (ε3-lem₁₀ zero k z≤n s s∈qj)
@@ -267,7 +268,7 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
     ε-clos-lem₁ k prf = lem₁ k prf , lem₂ k prf
       where
         lem₁ : ∀ k → ε-path q k ≈ᵈ ε-path q (suc k) → ε-closure q ⊆ ε-closureᵏ k q
-        lem₁ k εqk≈εqsk s (n , s∈qn) with n ≤? k
+        lem₁ k εqk≈εqsk s (n , s∈qn) with n Data.Nat.≤? k
         lem₁ k εqk≈εqsk s (n , s∈qn) | yes n≤k = n , n≤k , s∈qn
         lem₁ k εqk≈εqsk s (n , s∈qn) | no  n≥k = k , ℕ-lem₁₀ k , proj₂ (ε3-lem₁ n k εqk≈εqsk (ℕ-lem₁₄ n k (ℕ-lem₁₃ n k n≥k))) s s∈qn
         lem₂ : ∀ k → ε-path q k ≈ᵈ ε-path q (suc k) → ε-closure q ⊇ ε-closureᵏ k q
@@ -315,12 +316,12 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
                   → size-helper ps uni (ε-path q 0) ≡ 0
         helper₁ ( x ∷ [])      uni q∉ps q∈qs with x ∈ᵈ? (ε-path q 0) | inspect (ε-path q 0) x
         helper₁ ( x ∷ [])      uni q∉ps q∈qs | true  | [ x∈qs ] with Q? q x
-        helper₁ (.q ∷ [])      uni q∉ps q∈qs | true  | [ x∈qs ] | yes refl = ⊥-elim (q∉ps here)
+        helper₁ (.q ∷ [])      uni q∉ps q∈qs | true  | [ x∈qs ] | yes refl = ⊥-elim (q∉ps (here refl))
         helper₁ ( x ∷ [])      uni q∉ps q∈qs | true  | [   () ] | no  _
         helper₁ ( x ∷ [])      uni q∉ps q∈qs | false | [ x∈qs ] = refl
         helper₁ ( x ∷ x₁ ∷ ps) uni q∉ps q∈qs with x ∈ᵈ? (ε-path q 0) | inspect (ε-path q 0) x
         helper₁ ( x ∷ x₁ ∷ ps) uni q∉ps q∈qs | true  | [ x∈qs ] with Q? q x
-        helper₁ (.q ∷ x₁ ∷ ps) uni q∉ps q∈qs | true  | [ x∈qs ] | yes refl = ⊥-elim (q∉ps here)
+        helper₁ (.q ∷ x₁ ∷ ps) uni q∉ps q∈qs | true  | [ x∈qs ] | yes refl = ⊥-elim (q∉ps (here refl))
         helper₁ ( x ∷ x₁ ∷ ps) uni q∉ps q∈qs | true  | [   () ] | no  _
         helper₁ ( x ∷ x₁ ∷ ps) uni q∉ps q∈qs | false | [ x∈qs ] = helper₁ (x₁ ∷ ps) (proj₂ uni) (It-lem₈ q∉ps) q∈qs
         
@@ -433,7 +434,7 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
       = let ¬⊆ = ε4-lem₅ 0 ¬i≈i-1 in
         let p , (p∈qsj , p∉qj) = ε4-lem₆ 0 ¬⊆ in
         let prf = ε4-lem₁₀ 0 It unique p p∈qsj p∉qj (∀q∈It p) in
-        subst (λ n → suc n ≤ size (ε-path q (suc zero))) ε4-lem₂ prf
+        subst (λ n → suc n Data.Nat.≤ size (ε-path q (suc zero))) ε4-lem₂ prf
     ε4-lem₁ (suc (suc i)) i≥1 ¬i≈i-1
       = let ¬⊆ = ε4-lem₅ (suc i) ¬i≈i-1 in
         let p , (p∈qsj , p∉qj) = ε4-lem₆ (suc i) ¬⊆ in
@@ -441,11 +442,11 @@ module Compute-ε-closure (ε-nfa : ε-NFA) where
         let IH = ε4-lem₁ (suc i) (s≤s z≤n) (ε4-lem₁₃ i i≥1 p p∈qsj p∉qj ¬i≈i-1) in ℕ-lem₁₇ IH prf
         
 
-    ε4-lem₁₂ : ∀ j → size (ε-path q j) ≤ suc ∣Q∣-1
+    ε4-lem₁₂ : ∀ j → size (ε-path q j) Data.Nat.≤ suc ∣Q∣-1
     ε4-lem₁₂ j = helper It unique
       where
         helper : {n : ℕ}(ps : Vec Q (suc n))(uni : Unique ps)
-                 → size-helper ps uni (ε-path q j) ≤ suc n
+                 → size-helper ps uni (ε-path q j) Data.Nat.≤ suc n
         helper (p ∷ []) uni with p ∈ᵈ? ε-path q j
         helper (p ∷ []) uni | true  = s≤s z≤n
         helper (p ∷ []) uni | false = z≤n

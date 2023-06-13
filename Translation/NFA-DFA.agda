@@ -18,7 +18,8 @@ open import Data.Product hiding (Σ ; map)
 open import Data.Sum
 open import Data.Empty
 open import Data.Nat
-open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_ ; tail to tailⱽ)
+open import Data.Vec
+open import Data.Vec.Membership.Propositional renaming (_∈_ to _∈ⱽ_) hiding (_∉_)
 
 open import Subset.DecidableSubset
   renaming (_∈_ to _∈ᵈ_ ; _∈?_ to _∈ᵈ?_ ; Ø to ø ; _⋃_ to _⋃ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; _≈_ to _≈ᵈ_ ; ≈-isEquiv to ≈ᵈ-isEquiv)
@@ -112,7 +113,7 @@ powerset-construction nfa =
       ... | no  _ = false
       
       q₀' : Q'
-      q₀' = ⟦ q₀ ⟧ᵈ {{Q?}}
+      q₀' = ⟦ q₀ ⟧ᵈ {Q?}
       
       F' : DecSubset Q'
       -- = { qs | ∃q∈Q. q ∈ qs ∧ q ∈ F }

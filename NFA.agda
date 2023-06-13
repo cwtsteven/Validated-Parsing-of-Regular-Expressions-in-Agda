@@ -14,7 +14,8 @@ open import Data.List hiding (any ; all)
 open import Relation.Binary.PropositionalEquality
 open import Data.Product hiding (Σ)
 open import Data.Nat
-open import Data.Vec hiding (_++_) renaming (_∈_ to _∈ⱽ_ ; tail to tailⱽ)
+open import Data.Vec 
+open import Data.Vec.Membership.Propositional renaming  (_∈_ to _∈ⱽ_                ) hiding (_∉_      )
 
 open import Subset.DecidableSubset
   renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_ ; Ø to Øᵈ ; _⋃_ to _⋃ᵈ_ ; _⋂_ to _⋂ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ

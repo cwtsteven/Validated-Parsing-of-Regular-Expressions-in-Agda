@@ -17,8 +17,8 @@ open import Relation.Nullary
 open import Data.Sum
 open import Data.Product hiding (Σ)
 open import Data.Empty
-open import Data.Nat
-open import Induction.Nat
+open import Data.Nat hiding (_^_)
+open import Data.Nat.Induction
 
 open import Subset renaming (Ø to ø)
 open import Subset.DecidableSubset renaming (Ø to ø ; _∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; _≈_ to _≈ᵈ_) hiding (_⊆_ ; _⊇_)
@@ -140,7 +140,7 @@ Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
                    → (prf : (inj q₀₁ , wᵉ) ⊢ᵏ n ─ (inj q , []))
                    → HasLoop q₀₁ wᵉ n q [] prf
                    → Σ[ n₁ ∈ ℕ ] w ∈ Lᴿ e ^ n₁
-    HasLoop-lem₁ = <-rec _ helper
+    HasLoop-lem₁ = <′-rec _ helper
       where
         helper : ∀ n
                  → (∀ m₁
@@ -199,17 +199,11 @@ Lᴿ⊇Lᵉᴺ (e *) w prf = lem₁ w prf
     lem₃ : ∀ wᵉ n q₁
            → (q₀ , wᵉ)  ⊢ᵏ suc n ─ (inj q₁ , [])
            → Σ[ n₁ ∈ ℕ ] Σ[ uᵉ ∈ Σᵉ* ] (toΣ* wᵉ ≡ toΣ* uᵉ × (inj q₀₁ , uᵉ) ⊢ᵏ n₁ ─ (inj q₁ , []))
-    lem₃ ._ zero    q₁  (inj .q₁  , α _ , .[] , refl , (refl ,   ()) , (refl , refl))
-    lem₃ ._ zero    q₁  (inj .q₁  , E   , .[] , refl , (refl , prf₁) , (refl , refl)) with Q₁? q₁ q₀₁
-    lem₃ ._ zero   .q₀₁ (inj .q₀₁ , E   , .[] , refl , (refl , prf₁) , (refl , refl)) | yes refl  = zero , [] , (refl , (refl , refl))
-    lem₃ ._ zero    q₁  (inj .q₁  , E   , .[] , refl , (refl ,   ()) , (refl , refl)) | no  p≢q₀₁
-    lem₃ ._ (suc n) q₁  (init     , α _ ,  uᵉ , refl , (refl ,   ()) , prf₂)
-    lem₃ ._ (suc n) q₁  (init     , E   ,  uᵉ , refl , (refl , prf₁) , prf₂) = lem₃ uᵉ n q₁ prf₂
-    lem₃ ._ (suc n) q₁  (inj  p   , α _ ,  uᵉ , refl , (refl ,   ()) , prf₂)
-    lem₃ ._ (suc n) q₁  (inj  p   , E   ,  uᵉ , refl , (refl , prf₁) , prf₂) with Q₁? p q₀₁
-    lem₃ ._ (suc n) q₁  (inj .q₀₁ , E   ,  uᵉ , refl , (refl , prf₁) , prf₂) | yes refl  = suc n , uᵉ , refl , prf₂
-    lem₃ ._ (suc n) q₁  (inj  p   , E   ,  uᵉ , refl , (refl ,   ()) , prf₂) | no  p≢q₀₁
-
+    lem₃ .(E ∷ []) zero q₁ (inj .q₁ , E , .[] , refl , prf₁ , refl , refl) with Q₁? q₁ q₀₁
+    lem₃ .(E ∷ []) zero .(_) (inj .(_) , E , .[] , refl , prf₁ , refl , refl) | .true because ofʸ refl = zero , [] , (refl , (refl , refl))
+    lem₃ .(E ∷  uᵉ) (suc n) q₁ (init , E , uᵉ , refl , (refl , prf₁) , prf₂) = lem₃ uᵉ n q₁ prf₂
+    lem₃ .(E ∷ uᵉ) (suc n) q₁ (inj p , E , uᵉ , refl , (refl , prf₁) , prf₂) with Q₁? p q₀₁
+    lem₃ .(E ∷ uᵉ) (suc n) q₁ (inj .(_) , E , uᵉ , refl , (refl , prf₁) , prf₂) | .true because ofʸ refl =  suc n , uᵉ , refl , prf₂
 
     lem₂ : ∀ w wᵉ q n
            → w ≡ toΣ* wᵉ

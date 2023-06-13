@@ -14,8 +14,9 @@ open import Data.Product hiding (map)
 open import Data.Sum hiding (map)
 open import Data.Unit
 open import Data.Nat
-open import Data.Vec hiding (init) renaming (_∈_ to _∈ⱽ_)
-
+open import Data.Vec hiding (init)
+open import Data.Vec.Membership.Propositional renaming  (_∈_ to _∈ⱽ_                ) hiding (_∉_      )
+open import Data.Vec.Relation.Unary.Any as AnyV using (here; there)  
 open import Util
 open import Subset.DecidableSubset
 open import Subset.VectorRep
@@ -132,13 +133,13 @@ unique-⊍ (a ∷ as) bs un-as un-bs = ¬init∈V , prf a as bs un-as un-bs
         helper₁ : {A B : Set}{n m : ℕ}(a x : A)(as : Vec A n)(b : B)(bs : Vec B m)
                   → Unique (a ∷ x ∷ as)
                   → ¬ ⊍inj₁ a ∈ⱽ ⊍inj₁ x ∷ (map ⊍inj₁ as) ++ map ⊍inj₂ (b ∷ bs)
-        helper₁ a .a as b bs unaxas here = proj₁ unaxas here
+        helper₁ a .a as b bs unaxas (here refl) = proj₁ unaxas (here refl)
         helper₁ a x [] b bs unaxas (there prf) = ¬a∈bs a (b ∷ bs) prf
         helper₁ a x (y ∷ as) b bs (proj₁ , proj₂ , proj₃) (there prf) = helper₁ a y as b bs ((λ x₁ → proj₁ (there x₁)) , proj₃) prf
         helper₂ : {A B : Set}{n m : ℕ}(a x : A)(as : Vec A n)(b : B)(bs : Vec B m)
                   → Unique (a ∷ x ∷ as)
                   → Unique (b ∷ bs)
-                  → Unique (⊍inj₁ x ∷ (replicate ⊍inj₁ ⊛ as) ++ map ⊍inj₂ (b ∷ bs))
+                  → Unique (⊍inj₁ x ∷ (map ⊍inj₁ as) ++ map ⊍inj₂ (b ∷ bs))
         helper₂ a x [] b bs un-axas unbbs = (λ prf → ¬a∈bs x (b ∷ bs) prf) , Unique-lem₁ ⊍inj₂ ⊍inj₂-Injective (b ∷ bs) unbbs
         helper₂ a x (y ∷ as) b bs un-axas unbbs = (λ prf → helper₁ x y as b bs (proj₂ un-axas) prf) , helper₂ x y as b bs (proj₂ un-axas) unbbs
 
@@ -210,14 +211,14 @@ unique-⍟ (a ∷ x ∷ as) (b ∷ bs) un-as un-bs = helper₁ a x as b bs un-as
     helper₁ : {A B : Set}{n m : ℕ}(a x : A)(as : Vec A n)(b : B)(bs : Vec B m)
               → Unique (a ∷ x ∷ as)
               → ¬ ⍟inj₁ a ∈ⱽ ⍟inj₁ x ∷ (map ⍟inj₁ as) ++ mid ∷ map ⍟inj₂ (b ∷ bs)
-    helper₁ a₁ .a₁ as₁ b₁ bs₁ un-as₁ here = proj₁ un-as₁ here
+    helper₁ a₁ .a₁ as₁ b₁ bs₁ un-as₁ (here refl)  = proj₁ un-as₁ (here refl)
     helper₁ a₁ x₁ [] b₁ bs₁ (proj₁ , proj₂) (there prf) = ¬a∈midbs a₁ (b₁ ∷ bs₁) prf
     helper₁ a₁ x₁ (x₂ ∷ as₁) b₁ bs₁ (proj₁ , proj₂ , proj₃) (there prf)
       = helper₁ a₁ x₂ as₁ b₁ bs₁ ((λ x₃ → proj₁ (there x₃)) , proj₃) prf
     helper₂ : {A B : Set}{n m : ℕ}(a x : A)(as : Vec A n)(b : B)(bs : Vec B m)
               → Unique (a ∷ x ∷ as)
               → Unique (b ∷ bs)
-              → Unique (⍟inj₁ x ∷ (replicate ⍟inj₁ ⊛ as) ++ mid ∷ map ⍟inj₂ (b ∷ bs))
+              → Unique (⍟inj₁ x ∷ (map ⍟inj₁ as) ++ mid ∷ map ⍟inj₂ (b ∷ bs))
     helper₂ {A} {B} a₁ x₁ [] b₁ bs₁ un-axas un-bbs = (λ x₂ → ¬a∈midbs x₁ (b₁ ∷ bs₁) x₂) , (λ prf → ¬mid∈bs b₁ bs₁ prf) , (Unique-lem₁ ⍟inj₂ ⍟inj₂-Injective (b₁ ∷ bs₁) un-bbs)
       where
         ¬mid∈bs : {m : ℕ}(b : B)(bs : Vec B m) → ¬ mid ∈ⱽ map ⍟inj₂ (b ∷ bs)
@@ -265,7 +266,7 @@ unique-* (a ∷ as) un-as = ¬init∈V a as , prf a as un-as
     prf a₁ (x ∷ as₁) (proj₁ , proj₂) = helper₁ a₁ x as₁ (proj₁ , proj₂) , (Unique-lem₁ inj inj-Injective (x ∷ as₁) proj₂)
       where
         helper₁ : {A : Set}{n : ℕ}(a x : A)(as : Vec A n) → Unique (a ∷ x ∷ as) → ¬ inj a ∈ⱽ inj x ∷ (map inj as)
-        helper₁ a₂ .a₂ [] (proj₃ , proj₄) here = proj₃ here
+        helper₁ a₂ .a₂ [] (proj₃ , proj₄) (here refl) = proj₃ (here refl)
         helper₁ a₂ x₁  [] (proj₃ , proj₄) (there ())
-        helper₁ a₂ .a₂ (x₂ ∷ as₂) (proj₃ , proj₄) here = proj₃ here
+        helper₁ a₂ .a₂ (x₂ ∷ as₂) (proj₃ , proj₄) (here refl) = proj₃ (here refl)
         helper₁ a₂ x₁ (x₂ ∷ as₂) (proj₃ , proj₄ , proj₅) (there x₃) = helper₁ a₂ x₂ as₂ ((λ x₄ → proj₃ (there x₄)) , proj₅) x₃

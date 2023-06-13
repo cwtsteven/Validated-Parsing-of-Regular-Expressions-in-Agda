@@ -13,8 +13,8 @@ open import Relation.Binary.PropositionalEquality
 open import Data.Product
 open import Data.Empty
 open import Data.Nat
-open import Data.Vec renaming (_∈_ to _∈ⱽ_)
-
+open import Data.Vec
+open import Data.Vec.Membership.Propositional renaming (_∈_ to _∈ⱽ_)
 open import Util
 open import Subset
 open import Subset.DecidableSubset
@@ -66,7 +66,7 @@ module Quot-Properties (quot : QuotientSet) where
   ≋-isEquiv = record { refl = λ {q} → ≋-refl {q} ; sym = λ {q} {q'} → ≋-sym {q} {q'} ; trans = λ {q} {q'} {q''} → ≋-trans {q} {q'} {q''} }
   
 
-  p∼q⇔⟪p⟫≈⟪q⟫ : ∀ {p q} → (p ∼ q) ⇔ ⟪ p ⟫ ≈ᵈ ⟪ q ⟫
+  p∼q⇔⟪p⟫≈⟪q⟫ : ∀ {p q} → (p ∼ q) Util.⇔ ((⟪ p ⟫) ≈ᵈ (⟪ q ⟫))
   p∼q⇔⟪p⟫≈⟪q⟫ = lem₁ , lem₂
     where
       lem₁ : ∀ {p q} → p ∼ q → ⟪ p ⟫ ≈ᵈ ⟪ q ⟫
