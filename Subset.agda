@@ -41,8 +41,8 @@ Decidable as = ∀ a → Dec (a ∈ as)
 
 -- Membership decider
 infix 10 _∈?_
-_∈?_ : {A : Set} → (a : A) → (as : Subset A) → {{dec : Decidable as}} → Dec (a ∈ as)
-(a ∈? as) {{dec}} = dec a
+_∈?_ : {A : Set} → (a : A) → (as : Subset A) → {dec : Decidable as} → Dec (a ∈ as)
+(a ∈? as) {dec} = dec a
 
 
 {- Here we define the operations on subset -}

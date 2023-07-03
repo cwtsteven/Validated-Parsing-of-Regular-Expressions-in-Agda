@@ -79,11 +79,9 @@ module Lᴿ⊆Lᴺ where
          → q₁ ∈ᵈ F₁
          → (q₀₁ , uᵉ) ⊢ᵏₑ₁ n ─ (q₁ , [])
          → (q₀ , uᵉ ++ E ∷ E ∷ vᵉ) ⊢ᵏ suc n ─ (mid , E ∷ vᵉ)
-  lem₃ .[] .q₀₁ vᵉ zero    q₁∈F₁ (refl , refl) = mid , E , E ∷ vᵉ , refl , (refl , q₁∈F₁) , (refl , refl)
-  lem₃ ._   q₁  vᵉ (suc n) q₁∈F₁ (p , aᵉ , sᵉ , refl , (refl , prf₁) , prf₂)
-    = ⍟inj₁ p , aᵉ , sᵉ ++ E ∷ E ∷ vᵉ , refl , (refl , prf₁) , lem₄ p sᵉ n q₁ (E ∷ vᵉ) q₁∈F₁ prf₂
-  
-  
+  lem₃ [] q₀₁ vᵉ zero q₁∈F₁ (refl , refl) = mid , E , E ∷ vᵉ , refl , (refl , q₁∈F₁) , refl , refl
+  lem₃ (aᵉ ∷ uᵉ) q₁ vᵉ (suc n) q₁∈F₁ (p , .aᵉ , .uᵉ , refl , (refl , prf₁) , prf₂) =  ⍟inj₁ p  ,  aᵉ , uᵉ ++ E ∷ E ∷ vᵉ , refl , (refl , prf₁) , lem₄ p uᵉ n q₁ (E ∷ vᵉ) q₁∈F₁ prf₂
+    
   lem₂ : ∀ uᵉ q₁ vᵉ q₂
          → q₁ ∈ᵈ F₁
          → (q₀₁ , uᵉ) ⊢*ₑ₁ (q₁ , [])
@@ -131,15 +129,10 @@ module Lᴿ⊇Lᴺ where
          → ⍟inj₂ q ∈ᵈ F
          → (mid , vᵉ) ⊢ᵏ m ─ (⍟inj₂ q , [])
          → toΣ* vᵉ ∈ Lᵉᴺ nfa₂
-  lem₉ q vᵉ zero    q∈F (() , _)
-  lem₉ q []         (suc m) q∈F (_          ,  _    ,  _  , ()   , (refl ,     _) ,    _)
-  lem₉ q (α a ∷ vᵉ) (suc m) q∈F (p          ,  α .a , .vᵉ , refl , (refl ,    ()) ,    _)
-  lem₉ q (E   ∷ vᵉ) (suc m) q∈F (⍟inj₁ _    , .E    , .vᵉ , refl , (refl ,    ()) ,    _)
-  lem₉ q (E   ∷ vᵉ) (suc m) q∈F (mid        , .E    , .vᵉ , refl , (refl ,  prf₁) , prf₂) = lem₉ q vᵉ m q∈F prf₂
-  lem₉ q (E   ∷ vᵉ) (suc m) q∈F (⍟inj₂ p    , .E    , .vᵉ , refl , (refl ,  prf₁) , prf₂) with Q₂? p q₀₂
-  lem₉ q (E   ∷ vᵉ) (suc m) q∈F (⍟inj₂ .q₀₂ , .E    , .vᵉ , refl , (refl ,  prf₁) , prf₂) | yes refl = vᵉ , refl , q , q∈F , m , lem₁₀ q₀₂ vᵉ m q prf₂
-  lem₉ q (E   ∷ vᵉ) (suc m) q∈F (⍟inj₂ p    , .E    , .vᵉ , refl , (refl ,    ()) , prf₂) | no  _
-  
+  lem₉ q (E ∷ vᵉ) (suc m)  q∈F (mid , E , .vᵉ , refl , (refl , prf₁) , prf₂) =  lem₉ q vᵉ m q∈F prf₂
+  lem₉ q (E ∷ vᵉ) (suc m)  q∈F (⍟inj₂ p , E , .vᵉ , refl , (refl , prf₁) , prf₂) with  Q₂? p q₀₂
+  lem₉ q (E ∷ vᵉ) (suc m) q∈F (⍟inj₂ .(_) , E , .vᵉ , refl , (refl , prf₁) , prf₂) | .true because ofʸ refl =  vᵉ , refl , q , q∈F , m , lem₁₀ q₀₂ vᵉ m q prf₂
+  lem₉ q (α x₂ ∷ vᵉ) (suc m) x (fst , .(α x₂) , .vᵉ , refl , ())
 
   lem₈ : ∀ q u₁ n vᵉ
          → ¬ (⍟inj₂ q , u₁) ⊢ᵏ n ─ (mid , vᵉ)

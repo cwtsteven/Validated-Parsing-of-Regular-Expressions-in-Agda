@@ -89,7 +89,7 @@ module Lᴿ⊇Lᴺ where
   lem₁ ( x ∷ y ∷ xs) (._ , _    , accept , refl , zero  , ()     , refl)
   lem₁ ( x ∷ y ∷ xs) (._ , _    , accept , refl , suc n , init   , α _ , _  , refl , (_ , ())   ,   _)
   lem₁ ( x ∷ y ∷ xs) (._ , w≡wᵉ , accept , refl , suc n , accept , α b , uᵉ , refl , _          , prf)
-    = ⊥-elim (lem₂ uᵉ n (λ u≡[] → u≢[] {toΣ* uᵉ} {uᵉ} {y} {xs} refl (sym (cong tail w≡wᵉ)) u≡[]) prf)
+    = ⊥-elim (lem₂ uᵉ n (λ u≡[] → u≢[] {toΣ* uᵉ} {uᵉ} {y} {xs} refl (sym (cong mytail w≡wᵉ)) u≡[]) prf)
     where
       u≢[] : ∀ {u uᵉ y xs } → u ≡ toΣ* uᵉ → u ≡ y ∷ xs → u ≢ []
       u≢[] {.[]} {uᵉ} {y} {xs} u≡uᵉ () refl

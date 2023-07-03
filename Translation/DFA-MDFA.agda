@@ -21,8 +21,9 @@ open import Relation.Nullary
 open import Data.Product hiding (Σ ; map)
 open import Data.Sum
 open import Data.Empty
-open import Data.Vec renaming (_∈_ to _∈ⱽ_) hiding ( _++_ ; _∷ʳ_)
-open import Induction.Nat
+open import Data.Vec
+open import Data.Vec.Membership.Propositional renaming (_∈_ to _∈ⱽ_) hiding (_∉_)
+
 
 open import Subset
 open import Subset.DecidableSubset
@@ -95,16 +96,16 @@ module Quotient-Construct (dfa : DFA) where
   -- States Equivalence
   infix 0 _∼_
   _∼_ : Q → Q → Set
-  p ∼ q = ∀ w → δ* p w ∈ᵈ F ⇔ δ* q w ∈ᵈ F
+  p ∼ q = ∀ w → δ* p w ∈ᵈ F Util.⇔ δ* q w ∈ᵈ F
 
   open Irreducibility dfa
 
   
-  ≠-lem : ∀ {p q} → (¬ (p ∼ q)) ⇔ (p ≠ q)
+  ≠-lem : ∀ {p q} → (¬ (p ∼ q)) Util.⇔ (p ≠ q)
 
   ≠-lem₁ : ∀ {p q} → ¬ (p ≠ q) → p ∼ q
 
-  ≠-lem₂ : ∀ {p q w} → (δ* p w ∈ᵈ F ⇔ δ* q w ∈ᵈ F) ⇔ ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)
+  ≠-lem₂ : ∀ {p q w} → (δ* p w ∈ᵈ F Util.⇔ δ* q w ∈ᵈ F) ⇔ ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)
   
   ≠-lem₃ : ∀ {p q} → p ∼ q → ¬ (p ≠ q)
   
@@ -113,11 +114,11 @@ module Quotient-Construct (dfa : DFA) where
 
   ≠-lem₂ {p} {q} {w} = lem₁ {p} {q} {w} , lem₂ {p} {q} {w}
     where
-      lem₁ : ∀ {p q w} → (δ* p w ∈ᵈ F ⇔ δ* q w ∈ᵈ F) → ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)
+      lem₁ : ∀ {p q w} → (δ* p w ∈ᵈ F Util.⇔ δ* q w ∈ᵈ F) → ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F)
       lem₁ prf₁ (inj₁ (prf₂ , prf₃)) = ⊥-elim (prf₃ (proj₁ prf₁ prf₂))
       lem₁ prf₁ (inj₂ (prf₂ , prf₃)) = ⊥-elim (prf₂ (proj₂ prf₁ prf₃))
 
-      lem₂ : ∀ {p q w} → ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F) → (δ* p w ∈ᵈ F ⇔ δ* q w ∈ᵈ F)
+      lem₂ : ∀ {p q w} → ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F) → (δ* p w ∈ᵈ F Util.⇔ δ* q w ∈ᵈ F)
       lem₂ {p} {q} {w} prf = left {p} {q} {w} prf , right {p} {q} {w} prf
         where
           left : ∀ {p q w} → ¬ (δ* p w ∈ᵈ F × δ* q w ∉ᵈ F ⊎ δ* p w ∉ᵈ F × δ* q w ∈ᵈ F) → (δ* p w ∈ᵈ F → δ* q w ∈ᵈ F)

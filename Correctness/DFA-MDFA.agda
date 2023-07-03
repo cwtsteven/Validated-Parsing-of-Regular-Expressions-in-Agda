@@ -14,14 +14,13 @@ open import Data.List hiding (any)
 open import Data.Bool
 open import Relation.Binary hiding (Decidable)
 open import Relation.Binary.PropositionalEquality
-open Deprecated-inspect-on-steroids renaming (inspect to inspect')
 open import Relation.Nullary
 open import Data.Sum
 open import Data.Product hiding (Σ)
 open import Data.Unit
 open import Data.Empty
 open import Data.Nat
-open import Data.Vec renaming (_∈_ to _∈ⱽ_)
+open import Data.Vec
 
 open import Subset renaming (Ø to ø)
 open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; _∉_ to _∉ᵈ_ ; _∈?_ to _∈ᵈ?_ ; Ø to ø ; _⋃_ to _⋃ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; _≈_ to _≈ᵈ_ ; ≈-isEquiv to ≈ᵈ-isEquiv)

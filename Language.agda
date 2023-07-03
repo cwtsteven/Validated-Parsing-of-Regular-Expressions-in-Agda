@@ -11,10 +11,10 @@ open import Util
 module Language (Σ : Set)(dec : DecEq Σ) where
 
 open import Data.List
+open import Data.Nat hiding (_^_)
 open import Relation.Binary.PropositionalEquality
 open import Relation.Nullary
 open import Data.Product hiding (Σ)
-open import Data.Nat
 
 open import Subset renaming (Ø to Øˢ ; ⟦_⟧ to ⟦_⟧ˢ ; _⋃_ to _⋃ˢ_)
 

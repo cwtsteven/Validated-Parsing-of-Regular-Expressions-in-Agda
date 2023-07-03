@@ -115,15 +115,10 @@ module Lᴿ⊇Lᴺ where
   lem₉ : ∀ {wᵉ q}
          → (q₀ , wᵉ) ⊢* (⊍inj₂ q , [])
          → Σ[ uᵉ ∈ Σᵉ* ] ( (q₀₂ , uᵉ) ⊢*ₑ₂ (q , []) × toΣ* wᵉ ≡ toΣ* uᵉ )
-  lem₉ { _} {q} (zero  , () , _)
-  lem₉ {._} {q} (suc n , init       , α _ , _  , refl , (_    , ())   ,    _)
-  lem₉ {._} {q} (suc n , init       , E   , uᵉ , refl , (refl , prf₁) , prf₂) = lem₉ {uᵉ} {q} (n , prf₂)
-  lem₉ {._} {q} (suc n , ⊍inj₁  _   , α _ , _  , refl , (_    , ())   ,    _)
-  lem₉ {._} {q} (suc n , ⊍inj₁  p   , a   , uᵉ , refl , (_    ,  _)   ,  prf) = ⊥-elim (lem₁₁ p uᵉ n q [] prf)
-  lem₉ {._} {q} (suc n , ⊍inj₂  p   , α _ , uᵉ , refl , (_    , ())   ,    _) 
-  lem₉ {._} {q} (suc n , ⊍inj₂  p   , E   , uᵉ , refl , (_    ,  _)   ,    _) with Q₂? p q₀₂
-  lem₉ {._} {q} (suc n , ⊍inj₂ .q₀₂ , E   , uᵉ , refl , (_    ,  _)   ,  prf) | yes refl  = uᵉ , (n , lem₁₀ q₀₂ uᵉ n q [] prf) , refl
-  lem₉ {._} {q} (suc n , ⊍inj₂  p   , E   , uᵉ , refl , (_    , ())   ,    _) | no  p≢q₀₂
+  lem₉ {.(E ∷  uᵉ)} {q} (suc n , init , E , uᵉ  , refl , (refl , snd₁) , snd) = lem₉ (n , snd)
+  lem₉ {.(E ∷  uᵉ)} {q} (suc n , ⊍inj₁ p , E , uᵉ  , refl , (refl , snd₁) , prf) =  ⊥-elim (lem₁₁ p uᵉ n q [] prf)
+  lem₉ {.(E ∷ uᵉ)} {q} (suc n , ⊍inj₂ p , E , uᵉ , refl , fst , prf) with Q₂? p q₀₂
+  lem₉ {.(E ∷ uᵉ)} {q} (suc n , ⊍inj₂ .(_) , E , uᵉ , refl , fst , prf) | .true because ofʸ refl = uᵉ , ((n , lem₁₀ q₀₂ uᵉ n q [] prf)) , refl
   
   lem₈ : ∀ a wᵉ q
          → ¬ (q₀ , α a ∷ wᵉ) ⊢* (⊍inj₂ q , [])
@@ -155,15 +150,10 @@ module Lᴿ⊇Lᴺ where
   lem₄ : ∀ {wᵉ q}
          → (q₀ , wᵉ) ⊢* (⊍inj₁ q , [])
          → Σ[ uᵉ ∈ Σᵉ* ] ( (q₀₁ , uᵉ) ⊢*ₑ₁ (q , []) × toΣ* wᵉ ≡ toΣ* uᵉ )
-  lem₄ { _} {q} (zero  , () , _)
-  lem₄ {._} {q} (suc n , init       , α _ , _  , refl , (_    , ())   ,    _)
-  lem₄ {._} {q} (suc n , init       , E   , uᵉ , refl , (refl , prf₁) , prf₂) = lem₄ {uᵉ} {q} (n , prf₂)
-  lem₄ {._} {q} (suc n , ⊍inj₁  _   , α _ , _  , refl , (_ , ()) ,   _)
-  lem₄ {._} {q} (suc n , ⊍inj₁  p   , E   , uᵉ , refl , (_ ,  _) ,   _) with Q₁? p q₀₁
-  lem₄ {._} {q} (suc n , ⊍inj₁ .q₀₁ , E   , uᵉ , refl , (_    ,  _)   ,  prf) | yes refl  = uᵉ , (n , lem₅ q₀₁ uᵉ n q [] prf) , refl
-  lem₄ {._} {q} (suc n , ⊍inj₁  p   , E   , uᵉ , refl , (_    , ())   ,    _) | no  p≢q₀₁ 
-  lem₄ {._} {q} (suc n , ⊍inj₂  _   , α _ , _  , refl , (_    , ())   ,    _)
-  lem₄ {._} {q} (suc n , ⊍inj₂  p   , a   , uᵉ , refl , (_    ,  _)   ,  prf) = ⊥-elim (lem₆ p uᵉ n q [] prf)
+  lem₄ {.(E ∷ uᵉ)} {q} (suc n , init , E ,  uᵉ , refl , (refl , snd₁) , prf₂) =  lem₄ {uᵉ} {q} (n , prf₂)
+  lem₄ {.(E ∷ uᵉ)} {q} (suc n , ⊍inj₁ p , E ,  uᵉ , refl , (refl , snd₁) , prf) with Q₁? p q₀₁
+  lem₄ {.(E ∷ uᵉ)} {q} (suc n , ⊍inj₁ .(_) , E , uᵉ , refl , (refl , snd₁) , prf) | .true because ofʸ refl = uᵉ , (n , lem₅ q₀₁ uᵉ n q [] prf) , refl
+  lem₄ {.(E ∷ uᵉ)} {q} (suc n , ⊍inj₂ p , E , uᵉ   , refl , (refl , snd₁) , prf) =  ⊥-elim (lem₆ p uᵉ n q [] prf)
   
   lem₃ : ∀ a wᵉ q
          → ¬ (q₀ , α a ∷ wᵉ) ⊢* (⊍inj₁ q , [])

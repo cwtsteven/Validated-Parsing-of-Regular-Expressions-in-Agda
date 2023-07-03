@@ -19,7 +19,7 @@ open import Data.Product hiding (Σ)
 open import Data.Unit
 open import Data.Empty
 open import Data.Nat
-open import Induction.Nat
+open import Data.Nat.Induction 
 
 open import Subset renaming (Ø to ø)
 open import Subset.DecidableSubset renaming (_∈?_ to _∈ᵈ?_ ; _∈_ to _∈ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ ; _≈_ to _≈ᵈ_) hiding (_⊆_ ; _⊇_)
@@ -75,7 +75,7 @@ module Lᵉᴺ⊆Lᴺ (ε-nfa : ε-NFA) where
          → (q , wᵉ) ⊢ᵏₑ n ─ (p , α a ∷ uᵉ)
          → (p , α a , uᵉ) ⊢ₑ (q' , uᵉ)
          → Σ[ u ∈ Σ* ] ( u ≡ toΣ* uᵉ × ( Σ[ n₁ ∈ ℕ ] (q , w) ⊢ᵏ n₁ ─ (q' , u) ) )
-  lem₃ = <-rec _ helper
+  lem₃ = <′-rec _ helper
     where
       helper : ∀ n
                → (∀ m₁

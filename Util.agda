@@ -57,9 +57,9 @@ Injective-lem₁ f-inj a≢b fa≡fb = a≢b (f-inj fa≡fb)
 
 
 -- List operations and lemmas
-tail : {A : Set} → List A → List A
-tail []       = []
-tail (x ∷ xs) = xs
+mytail : {A : Set} → List A → List A
+mytail []       = []
+mytail (x ∷ xs) = xs
 
 DecEq-List : {A : Set} → DecEq A → DecEq (List A)
 DecEq-List dec []         []       = yes refl
@@ -70,7 +70,7 @@ DecEq-List dec (.y ∷  xs) (y ∷ ys) | yes refl with DecEq-List dec xs ys
 DecEq-List dec (.y ∷ .ys) (y ∷ ys) | yes refl | yes refl
   = yes refl
 DecEq-List dec (.y ∷  xs) (y ∷ ys) | yes refl | no  xs≢ys
-  = no  (λ yxs≡yys → xs≢ys (cong tail yxs≡yys))
+  = no  (λ yxs≡yys → xs≢ys (cong mytail yxs≡yys))
 DecEq-List dec ( x ∷  xs) (y ∷ ys) | no  x≢y  = no (λ xxs≡yys → x≢y (lem₁ xxs≡yys))
   where
     lem₁ : {A : Set}{x y : A}{xs ys : List A} → x ∷ xs ≡ y ∷ ys → x ≡ y
@@ -177,7 +177,7 @@ List-lem₄ ._ ._ vs xs ys refl refl = List-lem₃ xs ys vs
 ℕ-lem₉ (suc j) zero .j j≥k refl = refl
 ℕ-lem₉ (suc j) (suc k) n (s≤s j≥k) prf = ℕ-lem₉ j k n j≥k prf
 
-ℕ-lem₁₀ : ∀ j → j ≤ j
+ℕ-lem₁₀ : ∀ j → j Data.Nat.≤ j
 ℕ-lem₁₀ zero = z≤n
 ℕ-lem₁₀ (suc j) = s≤s (ℕ-lem₁₀ j)
 
@@ -195,7 +195,7 @@ List-lem₄ ._ ._ vs xs ys refl refl = List-lem₃ xs ys vs
 ℕ-lem₁₂ (suc j) (suc k) (s≤s j≥k) (s≤s k≥j) = sym (cong suc (ℕ-lem₁₂ k j k≥j j≥k))
 
 ℕ-lem₁₃ : ∀ n k
-          → ¬ n ≤ k
+          → ¬ n Data.Nat.≤ k
           → n > k
 ℕ-lem₁₃ zero zero n≰k = ⊥-elim (n≰k z≤n)
 ℕ-lem₁₃ zero (suc k) n≰k = ⊥-elim (n≰k z≤n)
@@ -241,7 +241,7 @@ List-lem₄ ._ ._ vs xs ys refl refl = List-lem₃ xs ys vs
 ℕ-lem₁₉ (suc n) (s≤s n≥1) ()       
 
 ℕ-lem₁₈ : ∀ {n k}
-          → n ≤ suc k
+          → n Data.Nat.≤ suc k
           → n ≱ suc (suc k)
 ℕ-lem₁₈ {zero} {zero} z≤n ()
 ℕ-lem₁₈ {zero} {suc k} n≤sk ()
@@ -249,9 +249,9 @@ List-lem₄ ._ ._ vs xs ys refl refl = List-lem₃ xs ys vs
 ℕ-lem₁₈ {suc n} {suc k} (s≤s n≤sk) (s≤s n≥ssk) = ℕ-lem₁₈ n≤sk n≥ssk
 
 ℕ-lem₃₀ : ∀ n m r
-          → n < m
+          → n Data.Nat.< m
           → r ≡ m
-          → n < r
+          → n Data.Nat.< r
 ℕ-lem₃₀ n .r r n<r refl = n<r
 
 ℕ-lem₂₂ : ∀ M n
@@ -262,7 +262,7 @@ List-lem₄ ._ ._ vs xs ys refl refl = List-lem₃ xs ys vs
 
 ℕ-lem₂₁ : ∀ M n
           → M > zero
-          → suc n ≤ M
+          → suc n Data.Nat.≤ M
           → M > M ∸ suc n
 ℕ-lem₂₁ zero zero () n≤M
 ℕ-lem₂₁ zero (suc n) () n≤M
@@ -273,10 +273,10 @@ List-lem₄ ._ ._ vs xs ys refl refl = List-lem₃ xs ys vs
     IH = ℕ-lem₂₁ M n (ℕ-lem₂₂ M n n≤M) n≤M
 
 ℕ-lem₂₀ : ∀ M new old
-          → old < M
-          → new ≤ M
-          → old < new
-          → M ∸ new < M ∸ old
+          → old Data.Nat.< M
+          → new Data.Nat.≤ M
+          → old Data.Nat.< new
+          → M ∸ new Data.Nat.< M ∸ old
 ℕ-lem₂₀ M zero zero old<M new≤M ()
 ℕ-lem₂₀ M zero (suc old) old<M new≤M ()
 ℕ-lem₂₀ M (suc new) zero old<M new≤M old<new = ℕ-lem₂₁ M new old<M new≤M
@@ -300,7 +300,7 @@ List-lem₄ ._ ._ vs xs ys refl refl = List-lem₃ xs ys vs
 ℕ-lem₂₆ (suc n) (suc m) (≤′-step m<n) = ≤′-step (ℕ-lem₂₆ n (suc m) m<n)
 
 ℕ-lem₂₄ : ∀ {n m}
-          → m < n
+          → m Data.Nat.< n
           → m <′ n
 ℕ-lem₂₄ {zero}  {m} ()
 ℕ-lem₂₄ {suc n} {zero}  (s≤s 0≤n) = ℕ-lem₂₅ n

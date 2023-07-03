@@ -26,10 +26,10 @@ DecSubset A = A → Bool
 Ø = λ _ → false
 
 -- Singleton
-⟦_⟧ : {A : Set} → A → {{dec : DecEq A}} → DecSubset A
-⟦ a ⟧ {{dec}}  b with dec a b
-⟦ a ⟧ {{dec}} .a | yes refl = true
-⟦ a ⟧ {{dec}}  b | no  _    = false
+⟦_⟧ : {A : Set} → A → {dec : DecEq A} → DecSubset A
+⟦ a ⟧ {dec}  b with dec a b
+⟦ a ⟧ {dec} .a | yes refl = true
+⟦ a ⟧ {dec}  b | no  _    = false
 
 -- Membership
 infix 10 _∈?_
@@ -49,7 +49,7 @@ _∉_ : {A : Set} → A → DecSubset A → Set
 a ∉ p = ¬ (a ∈ p)
 
 -- ∀a. a ∈ ⟦ a ⟧
-⟦a⟧-lem₁ : {A : Set}(dec : DecEq A)(a : A) → a ∈ ⟦ a ⟧ {{dec}}
+⟦a⟧-lem₁ : {A : Set}(dec : DecEq A)(a : A) → a ∈ ⟦ a ⟧ {dec}
 ⟦a⟧-lem₁ dec a with dec a a
 ⟦a⟧-lem₁ dec a | yes refl = refl
 ⟦a⟧-lem₁ dec a | no  a≢a  = ⊥-elim (a≢a refl)
@@ -70,7 +70,7 @@ a ∉ p = ¬ (a ∈ p)
 ∈-lem₂ {A} {a} {p} a∈?p≡false ()  | false
 
 ∈-lem₁ : {A : Set}{a : A}{p : DecSubset A}
-         → a ∈? p ≡ false ⇔ a ∉ p
+         → ((a ∈? p) ≡ false) Util.⇔ (a ∉ p)
 ∈-lem₁ {A} {a} {p} = ∈-lem₂ {A} {a} {p} , ∈-lem₃ {A} {a} {p}
 {- a ∉ p ⇔ a ∈? p ≡ false -}
 
@@ -120,7 +120,8 @@ as ≈ bs = (as ⊆ bs) × (as ⊇ bs)
 
 -- Proving the decidability of ≈ using vector representation
 open import Data.Nat
-open import Data.Vec renaming (_∈_ to _∈ⱽ_)
+open import Data.Vec
+open import Data.Vec.Membership.Propositional renaming (_∈_ to _∈ⱽ_) hiding (_∉_)
 open import Subset.VectorRep hiding (_∈?_ ; ∈-lem₂)
 
 module Decidable-≈ {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a∈It : ∀ a → a ∈ⱽ It)(unique : Unique It) where
@@ -198,7 +199,7 @@ module Decidable-≈ {A : Set}{n : ℕ}(dec : DecEq A)(It : Vec A (suc n))(∀a�
       ¬eq (_ , as⊇bs) = as⊉bs as⊇bs
 
 
-  ⊆-lem₁ : {as bs : DecSubset A} → ¬ (Σ[ a ∈ A ] (a ∈ as × a ∉ bs)) → as ⊆ bs
+  ⊆-lem₁ : {as bs : DecSubset A} → ¬ (Σ[ a ∈ A ] ((a ∈ as) × (a ∉ bs))) → as ⊆ bs
   ⊆-lem₁ {as} {bs} ¬∃a∈as a a∈as with a ∈? bs | inspect (λ a → a ∈? bs) a
   ... | true  | [ a∈bs ] = refl
   ... | false | [ a∉bs ] = ⊥-elim (¬∃a∈as (a , a∈as , ∈-lem₂ {A} {a} {bs} a∉bs))

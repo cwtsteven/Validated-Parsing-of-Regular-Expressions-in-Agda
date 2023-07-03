@@ -15,8 +15,9 @@ open import Data.Bool
 open import Relation.Binary.PropositionalEquality
 open import Data.Sum hiding (map)
 open import Data.Nat renaming (_≟_ to _≟N_) 
-open import Data.Vec renaming (_∈_ to _∈ⱽ_) hiding (init)
-
+open import Data.Vec hiding (init)
+open import Data.Vec.Membership.Propositional renaming (_∈_ to _∈ⱽ_) hiding (_∉_)
+open import Data.Vec.Relation.Unary.Any as AnyV using (here; there)  
 open import Subset.DecidableSubset renaming (_∈_ to _∈ᵈ_ ; _∈?_ to _∈ᵈ?_ ; Ø to ø ; _⋃_ to _⋃ᵈ_ ; ⟦_⟧ to ⟦_⟧ᵈ ; _⊆_ to _⊆ᵈ_ ; _⊇_ to _⊇ᵈ_ ; _≈_ to _≈ᵈ_ ; ≈-isEquiv to ≈ᵈ-isEquiv)
 open import Subset.VectorRep renaming (_∈?_ to _∈ⱽ?_)
 open import Language Σ dec hiding (⟦_⟧)
@@ -38,7 +39,7 @@ regexToε-NFA Ø =
       ∀qEq : ∀ q → q ∈ᵈ δ q E
       ∀qEq init = refl
       ∀q∈It : ∀ q → q ∈ⱽ Ø-Vec
-      ∀q∈It init = here
+      ∀q∈It init = here refl
       unique : Unique Ø-Vec
       unique = unique-Ø
 regexToε-NFA ε =
@@ -54,7 +55,7 @@ regexToε-NFA ε =
       ∀qEq : ∀ q → q ∈ᵈ δ q E
       ∀qEq init = refl
       ∀q∈It : ∀ q → (q ∈ⱽ ε-Vec)
-      ∀q∈It init = here
+      ∀q∈It init = here refl
       unique : Unique ε-Vec
       unique = unique-ε
 regexToε-NFA (σ a) =
@@ -74,8 +75,8 @@ regexToε-NFA (σ a) =
       ∀qEq init = refl
       ∀qEq accept = refl
       ∀q∈It : ∀ q → (q ∈ⱽ σ-Vec)
-      ∀q∈It init   = here
-      ∀q∈It accept = there here
+      ∀q∈It init   = here refl
+      ∀q∈It accept = there (here refl)
       unique : Unique σ-Vec
       unique = unique-σ
 regexToε-NFA (e₁ ∣ e₂) =
@@ -103,7 +104,7 @@ regexToε-NFA (e₁ ∣ e₂) =
       ∀qEq (⊍inj₁ q) = ∀qEq₁ q
       ∀qEq (⊍inj₂ q) = ∀qEq₂ q
       ∀q∈It : ∀ q → q ∈ⱽ ⊍-Vec It₁ It₂
-      ∀q∈It init      = here
+      ∀q∈It init      = here refl
       ∀q∈It (⊍inj₁ q) = let prf₁ = Subset.VectorRep.∈-lem₆ (DecEq-⊍ Q₁? Q₂?) (⊍inj₁ q) (map ⊍inj₁ It₁) (map ⊍inj₂ It₂) in
                          let prf₂ = Subset.VectorRep.∈-lem₂ Q₁? (DecEq-⊍ Q₁? Q₂?) ⊍inj₁ q It₁ (∀q∈It₁ q) in there (prf₁ (inj₁ prf₂))
       ∀q∈It (⊍inj₂ q) = let prf₁ = Subset.VectorRep.∈-lem₆ (DecEq-⊍ Q₁? Q₂?) (⊍inj₂ q) (map ⊍inj₁ It₁) (map ⊍inj₂ It₂) in
@@ -137,7 +138,7 @@ regexToε-NFA (e₁ ∙ e₂) =
       ∀qEq (⍟inj₂ q) = ∀qEq₂ q
       ∀q∈It : ∀ q → q ∈ⱽ ⍟-Vec It₁ It₂
       ∀q∈It mid       = let prf₁ = Subset.VectorRep.∈-lem₆ (DecEq-⍟ Q₁? Q₂?) mid (map ⍟inj₁ It₁) (mid ∷ map ⍟inj₂ It₂) in
-                         prf₁ (inj₂ here)
+                         prf₁ (inj₂ (here refl))
       ∀q∈It (⍟inj₁ q) = let prf₁ = Subset.VectorRep.∈-lem₆ (DecEq-⍟ Q₁? Q₂?) (⍟inj₁ q) (map ⍟inj₁ It₁) (mid ∷ map ⍟inj₂ It₂) in
                          let prf₂ = Subset.VectorRep.∈-lem₂ Q₁? (DecEq-⍟ Q₁? Q₂?) ⍟inj₁ q It₁ (∀q∈It₁ q) in prf₁ (inj₁ prf₂)
       ∀q∈It (⍟inj₂ q) = let prf₁ = Subset.VectorRep.∈-lem₆ (DecEq-⍟ Q₁? Q₂?) (⍟inj₂ q) (map ⍟inj₁ It₁) (mid ∷ map ⍟inj₂ It₂) in
@@ -165,7 +166,7 @@ regexToε-NFA (e *) =
       ∀qEq init = refl
       ∀qEq (inj q) = Bool-lem₆ _ _ (∀qEq₁ q)
       ∀q∈It : ∀ q → q ∈ⱽ *-Vec It₁
-      ∀q∈It init    = here
+      ∀q∈It init    = here refl
       ∀q∈It (inj q) = there (Subset.VectorRep.∈-lem₂ Q₁? (DecEq-* Q₁?) inj q It₁ (∀q∈It₁ q))
       unique : Unique (*-Vec It₁)
       unique = unique-* It₁ unique₁
